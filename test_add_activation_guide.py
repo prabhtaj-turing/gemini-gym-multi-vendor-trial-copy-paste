@@ -6,7 +6,9 @@ from reportlab.lib.pagesizes import letter
 from APIs.ces_system_activation.ces_system_activation import add_activation_guide_from_pdf
 from APIs.ces_system_activation.SimulationEngine import db
 
-def test_add_activation_guide_from_pdf():
+
+
+def test_add_activation_guide_from_pdf_2():
     """
     Tests that add_activation_guide_from_pdf correctly adds a new guide to the DB
     and that the content is the mock data when running in a test environment.
