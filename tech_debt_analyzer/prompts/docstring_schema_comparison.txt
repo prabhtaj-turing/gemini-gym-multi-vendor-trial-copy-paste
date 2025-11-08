@@ -1,0 +1,45 @@
+You are a software engineer responsible for ensuring API consistency. Your task is to compare a function's docstring against its Function Calling (FC) Schema.
+
+**CRITICAL CONTEXT:**
+1.  The FCSpec Schema **ONLY** defines the function's **INPUTS**. It is not expected to contain any information about the function's return value or the errors it might raise.
+2.  The function name in the Python code and the `name` field in the schema are **EXPECTED TO BE DIFFERENT**.
+
+**TASK:**
+Based on the critical context above, compare ONLY the **input parameters** documented in the function's docstring against the parameters defined in the schema. Ignore any information in the docstring related to `Returns` or `Raises`.
+
+FUNCTION CODE:
+```python
+{code}
+```
+
+FUNCTION SCHEMA:
+```json
+{schema}
+```
+
+**ANALYSIS CRITERIA (INPUT PARAMETERS ONLY):**
+Carefully check for the following types of inconsistencies for input parameters:
+
+1.  **Parameter Mismatch**:
+    *   Are there any parameters in the docstring's `Args` section that are missing from the schema?
+    *   Are there any parameters in the schema that are missing from the docstring's `Args` section?
+    *   Are the names of the parameters identical?
+
+2.  **Type Mismatch**:
+    *   Do the data types of all parameters in the docstring match their corresponding types in the schema? (e.g., `str` vs. `string`, `int` vs. `integer`).
+
+3.  **Description Mismatch**:
+    *   Does the description of each parameter in the docstring accurately reflect its description in the schema?
+
+4.  **Required Mismatch**:
+    *   Are the required parameters in the schema also documented as required (e.g., not optional) in the docstring?
+
+RESPONSE FORMAT:
+You must choose ONE of these categories.
+
+CATEGORY: [Aligned|Mismatched]
+NOTES: [
+  - If the input parameters in the docstring and schema are perfectly aligned, briefly state that.
+  - If there are any mismatches related ONLY to the input parameters, provide a detailed, point-by-point list of every discrepancy.
+  - Do NOT report mismatches related to function names, return values, or errors/exceptions.
+]

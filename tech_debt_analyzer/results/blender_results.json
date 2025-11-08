@@ -1,0 +1,371 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:56.722265Z",
+  "results": {
+    "blender/execution.py": {
+      "functions": {
+        "execute_blender_code": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, arguments, return values, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `execute_blender_code` has only one functional input parameter: `code` (a string).  The function performs input validation on this parameter using `isinstance` to check if it's a string and checks if it's empty after stripping whitespace. It also uses a `try-except` block to catch `SyntaxError` and `ValueError` during compilation, providing informative error messages.  While Pydantic could be used, the existing validation is sufficient and arguably more efficient for this specific case.  Using Pydantic would add unnecessary overhead for this simple input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `execute_blender_code` has only one functional input parameter: `code` (a string).  The validation for this parameter is comprehensive. It checks:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `execute_blender_code` has an excellent parameter design.  The single parameter `code` is properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  All type annotations are complete and accurate, including the use of `Optional` in the return dictionary's type hints."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly executes arbitrary Python code within the specified constraints.  All functional input parameters (`code`) are used.  The documented exceptions (`InvalidInputError`, `ValidationError`) are handled appropriately. There are no TODOs, pass statements, or placeholder implementations. The logic for handling code execution, capturing output, managing errors, and logging results to the global `DB` is complete and functional. The docstring accurately reflects the function's behavior, including return types and exception handling.  The function's handling of both expressions and statements within the input code is robust.  The use of `ast.parse` to differentiate between expressions and statements for return value handling is a particularly strong aspect of the implementation. The inclusion of error handling for database logging is also a positive aspect."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `execute_blender_code` function does not handle phone numbers or email addresses as input.  Its purpose is to execute arbitrary Python code within a Blender simulation environment.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses on code execution, error handling, and logging, not data validation of specific input types like phone numbers or emails."
+          }
+        }
+      }
+    },
+    "blender/hyper3d.py": {
+      "functions": {
+        "get_hyper3d_status": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: checking Hyper3D Rodin integration status in Blender.  It accurately describes the function's role within an MCP server context. The description of the returned dictionary is detailed, including key names, types, and a brief explanation.  The `Raises` section correctly lists the `ValidationError` and its potential causes.  Type hints are used consistently and correctly for the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_hyper3d_status` does not take any functional input parameters.  Its input comes from the global `DB` dictionary.  The code performs manual validation checks on the structure and values within the `DB['hyper3d_service_status']` dictionary.  Therefore, Pydantic models are not needed, and the existing manual validation is sufficient.  Using Pydantic would add unnecessary complexity in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_hyper3d_status` does not take any functional input parameters.  Its data source is the global `DB` dictionary.  The code performs comprehensive validation on the data retrieved from `DB['hyper3d_service_status']`, checking for the existence of the key, the presence of the `is_enabled` and `message` keys, and validating the value of the `mode` key against a list of allowed values.  All checks are performed before using the data, and appropriate `ValidationError` exceptions are raised with informative messages for each validation failure.  Therefore, the validation is considered comprehensive for its data source."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_hyper3d_status` has no parameters.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic described in its docstring. It checks the `DB` for the Hyper3D service status, validates the presence of necessary keys ('is_enabled', 'message', and checks the validity of 'mode'), and returns a dictionary containing the status information.  All documented exceptions are handled. There are no placeholders or TODO comments. The function's logic is complete and functional given the use of the global `DB`.  The return type and content precisely match the docstring's description. There are no unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_hyper3d_status` does not handle any phone number or email address inputs.  It interacts with a database to retrieve and validate the status of a Hyper3D integration within a Blender environment.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "generate_hyper3d_model_via_text": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, arguments, return values, and exceptions.  It accurately reflects the function's behavior and includes details about the expected input formats and the structure of the dictionary returned.  The default value for `bbox_condition` is correctly documented as `None`.  All arguments and their types are clearly specified. The `Returns` section adequately describes the dictionary structure, including the potential keys and their types. The `Raises` section lists all possible exceptions.  Type hints are used consistently.  The description of the function's purpose is clear and helpful in the context of an MCP server."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `text_prompt` and `bbox_condition` parameters.  While Pydantic could be used to structure this validation more concisely, the existing checks are comprehensive and cover type and value constraints.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `text_prompt` and `bbox_condition`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`text_prompt`, `bbox_condition`) are properly type-annotated with their expected types (str and Optional[List[float]] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the generation of a Hyper3D model based on a text prompt and optional bounding box conditions.  All functional input parameters (`text_prompt` and `bbox_condition`) are used in the input validation and subsequent job creation.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  The function simulates API interaction and stores job details in the DB, mirroring the described functionality."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `generate_hyper3d_model_via_text` does not handle any phone number or email address inputs.  Its inputs are a text prompt (string) and an optional bounding box condition (list of floats). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on validating the input types and structure relevant to its 3D model generation task."
+          }
+        },
+        "generate_hyper3d_model_via_images": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types (including default values), thoroughly details the return value (including the structure of the dictionary and the meaning of each key), and lists all possible exceptions with informative descriptions.  The docstring effectively communicates the function's behavior and constraints, including the mutually exclusive nature of `input_image_paths` and `input_image_urls`, and the dependency on the Hyper3D Rodin mode.  The explanation of the `bbox_condition` parameter is also precise.  There are no inconsistencies between the docstring and the function's implementation; the docstring accurately reflects the function's behavior, return type, and raised exceptions. The documentation of the dictionary return value is particularly strong, specifying each key, its type, and its purpose.  The docstring is complete enough for a developer to understand and use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`input_image_paths`, `input_image_urls`, `bbox_condition`).  It checks types, list contents, and the existence of file paths. While Pydantic could provide a more structured and potentially more concise way to perform these validations, the existing manual checks are comprehensive and effective.  The use of Pydantic wouldn't add significant value in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters (`input_image_paths`, `input_image_urls`, and `bbox_condition`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`input_image_paths`, `input_image_urls`, `bbox_condition`) are properly type-annotated with their expected types using Optional and List.  The function's return type is clearly specified as `Dict[str, Any]`. No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the generation of a 3D model using Hyper3D based on provided image paths or URLs, and subsequently simulates the creation of a job entry in the global `DB`.  All functional input parameters (`input_image_paths`, `input_image_urls`, `bbox_condition`) are used appropriately in the validation and job creation logic.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional within the context of the global `DB`. The docstring accurately reflects the function's behavior, including the return type and the conditions under which exceptions are raised."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `generate_hyper3d_model_via_images` does not handle any phone numbers or email addresses.  Its inputs are lists of image paths or URLs, a bounding box condition (list of integers), and it returns a dictionary representing the status of a 3D model generation task.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "poll_rodin_job_status": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, behavior, and usage.  It clearly explains the two operational modes (MAIN_SITE and FAL_AI) and how the function behaves differently in each.  The Args, Returns, and Raises sections are complete and accurate, specifying types and providing detailed descriptions of the dictionary structure in the Returns section. Default values for optional parameters are correctly documented."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `poll_rodin_job_status` uses manual input validation for its functional parameters (`subscription_key` and `request_id`).  It checks if both are provided, if either is an empty string, and if at least one is provided.  While Pydantic could be used, the current manual validation is sufficient and covers all cases.  The validation logic is straightforward and easily understandable.  Using Pydantic wouldn't significantly improve the code's clarity or maintainability in this specific instance."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its two functional input parameters, `subscription_key` and `request_id`.  Both are checked for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`subscription_key` and `request_id`) are properly type-annotated with `Optional[str]`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic described in its docstring.  It handles both MAIN_SITE and FAL_AI modes appropriately, using the provided `subscription_key` or `request_id` to determine the operational mode and retrieve the relevant job data from the global `DB`.  All functional input parameters (`subscription_key` and `request_id`) are used correctly in the input validation and job retrieval process.  All documented exceptions (`InvalidInputError` and `JobNotFoundError`) are properly raised in the appropriate scenarios. There are no TODO comments, pass statements, or placeholder implementations. The returned dictionary matches the structure and content specified in the docstring.  The logic for interpreting the job status in each mode is complete and functional."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `poll_rodin_job_status` does not handle any phone numbers or email addresses.  Its input parameters are `subscription_key` and `request_id`, which are treated as strings and validated only for emptiness or the presence of both. There is no phone number or email address normalization or validation performed within the function.  Therefore, the rating of \"Not Applicable\" is appropriate."
+          }
+        },
+        "import_generated_asset": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose,  the required arguments (`name`, `task_uuid`, `request_id`), their types, and default values.  The `Returns` section adequately describes the dictionary structure and its keys, including optional keys. The `Raises` section comprehensively lists all potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ImportGeneratedAssetArguments` to validate the `name`, `task_uuid`, and `request_id` parameters.  This model is used to perform initial validation before the function proceeds with its logic.  While additional checks are performed after the Pydantic validation (e.g., checking for empty strings after the fact), these are supplementary and don't negate the use of Pydantic for initial input validation.  The Pydantic approach is efficient and clearly structured for handling input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters (`name`, `task_uuid`, `request_id`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `task_uuid`, `request_id`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  Complex types are used appropriately (e.g., `Dict[str, Any]` in the return type)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of importing a generated asset.  All functional input parameters (`name`, `task_uuid`, `request_id`) are used appropriately in the logic to determine the job, check its status, and handle potential errors.  The documented exceptions are all properly raised where applicable. There are no TODOs or placeholders. The docstring accurately reflects the function's return type and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `import_generated_asset` does not handle any phone numbers or email addresses.  Its inputs are a name, a task UUID, and a request ID, all of which are treated as strings and subjected to basic validation (checking for emptiness or conflicts). There is no input field designed for or processing of phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "blender/object.py": {
+      "functions": {
+        "get_object_info": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and functionality.  It accurately describes the function's inputs (Args section) and output (Returns section), including the structure of the dictionary returned. The types are correctly specified for parameters and return values.  The Raises section correctly lists the exceptions that the function might raise.  The documentation of the dictionary's keys, types, and nested structures in the Returns section is thorough and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_object_info` has only one functional input parameter, `object_name`, which is validated using a simple `isinstance` check to ensure it's a string.  While Pydantic could be used here, the existing validation is sufficient and arguably simpler for this specific case.  Using Pydantic would add overhead without significant benefit given the straightforward nature of the input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_object_info` performs comprehensive validation of its single functional input parameter, `object_name`.  It checks that `object_name` is a string using `isinstance`. It then checks if the object exists within the scene's object list in the global `DB`.  Appropriate exceptions (`custom_errors.InvalidInputError`, `custom_errors.ObjectNotFoundError`, `custom_errors.SceneNotFoundError`) are raised with informative error messages for all validation failures.  All possible failure scenarios related to the input parameter are handled."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_object_info` has excellent parameter design.  All parameters are properly type-annotated (`object_name: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the return dictionary are described in the docstring, though not strictly enforced by type hints in the function signature itself (this is acceptable given the dynamic nature of the data)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of object information from the global `DB` dictionary.  All functional input parameters (`object_name`) are used.  All documented exceptions (`ObjectNotFoundError`, `ValidationError`, `SceneNotFoundError`, `InvalidInputError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB`. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_object_info` does not handle any phone number or email address inputs.  Its purpose is to retrieve information about objects within a Blender scene (presumably a 3D modeling software).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "set_texture": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately describes the arguments and their types, thoroughly details the structure and content of the dictionary returned, and lists all possible exceptions with informative descriptions.  The description of how the function handles existing materials versus creating new ones is helpful. The docstring accurately reflects the function's implementation; there are no inconsistencies between the documented behavior and the actual code.  Type hints are used effectively throughout. The documentation of the dictionary return value is particularly strong, specifying each key, its type, and its meaning."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`isinstance`) to validate the `object_name` and `texture_id` parameters.  While this is functional, it doesn't leverage the power and expressiveness of Pydantic models.  Pydantic could provide more sophisticated validation (e.g., string length constraints, regular expressions for specific formats) if needed, but the current basic type checking is sufficient for the simple string validation required.  The additional validation performed within the function (checking the existence of the object and texture in the DB) is not input validation in the strict sense; it's more of a data consistency check."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its two functional input parameters, `object_name` and `texture_id`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`object_name` and `texture_id`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  Both `object_name` and `texture_id` are used appropriately. All documented exceptions are handled, and there are no placeholders or TODO comments. The logic for handling existing materials and creating new ones is complete and functional within the context of the global `DB`. The return dictionary matches the docstring's specification."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `set_texture` does not handle any phone numbers or email addresses.  Its inputs are `object_name` (a string representing an object's name) and `texture_id` (a string representing a texture ID).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on applying textures within a specific application context (likely a 3D modeling program), and its input validation is relevant to that context, not to phone numbers or emails."
+          }
+        }
+      }
+    },
+    "blender/polyhaven.py": {
+      "functions": {
+        "get_polyhaven_categories": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and accurately reflects the function's behavior.  It clearly explains the function's purpose,  lists all arguments with types and descriptions, including default values, specifies the return type and description, and details the exception that can be raised. The docstring also correctly points out that the `asset_type` parameter must be one of several specific strings.  The explanation of the `all` option and how it handles the aggregation of categories from different asset types is clear and accurate. There are no inconsistencies between the docstring and the function's implementation.  The docstring is complete enough for someone to use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance`) and manual validation against a set of allowed values (`PolyhavenAssetTypeSearchable`) to validate the `asset_type` input.  While Pydantic could be used, the existing validation is sufficient and arguably more readable in this specific case.  The manual check against the enum ensures only valid values are accepted.  No Pydantic model is needed for this simple validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_polyhaven_categories` performs comprehensive validation of its single functional input parameter, `asset_type`.  It first checks if `asset_type` is a string using `isinstance`. Then, it uses a custom enum (`PolyhavenAssetTypeSearchable`) to ensure that the string value is one of the allowed values ('hdris', 'textures', 'models', 'all').  If the value is invalid, a `ValueError` is caught and an `InvalidAssetTypeError` is raised with a clear message indicating the valid options.  This covers type validation, value validation, and appropriate error handling for the functional input."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_polyhaven_categories` has excellent parameter design and type annotations.  The single parameter `asset_type` is correctly type-annotated as `str`. The return type is clearly specified as `List[str]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic described in its docstring.  It handles the `asset_type` parameter appropriately, validating its type and value against the allowed options.  The exception handling for invalid `asset_type` values is correctly implemented. The logic for handling the \"all\" asset type by combining categories from other types is also correctly implemented. The function uses the global `DB` dictionary as expected, and there are no placeholders or TODO comments. The return type and behavior match the docstring.  All functional input parameters are used."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_polyhaven_categories` does not handle any phone number or email address inputs.  Its purpose is to retrieve categories of assets from a Polyhaven database based on a string input representing the asset type.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "search_polyhaven_assets": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: searching Polyhaven for assets based on type and categories. Default values for parameters are correctly stated.  The `Args` and `Returns` sections are well-structured, and types are specified. The documentation of the dictionary structure returned is particularly helpful, listing all keys and their types.  The `Raises` section correctly mentions the `InvalidInputError`."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`SearchPolyhavenAssetsArguments`) to validate the `asset_type` and `categories` parameters.  The `try...except` block handles `PydanticValidationError`, translating it into a custom `InvalidInputError` with more specific messaging.  While the error handling is quite extensive, the core validation is delegated to the Pydantic model, which is the appropriate and preferred method for this task.  The validation covers both the type and valid values for `asset_type` and the type and format for `categories`.  No other input validation is needed beyond what the Pydantic model provides."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic for input validation, which provides both type and value validation for both `asset_type` and `categories`.  The `asset_type` validation checks for string type and valid values (as defined within the Pydantic model, which is not shown in the provided code snippet but implied). The `categories` validation checks for string type (or None) and correct formatting (comma-separated string).  Error handling translates Pydantic's `ValidationError` into a custom `InvalidInputError` with informative messages.  All functional input parameters (`asset_type` and `categories`) are comprehensively validated before use.  The validation also handles various error scenarios, providing specific error messages for different types of invalid input."
+          },
+          "function_parameters": {
+            "status": "Good",
+            "notes": "The function uses type annotations for both `asset_type` and `categories` parameters, and also for the return type `List[Dict[str, Any]]`.  However, the `Any` type used in these annotations is overly broad and doesn't fully specify the expected types.  While `asset_type` is intended to be a string, and `categories` is either `None` or a comma-separated string, the `Any` annotation doesn't reflect this.  The return type annotation is also somewhat vague with `Any` for the dictionary values.  The function does not use `**kwargs`.  More precise type hints would improve the code."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the search functionality as described in its docstring.  Both `asset_type` and `categories` functional input parameters are used in the filtering logic.  The exception handling for `PydanticValidationError` is comprehensive, translating the errors into the custom `InvalidInputError` with informative messages.  There are no TODOs, placeholders, or `pass` statements. The logic correctly parses the categories, filters the assets based on type and categories, and returns a list of dictionaries matching the specified structure in the docstring.  The function's behavior aligns perfectly with its docstring's promises."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_polyhaven_assets` function does not handle phone numbers or email addresses as input.  Its inputs are `asset_type` (a string) and `categories` (a string or None).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on searching and filtering Polyhaven assets based on type and categories."
+          }
+        },
+        "download_polyhaven_asset": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior and includes default values for parameters. The description of the dictionary return value is detailed, listing all keys and their types.  The `Raises` section is thorough, listing all potential exceptions.  Types are consistently specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `DownloadPolyhavenAssetArguments` to validate the `asset_id`, `asset_type`, `resolution`, and `file_format` parameters.  This model handles type checking and likely contains further validation rules (not shown in the provided code snippet).  The `try...except PydanticValidationError` block correctly catches and handles validation errors. While additional validation is performed later in the function (e.g., checking resolution against available options), the initial Pydantic validation provides a solid foundation for input sanitization and error handling.  No improvements are needed in terms of input validation; the use of Pydantic is appropriate and effective."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters (`asset_id`, `asset_type`, `resolution`, `file_format`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`asset_id`, `asset_type`, `resolution`, `file_format`) are properly type-annotated with their expected types (str, str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the download and simulated import of Polyhaven assets based on the provided parameters. All functional input parameters (`asset_id`, `asset_type`, `resolution`, `file_format`) are used in the function's logic.  All documented exceptions are handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior, return type, and exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `download_polyhaven_asset` does not handle any phone numbers or email addresses.  Its inputs are related to asset IDs, types, resolutions, and file formats for a Polyhaven asset download and import into Blender.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_polyhaven_status": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: checking PolyHaven integration status in Blender and returning a message.  It accurately reflects the function's behavior of retrieving data from the `DB` and constructing a dictionary. The `Returns` section correctly specifies the dictionary's structure, including the types of `is_enabled` and `message`.  The docstring is complete enough for someone to understand how to use the function and interpret its output.  However, it could be slightly improved by explicitly mentioning that the function relies on a global `DB` (although this is acceptable given the context).  There's no need for an \"Args\" section as the function takes no arguments.  No exceptions are raised, so no \"Raises\" section is needed.  The docstring accurately reflects the implementation; there are no inconsistencies."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_polyhaven_status` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_polyhaven_status` does not have any functional input parameters.  It relies solely on the global `DB` dictionary to retrieve its data.  Therefore, no input validation is needed or possible."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_polyhaven_status` has no parameters.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves the PolyHaven integration status from the global `DB` dictionary and returns it as a dictionary with \"is_enabled\" and \"message\" keys, matching the docstring's description.  There are no unused functional parameters, exceptions to handle, placeholders, or inconsistencies between the docstring and implementation. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_polyhaven_status` does not handle any phone numbers or email addresses.  It interacts with a database to retrieve the status of a PolyHaven integration within Blender.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "blender/scene.py": {
+      "functions": {
+        "get_scene_info": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose and the structure of its return value.  It accurately reflects the function's behavior, including the types of data returned. The inclusion of nested dictionary structures within the `Returns` section is particularly helpful.  The `Raises` section correctly identifies a potential exception."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_scene_info` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_scene_info()` has no input parameters.  Therefore, there is no input parameter validation to assess."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_scene_info` has no parameters.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function `get_scene_info` does not actually retrieve and process scene information.  It simply delegates to a `utils.get_scene_data_dict()` function.  The implementation is therefore incomplete because we don't know what `utils.get_scene_data_dict()` does.  It's possible that `utils.get_scene_data_dict()` correctly populates the dictionary as described in the docstring, but the current function itself doesn't perform any of the described logic.  The `SceneNotFoundError` exception is also not handled within this function.  The docstring promises a function that actively gathers scene data, but the implementation only acts as a wrapper."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_scene_info` does not handle any phone number or email address inputs.  Its purpose is to retrieve information about a Blender scene, which does not involve processing contact details. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "blender": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The SimulationEngine folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The tests folder follows the naming convention and contains tests for the main API components."
+      }
+    }
+  }
+}

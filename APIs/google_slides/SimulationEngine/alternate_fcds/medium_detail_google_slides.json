@@ -1,0 +1,629 @@
+[
+  {
+    "name": "batch_update_presentation",
+    "description": "Applies a batch of update operations to a Google Slides presentation in a single request. These operations, such as creating slides, inserting text, or updating styles, are defined in the `requests` list.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "presentationId": {
+          "type": "string",
+          "description": "The unique identifier of the presentation to update."
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "createSlide": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "A user-supplied object ID. If specified,\n            must be unique (5-50 chars, pattern [a-zA-Z0-9_][a-zA-Z0-9_-:]*).\n            If empty, a unique ID is generated."
+                  },
+                  "insertionIndex": {
+                    "type": "integer",
+                    "description": "Optional zero-based index where to\n            insert the slides. If unspecified, created at the end."
+                  },
+                  "slideLayoutReference": {
+                    "type": "object",
+                    "properties": {
+                      "predefinedLayout": {
+                        "type": "string",
+                        "description": "A predefined layout type.\n                Enum: [\"BLANK\", \"CAPTION_ONLY\", \"TITLE\", \"TITLE_AND_BODY\",\n                \"TITLE_AND_TWO_COLUMNS\", \"TITLE_ONLY\", \"SECTION_HEADER\",\n                \"SECTION_TITLE_AND_DESCRIPTION\", \"ONE_COLUMN_TEXT\",\n                \"MAIN_POINT\", \"BIG_NUMBER\", \"PREDEFINED_LAYOUT_UNSPECIFIED\"]."
+                      },
+                      "layoutId": {
+                        "type": "string",
+                        "description": "Layout ID of one of the layouts in\n                the presentation."
+                      }
+                    },
+                    "description": "Layout reference\n            of the slide. If unspecified, uses a predefined BLANK layout.\n            One of 'predefinedLayout' or 'layoutId' must be provided if\n            'slideLayoutReference' itself is provided."
+                  },
+                  "placeholderIdMappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "objectId": {
+                          "type": "string",
+                          "description": "User-supplied object ID for the new\n                placeholder on the slide (5-50 chars, pattern\n                [a-zA-Z0-9_][a-zA-Z0-9_-:]*). If empty, a unique ID is generated."
+                        },
+                        "layoutPlaceholder": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "description": "The type of the placeholder. Enum: [\"TITLE\",\n                    \"BODY\", \"CENTERED_TITLE\", \"SUBTITLE\", \"DATE_AND_TIME\",\n                    \"FOOTER\", \"HEADER\", \"OBJECT\", \"CHART\", \"TABLE\", \"CLIP_ART\",\n                    \"PICTURE\", \"SLIDE_IMAGE\", \"SLIDE_NUMBER\"]."
+                            },
+                            "index": {
+                              "type": "integer",
+                              "description": "The index of the placeholder. Usually 0."
+                            }
+                          },
+                          "description": "The placeholder on a\n                layout to be applied to a slide.",
+                          "required": [
+                            "index",
+                            "type"
+                          ]
+                        },
+                        "layoutPlaceholderObjectId": {
+                          "type": "string",
+                          "description": "The object ID of the\n                placeholder on a layout."
+                        }
+                      }
+                    },
+                    "description": "Optional list\n            of object ID mappings from layout placeholders to slide placeholders.\n            Used only when 'slideLayoutReference' is specified. Each item is a\n            dictionary:"
+                  }
+                },
+                "description": "Creates a new slide."
+              },
+              "createShape": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Optional user-supplied object ID for the\n            shape (5-50 chars, pattern [a-zA-Z0-9_][a-zA-Z0-9_-:]*).\n            If empty, a unique ID is generated."
+                  },
+                  "elementProperties": {
+                    "type": "object",
+                    "properties": {
+                      "pageObjectId": {
+                        "type": "string",
+                        "description": "The object ID of the page where\n                the element is located."
+                      },
+                      "size": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "object",
+                            "properties": {
+                              "magnitude": {
+                                "type": "number",
+                                "description": "Magnitude of the dimension."
+                              },
+                              "unit": {
+                                "type": "string",
+                                "description": "Unit of the dimension. Enum: [\"EMU\", \"PT\"]."
+                              }
+                            },
+                            "description": "Width dimension."
+                          },
+                          "height": {
+                            "type": "object",
+                            "properties": {
+                              "magnitude": {
+                                "type": "number",
+                                "description": "Magnitude of the dimension."
+                              },
+                              "unit": {
+                                "type": "string",
+                                "description": "Unit of the dimension. Enum: [\"EMU\", \"PT\"]."
+                              }
+                            },
+                            "description": "Height dimension."
+                          }
+                        },
+                        "description": "The size of the page element."
+                      },
+                      "transform": {
+                        "type": "object",
+                        "properties": {
+                          "scaleX": {
+                            "type": "number",
+                            "description": "The X scaling factor."
+                          },
+                          "scaleY": {
+                            "type": "number",
+                            "description": "The Y scaling factor."
+                          },
+                          "shearX": {
+                            "type": "number",
+                            "description": "The X shearing factor."
+                          },
+                          "shearY": {
+                            "type": "number",
+                            "description": "The Y shearing factor."
+                          },
+                          "translateX": {
+                            "type": "number",
+                            "description": "The X translation."
+                          },
+                          "translateY": {
+                            "type": "number",
+                            "description": "The Y translation."
+                          },
+                          "unit": {
+                            "type": "string",
+                            "description": "Unit for translate. Enum: [\"EMU\", \"PT\"]."
+                          }
+                        },
+                        "description": "The transform of the\n                page element."
+                      }
+                    },
+                    "description": "Element properties\n            for the shape."
+                  },
+                  "shapeType": {
+                    "type": "string",
+                    "description": "The type of shape to create. Enum:\n            [\"TYPE_UNSPECIFIED\", \"TEXT_BOX\", \"RECTANGLE\", \"ROUND_RECTANGLE\",\n            \"ELLIPSE\", \"ARC\", \"BENT_CONNECTOR_2\", \"BENT_CONNECTOR_3\",\n            \"BENT_CONNECTOR_4\", \"BENT_CONNECTOR_5\", \"CURVED_CONNECTOR_2\",\n            \"CURVED_CONNECTOR_3\", \"CURVED_CONNECTOR_4\", \"CURVED_CONNECTOR_5\",\n            \"LINE\", \"STRAIGHT_CONNECTOR_1\", \"TRIANGLE\", \"RIGHT_TRIANGLE\",\n            \"PARALLELOGRAM\", \"TRAPEZOID\", \"DIAMOND\", \"PENTAGON\", \"HEXAGON\",\n            \"HEPTAGON\", \"OCTAGON\", \"STAR_5\", \"ARROW_EAST\", \"ARROW_NORTH_EAST\",\n            \"ARROW_NORTH\", \"SPEECH\", \"CLOUD\", \"NOTCHED_RIGHT_ARROW\"]."
+                  }
+                },
+                "description": "Creates a new shape.",
+                "required": [
+                  "shapeType"
+                ]
+              },
+              "insertText": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Object ID of the shape or table."
+                  },
+                  "cellLocation": {
+                    "type": "object",
+                    "properties": {
+                      "rowIndex": {
+                        "type": "integer",
+                        "description": "0-based row index."
+                      },
+                      "columnIndex": {
+                        "type": "integer",
+                        "description": "0-based column index."
+                      }
+                    },
+                    "description": "Optional table cell\n            location if inserting into a table."
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "The text to insert."
+                  },
+                  "insertionIndex": {
+                    "type": "integer",
+                    "description": "Optional 0-based index where text\n            will be inserted in Unicode code units."
+                  }
+                },
+                "description": "Inserts text into a shape or table cell.",
+                "required": [
+                  "objectId",
+                  "text"
+                ]
+              },
+              "replaceAllText": {
+                "type": "object",
+                "properties": {
+                  "replaceText": {
+                    "type": "string",
+                    "description": "The text that will replace matched text."
+                  },
+                  "containsText": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "The text to search for."
+                      },
+                      "matchCase": {
+                        "type": "boolean",
+                        "description": "Indicates if the search should be\n                case sensitive. Defaults to False."
+                      },
+                      "searchByRegex": {
+                        "type": "boolean",
+                        "description": "Optional. True if the find value\n                should be treated as a regular expression. Defaults to False."
+                      }
+                    },
+                    "description": "Criteria for matching text.",
+                    "required": [
+                      "text"
+                    ]
+                  },
+                  "pageObjectIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Optional. Limits matches to\n            page elements only on the given page IDs."
+                  }
+                },
+                "description": "Replaces all instances of specified text.",
+                "required": [
+                  "containsText",
+                  "replaceText"
+                ]
+              },
+              "deleteObject": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Object ID of the page or page element to delete."
+                  }
+                },
+                "description": "Deletes a page or page element.",
+                "required": [
+                  "objectId"
+                ]
+              },
+              "deleteText": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Object ID of the shape or table."
+                  },
+                  "cellLocation": {
+                    "type": "object",
+                    "properties": {
+                      "rowIndex": {
+                        "type": "integer",
+                        "description": "0-based row index."
+                      },
+                      "columnIndex": {
+                        "type": "integer",
+                        "description": "0-based column index."
+                      }
+                    },
+                    "description": "Optional table cell location."
+                  },
+                  "textRange": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "The type of range. Enum: [\"ALL\", \"FIXED_RANGE\",\n                \"FROM_START_INDEX\", \"RANGE_TYPE_UNSPECIFIED\"]."
+                      },
+                      "startIndex": {
+                        "type": "integer",
+                        "description": "Optional 0-based start index for\n                FIXED_RANGE and FROM_START_INDEX."
+                      },
+                      "endIndex": {
+                        "type": "integer",
+                        "description": "Optional 0-based end index for\n                FIXED_RANGE."
+                      }
+                    },
+                    "description": "The range of text to delete.",
+                    "required": [
+                      "type"
+                    ]
+                  }
+                },
+                "description": "Deletes text from a shape or table cell.",
+                "required": [
+                  "objectId",
+                  "textRange"
+                ]
+              },
+              "updateTextStyle": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Object ID of the shape or table with the text to be styled."
+                  },
+                  "cellLocation": {
+                    "type": "object",
+                    "properties": {
+                      "rowIndex": {
+                        "type": "integer",
+                        "description": "0-based row index."
+                      },
+                      "columnIndex": {
+                        "type": "integer",
+                        "description": "0-based column index."
+                      }
+                    },
+                    "description": "Optional table cell location."
+                  },
+                  "style": {
+                    "type": "object",
+                    "properties": {
+                      "bold": {
+                        "type": "boolean",
+                        "description": "Whether the text is bold."
+                      },
+                      "italic": {
+                        "type": "boolean",
+                        "description": "Whether the text is italic."
+                      },
+                      "underline": {
+                        "type": "boolean",
+                        "description": "Whether the text is underlined."
+                      },
+                      "strikethrough": {
+                        "type": "boolean",
+                        "description": "Whether the text is struck through."
+                      },
+                      "fontFamily": {
+                        "type": "string",
+                        "description": "The font family."
+                      },
+                      "fontSize": {
+                        "type": "object",
+                        "properties": {
+                          "magnitude": {
+                            "type": "number",
+                            "description": "The magnitude of the font size."
+                          },
+                          "unit": {
+                            "type": "string",
+                            "description": "The unit of the font size. Enum: [\"PT\"]."
+                          }
+                        },
+                        "description": "The font size."
+                      },
+                      "foregroundColor": {
+                        "type": "object",
+                        "properties": {},
+                        "description": "Color of the text.\n                Structure defined by Google Slides API OptionalColor."
+                      }
+                    },
+                    "description": "The TextStyle to apply."
+                  },
+                  "textRange": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "The type of range. Enum: [\"ALL\", \"FIXED_RANGE\",\n                \"FROM_START_INDEX\", \"RANGE_TYPE_UNSPECIFIED\"]."
+                      },
+                      "startIndex": {
+                        "type": "integer",
+                        "description": "Optional start index."
+                      },
+                      "endIndex": {
+                        "type": "integer",
+                        "description": "Optional end index."
+                      }
+                    },
+                    "description": "The range of text to style.",
+                    "required": [
+                      "type"
+                    ]
+                  },
+                  "fields": {
+                    "type": "string",
+                    "description": "Field mask (e.g., 'bold,fontSize') specifying which\n            style fields to update. Use '*' for all fields."
+                  }
+                },
+                "description": "Updates the styling of text within a\n        Shape or Table.",
+                "required": [
+                  "fields",
+                  "objectId",
+                  "style",
+                  "textRange"
+                ]
+              },
+              "groupObjects": {
+                "type": "object",
+                "properties": {
+                  "groupObjectId": {
+                    "type": "string",
+                    "description": "Optional user-supplied ID for the\n            new group (5-50 chars, pattern [a-zA-Z0-9_][a-zA-Z0-9_-:]*)."
+                  },
+                  "childrenObjectIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Object IDs of the page elements to\n            group (at least 2, on the same page, not already in another group)."
+                  }
+                },
+                "description": "Groups page elements.",
+                "required": [
+                  "childrenObjectIds"
+                ]
+              },
+              "ungroupObjects": {
+                "type": "object",
+                "properties": {
+                  "objectIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Object IDs of the groups to ungroup (at least 1).\n            Groups must not be inside other groups and all on the same page."
+                  }
+                },
+                "description": "Ungroups objects.",
+                "required": [
+                  "objectIds"
+                ]
+              },
+              "updatePageElementAltText": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Object ID of the page element."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Optional. The new alt text title. If unset,\n            existing value is maintained."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Optional. The new alt text description.\n            If unset, existing value is maintained."
+                  }
+                },
+                "description": "Updates alt text of a page element.",
+                "required": [
+                  "objectId"
+                ]
+              },
+              "updateSlideProperties": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "string",
+                    "description": "Object ID of the slide."
+                  },
+                  "slideProperties": {
+                    "type": "object",
+                    "properties": {
+                      "masterObjectId": {
+                        "type": "string",
+                        "description": "The object ID of the master slide."
+                      },
+                      "layoutObjectId": {
+                        "type": "string",
+                        "description": "The object ID of the layout slide."
+                      },
+                      "isSkipped": {
+                        "type": "boolean",
+                        "description": "Whether the slide is skipped in\n                show mode."
+                      },
+                      "notesPage": {
+                        "type": "object",
+                        "properties": {},
+                        "description": "Notes page properties.\n                Structure defined by Google Slides API NotesPage."
+                      }
+                    },
+                    "description": "The SlideProperties to update."
+                  },
+                  "fields": {
+                    "type": "string",
+                    "description": "Field mask (e.g., 'isSkipped,notesPage.notesPageProperties')\n            specifying which slide properties to update. Use '*' for all."
+                  }
+                },
+                "description": "Updates properties of a slide.",
+                "required": [
+                  "fields",
+                  "objectId",
+                  "slideProperties"
+                ]
+              }
+            },
+            "required": [
+              "createShape",
+              "createSlide",
+              "deleteObject",
+              "deleteText",
+              "groupObjects",
+              "insertText",
+              "replaceAllText",
+              "ungroupObjects",
+              "updatePageElementAltText",
+              "updateSlideProperties",
+              "updateTextStyle"
+            ]
+          },
+          "description": "A list of update requests to apply to the presentation. Each request is a dictionary with a single key identifying the operation (e.g., `createSlide`) and a value containing the parameters for that request."
+        },
+        "writeControl": {
+          "type": "object",
+          "properties": {
+            "requiredRevisionId": {
+              "type": "string",
+              "description": "The required revision ID of the presentation for this update. The request will fail if the current revision does not match this ID, preventing conflicting changes."
+            },
+            "targetRevisionId": {
+              "type": "string",
+              "description": "This parameter is deprecated. Use `requiredRevisionId` instead."
+            }
+          },
+          "description": "An optional dictionary providing concurrency control. It must contain a `requiredRevisionId` that matches the presentation's current revision, ensuring the update succeeds only if the presentation has not been modified."
+        }
+      },
+      "required": [
+        "presentationId",
+        "requests"
+      ]
+    }
+  },
+  {
+    "name": "create_presentation",
+        "description": "Create a new Google Slides presentation using the provided title. An initial blank slide is typically created with the new presentation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title for the new presentation. This value cannot be empty or contain only whitespace."
+        }
+      },
+      "required": [
+        "title"
+      ]
+    }
+  },
+  {
+    "name": "get_page",
+        "description": "Retrieves detailed information about a specific page (slide) from a presentation. This function requires both the `presentationId` and the `pageObjectId` to identify the target page.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "presentationId": {
+          "type": "string",
+                    "description": "The string identifier for the presentation. It must be a non-empty string."
+        },
+        "pageObjectId": {
+          "type": "string",
+                    "description": "The object ID of the specific page or slide to retrieve. This parameter must be a non-empty string."
+        }
+      },
+      "required": [
+        "pageObjectId",
+        "presentationId"
+      ]
+    }
+  },
+  {
+    "name": "get_presentation",
+    "description": "Retrieves details about a Google Slides presentation specified by its `presentationId`. An optional `fields` argument can be used as a mask to return only specific parts of the presentation data.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "presentationId": {
+          "type": "string",
+                    "description": "The unique identifier for the Google Slides presentation to be retrieved. This parameter must be a non-empty string."
+        },
+        "fields": {
+          "type": "string",
+                    "description": "An optional mask specifying which fields to include in the response. Provide a comma-separated string of field names (e.g., 'slides,pageSize')."
+        }
+      },
+      "required": [
+        "presentationId"
+      ]
+    }
+  },
+  {
+    "name": "summarize_presentation",
+    "description": "Extracts all text from the slides of a presentation, identified by `presentationId`, to prepare it for summarization. If `include_notes` is set to true, speaker notes are also extracted. The function returns a dictionary containing the text content organized by slide.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "presentationId": {
+          "type": "string",
+          "description": "The unique identifier of the presentation to summarize."
+        },
+        "include_notes": {
+          "type": "boolean",
+          "description": "Specifies whether to include speaker notes in the summary. If `True`, notes are extracted along with slide text. Defaults to `False`."
+        }
+      },
+      "required": [
+        "presentationId"
+      ]
+    }
+  }
+]

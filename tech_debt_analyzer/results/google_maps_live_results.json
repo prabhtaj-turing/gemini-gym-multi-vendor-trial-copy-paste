@@ -1,0 +1,177 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.567641Z",
+  "results": {
+    "google_maps_live/directions.py": {
+      "functions": {
+        "find_directions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is generally well-written and informative. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values are correctly specified. The types are mostly complete, with the exception of the nested structure within the `routes` list in the return value.  While the docstring mentions the structure of the `routes` list, it doesn't fully specify the types of each field within the nested dictionaries (e.g., `distance` is a string, but the docstring doesn't explicitly state that).  The description of `origin_location_bias` and `destination_location_bias` is excellent, clearly explaining the different input options.  The `Raises` section is comprehensive."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `FindDirectionsInput` to validate its functional input parameters.  The `try...except` block catches `ValidationError` exceptions raised by Pydantic and converts them into more user-friendly error messages. While some additional validation (checking for conflicting `departure_time` and `arrival_time`) is performed after the Pydantic validation, this is supplementary and doesn't replace the primary validation provided by the Pydantic model.  All functional input parameters are validated using Pydantic."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic for input validation, which provides type checking for all parameters.  `travel_mode` and `avoid` have additional value validation within the `try...except` block, raising ValueError for invalid inputs. The code also explicitly checks for the mutually exclusive constraint of `departure_time` and `arrival_time`.  However, while Pydantic handles type and some basic value checks (like ensuring lists are lists), it doesn't inherently validate the *contents* of lists like `waypoints` and `avoid` beyond type checking.  For example, it doesn't check if `avoid` contains only valid avoidance options or if `waypoints` contains valid location strings.  Similarly,  `origin_location_bias` and `destination_location_bias` allow for environment variables, but there's no validation to ensure these variables actually exist and contain valid location data.  Therefore, while the validation is good, it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, Union, and Dict where appropriate.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use **kwargs parameters.  All parameter names are clear and descriptive."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, leveraging a Gemini query to obtain directions.  All functional input parameters are used in constructing the Gemini query.  The exception handling covers the documented `ValueError` scenarios, although the specific error messages could be improved for better user experience.  The docstring accurately reflects the function's return type and behavior. However, the implementation relies on an external `get_model_from_gemini_response` function and `DirectionsSummary` Pydantic model (not shown in the provided code), which are crucial for the function's complete functionality but are not defined within the provided code snippet.  The `search_along_route` parameter is mentioned as unsupported but is still accepted as input, which might warrant a warning or explicit handling.  The error handling for the Gemini API call (e.g., network issues, API errors) is missing.  Finally, the use of `print_log` suggests a logging mechanism is in place, but its implementation is not shown.  These omissions prevent a \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `find_directions` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on processing location data for route planning, using string inputs for origins and destinations.  There's no mechanism to input or process phone numbers or email addresses within this function's design."
+          }
+        },
+        "navigate": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the `navigate` function.  It clearly explains the function's purpose, its relationship to `find_directions`, and its reliance on the user's current location.  The Args section accurately lists and describes all parameters, including default values and acceptable input types (especially the nuanced `origin_location_bias` and `destination_location_bias` parameters). The Returns section effectively details the structure of the dictionary response, including nested structures.  The Raises section is also thorough, listing all potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `NavigateInput` to validate the functional input parameters: `destination`, `travel_mode`, `waypoints`, `avoid`, `origin_location_bias`, and `destination_location_bias`.  The `try...except` block catches `ValidationError` exceptions raised by Pydantic and converts them into more user-friendly `ValueError` exceptions. While the error handling could be improved by providing more specific error messages based on the Pydantic error details, the core functionality of using Pydantic for input validation is present and effective for all functional parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic's `NavigateInput` model for input validation, which provides type checking for all functional parameters.  `travel_mode` and `avoid` are checked against allowed values within the Pydantic model (though the specific allowed values aren't shown in the provided code snippet, the existence of this check is implied).  The error handling converts Pydantic's `ValidationError` into more user-friendly `ValueError` exceptions, providing context about the invalid input."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, Union, and Dict where appropriate.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely implemented and uses most functional input parameters.  The core logic of constructing a Gemini query based on the inputs and then using that query to obtain directions is present.  The exception handling for `ValidationError` from Pydantic is implemented, although it could be improved by providing more specific error messages based on the Pydantic error types.  The function correctly handles the default `travel_mode` and incorporates waypoints and avoid features into the Gemini query.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `navigate` function does not handle phone numbers or email addresses as input.  Its inputs are focused on location data for navigation purposes (destination, waypoints, etc.), using strings for place names and optional coordinate dictionaries.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_maps_live/places.py": {
+      "functions": {
+        "query_places": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose,  arguments, and return value.  Default values are explicitly stated, and the types are correctly specified for parameters and return values. The `Args` and `Returns` sections are comprehensive, detailing the structure of dictionaries.  The `Raises` section lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`QueryPlacesInput`) to validate its functional input parameters.  The `try...except` block catches `ValidationError` exceptions raised by Pydantic and converts them into more user-friendly error messages.  While some error handling is specific (e.g., separate error messages for empty query lists and invalid `min_rating`), this is a reasonable approach to improve the user experience.  All functional parameters are validated using the Pydantic model.  No alternative validation methods are needed because Pydantic handles the validation comprehensively."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters.  `query` is checked for emptiness. `min_rating` is validated to be within the range 1.0 to 5.0. `price_levels` are checked against allowed values. `rank_preference` is also checked against allowed values.  All these checks are performed using a Pydantic model and handled with specific `ValueError` exceptions providing informative error messages.  The Pydantic model likely handles type validation implicitly.  While the code snippet doesn't explicitly show the Pydantic model's definition, the error handling suggests that it covers type validation and other constraints.  The reliance on a Pydantic model for validation ensures that all functional parameters are checked before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types (List, Dict, Optional, Union) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function uses most of the functional input parameters, but `search_along_route`, `in_history`, `is_saved`, and `immersive_view` are explicitly marked as \"currently unsupported\" in the docstring and are not used in the implementation.  While the function attempts to construct a Gemini query based on the inputs, the actual interaction with a \"Gemini\" API or any external service is absent.  The `get_model_from_gemini_response` function is not defined, and the code relies on a hypothetical external API call and JSON parsing, which is not implemented.  The function also lacks error handling for potential issues during the hypothetical API call (e.g., network errors, API rate limits).  The docstring mentions that a `ValueError` will be raised if input validation fails, but the specific error messages are not consistently reflected in the exception handling.  The function correctly handles the `query` parameter's validation, but the error messages for `min_rating`, `price_levels`, and `rank_preference` are generic.  Finally, the `add_recent_search` function is called but its implementation is not shown, and its impact on the overall functionality is unknown."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `query_places` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable. The function focuses on querying places based on various parameters like location, rating, and price level, but it doesn't involve any processing of contact information like phone numbers or emails.  The function's input and output are structured using Pydantic models for validation of other parameters, but no such validation is present for email or phone numbers."
+          }
+        },
+        "lookup_place_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core functionality: fetching detailed place information using IDs and an optional query. The Args and Returns sections are well-structured and include type information.  The Raises section correctly lists the potential exceptions. The docstring also mentions the use of Pydantic for input validation, which is a positive aspect."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `LookupPlaceDetailsInput` to validate the `place_ids` and `query` parameters.  The `try...except ValidationError` block handles potential validation errors, raising more user-friendly exceptions based on the specific error.  This demonstrates proper usage of Pydantic for input validation.  All functional input parameters are validated using this method."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `lookup_place_details` performs comprehensive validation on its functional input parameters.  Both `place_ids` (List[str]) and `query` (Optional[str]) are validated using a Pydantic model.  `place_ids` is checked for emptiness, raising a `ValueError` if it's an empty list.  The Pydantic model implicitly handles type validation for both parameters. While the specific value constraints within the Pydantic model are not explicitly shown in the provided code snippet, the use of Pydantic implies that type and value validation are handled within the model definition itself.  The code also gracefully handles `ValidationError` exceptions from Pydantic, converting them into user-friendly error messages.  Therefore, all functional input parameters are validated for type and value, and appropriate exceptions are raised for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`place_ids` and `query`) are properly type-annotated with their expected types (`List[str]` and `Optional[str]`, respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality. It uses both `place_ids` and `query` parameters effectively in constructing the Gemini query.  Exception handling is present for `ValueError`, `ParseError`, and `ValidationError`, although the error handling could be improved by providing more specific error messages to the user instead of relying on the raw exception messages in some cases. The function correctly handles cases where no valid places are found in the response.  The JSON schema validation and error handling are robust.  However, the reliance on a `get_gemini_response` function and `parse_json_from_gemini_response` function (which are not provided) makes a complete assessment of correctness impossible.  The assumption is made that these functions work as intended.  The `print_log` and `add_recent_search` functions are also assumed to work correctly and are not directly relevant to the core functionality of the `lookup_place_details` function.  The code is well-structured and readable."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `lookup_place_details` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable. The function focuses on retrieving and validating place details based on IDs provided in a list, using a Gemini API and Pydantic for data validation.  There's no input field for phone numbers or emails within the `LookupPlaceDetailsInput` Pydantic model or anywhere else in the function's logic.  The function processes place data which *may* contain a phone number field, but it doesn't process or validate it as input."
+          }
+        },
+        "analyze_places": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's inputs and outputs, including types. The `Args` and `Returns` sections are well-structured and informative.  The `Raises` section correctly lists the potential exceptions.  The documentation of the dictionary return value is adequate, listing the keys and their types, although a more detailed description of `web_answers` (what kind of dictionaries are within the list?) would improve clarity."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `AnalyzePlacesInput` to validate the `place_ids` and `question` parameters.  The `try...except` block catches `ValidationError` exceptions raised by Pydantic and converts them into more user-friendly `ValueError` exceptions.  While the error handling could be slightly improved (e.g., by providing more specific error messages based on the Pydantic error types), the core functionality of using Pydantic for input validation is correctly implemented.  All functional input parameters are validated using Pydantic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `place_ids` and `question`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`place_ids` and `question`) are properly type-annotated with their expected types (`List[str]` and `str`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly uses both `place_ids` and `question` parameters.  Exception handling is implemented for `ValueError` (empty `place_ids` and `question`), and it attempts to handle other potential errors from Pydantic validation and the Gemini API call.  The docstring accurately reflects the return type and the exceptions raised. However, the error handling around `get_model_from_gemini_response`  is not explicitly shown; it's assumed this function handles `ParseError` and `NotImplementedError`, but this should be made explicit in the `analyze_places` function for better clarity and robustness.  Additionally,  the success of the `add_recent_search` function is not checked, and potential errors from it are not handled.  While the core logic is present, these minor omissions prevent a \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `analyze_places` function does not handle phone numbers or email addresses as input.  Its inputs are a list of place IDs (strings) and a natural language question (string).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on processing place IDs and natural language queries, using a Gemini model for analysis, and does not involve any processing of contact information."
+          }
+        },
+        "show_on_map": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: displaying places on a map using Gemini. The Args, Returns, and Raises sections are present and mostly accurate.  Types are specified for parameters and return values. The description of the dictionary return is adequate, listing the keys but not providing detailed explanations of `place_marker_passthrough` and `map_title` beyond stating they are hidden from the model.  The default value for `places` is correctly documented."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ShowOnMapInput` to validate the `places` parameter, which is the only functional input parameter.  The `try...except` block handles `ValidationError` and converts Pydantic's detailed error messages into more user-friendly ones.  The validation covers the case of an empty `places` list.  No other input validation methods are needed because Pydantic handles the validation completely."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for the `places` parameter.  Type validation is implicitly handled by Pydantic's `Optional[List[str]]` type hint.  Value validation checks for an empty list when the parameter is provided, raising a `ValueError` with a user-friendly message.  Null/Empty checks are also present, as the code handles the case where `places` is `None`.  However, the validation does not check for the 'place_id://' prefix constraint on individual elements within the `places` list, if provided.  Therefore, while the primary validation is solid, a minor gap exists in enforcing the prefix constraint for place IDs, preventing a \"Comprehensive\" rating.  All functional input parameters are checked."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `show_on_map` has excellent parameter design.  The `places` parameter is properly type-annotated as `Optional[List[str]]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It uses the `places` parameter correctly for generating the Gemini query.  The exception handling for `ValidationError` is robust, converting Pydantic errors into more user-friendly messages.  The function correctly returns a dictionary matching the specified schema. However, the `get_model_from_gemini_response` and `add_recent_search` functions are external and their implementation is unknown.  If these functions fail or behave unexpectedly, the overall functionality could be affected.  The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODOs. The reliance on external functions introduces a degree of uncertainty, preventing a \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function `show_on_map` takes a list of strings (`places`) as input, which are interpreted as place IDs or names. There is no processing or validation related to phone numbers or email addresses within the function's logic.  The Pydantic model (not shown in the provided code) might perform validation on the `places` list itself, but that's unrelated to phone number or email address handling.  Therefore, the rating of \"Not Applicable\" is appropriate."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "google_maps_live": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`). The `tests` folder has a good set of test files covering different aspects of the API.  The main API folder contains the expected API logic files (`places.py`, `directions.py`)."
+      }
+    }
+  }
+}

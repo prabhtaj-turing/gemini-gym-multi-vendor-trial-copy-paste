@@ -1,0 +1,47 @@
+
+You are a senior software architect reviewing the project structure of an API service.
+
+API Name: {api_name}
+
+CONFIRMED STRUCTURE:
+- Main API folder: APIs/{api_name}/
+- Init file in main folder: {init_status}
+
+SimulationEngine Files Found ({sim_engine_file_count} files):
+{sim_engine_files}
+
+Main API Files Found ({main_api_file_count} files):
+{main_api_files}
+
+Tests Files Found ({tests_file_count} files):
+{tests_files}
+
+TASK: Check if this API service has the correct, modern project structure based on the guidelines below.
+
+MODERN REQUIREMENTS:
+1. **SimulationEngine folder**: This folder is for core simulation logic. It should contain:
+   - `db.py`: Manages the database simulation.
+   - `models.py`: Contains Pydantic models for data validation.
+   - `custom_errors.py`: Defines custom exception classes.
+   - `error_config.json` and `error_definitions.json`: Define error simulation behavior.
+   - It may contain other helpers like `utils.py` or `duckdb_manager.py`, but common utilities are often in a shared `common_utils` package.
+
+2. **Tests folder**: This folder is for all unit and integration tests. It must contain:
+   - `__init__.py`: To mark it as a Python package.
+   - Multiple files starting with `test_`: Each file should test a specific part of the API.
+
+3. **Main API folder (root)**: This is the public interface of the service. It must contain:
+   - `__init__.py`: This is critical and must define the `_function_map` to expose the public functions.
+   - One or more `.py` files containing the main API logic (e.g., `mysql_handler.py`, `notifications.py`).
+
+ANALYSIS RULES:
+- **Complete**: All three main folders (`SimulationEngine`, `tests`, root) are present and contain all the required files.
+- **Mostly Complete**: Minor files are missing (e.g., a non-critical helper in `SimulationEngine` or one test file), but the core structure is sound.
+- **Incomplete**: A major required file is missing (e.g., `db.py`, `__init__.py` in the root, or no test files).
+- **Poor Structure**: The service is missing entire required folders or the file organization is fundamentally incorrect.
+
+RESPONSE FORMAT:
+You must choose ONE of these categories. If none of the first four options fit exactly, choose "Others":
+
+CATEGORY: [Complete|Mostly Complete|Incomplete|Poor Structure|Others]
+NOTES: [Provide a justification for your rating. Note any missing or extra files compared to the modern standard. Do not penalize for the absence of files that are now expected in a central `common_utils` package.]

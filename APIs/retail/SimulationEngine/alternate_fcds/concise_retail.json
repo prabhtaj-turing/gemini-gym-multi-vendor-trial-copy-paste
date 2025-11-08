@@ -1,0 +1,385 @@
+[
+  {
+    "name": "calculate",
+    "description": "Calculates a mathematical expression.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "A mathematical expression string containing numbers, operators (+, -, *, /), parentheses, and spaces."
+        }
+      },
+      "required": [
+        "expression"
+      ]
+    }
+  },
+  {
+    "name": "cancel_pending_order",
+    "description": "Cancels a pending order, returning the updated order details and issuing a refund which is immediate for gift card payments or takes 5-7 business days otherwise.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The unique ID for the order, which must start with a '#' (e.g., '#W0000000')."
+        },
+        "reason": {
+          "type": "string",
+          "description": "The reason for cancellation; must be 'no longer needed' or 'ordered by mistake'."
+        }
+      },
+      "required": [
+        "order_id",
+        "reason"
+      ]
+    }
+  },
+  {
+    "name": "exchange_delivered_order_items",
+    "description": "Exchange items in a delivered order for new items of the same product type; this can only be done once and requires explicit user confirmation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The order ID, which must start with a '#' symbol (e.g., '#W0000000')."
+        },
+        "item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of item IDs (e.g., '1008292230') to be exchanged, which may include duplicates."
+        },
+        "new_item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of new item IDs to exchange for, such as '1008292230', where each ID must correspond positionally to an ID in `item_ids` and be of the same product."
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "The ID for the payment method, such as `'gift_card_0000000'`, used to pay or receive a refund for the price difference, which is available in the user or order details."
+        }
+      },
+      "required": [
+        "item_ids",
+        "new_item_ids",
+        "order_id",
+        "payment_method_id"
+      ]
+    }
+  },
+  {
+    "name": "find_user_id_by_email",
+    "description": "Finds a user ID by email, returning an error if the user is not found.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "The user's email address (e.g., `user@example.com`)."
+        }
+      },
+      "required": [
+        "email"
+      ]
+    }
+  },
+  {
+    "name": "find_user_id_by_name_zip",
+    "description": "Finds a user ID by first name, last name, and zip code, intended as a fallback when a user cannot be found by email.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "The customer's first name, e.g., 'John'."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The customer's last name, e.g., 'Doe'."
+        },
+        "zip_code": {
+          "type": "string",
+          "description": "The customer's zip code, such as '12345'."
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "zip_code"
+      ]
+    }
+  },
+  {
+    "name": "get_order_details",
+    "description": "Get an order's status and details.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The order ID, which must be prefixed with a '#' symbol (e.g., '#W0000000')."
+        }
+      },
+      "required": [
+        "order_id"
+      ]
+    }
+  },
+  {
+    "name": "get_product_details",
+    "description": "Get the details for a product and its variants.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "description": "The product's unique identifier (e.g., '6086499569'), which is distinct from an item ID."
+        }
+      },
+      "required": [
+        "product_id"
+      ]
+    }
+  },
+  {
+    "name": "get_user_details",
+    "description": "Get a user's details, including their orders.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The user's unique identifier, for example: `sara_doe_496`."
+        }
+      },
+      "required": [
+        "user_id"
+      ]
+    }
+  },
+  {
+    "name": "list_all_product_types",
+    "description": "Lists the name and product ID for all 50 product types.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "modify_pending_order_address",
+    "description": "Modifies the shipping address of a pending order after receiving explicit user confirmation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The ID of the order, which must start with a '#' symbol (e.g., `#W0000000`)."
+        },
+        "address1": {
+          "type": "string",
+          "description": "The primary address line, such as '123 Main St'."
+        },
+        "address2": {
+          "type": "string",
+          "description": "The second address line, e.g., 'Apt 1' or an empty string."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city name, e.g., 'San Francisco'."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state, e.g., 'CA'."
+        },
+        "country": {
+          "type": "string",
+          "description": "The country for the address, such as 'USA'."
+        },
+        "zip_code": {
+          "type": "string",
+          "description": "The zip code, for example, '12345'."
+        }
+      },
+      "required": [
+        "address1",
+        "address2",
+        "city",
+        "country",
+        "order_id",
+        "state",
+        "zip_code"
+      ]
+    }
+  },
+  {
+    "name": "modify_pending_order_items",
+    "description": "Modifies items in a pending order with new items of the same product type; can only be called once per order and requires user confirmation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The order ID, prefixed with a '#' symbol (e.g., `#W0000000`)."
+        },
+        "item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The list of item IDs to modify, such as '1008292230', which can contain duplicates."
+        },
+        "new_item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of new item IDs, such as `'1008292230'`, where each ID corresponds to an old item at the same position in `item_ids` and is of the same product."
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "The payment method ID used to pay or receive a refund for the item price difference, such as `'gift_card_0000000'` or `'credit_card_0000000'`."
+        }
+      },
+      "required": [
+        "item_ids",
+        "new_item_ids",
+        "order_id",
+        "payment_method_id"
+      ]
+    }
+  },
+  {
+    "name": "modify_pending_order_payment",
+    "description": "Modify a pending order's payment method after explaining the change and receiving explicit user confirmation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The ID of the order, which must be prefixed with a '#' symbol (e.g., `#W0000000`)."
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "The ID of the payment method for paying or refunding an item price difference, such as 'gift_card_0000000', which is found in user or order details."
+        }
+      },
+      "required": [
+        "order_id",
+        "payment_method_id"
+      ]
+    }
+  },
+  {
+    "name": "modify_user_address",
+    "description": "Modify a user's default address after explaining the changes and receiving explicit user confirmation (yes/no).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "A unique identifier for the user, such as 'sara_doe_496'."
+        },
+        "address1": {
+          "type": "string",
+          "description": "The first line of the address, e.g., '123 Main St'."
+        },
+        "address2": {
+          "type": "string",
+          "description": "The second line of the address, such as 'Apt 1', which can be an empty string."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city name, e.g., 'San Francisco'."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state, for example, 'CA'."
+        },
+        "country": {
+          "type": "string",
+          "description": "The country. For example: `USA`."
+        },
+        "zip_code": {
+          "type": "string",
+          "description": "The zip code (e.g., '12345')."
+        }
+      },
+      "required": [
+        "address1",
+        "address2",
+        "city",
+        "country",
+        "state",
+        "user_id",
+        "zip_code"
+      ]
+    }
+  },
+  {
+    "name": "return_delivered_order_items",
+    "description": "Initiates a return for items from a delivered order, changing the status to 'return requested' and requiring agent confirmation before sending the user an email with return instructions.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "The unique identifier for the order, prefixed with a '#' symbol (e.g., `#W0000000`)."
+        },
+        "item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of item IDs to return, such as '1008292230', which can include duplicates."
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "The ID of the payment method for receiving a refund or paying for a price difference, such as `gift_card_0000000` or `credit_card_0000000`."
+        }
+      },
+      "required": [
+        "item_ids",
+        "order_id",
+        "payment_method_id"
+      ]
+    }
+  },
+  {
+    "name": "think",
+    "description": "Log a thought to aid in complex reasoning or to serve as a memory cache, without retrieving new information or altering the database.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "thought": {
+          "type": "string",
+          "description": "A thought for complex reasoning or to use as a memory cache."
+        }
+      },
+      "required": [
+        "thought"
+      ]
+    }
+  },
+  {
+    "name": "transfer_to_human_agents",
+    "description": "Transfers the user to a human agent.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "A summary of the user's issue."
+        }
+      },
+      "required": [
+        "summary"
+      ]
+    }
+  }
+]

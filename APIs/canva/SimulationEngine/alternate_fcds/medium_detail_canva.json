@@ -1,0 +1,784 @@
+[
+    {
+        "name": "create_asset_upload_job",
+        "description": "Creates an asset upload job, specifying the asset's name, associated tags (maximum 50), and a thumbnail URL. This function returns the unique ID of the newly created upload job.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Represents the name of the asset being uploaded."
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings representing tags associated with the asset, with a maximum limit of 50 tags."
+                },
+                "thumbnail_url": {
+                    "type": "string",
+                    "description": "The URL for the thumbnail image. This image represents the asset."
+                }
+            },
+            "required": [
+                "name",
+                "tags",
+                "thumbnail_url"
+            ]
+        }
+    },
+    {
+        "name": "create_autofill_job",
+        "description": "Creates an asynchronous job to autofill a design from a brand template with input data.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "brand_template_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the input brand template."
+                },
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "A required field that specifies the data type. The value must be one of the following strings: `image`, `text`, or `chart`."
+                        },
+                        "asset_id": {
+                            "type": "string",
+                            "description": "The asset's identifier, which is required only when the `type` is `image`."
+                        },
+                        "text": {
+                            "type": "string",
+                            "description": "This property is required when the `type` property is set to 'text'."
+                        },
+                        "chart_data": {
+                            "type": "object",
+                            "description": "Contains the data for the chart. This property is required and must conform to a specific structure when the `type` is `chart`.",
+                            "properties": {
+                                "rows": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "cells": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "description": "One of \"string\", \"number\", \"boolean\", \"date\"."
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "type"
+                                                    ]
+                                                },
+                                                "description": "List of cells, each with:"
+                                            }
+                                        },
+                                        "required": [
+                                            "cells"
+                                        ]
+                                    },
+                                    "description": "An array of objects, where each object represents a single data row for the chart."
+                                }
+                            },
+                            "required": [
+                                "rows"
+                            ]
+                        }
+                    },
+                    "description": "A dictionary of data fields to autofill, where each key represents a field and maps to its corresponding field object.",
+                    "required": [
+                        "type"
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "description": "An optional title for the autofilled design. If a title is not provided, this defaults to the title of the original template."
+                }
+            },
+            "required": [
+                "brand_template_id",
+                "data"
+            ]
+        }
+    },
+    {
+        "name": "create_comment_reply",
+        "description": "Adds a reply to a specified comment thread on a design. The reply message is plaintext and supports user mentions formatted as `[user_id:team_id]`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "The string ID of the design to which the thread belongs."
+                },
+                "thread_id": {
+                    "type": "string",
+                    "description": "The string identifier of the comment thread to which the reply will be added."
+                },
+                "message": {
+                    "type": "string",
+                    "description": "The plaintext message body for the reply. Mentions within the message must be formatted as `[user_id:team_id]`."
+                }
+            },
+            "required": [
+                "design_id",
+                "message",
+                "thread_id"
+            ]
+        }
+    },
+    {
+        "name": "create_comment_thread",
+        "description": "Creates a new comment thread on a specific design. The comment `message` must format user mentions as `[user_id:team_id]`. An optional `assignee_id` can be provided, but the assigned user must be mentioned within the comment message.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "The string ID of the design to which a new comment thread will be added."
+                },
+                "message": {
+                    "type": "string",
+                    "description": "The plaintext body of the comment. User mentions within the message must follow the format `[user_id:team_id]`."
+                },
+                "assignee_id": {
+                    "type": "string",
+                    "description": "An optional ID of the user to assign the comment to. The specified user must be mentioned within the `message` parameter."
+                }
+            },
+            "required": [
+                "design_id",
+                "message"
+            ]
+        }
+    },
+    {
+        "name": "create_design",
+        "description": "Creates a new design using a specified design type, asset ID, and title. The `design_type` must be a dictionary containing a 'preset' key, whose value must be one of: 'doc', 'whiteboard', 'presentation', 'canvas', 'banner', 'flyer', 'social', 'video', 'infographic', or 'poster'. The `asset_id` must be a non-empty string, and the `title` must be a string between 1 and 255 characters long.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_type": {
+                    "type": "object",
+                    "description": "A dictionary that specifies the design type. It must contain a `\"preset\"` key, with its value being one of the following accepted strings: `'doc'`, `'whiteboard'`, `'presentation'`, `'canvas'`, `'banner'`, `'flyer'`, `'social'`, `'video'`, `'presentation'`, `'infographic'`, or `'poster'`."
+                },
+                "asset_id": {
+                    "type": "string",
+                    "description": "The ID of the asset (e.g., image) to include in the design. This parameter must be a non-empty string."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The title of the design, which must be between 1 and 255 characters long."
+                }
+            },
+            "required": [
+                "asset_id",
+                "design_type",
+                "title"
+            ]
+        }
+    },
+    {
+        "name": "create_design_export_job",
+        "description": "Creates an export job for the specified design, allowing for output in various formats such as PDF, JPG, PNG, GIF, MP4, or PPTX. The export process is configured using a dictionary that specifies the required file `type` and supports optional parameters like `quality`, `pages`, `size`, `height`, `width`, and specific options for PNG exports or multi-page designs.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "Specifies the ID of the design to export. This parameter is required."
+                },
+                "format": {
+                    "type": "object",
+                    "description": "A required dictionary that specifies options for the design export format. It must contain a `type` key, which can be `\"pdf\"`, `\"jpg\"`, `\"png\"`, `\"pptx\"`, `\"gif\"`, or `\"mp4\"`, to define the export file type. Additional optional keys within this dictionary specify further details like quality, pages, and dimensions.",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "Specifies the required export file type. This value must be one of 'pdf', 'jpg', 'png', 'pptx', 'gif', or 'mp4'."
+                        },
+                        "quality": {
+                            "type": "integer",
+                            "description": "Specifies the export quality, which is sometimes required depending on the export format. For JPG, provide an integer between 1 and 100 representing the compression quality. For MP4, select one of the following resolution strings: \"horizontal_480p\", \"horizontal_720p\", \"horizontal_1080p\", \"horizontal_4k\", \"vertical_480p\", \"vertical_720p\", \"vertical_1080p\", or \"vertical_4k\"."
+                        },
+                        "pages": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "A list of 1-based page numbers to export."
+                        },
+                        "export_quality": {
+                            "type": "string",
+                            "description": "Specifies the export quality, which must be either \"regular\" or \"pro\". The default value is \"regular\"."
+                        },
+                        "size": {
+                            "type": "string",
+                            "description": "Specifies the paper size for PDF exports. It must be one of \"a4\", \"a3\", \"letter\", or \"legal\"."
+                        },
+                        "height": {
+                            "type": "integer",
+                            "description": "The height of the export in pixels, with a minimum value of 40 and a maximum of 25000."
+                        },
+                        "width": {
+                            "type": "integer",
+                            "description": "The width of the export in pixels. This value must be between 40 and 25000, inclusive."
+                        },
+                        "lossless": {
+                            "type": "boolean",
+                            "description": "A boolean parameter that specifies whether to export PNG images without compression. This parameter is only applicable when the `type` is set to `png`, and its default value is `True`."
+                        },
+                        "transparent_background": {
+                            "type": "boolean",
+                            "description": "A boolean value that, if `True`, enables transparency for PNG exports. This option is only applicable to PNG file types, and its default value is `False`."
+                        },
+                        "as_single_image": {
+                            "type": "boolean",
+                            "description": "Set to `True` to export a multipage design as a single image. Defaults to `False`."
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ]
+                }
+            },
+            "required": [
+                "design_id",
+                "format"
+            ]
+        }
+    },
+    {
+        "name": "create_design_import_job",
+        "description": "Creates a job to import a design from a file upload.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "import_metadata": {
+                    "type": "object",
+                    "description": "Metadata to include in the `Import-Metadata` header.",
+                    "properties": {
+                        "title_base64": {
+                            "type": "string",
+                            "description": "A required, Base64-encoded title for the design. The original, unencoded string must not exceed 50 characters."
+                        },
+                        "mime_type": {
+                            "type": "string",
+                            "description": "Specifies the MIME type of the file, for example, `application/pdf`."
+                        }
+                    },
+                    "required": [
+                        "title_base64"
+                    ]
+                }
+            },
+            "required": [
+                "import_metadata"
+            ]
+        }
+    },
+    {
+        "name": "create_folder",
+        "description": "Creates a new folder with a specified name (1–255 characters) under a given parent folder ID (1–50 characters).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name for the new folder, which must be between 1 and 255 characters long."
+                },
+                "parent_folder_id": {
+                    "type": "string",
+                    "description": "Specifies the ID of the parent folder. This string must be between 1 and 50 characters in length."
+                }
+            },
+            "required": [
+                "name",
+                "parent_folder_id"
+            ]
+        }
+    },
+    {
+        "name": "create_url_design_import_job",
+        "description": "Creates a design import job using a publicly accessible URL. The created job tracks its status, which can be \"in_progress\", \"success\", or \"failed\", providing results upon completion or an error if it fails.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The required title for the imported design. This string must be between 1 and 255 characters in length."
+                },
+                "url": {
+                    "type": "string",
+                    "description": "A required parameter that specifies the publicly accessible URL of the file. This URL must be between 1 and 2048 characters in length."
+                },
+                "mime_type": {
+                    "type": "string",
+                    "description": "The MIME type of the file, which must be between 1 and 100 characters. If this parameter is not provided, the MIME type will be auto-detected."
+                }
+            },
+            "required": [
+                "title",
+                "url"
+            ]
+        }
+    },
+    {
+        "name": "delete_asset",
+        "description": "Deletes an asset by its ID. It returns `True` if the asset is successfully deleted, or `False` if the asset is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "asset_id": {
+                    "type": "string",
+                    "description": "The string ID of the asset to delete."
+                }
+            },
+            "required": [
+                "asset_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_folder",
+        "description": "Deletes the specified folder and all its contents recursively.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "folder_id": {
+                    "type": "string",
+                    "description": "The string ID of the folder to be deleted. This ID must refer to an existing folder."
+                }
+            },
+            "required": [
+                "folder_id"
+            ]
+        }
+    },
+    {
+        "name": "get_asset",
+        "description": "Retrieves metadata for a specific asset by its ID. The returned metadata includes the asset's ID, name, type, tags, creation and update timestamps, and may optionally include thumbnail details, import status, or import error information.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "asset_id": {
+                    "type": "string",
+                    "description": "A string representing the ID of the asset to retrieve."
+                }
+            },
+            "required": [
+                "asset_id"
+            ]
+        }
+    },
+    {
+        "name": "get_asset_upload_job",
+        "description": "Retrieves the status and result of an asset upload job. The returned dictionary contains a 'job' key, which holds the job's ID and current status, one of 'in_progress', 'success', or 'failed'. If the status is 'success', the 'job' dictionary also includes details about the uploaded asset; if 'failed', it includes error information.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "The string ID for the asset upload job."
+                }
+            },
+            "required": [
+                "job_id"
+            ]
+        }
+    },
+    {
+        "name": "get_autofill_job",
+        "description": "Retrieves the status and results of an autofill job by its ID. The returned dictionary includes the job's ID and its `status`, which can be `in_progress`, `success`, or `failed`. If the `status` is `success`, detailed job results are provided; otherwise, an `error` message is returned if the job is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "The string identifier for the autofill job. Use this ID to retrieve the job's status and results."
+                }
+            },
+            "required": [
+                "job_id"
+            ]
+        }
+    },
+    {
+        "name": "get_brand_template",
+        "description": "Retrieves a brand template using its unique string identifier. It returns the template's data as a dictionary, or None if the specified ID is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "brand_template_id": {
+                    "type": "string",
+                    "description": "The string ID used to uniquely identify the brand template."
+                }
+            },
+            "required": [
+                "brand_template_id"
+            ]
+        }
+    },
+    {
+        "name": "get_brand_template_dataset",
+        "description": "Gets the dataset definition of a brand template. If the template contains autofill data fields, it returns a dictionary that includes a 'dataset' key, whose value is a dictionary mapping data field names to their accepted data types (e.g., 'image', 'text', 'chart'). Returns `None` if the template is not found or has no dataset.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "brand_template_id": {
+                    "type": "string",
+                    "description": "A string representing the identifier for a specific brand template."
+                }
+            },
+            "required": [
+                "brand_template_id"
+            ]
+        }
+    },
+    {
+        "name": "get_comment_reply",
+        "description": "Retrieves a specific reply from a design thread. The reply is uniquely identified by its `reply_id` within the specified `thread_id` and `design_id`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "The string ID of the design."
+                },
+                "thread_id": {
+                    "type": "string",
+                    "description": "The identifier for the thread that contains the reply."
+                },
+                "reply_id": {
+                    "type": "string",
+                    "description": "The string ID of the specific reply to retrieve."
+                }
+            },
+            "required": [
+                "design_id",
+                "reply_id",
+                "thread_id"
+            ]
+        }
+    },
+    {
+        "name": "get_comment_thread",
+        "description": "Retrieves a specific comment thread from a design. The thread is identified by its unique thread ID within the specified design ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "A string representing the design ID."
+                },
+                "thread_id": {
+                    "type": "string",
+                    "description": "The string ID of the specific comment thread to retrieve."
+                }
+            },
+            "required": [
+                "design_id",
+                "thread_id"
+            ]
+        }
+    },
+    {
+        "name": "get_current_user",
+        "description": "Retrieves team-related user information for a specified user ID. It returns a dictionary with the key `team_user`, containing the user's ID and their Canva Team ID. An empty dictionary is returned if the user is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the user, provided as a string."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "get_current_user_profile",
+        "description": "Retrieves the profile data for a given unique user ID. The function returns a dictionary containing the user's profile under the 'profile' key (which may include their `display_name`); an empty dictionary is returned if the user is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the user."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "get_design",
+        "description": "Retrieves metadata for a single design. It requires a non-empty string for the `design_id` parameter. If found, it returns a dictionary containing the design's metadata under the 'design' key; otherwise, it returns None.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "The ID of the design, which must be a non-empty string."
+                }
+            },
+            "required": [
+                "design_id"
+            ]
+        }
+    },
+    {
+        "name": "get_design_export_job",
+        "description": "Retrieves the status and results of a design export job. The results include its current status, optional downloadable file URLs (valid for 24 hours) upon success, or error details if it failed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "The required string identifier for the export job."
+                }
+            },
+            "required": [
+                "job_id"
+            ]
+        }
+    },
+    {
+        "name": "get_design_import_job",
+        "description": "Retrieves the status and outcome of a design import job. The job's status can be \"in_progress\", \"success\", or \"failed\"; if \"success\", it includes details of the imported designs, otherwise it provides error information if \"failed\".",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "A string representing the ID of the design import job."
+                }
+            },
+            "required": [
+                "job_id"
+            ]
+        }
+    },
+    {
+        "name": "get_design_pages",
+        "description": "Retrieves a paginated list of pages from a specified design, using `offset` to define the starting page index (1-based, min 1, max 500) and `limit` to specify the number of pages to return (min 1, max 200). Each returned page includes its index and optionally thumbnail details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "The string identifier for the design from which to retrieve pages."
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Specifies the 1-based index of the first page to return, defaulting to 1. This value must be an integer between 1 and 500, inclusive."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of pages to return. The default value is 50, with a minimum of 1 and a maximum of 200 pages."
+                }
+            },
+            "required": [
+                "design_id"
+            ]
+        }
+    },
+    {
+        "name": "get_folder",
+        "description": "Retrieves metadata for a specific folder, identified by its ID. The returned metadata is a dictionary containing the folder's ID, name, creation and update timestamps, thumbnail details (width, height, URL), and parent folder ID. A `ValueError` is raised if the specified folder ID does not exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "folder_id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the folder to retrieve."
+                }
+            },
+            "required": [
+                "folder_id"
+            ]
+        }
+    },
+    {
+        "name": "get_url_design_import_job",
+        "description": "Retrieves the status and result of a URL import job. The response includes the job's status (e.g., \"in_progress\", \"success\", \"failed\") and, depending on this status, either the imported design results or error details if the job failed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the URL import job."
+                }
+            },
+            "required": [
+                "job_id"
+            ]
+        }
+    },
+    {
+        "name": "list_brand_templates",
+        "description": "List brand templates. Optionally filter results by title, ownership (e.g., 'any', 'owned'), or dataset presence (e.g., 'empty'). The results can also be sorted by various criteria.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "A string search term used to filter brand templates. This term is applied specifically to the title of each template."
+                },
+                "continuation": {
+                    "type": "string",
+                    "description": "A token used for pagination. This parameter is currently unused."
+                },
+                "ownership": {
+                    "type": "string",
+                    "description": "Filters brand templates based on their ownership status. Valid values are `any`, `owned`, or `shared`."
+                },
+                "sort_by": {
+                    "type": "string",
+                    "description": "Specifies the sort order for the retrieved brand templates. Valid values include 'relevance', 'modified_descending', 'modified_ascending', 'title_descending', and 'title_ascending'."
+                },
+                "dataset": {
+                    "type": "string",
+                    "description": "Filters results based on the presence of associated datasets. Valid options are `'any'`, `'non_empty'`, or `'empty'`."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_comment_replies",
+        "description": "List replies. These replies are retrieved from a specific thread associated with a particular design.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "The string identifier for the design."
+                },
+                "thread_id": {
+                    "type": "string",
+                    "description": "The string ID of the thread."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of replies to return. This value defaults to 50, must be at least 1, and cannot exceed 100."
+                },
+                "continuation": {
+                    "type": "string",
+                    "description": "An optional string token used for paginated results. Supply this token, obtained from a previous response, to retrieve the next set of items."
+                }
+            },
+            "required": [
+                "design_id",
+                "thread_id"
+            ]
+        }
+    },
+    {
+        "name": "list_designs",
+        "description": "List user-owned and shared designs. Optionally filter designs by title using a search term (max 255 characters) or by ownership type, which can be \"any\", \"owned\", or \"shared\". Sort the results by relevance, modification date, or title, in either ascending or descending order.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "A search term used to filter designs by title. It has a maximum length of 255 characters."
+                },
+                "ownership": {
+                    "type": "string",
+                    "description": "Filters designs based on ownership. This parameter accepts one of three string values: `\"any\"`, `\"owned\"`, or `\"shared\"`, with `\"any\"` as the default."
+                },
+                "sort_by": {
+                    "type": "string",
+                    "description": "Specifies the sorting order for designs. Valid options are \"relevance\", \"modified_descending\", \"modified_ascending\", \"title_descending\", and \"title_ascending\". This parameter defaults to \"relevance\"."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_folder_items",
+        "description": "Lists items, specifically folders, designs, and images, that are located within a specified folder.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "folder_id": {
+                    "type": "string",
+                    "description": "The ID of the folder from which to list items. This parameter is a string."
+                },
+                "item_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A comma-delimited list of item types used to filter the results. Valid item types include \"folder\", \"design\", and \"image\"."
+                },
+                "sort_by": {
+                    "type": "string",
+                    "description": "Specifies the field used to sort the results. Valid values are `created_ascending`, `created_descending`, `modified_ascending`, `modified_descending` (default), `title_ascending`, and `title_descending`."
+                },
+                "continuation": {
+                    "type": "string",
+                    "description": "An optional string token used to retrieve the next page of results for paginated responses."
+                }
+            },
+            "required": [
+                "folder_id"
+            ]
+        }
+    },
+    {
+        "name": "update_asset",
+        "description": "Updates the metadata of an existing asset specified by its ID. It can optionally update the asset's name (maximum 50 characters) and tags (maximum 50 tags). Returns `True` if the asset is successfully updated, or `False` if the asset is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "asset_id": {
+                    "type": "string",
+                    "description": "The ID of the asset to update."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Specifies a new name for the asset. This name must not exceed 50 characters."
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "An optional list of new tags for the asset. This list can contain a maximum of 50 tags."
+                }
+            },
+            "required": [
+                "asset_id"
+            ]
+        }
+    },
+    {
+        "name": "update_folder",
+        "description": "Updates the name of a specified folder and its modification timestamp. The new folder name must be between 1 and 255 characters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "folder_id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the folder to be updated."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Specifies the new name for the folder. The name must be between 1 and 255 characters long."
+                }
+            },
+            "required": [
+                "folder_id",
+                "name"
+            ]
+        }
+    }
+]

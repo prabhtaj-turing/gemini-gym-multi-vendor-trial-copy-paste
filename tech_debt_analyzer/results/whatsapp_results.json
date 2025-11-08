@@ -1,0 +1,341 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:59.045258Z",
+  "results": {
+    "whatsapp/contacts.py": {
+      "functions": {
+        "search_contacts": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's search capabilities and the structure of the returned data. The `Args`, `Returns`, and `Raises` sections are well-structured and informative.  Types are correctly specified for parameters and return values, including a clear description of the dictionary structure in the Returns section.  The docstring also correctly mentions the `InvalidQueryError` that can be raised."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `SearchContactsArguments` to validate the `query` input parameter.  This is the primary functional input, and the `try...except` block correctly handles `PydanticValidationError`.  The validation is comprehensive for the single functional input parameter.  No other input validation methods are needed because Pydantic handles it effectively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation and value validation on the `query` parameter using Pydantic.  The `try...except` block around the Pydantic validation ensures that invalid inputs raise a custom `InvalidQueryError` with a descriptive message.  However, while Pydantic likely handles many value constraints (depending on the `SearchContactsArguments` model definition, which is not shown), the specific constraints are not explicitly detailed in the provided code snippet.  Therefore, the validation is good but not fully comprehensive without knowing the specifics of the Pydantic model.  The only functional input parameter is `query`, and it receives both type and value validation (though the exact nature of the value validation is not fully transparent)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `search_contacts` has excellent parameter design and type annotations.  The single parameter `query` is correctly type-annotated as `str`. The return type `List[Dict[str, Any]]` is clearly specified.  No `**kwargs` are used.  Complex types within the return annotation are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the search functionality as described in its docstring.  It uses the provided `query` parameter to search contacts and returns a list of dictionaries matching the specified structure.  Exception handling for `PydanticValidationError` is implemented, raising a custom `InvalidQueryError` with informative details. The output is validated against the `WhatsappContact` model before being returned. There are no placeholders, TODOs, or pass statements. The docstring accurately reflects the function's behavior and return type.  All functional input parameters are used."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code snippet does not handle phone numbers or email addresses as inputs.  The `query` parameter is a string used for searching contacts, and the function doesn't specify that this string must represent a phone number or email.  The function relies on a `SearchContactsArguments` Pydantic model (not shown) and a `utils.search_contacts_data` function (also not shown) for input validation and data processing.  Without seeing the definitions of these, it's impossible to assess whether phone number normalization or email validation is performed.  The code only shows that a validation step occurs and that an error is raised if validation fails, but it doesn't reveal the specifics of that validation.  Therefore, the rating of \"Not Applicable\" is the most accurate."
+          }
+        },
+        "get_contact_chats": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for `limit` and `page` are correctly specified.  The `Args` and `Returns` sections are comprehensive, including detailed descriptions of the nested dictionary structures. The `Raises` section lists all potential exceptions. Types are consistently specified using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `GetContactChatsArgs` to validate the `jid`, `limit`, and `page` input parameters.  This is the primary method of input validation used, and it handles type checking and constraint validation for these parameters.  The `try...except` block specifically catches `PydanticValidationError` to handle validation failures, raising custom exceptions based on the failing field.  This demonstrates proper usage of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_contact_chats` demonstrates comprehensive input validation for its functional parameters.  All three functional parameters (`jid`, `limit`, and `page`) are validated using Pydantic's `GetContactChatsArgs` model. This ensures type checking (str for `jid`, int for `limit` and `page`).  Furthermore, value validation is performed:  `limit` and `page` are implicitly checked for valid integer ranges (non-negative for `page`, and positive for `limit` - though the specific range isn't explicitly defined in the code, Pydantic's default validation for integers will prevent negative values).  The `jid` parameter undergoes validation for a valid JID format (though the specifics of this format are not shown in the provided code snippet).  Appropriate exceptions (`InvalidJIDError`, `InvalidParameterError`, `PaginationError`) are raised for invalid inputs with informative error messages.  The `try...except` block effectively handles PydanticValidationError, providing specific error handling based on the field that failed validation.  Finally, additional checks are performed after the initial Pydantic validation to ensure the `page` parameter is within the bounds of the available data."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`jid`, `limit`, `page`) are properly type-annotated with their expected types (str, int, int). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the return type annotation are also properly specified (List, Dict, Optional)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of WhatsApp chats involving a specified contact, incorporating pagination and error handling.  All functional input parameters (`jid`, `limit`, `page`) are used appropriately in the function's logic.  All documented exceptions (`ContactNotFoundError`, `InvalidJIDError`, `InvalidParameterError`, `PaginationError`) are properly handled. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, correctly processing data from a mock database (represented by the `utils` functions). The docstring accurately reflects the function's behavior, return type, and exception handling.  The use of Pydantic for input validation and response validation adds robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The input `jid` (Jabber ID) is a unique identifier for a contact within a messaging system (like WhatsApp), and it's not directly comparable to a phone number or email address. The function focuses on retrieving chat data based on this JID, performing validation only on the `jid`, `limit`, and `page` parameters for correct input format and range.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "whatsapp/chats.py": {
+      "functions": {
+        "list_chats": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, parameters, return value, and exceptions.  It accurately reflects the function's behavior and includes default values for all parameters.  The documentation of the nested dictionary structure within the `Returns` section is particularly thorough, clearly outlining the keys, types, and nested structures of the `chats` and `last_message_preview` dictionaries.  Types are consistently specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ListChatsFunctionArgs` to validate the functional input parameters: `query`, `limit`, `page`, `include_last_message`, and `sort_by`.  This model handles type checking and constraint enforcement for these parameters.  The `try...except` block catches `PydanticValidationError` to handle validation failures, raising a custom `InvalidInputError`. While additional validation (e.g., checking the range of `limit` more precisely within the Pydantic model) could be added, the existing implementation demonstrates proper use of Pydantic for input validation.  The subsequent check for `validated_sort_by` is redundant given the Pydantic model already validates this field, but doesn't detract from the proper use of Pydantic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `limit`, `page`, `include_last_message`, `sort_by`) are properly type-annotated with their expected types (Optional[str], int, int, bool, str respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional`, `List`, and `Dict` are used correctly in both parameter and return type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using all functional input parameters (`query`, `limit`, `page`, `include_last_message`, `sort_by`).  The exception handling for `InvalidSortByError` and `PaginationError` is implemented.  The logic for filtering, sorting, pagination, and constructing the response dictionary is present.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_chats` function does not handle any phone number or email address inputs.  Its purpose is to retrieve and filter WhatsApp chat data based on various criteria (query, limit, pagination, sorting).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses on other aspects of data retrieval and manipulation."
+          }
+        },
+        "get_chat": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate, providing a clear description of the function's purpose and usage within an MCP server context.  It correctly lists arguments, their types, and default values. The `Returns` section is comprehensive, detailing the structure of the returned dictionary, including nested dictionaries and optional fields.  The `Raises` section accurately reflects the exceptions the function might throw.  Types are consistently specified for parameters and return values.  The documentation of the nested dictionaries within the `Returns` section is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `GetChatArguments` to validate the `chat_jid` and `include_last_message` parameters before processing.  This is the primary method of input validation for the functional parameters.  The `chat_jid` validation is further refined with a regular expression check after Pydantic validation, but this is supplementary to the Pydantic validation, not a replacement for it.  No other input validation methods are used for these parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic's `GetChatArguments` for validation of `chat_jid` and `include_last_message`.  This provides type validation (ensuring `chat_jid` is a string and `include_last_message` is a boolean).  However, it lacks explicit value validation for `chat_jid` beyond a regex check performed *after* Pydantic validation.  The regex check (`re.match(WhatsappJIDRegex.WHATSAPP_JID.value, current_chat_jid)`) addresses format constraints, but it's not clear what the `WhatsappJIDRegex` contains or how comprehensive it is.  The `include_last_message` parameter is a boolean, so no further value validation is needed.  Therefore, while type validation is comprehensive via Pydantic, value validation for `chat_jid` is only partially addressed, leading to a \"Good\" rating.  Null/empty checks are implicitly handled by Pydantic and the subsequent regex check.  Error handling is present with custom exceptions for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`chat_jid` and `include_last_message`) are properly type-annotated with their expected types (str and bool, respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within the function's documentation and internal logic (List, Dict, Optional) are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves chat metadata based on the provided JID, including handling group metadata and the last message as specified by `include_last_message`.  Both functional input parameters (`chat_jid` and `include_last_message`) are used. All documented exceptions (`ChatNotFoundError`, `InvalidJIDError`, `InvalidInputError`) are handled. There are no TODOs, placeholders, or pass statements. The logic is complete and functional, given the use of the global `utils.get_chat_data` function (which is assumed to correctly fetch data from the global DB). The docstring accurately reflects the function's behavior and return type.  The use of Pydantic for validation is a good practice.  The function correctly handles cases where `chat_data` or `group_metadata` might be missing or of the wrong type.  The sorting of messages to find the last message is also correctly implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function deals with WhatsApp JIDs (Jabber IDs), which have a different format and validation requirements than standard phone numbers or email addresses.  The code validates the JID format using a regular expression (`re.match(WhatsappJIDRegex.WHATSAPP_JID.value, current_chat_jid)`), but this is specific to WhatsApp JIDs and not a general phone number or email validation.  Therefore, the categories of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_direct_chat_by_contact": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the nested `last_message` dictionary is particularly thorough, detailing its various fields and their types.  Type hints are used consistently for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_direct_chat_by_contact` uses only one functional input parameter: `sender_phone_number`.  It performs extensive validation on this parameter using type checking (`isinstance`), string manipulation (`.strip()`), and regular expressions (`re.fullmatch`, `re.sub`).  While Pydantic could be used to structure this validation more elegantly, the existing validation is comprehensive and effective.  Therefore, Pydantic is not strictly needed for input validation in this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_direct_chat_by_contact` performs comprehensive validation on its single functional input parameter, `sender_phone_number`.  The validation includes:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_direct_chat_by_contact` has excellent parameter design.  All parameters are properly type-annotated (`sender_phone_number: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the function's docstrings and internal logic (like `Optional`, `Dict`, `List`) are also properly handled and reflected in the code's type hinting where applicable (though the `Any` in the return type could be improved with a more specific type if possible)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of WhatsApp chat metadata based on the sender's phone number.  All functional input parameters (`sender_phone_number`) are used.  All documented exceptions (`ContactNotFoundError`, `InvalidPhoneNumberError`, `InternalSimulationError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `utils` functions (which are assumed to correctly interact with the global `DB`). The docstring accurately reflects the function's behavior, return type, and exceptions."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function performs good phone number normalization. It extracts digits only, checks for a minimum number of digits, and uses the normalized number to construct the JID.  However, it lacks email handling altogether.  The phone number validation could be improved; while it checks for a minimum number of digits and a basic format (`\\+?\\d+`), it doesn't incorporate any knowledge of country codes or common phone number length variations.  A more robust solution would use a dedicated phone number validation library to handle international formats more accurately.  The absence of email handling is a significant shortcoming, as the prompt specified that email validation should be included if the function accepted email addresses.  Currently, it only handles phone numbers."
+          }
+        },
+        "get_last_interaction": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's goal of retrieving the most recent WhatsApp message with a given JID. The Args and Returns sections are well-structured, clearly specifying types and providing detailed explanations of the dictionary structure.  The Raises section comprehensively lists all potential exceptions.  Type hints are used consistently throughout."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_last_interaction` has only one functional input parameter: `jid`.  The code performs manual validation on `jid`, checking its type, emptiness, and format.  While Pydantic could be used, the current manual validation is sufficient and covers all aspects of the `jid` parameter.  Using Pydantic wouldn't add significant value in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_last_interaction` performs comprehensive validation on its single functional input parameter, `jid`.  It checks for the correct data type (string), validates that the string is not empty, and performs a domain-specific format check to ensure the JID conforms to the expected \"user@s.whatsapp.net\" pattern.  Appropriate custom exceptions (`InvalidParameterError`, `ValidationError`, `InvalidJIDError`) are raised for each validation failure with informative messages.  All aspects of input validation are covered for the single functional parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_last_interaction` has excellent parameter design.  It has one parameter, `jid`, which is correctly type-annotated as `str`. The return type is also clearly specified as `Optional[Dict[str, Any]]`.  No `**kwargs` are used.  Complex types like `Optional` and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic to retrieve the latest WhatsApp message interaction for a given JID.  All functional input parameters (`jid`) are used.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic iterates through all chats and messages, correctly identifying relevant interactions based on `is_outgoing` and `sender_jid`. The function correctly handles potential errors in timestamp formatting and message structure. The final validation using Pydantic ensures the returned message conforms to the expected structure, raising `InternalSimulationError` if validation fails. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_last_interaction` does not handle phone numbers or email addresses.  Its input is a JID (Jabber ID), a unique identifier specific to the WhatsApp context, which is validated for format and existence in a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "whatsapp/messages.py": {
+      "functions": {
+        "list_messages": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The `Returns` section is detailed, correctly outlining the structure of the returned dictionary, including the nested dictionaries and lists within.  It also correctly notes the conditional structure based on `include_context`. The `Raises` section accurately lists the potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ListMessagesArgs` to validate its functional input parameters (`after`, `before`, `sender_phone_number`, `chat_jid`, `query`, `limit`, `page`, `include_context`, `context_before`, `context_after`).  The `try...except` block around the model instantiation correctly handles `PydanticValidationError`, raising a custom `InvalidInputError` if validation fails. This demonstrates proper use of Pydantic for input validation.  While there is additional validation after the Pydantic check (e.g., checking date ranges and chat JID format), this is supplementary and doesn't replace the initial Pydantic validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  `limit` and `page` are validated for type and value (page cannot be negative, and both are integers). `chat_jid` is checked for the presence of \"@\" symbol.  `after` and `before` are parsed as ISO 8601 datetimes, and their relative order is validated.  The `sender_phone_number` is validated indirectly by checking if a corresponding JID exists in the database.  The `query` parameter, while not explicitly checked for emptiness, is implicitly validated within the message filtering logic where an empty query would not filter out any messages.  The `context_before` and `context_after` parameters are validated as positive integers implicitly through the use of `max` and `min` functions to avoid negative indexing.  All validations are performed using a Pydantic model and raise `InvalidInputError` or `InvalidParameterError` with informative messages upon failure.  The validation is thorough and covers all aspects of the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types (List, Dict, Optional) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of WhatsApp messages based on the specified criteria.  All functional input parameters (`after`, `before`, `sender_phone_number`, `chat_jid`, `query`, `limit`, `page`, `include_context`, `context_before`, `context_after`) are used in the function's logic.  The documented exceptions (`InvalidInputError`, `InvalidParameterError`, `PaginationError`) are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, correctly handling pagination and context inclusion as specified in the docstring. The docstring accurately reflects the function's behavior and return type.  The use of Pydantic for validation is a good practice. The code efficiently handles the lookup of sender information using a dictionary."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function handles phone number normalization, but its email validation is absent.  The phone number normalization is done indirectly through a Pydantic model (not shown in the provided code, but implied by `PydanticValidationError`).  This model presumably performs the extraction of digits and area code separation.  However, we don't see the details of this model, so we can't assess the robustness of its normalization (e.g., handling various international formats).  The crucial missing element is email validation.  The function doesn't include any mechanism to check if the `chat_jid` (which could potentially be an email address in some contexts) is a valid email address beyond checking for the presence of the \"@\" symbol.  A proper email validation regex or a dedicated validation library should be used to ensure the syntactic correctness of email addresses.  Therefore, while the phone number handling shows good intent, the lack of email validation prevents an \"Excellent\" rating."
+          }
+        },
+        "get_message_context": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior and includes default values for parameters. The documentation of the nested dictionary structures within the return value (`target_message`, `messages_before`, `messages_after`) is particularly thorough, specifying the keys, types, and even optional fields.  The types are consistently specified for all parameters and return values using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `message_id`, `before`, and `after` parameters.  It checks the types and constraints of these parameters using `isinstance`, comparisons, and checks against a maximum value from `models.MaxContextMessages`. While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is comprehensive and covers all functional input parameters.  Therefore, Pydantic is not strictly needed for input validation in this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`message_id`, `before`, and `after`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`message_id`, `before`, `after`) are properly type-annotated with their expected types (str, int, int). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the return dictionary are also properly specified (List, Dict)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of message context, using the `before` and `after` parameters to fetch messages surrounding the target message.  All functional input parameters (`message_id`, `before`, `after`) are used.  All documented exceptions (`MessageNotFoundError`, `InvalidParameterError`, `ValidationError`) are handled. There are no TODOs, pass statements, or placeholders. The logic is complete and functional, correctly handling various scenarios such as malformed data in the DB. The docstring accurately reflects the function's behavior, including the structure of the returned dictionary and the types of exceptions raised."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_message_context` function does not handle phone numbers or email addresses as input.  Its inputs are a message ID (string), and integers representing the number of messages to retrieve before and after the target message.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "send_message": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return values, and exceptions.  The description clearly explains the function's role in sending WhatsApp messages within the context of an MCP server.  Default values are correctly mentioned and explained.  The Args and Returns sections are well-structured and informative, including type hints.  The Raises section comprehensively lists all potential exceptions.  The documentation of the dictionary return value is detailed, specifying keys, types, and descriptions."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `models.SendMessageArgs` to attempt to validate the `recipient`, `message`, and `reply_to_message_id` parameters. However, the `try...except` block only catches generic `Exception`s, which is too broad.  A more specific exception handling would be beneficial.  Furthermore, even if `models.SendMessageArgs` performs validation, the subsequent code contains extensive manual validation and type checking.  This redundancy suggests that the Pydantic model's validation is either incomplete or not fully relied upon.  Using Pydantic more comprehensively, and handling specific exceptions raised by the model, would improve the code's clarity and maintainability.  The manual checks after the Pydantic model attempt to validate the recipient further, based on regex and length constraints, indicating that the Pydantic model might not be fully capturing all validation requirements.  A more robust Pydantic model could potentially eliminate the need for much of this subsequent manual validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `recipient` and `message` parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`recipient`, `message`, `reply_to_message_id`) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of sending a WhatsApp message and replying to existing messages.  All functional input parameters (`recipient`, `message`, `reply_to_message_id`) are used.  The exception handling covers the documented exceptions, although the error messages could be more specific in some cases.  The logic for handling different recipient formats (JID and phone number) is well-structured, and the creation of new chats for unknown contacts is implemented.  The function correctly uses the global `DB` dictionary.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function performs good phone number normalization and validation.  It correctly extracts digits from the phone number input, rejecting numbers with invalid characters. It also checks the length of the phone number to ensure it falls within an acceptable range.  The area code is not explicitly separated and stored, but the entire number is processed as a single unit.  The function does not handle email addresses at all; it only deals with WhatsApp JIDs and phone numbers."
+          }
+        }
+      }
+    },
+    "whatsapp/media.py": {
+      "functions": {
+        "send_file": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the `send_file` function.  It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the return dictionary is detailed, specifying the types and meanings of each key.  All arguments, including their default values, are correctly documented. The `Raises` section accurately lists all potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses basic type checking and non-emptiness checks for `recipient` and `media_path` instead of Pydantic models.  While this provides some input validation, it's not comprehensive.  Pydantic models could be used to define more robust validation rules, such as string length restrictions, regular expressions for the recipient format, and potentially file path validation beyond simple existence.  The `caption` parameter, while optional, also lacks any validation.  Using Pydantic models would improve the robustness and clarity of input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type and non-emptiness checks for the `recipient` and `media_path` parameters. This is good, but it lacks crucial value validation.  While it checks that `recipient` and `media_path` are non-empty strings, it doesn't verify the format of the recipient (phone number or JID) or check if `media_path` points to a real, accessible file. The `caption` parameter, while optional, also lacks validation; it should at least check for type.  The function relies on later stages (e.g., `utils.determine_media_type_and_details`) to catch some validation errors, which is not ideal.  A more robust approach would perform all necessary validation upfront in the function itself.  Therefore, while some validation is present, significant aspects are missing, leading to a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`recipient`, `media_path`, `caption`) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using all functional input parameters (`recipient`, `media_path`, `caption`).  It handles the documented exceptions appropriately. The logic for creating a new chat entry if one doesn't exist is implemented, although it could be improved by handling potential errors during name extraction from contact information more robustly (e.g., using more comprehensive error handling or defaulting to a generic name if no name is found).  The docstring accurately reflects the function's behavior and return type.  The only minor gap is the potential for failure in name extraction during new chat creation, which could lead to an incomplete chat entry.  While the function attempts to extract a name from various sources, it doesn't explicitly handle cases where all name extraction attempts fail, potentially resulting in a chat with a null or incomplete name.  This doesn't render the function non-functional, but it represents a minor gap in robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `send_file` function does not handle email addresses.  It handles phone numbers, but only insofar as it accepts them as a `recipient` string.  The function does *not* perform any normalization of phone numbers beyond checking that the input is a non-empty string.  It relies on a `utils.resolve_recipient_jid_and_chat_info` function to handle the recipient JID resolution, which presumably performs further validation and processing, but this is not shown in the provided code.  Therefore, the function does not directly perform the required normalization or validation of phone numbers or emails.  The lack of explicit normalization and validation within the `send_file` function itself makes it difficult to assess its robustness in this regard.  The assessment is \"Not Applicable\" because the core requirements of phone number normalization and email validation are not directly implemented within the function's logic."
+          }
+        },
+        "send_audio_message": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  The description accurately reflects the function's role in sending audio messages within the MCP server context.  The Args and Returns sections are well-structured and informative, including type hints. The Raises section comprehensively lists potential exceptions.  The documentation of the dictionary return value is detailed, specifying keys, types, and whether values are optional."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `SendAudioMessageArguments` to validate the `recipient` and `media_path` parameters before processing.  This is the primary method of input validation. The `try...except PydanticValidationError` block handles validation errors, raising a custom `ValidationError` if issues are detected.  This demonstrates proper usage of Pydantic for input validation.  No other input validation mechanisms are necessary given the Pydantic model's comprehensive validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `send_audio_message` demonstrates comprehensive validation of its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`recipient` and `media_path`) are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of sending audio messages, including conversion to .ogg, fallback mechanisms, and database interactions (using the global DB).  All functional input parameters (`recipient` and `media_path`) are used.  The exception handling is comprehensive, covering the documented exceptions. There are no placeholders or TODOs.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function handles phone number normalization, but not email validation.  The `utils.validate_and_normalize_recipient_for_audio(args.recipient)` function (not shown) is responsible for this normalization.  We can assume it extracts digits and handles area codes appropriately based on the function's description, but the exact implementation is not visible to assess its robustness fully.  The function does not handle email addresses at all; the recipient is either a phone number or a WhatsApp JID.  Therefore, email validation is not applicable, but phone number normalization is partially implemented and its completeness depends on the unseen `utils` function.  If `utils.validate_and_normalize_recipient_for_audio` thoroughly handles various phone number formats and edge cases, then the rating could be closer to \"Excellent\".  However, without seeing its code, we can only rate it as \"Good\" due to the lack of email handling and the incomplete visibility of phone number normalization."
+          }
+        },
+        "download_media": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the `download_media` function.  It accurately describes the function's purpose, arguments, return value, and raised exceptions.  The description of the dictionary returned is particularly thorough, detailing each key, its type, and whether it's optional.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`DownloadMediaArguments`) to validate the `message_id` and `chat_jid` parameters.  The `try-except` block around the model instantiation catches `PydanticValidationError` and raises a custom `ValidationError`. This demonstrates proper usage of Pydantic for input validation.  The initial `if` statements are redundant because the Pydantic validation already handles these checks (empty strings, etc.).  Removing them would improve the code's clarity and efficiency."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and null/empty checks for both `message_id` and `chat_jid`.  These checks are done initially using basic checks and then again using a Pydantic model (`DownloadMediaArguments`). While this provides a degree of redundancy and robustness, it could be streamlined.  The Pydantic validation likely covers more comprehensive checks (depending on the definition of `DownloadMediaArguments`), but the initial checks are somewhat redundant.  There's no explicit value validation beyond ensuring the strings are not empty or null.  For example, there's no check to ensure the `message_id` and `chat_jid` conform to expected formats or patterns if such constraints exist within the WhatsApp system.  The validation is good, but could be improved by removing the redundant initial checks and adding more robust value validation within the Pydantic model.  All functional input parameters are checked for null/empty values and type.  However, more sophisticated value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`message_id` and `chat_jid`) are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurate for the given parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using both `message_id` and `chat_jid` parameters.  It handles the documented exceptions (`MessageNotFoundError`, `MediaUnavailableError`, `DownloadFailedError`, `LocalStorageError`, `ValidationError`).  The docstring accurately reflects the return type and the function's behavior.  However, the implementation relies heavily on simulated data (`simulated_local_path`, `simulated_file_size_bytes`) within `media_info`.  A real-world implementation would need to replace this simulated data with actual media download and file saving logic.  The file writing logic only writes a single null byte to the file if `file_size_from_media_info` is provided; a robust implementation would handle the actual download and writing of the file content.  While the exception handling is present, the `except Exception` block in the file writing section is too broad and should be narrowed down to more specific exceptions for better error handling and debugging."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `download_media` function does not handle phone numbers or email addresses as input.  Its inputs are `message_id` and `chat_jid`, which are presumably WhatsApp-specific identifiers and not in the format of phone numbers or emails. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "whatsapp": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The SimulationEngine folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The tests folder has a good set of test files."
+      }
+    }
+  }
+}

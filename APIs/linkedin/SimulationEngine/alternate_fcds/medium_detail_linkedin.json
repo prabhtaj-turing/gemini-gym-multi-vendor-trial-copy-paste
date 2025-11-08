@@ -1,0 +1,757 @@
+[
+  {
+    "name": "create_my_profile",
+    "description": "Creates a new member profile. The function then establishes this profile as the current authenticated member.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "person_data": {
+          "type": "object",
+          "properties": {
+            "localizedFirstName": {
+              "type": "string",
+              "description": "The member's first name, provided as a string."
+            },
+            "localizedLastName": {
+              "type": "string",
+              "description": "The member's last name as a string."
+            },
+            "vanityName": {
+              "type": "string",
+              "description": "Represents the member's name in a URL-friendly format."
+            },
+            "firstName": {
+              "type": "object",
+              "properties": {
+                "localized": {
+                  "type": "object",
+                  "properties": {
+                    "en_US": {
+                      "type": "string",
+                      "description": "Represents the name string localized specifically for the English (US) locale."
+                    }
+                  },
+                  "description": "A dictionary where locale codes (e.g., `en_US`) are keys, and their corresponding localized names are values.",
+                  "required": [
+                    "en_US"
+                  ]
+                },
+                "preferredLocale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "The country code, specified as a string (e.g., 'US')."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "Specifies the language code for the preferred locale, such as 'en' for English."
+                    }
+                  },
+                  "description": "A dictionary specifying the preferred locale. It contains `country` (e.g., 'US') and `language` (e.g., 'en') keys, both of which are strings representing their respective codes.",
+                  "required": [
+                    "country",
+                    "language"
+                  ]
+                }
+              },
+              "description": "A dictionary representing the member's localized first name. It includes a `localized` key, which is a dictionary mapping locale codes (e.g., 'en_US') to the corresponding name string. Additionally, it has a `preferredLocale` key, a dictionary containing `country` and `language` codes.",
+              "required": [
+                "localized",
+                "preferredLocale"
+              ]
+            },
+            "lastName": {
+              "type": "object",
+              "properties": {
+                "localized": {
+                  "type": "object",
+                  "properties": {
+                    "en_US": {
+                      "type": "string",
+                      "description": "The member's name, localized for the English (US) locale."
+                    }
+                  },
+                  "description": "A dictionary mapping locale keys (e.g., 'en_US') to the corresponding localized name.",
+                  "required": [
+                    "en_US"
+                  ]
+                },
+                "preferredLocale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "Specifies the country code (e.g., 'US')."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "A string specifying the language code, such as 'en'."
+                    }
+                  },
+                  "description": "A dictionary specifying the preferred locale, containing the `country` (e.g., 'US') and `language` (e.g., 'en') codes.",
+                  "required": [
+                    "country",
+                    "language"
+                  ]
+                }
+              },
+              "description": "A dictionary representing the localized last name. It includes a `localized` key for a dictionary mapping locale codes (e.g., `en_US`) to the name, and a `preferredLocale` key specifying the `country` and `language` codes.",
+              "required": [
+                "localized",
+                "preferredLocale"
+              ]
+            }
+          },
+          "description": "A dictionary containing the new member's profile data. It includes string fields for `localizedFirstName`, `localizedLastName`, and `vanityName`. Additionally, it contains nested dictionaries for `firstName` and `lastName`, each specifying a `localized` name (e.g., `en_US`) and `preferredLocale` with country and language codes.",
+          "required": [
+            "firstName",
+            "lastName",
+            "localizedFirstName",
+            "localizedLastName",
+            "vanityName"
+          ]
+        }
+      },
+      "required": [
+        "person_data"
+      ]
+    }
+  },
+  {
+    "name": "create_organization",
+    "description": "Creates a new organization. The `organization_data` parameter is a dictionary that specifies the organization's details, including a `vanityName` (e.g., 'global-tech') and a `primaryOrganizationType` which must be 'COMPANY' or 'SCHOOL'. It also requires a `name` object containing `localized` names (keyed by `language_COUNTRY` like 'en_US') and a `preferredLocale` with `country` and `language` codes.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "organization_data": {
+          "type": "object",
+          "properties": {
+            "vanityName": {
+              "type": "string",
+              "description": "The organization's vanity name (e.g., 'global-tech')."
+            },
+            "name": {
+              "type": "object",
+              "properties": {
+                "localized": {
+                  "type": "object",
+                  "properties": {
+                    "en_US": {
+                      "type": "string",
+                      "description": "Represents the organization's name localized for English (US), provided as a string."
+                    }
+                  },
+                  "description": "A dictionary where keys are locale codes, formatted as `<language>_<COUNTRY>`, and map to the corresponding localized names. For example, `en_US` represents the English (US) localized name.",
+                  "required": [
+                    "en_US"
+                  ]
+                },
+                "preferredLocale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "Represents the country using a country code, for example 'US'."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "Specifies the language code for the preferred locale. For example, 'en' represents the English language."
+                    }
+                  },
+                  "description": "A dictionary that specifies the language/country version LinkedIn considers the \"main\" or \"default\" for the localized content. It contains `country` and `language` keys.",
+                  "required": [
+                    "country",
+                    "language"
+                  ]
+                }
+              },
+              "description": "A dictionary representing the localized organization name. It contains a `localized` key, which is a dictionary mapping locale codes (like `en_US`) to their respective names, and a `preferredLocale` key, a dictionary indicating the main or default language/country version (e.g., `country: 'US', language: 'en'`).",
+              "required": [
+                "localized",
+                "preferredLocale"
+              ]
+            },
+            "primaryOrganizationType": {
+              "type": "string",
+              "description": "Specifies the type of organization, which must be either 'COMPANY' or 'SCHOOL'."
+            }
+          },
+          "description": "A dictionary containing the new organization's data. It must include `vanityName` (string, e.g., 'global-tech'), `primaryOrganizationType` (string, either 'COMPANY' or 'SCHOOL'), and a `name` dictionary. The `name` dictionary requires a `localized` mapping (locale codes like 'en_US' to localized names) and a `preferredLocale` dictionary specifying the main language and country for the content (with 'country' and 'language' keys).",
+          "required": [
+            "name",
+            "primaryOrganizationType",
+            "vanityName"
+          ]
+        }
+      },
+      "required": [
+        "organization_data"
+      ]
+    }
+  },
+  {
+    "name": "create_organization_acl",
+    "description": "Creates a new organization ACL record. This record is defined by a dictionary that includes the role assignee's URN (e.g., 'urn:li:person:1'), the assigned role (from a predefined list), the organization's URN (e.g., 'urn:li:organization:1'), and an initial state (e.g., 'ACTIVE', 'REQUESTED', 'REJECTED', 'REVOKED').",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "acl_data": {
+          "type": "object",
+          "properties": {
+            "roleAssignee": {
+              "type": "string",
+              "description": "The URN of the person to whom the role will be assigned (e.g., `urn:li:person:1`)."
+            },
+            "role": {
+              "type": "string",
+              "description": "Specifies the role to assign to the person. The accepted values are 'ADMINISTRATOR', 'DIRECT_SPONSORED_CONTENT_POSTER', 'RECRUITING_POSTER', 'LEAD_CAPTURE_ADMINISTRATOR', 'LEAD_GEN_FORMS_MANAGER', 'ANALYST', 'CURATOR', or 'CONTENT_ADMINISTRATOR'."
+            },
+            "organization": {
+              "type": "string",
+              "description": "The URN of the organization, for example: 'urn:li:organization:1'."
+            },
+            "state": {
+              "type": "string",
+              "description": "The initial state of the ACL. It must be one of 'ACTIVE', 'REQUESTED', 'REJECTED', or 'REVOKED'."
+            }
+          },
+          "description": "A dictionary containing data for a new ACL record, which must include `roleAssignee` (a person's URN, e.g., 'urn:li:person:1'), `organization` (the organization's URN, e.g., 'urn:li:organization:1'), `role` (one of 'ADMINISTRATOR', 'DIRECT_SPONSORED_CONTENT_POSTER', 'RECRUITING_POSTER', 'LEAD_CAPTURE_ADMINISTRATOR', 'LEAD_GEN_FORMS_MANAGER', 'ANALYST', 'CURATOR', 'CONTENT_ADMINISTRATOR'), and `state` (one of 'ACTIVE', 'REQUESTED', 'REJECTED', 'REVOKED').",
+          "required": [
+            "organization",
+            "role",
+            "roleAssignee",
+            "state"
+          ]
+        }
+      },
+      "required": [
+        "acl_data"
+      ]
+    }
+  },
+  {
+    "name": "create_post",
+    "description": "Creates a new post. It requires a dictionary containing the post's `author` (specified as a URN, e.g., 'urn:li:person:1'), `commentary`, and `visibility`. The `visibility` must be one of 'PUBLIC', 'CONNECTIONS', 'LOGGED_IN', or 'CONTAINER'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "post_data": {
+          "type": "object",
+          "properties": {
+            "author": {
+              "type": "string",
+              "description": "The Uniform Resource Name (URN) of the post author. It must be formatted as a URN that identifies either a person (e.g., 'urn:li:person:1') or an organization (e.g., 'urn:li:organization:1')."
+            },
+            "commentary": {
+              "type": "string",
+              "description": "Specifies the string content of the post."
+            },
+            "visibility": {
+              "type": "string",
+              "description": "The visibility setting of the post, which must be one of 'PUBLIC', 'CONNECTIONS', 'LOGGED_IN', or 'CONTAINER'."
+            }
+          },
+          "description": "A dictionary containing the new post data, which must include keys for the post 'author' (a URN, e.g., 'urn:li:person:1'), 'commentary' (the content), and 'visibility' (one of 'PUBLIC', 'CONNECTIONS', 'LOGGED_IN', 'CONTAINER').",
+          "required": [
+            "author",
+            "commentary",
+            "visibility"
+          ]
+        }
+      },
+      "required": [
+        "post_data"
+      ]
+    }
+  },
+  {
+    "name": "delete_my_profile",
+    "description": "Deletes the authenticated member's profile.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "delete_organization_acl",
+    "description": "Deletes an organization ACL record specified by its unique identifier.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "acl_id": {
+          "type": "string",
+          "description": "The unique string identifier of the ACL record to be deleted."
+        }
+      },
+      "required": [
+        "acl_id"
+      ]
+    }
+  },
+  {
+    "name": "delete_organization_by_id",
+    "description": "Deletes an organization using its unique string identifier.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "organization_id": {
+          "type": "string",
+          "description": "The unique string identifier for the organization to be deleted."
+        }
+      },
+      "required": [
+        "organization_id"
+      ]
+    }
+  },
+  {
+    "name": "delete_organization_by_vanity_name",
+    "description": "Deletes one or more organizations by their vanity name. This operation requires the `query_field` parameter to be 'vanityName' to specify deletion by vanity name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query_field": {
+          "type": "string",
+          "description": "A query parameter that must be set to 'vanityName'."
+        },
+        "vanity_name": {
+          "type": "string",
+          "description": "The string representing the organization's vanity name used to identify which organization(s) to delete."
+        }
+      },
+      "required": [
+        "query_field",
+        "vanity_name"
+      ]
+    }
+  },
+  {
+    "name": "delete_post_by_id",
+    "description": "Deletes a post using its unique identifier. The `post_id` parameter must be a string that uniquely identifies the post to be deleted.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "post_id": {
+          "type": "string",
+          "description": "The unique identifier, as a string, for the post to delete."
+        }
+      },
+      "required": [
+        "post_id"
+      ]
+    }
+  },
+  {
+    "name": "find_posts_by_author",
+    "description": "Searches for and lists posts by a specified author, identified by a URN (e.g., 'urn:li:person:1' or 'urn:li:organization:1'). Results are paginated.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "The unique identifier of the author used to filter posts. This can be a person's URN (e.g., \"urn:li:person:1\") or an organization's URN (e.g., \"urn:li:organization:1\")."
+        },
+        "start": {
+          "type": "integer",
+          "description": "The starting index for pagination. It must be a non-negative integer and defaults to 0."
+        },
+        "count": {
+          "type": "integer",
+          "description": "The maximum number of posts to return. It must be a non-negative integer and defaults to 10."
+        }
+      },
+      "required": [
+        "author"
+      ]
+    }
+  },
+  {
+    "name": "get_my_profile",
+    "description": "Retrieves the authenticated member's profile data. Optionally, provide a `projection` string with comma-separated field names, which can be enclosed in parentheses, to specify which fields to return.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "projection": {
+          "type": "string",
+          "description": "A string that defines which fields to return from the profile data. It must consist of comma-separated field names and may optionally be enclosed in parentheses. This parameter defaults to `None`."
+        }
+      }
+    }
+  },
+  {
+    "name": "get_organization_acls_by_role_assignee",
+    "description": "Retrieves Access Control List (ACL) records, detailing a LinkedIn member's roles and permissions within organizations, by their URN. This function requires a query parameter explicitly set to 'roleAssignee' and supports optional field projection, formatted as comma-separated field names, along with pagination.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query_field": {
+          "type": "string",
+          "description": "A query parameter that specifies the field for data retrieval. This parameter is strictly constrained and must be set to 'roleAssignee'."
+        },
+        "role_assignee": {
+          "type": "string",
+          "description": "The Uniform Resource Name (URN) of the person for whom ACL records are requested. This URN identifies a specific person, for example, `urn:li:person:1`."
+        },
+        "projection": {
+          "type": "string",
+          "description": "A string used to control which fields are returned. The projection must consist of comma-separated field names and can optionally be enclosed in parentheses. Defaults to `None`."
+        },
+        "start": {
+          "type": "integer",
+          "description": "The starting index for pagination, defaulting to `0`."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Specifies the number of items to return. This parameter defaults to 10."
+        }
+      },
+      "required": [
+        "query_field",
+        "role_assignee"
+      ]
+    }
+  },
+  {
+    "name": "get_organizations_by_vanity_name",
+    "description": "Retrieves organizations by their vanity name. Control returned fields using an optional projection string consisting of comma-separated field names (e.g., 'id,name'), and paginate results by specifying a starting index and the number of items to return.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query_field": {
+          "type": "string",
+          "description": "A query parameter that must be set to 'vanityName'."
+        },
+        "vanity_name": {
+          "type": "string",
+          "description": "The string representing the organization's vanity name to search for."
+        },
+        "projection": {
+          "type": "string",
+          "description": "A string used for field projection to control which fields are returned. It must consist of comma-separated field names and may optionally be enclosed in parentheses. This parameter defaults to `None`."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Specifies the starting index for pagination. This integer parameter defaults to 0."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Specifies the number of items to return. The default value is 10."
+        }
+      },
+      "required": [
+        "query_field",
+        "vanity_name"
+      ]
+    }
+  },
+  {
+    "name": "get_post_by_id",
+    "description": "Retrieves a post by its unique identifier. An optional `projection` string, consisting of comma-separated field names (optionally enclosed in parentheses), can be used to control which fields are returned.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "post_id": {
+          "type": "string",
+          "description": "A string representing the unique identifier of the post to retrieve."
+        },
+        "projection": {
+          "type": "string",
+          "description": "A string that controls which fields to return from the post. The string must consist of comma-separated field names and may optionally be enclosed in parentheses. This parameter defaults to `None`."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Specifies the starting index for pagination. It defaults to 0 and must be a non-negative integer."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Specifies the number of items to return. It defaults to 10 and must be a positive integer."
+        }
+      },
+      "required": [
+        "post_id"
+      ]
+    }
+  },
+  {
+    "name": "update_my_profile",
+    "description": "Update the authenticated member's profile. Supply a dictionary containing the new profile data, including `localizedFirstName`, `localizedLastName`, and `vanityName`. The `firstName` and `lastName` fields also accept nested dictionaries, each with a `localized` sub-dictionary (e.g., `en_US`) and a `preferredLocale` sub-dictionary containing country and language codes.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "person_data": {
+          "type": "object",
+          "properties": {
+            "localizedFirstName": {
+              "type": "string",
+              "description": "A string representing the updated first name."
+            },
+            "localizedLastName": {
+              "type": "string",
+              "description": "A string representing the updated last name for the authenticated member's profile."
+            },
+            "vanityName": {
+              "type": "string",
+              "description": "Represents the member's name, formatted to be safe for use in URLs."
+            },
+            "firstName": {
+              "type": "object",
+              "properties": {
+                "localized": {
+                  "type": "object",
+                  "properties": {
+                    "en_US": {
+                      "type": "string",
+                      "description": "A string representing the localized name for the 'en_US' locale."
+                    }
+                  },
+                  "description": "A dictionary where locale keys, such as `en_US`, map to the localized version of the name as a string.",
+                  "required": [
+                    "en_US"
+                  ]
+                },
+                "preferredLocale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "A string representing the country code, such as 'US'."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "The language code, such as `'en'`."
+                    }
+                  },
+                  "description": "A dictionary specifying the preferred locale for the associated name. It contains the string keys `country` (e.g., 'US') and `language` (e.g., 'en').",
+                  "required": [
+                    "country",
+                    "language"
+                  ]
+                }
+              },
+              "description": "A dictionary representing the localized first name. It contains a `localized` key, which is a dictionary mapping locale codes (e.g., 'en_US') to the localized name, and a `preferredLocale` key, which specifies the 'country' and 'language' codes.",
+              "required": [
+                "localized",
+                "preferredLocale"
+              ]
+            },
+            "lastName": {
+              "type": "object",
+              "properties": {
+                "localized": {
+                  "type": "object",
+                  "properties": {
+                    "en_US": {
+                      "type": "string",
+                      "description": "A string representing the localized name for the 'en_US' (English, United States) locale."
+                    }
+                  },
+                  "description": "A dictionary where locale keys map to the localized name. For example, `en_US` maps to the English (US) localized name.",
+                  "required": [
+                    "en_US"
+                  ]
+                },
+                "preferredLocale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "Specifies the country code, such as 'US'."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "The language code (e.g., 'en')."
+                    }
+                  },
+                  "description": "A dictionary that specifies the preferred locale. It includes keys for `country` (e.g., 'US') and `language` (e.g., 'en') codes.",
+                  "required": [
+                    "country",
+                    "language"
+                  ]
+                }
+              },
+              "description": "A dictionary representing the localized last name. It includes a `localized` key that maps locale codes (e.g., `en_US`) to the name string, and a `preferredLocale` key containing `country` (e.g., 'US') and `language` (e.g., 'en') codes.",
+              "required": [
+                "localized",
+                "preferredLocale"
+              ]
+            }
+          },
+          "description": "A dictionary containing the updated member profile data. It includes string keys like `localizedFirstName`, `localizedLastName`, and `vanityName`, alongside `firstName` and `lastName` which are dictionaries containing `localized` names (e.g., 'en_US') and `preferredLocale` details (country and language).",
+          "required": [
+            "firstName",
+            "lastName",
+            "localizedFirstName",
+            "localizedLastName",
+            "vanityName"
+          ]
+        }
+      },
+      "required": [
+        "person_data"
+      ]
+    }
+  },
+  {
+    "name": "update_organization_acl",
+    "description": "Updates an existing organization ACL record identified by `acl_id`. The `acl_data` parameter must be a dictionary containing the `roleAssignee`, `role`, `organization`, and `state` fields, where the `role` and `state` fields are restricted to specific predefined values.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "acl_id": {
+          "type": "string",
+          "description": "The unique identifier of the ACL record to be updated."
+        },
+        "acl_data": {
+          "type": "object",
+          "properties": {
+            "roleAssignee": {
+              "type": "string",
+              "description": "The updated URN for the person assigned the role. This URN must be formatted as a string (e.g., 'urn:li:person:1')."
+            },
+            "role": {
+              "type": "string",
+              "description": "The updated role assigned to the person. It must be one of the following values: 'ADMINISTRATOR', 'DIRECT_SPONSORED_CONTENT_POSTER', 'RECRUITING_POSTER', 'LEAD_CAPTURE_ADMINISTRATOR', 'LEAD_GEN_FORMS_MANAGER', 'ANALYST', 'CURATOR', or 'CONTENT_ADMINISTRATOR'."
+            },
+            "organization": {
+              "type": "string",
+              "description": "The updated URN of the organization. It must be formatted as a URN, for example: `urn:li:organization:1`."
+            },
+            "state": {
+              "type": "string",
+              "description": "Specifies the updated state of the ACL. It must be one of 'ACTIVE', 'REQUESTED', 'REJECTED', or 'REVOKED'."
+            }
+          },
+          "description": "A dictionary containing the updated ACL data. It must include `roleAssignee` (the person's URN, e.g., 'urn:li:person:1'), `organization` (the organization's URN, e.g., 'urn:li:organization:1'), `role` (one of 'ADMINISTRATOR', 'DIRECT_SPONSORED_CONTENT_POSTER', 'RECRUITING_POSTER', 'LEAD_CAPTURE_ADMINISTRATOR', 'LEAD_GEN_FORMS_MANAGER', 'ANALYST', 'CURATOR', 'CONTENT_ADMINISTRATOR'), and `state` (one of 'ACTIVE', 'REQUESTED', 'REJECTED', 'REVOKED').",
+          "required": [
+            "organization",
+            "role",
+            "roleAssignee",
+            "state"
+          ]
+        }
+      },
+      "required": [
+        "acl_data",
+        "acl_id"
+      ]
+    }
+  },
+  {
+    "name": "update_organization_by_id",
+    "description": "Updates an existing organization's data using its unique identifier. The updated data, provided as a dictionary, must include a `vanityName`, a `name` object with localized versions and a preferred locale, and a `primaryOrganizationType` that is either 'COMPANY' or 'SCHOOL'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "organization_id": {
+          "type": "string",
+          "description": "A unique string identifier for the specific organization to be updated."
+        },
+        "organization_data": {
+          "type": "object",
+          "properties": {
+            "vanityName": {
+              "type": "string",
+              "description": "Specifies the organization's updated vanity name. This must be a string, such as 'global-tech'."
+            },
+            "name": {
+              "type": "object",
+              "properties": {
+                "localized": {
+                  "type": "object",
+                  "properties": {
+                    "en_US": {
+                      "type": "string",
+                      "description": "The English (US) localized name for the organization. This string is the value associated with the 'en_US' key within the 'localized' dictionary."
+                    }
+                  },
+                  "description": "A dictionary where locale keys map to the localized organization name. Keys are locale codes in the format `<language>_<COUNTRY>`, such as `'en_US'` for the English (US) localized name.",
+                  "required": [
+                    "en_US"
+                  ]
+                },
+                "preferredLocale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "A string representing the country code (e.g., 'US'). This code specifies the preferred country for the localized content."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "Specifies the language code for the preferred locale. For example, use 'en' for English."
+                    }
+                  },
+                  "description": "A dictionary that indicates the main or default language and country version for the localized content. It must contain `country` (e.g., 'US') and `language` (e.g., 'en') keys.",
+                  "required": [
+                    "country",
+                    "language"
+                  ]
+                }
+              },
+              "description": "The updated localized organization name. This dictionary includes a `localized` key mapping locale codes (e.g., 'en_US') to their string names, and a `preferredLocale` key, which indicates the main or default language/country version using 'country' (e.g., 'US') and 'language' (e.g., 'en') sub-keys.",
+              "required": [
+                "localized",
+                "preferredLocale"
+              ]
+            },
+            "primaryOrganizationType": {
+              "type": "string",
+              "description": "The updated type of organization, which must be either 'COMPANY' or 'SCHOOL'."
+            }
+          },
+          "description": "A dictionary containing the updated organization data. It must include `vanityName` (string, e.g., 'global-tech'), `name` (a dictionary for localized names), and `primaryOrganizationType` (string, either 'COMPANY' or 'SCHOOL'). The `name` dictionary further specifies `localized` (with locale keys like 'en_US' mapping to names) and `preferredLocale` (detailing `country` and `language` codes).",
+          "required": [
+            "name",
+            "primaryOrganizationType",
+            "vanityName"
+          ]
+        }
+      },
+      "required": [
+        "organization_data",
+        "organization_id"
+      ]
+    }
+  },
+  {
+    "name": "update_post",
+    "description": "Updates an existing post identified by its unique `post_id`. The `post_data` parameter is a dictionary containing the updated `author` (a URN, e.g., 'urn:li:person:1'), `commentary` (the post content), and `visibility`, which must be one of 'PUBLIC', 'CONNECTIONS', 'LOGGED_IN', or 'CONTAINER'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "post_id": {
+          "type": "string",
+          "description": "The unique identifier for the post to be updated."
+        },
+        "post_data": {
+          "type": "object",
+          "properties": {
+            "author": {
+              "type": "string",
+              "description": "Specifies the updated URN of the post author. This URN must follow the format for a person (e.g., 'urn:li:person:1') or an organization (e.g., 'urn:li:organization:1')."
+            },
+            "commentary": {
+              "type": "string",
+              "description": "The updated content of the post, provided as a string."
+            },
+            "visibility": {
+              "type": "string",
+              "description": "The updated visibility setting for the post. It must be one of 'PUBLIC', 'CONNECTIONS', 'LOGGED_IN', or 'CONTAINER'."
+            }
+          },
+          "description": "A dictionary containing the updated post data. It must include the following keys: `author` (string, the updated URN of the post author, e.g., 'urn:li:person:1'), `commentary` (string, the updated content of the post), and `visibility` (string, the updated visibility setting, one of 'PUBLIC', 'CONNECTIONS', 'LOGGED_IN', or 'CONTAINER').",
+          "required": [
+            "author",
+            "commentary",
+            "visibility"
+          ]
+        }
+      },
+      "required": [
+        "post_data",
+        "post_id"
+      ]
+    }
+  }
+]

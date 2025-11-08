@@ -1,0 +1,622 @@
+[
+    {
+        "name": "create_organization",
+        "description": "Creates a new organization, registering it only if the provided organization ID does not already exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "organization_id": {
+                    "type": "integer",
+                    "description": "A unique integer identifier for the organization."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the organization, provided as a string."
+                },
+                "industry": {
+                    "type": "string",
+                    "description": "An optional string representing the organization's industry. This parameter defaults to `None`."
+                },
+                "location": {
+                    "type": "string",
+                    "description": "Specifies the location of the organization. This parameter defaults to `None`."
+                },
+                "domain_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings, each representing a domain name associated with the organization. This parameter is optional and defaults to `None`."
+                }
+            },
+            "required": [
+                "name",
+                "organization_id"
+            ]
+        }
+    },
+    {
+        "name": "create_ticket",
+        "description": "Creates a new ticket from a `ticket` object provided in the request body. This object must contain either a `requester_id` or a `requester` object, along with a `comment` object that includes a `body`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticket": {
+                    "type": "object",
+                    "properties": {
+                        "assignee_email": {
+                            "type": "string",
+                            "description": "Specifies the email address of the agent to whom the ticket will be assigned. This is a write-only field."
+                        },
+                        "assignee_id": {
+                            "type": "integer",
+                            "description": "The unique identifier for the agent assigned to the ticket."
+                        },
+                        "attribute_value_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "A write-only array of attribute value IDs to be associated with the ticket."
+                        },
+                        "brand_id": {
+                            "type": "integer",
+                            "description": "The unique identifier for the brand to which the ticket is being assigned."
+                        },
+                        "collaborator_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "A list of user IDs to be included as carbon copies (CCs) on the ticket."
+                        },
+                        "collaborators": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "description": "ID of an existing user."
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of a new or existing user."
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Email of a new or existing user."
+                                    }
+                                }
+                            },
+                            "description": "A list of users to add as CCs when creating a ticket. Each user must be represented as a dictionary object containing their information."
+                        },
+                        "comment": {
+                            "type": "object",
+                            "properties": {
+                                "body": {
+                                    "type": "string",
+                                    "description": "The plain text body of the comment. This is a mandatory field when creating a new ticket."
+                                },
+                                "html_body": {
+                                    "type": "string",
+                                    "description": "The comment's body, formatted in HTML. This parameter is ignored if the `body` parameter is also provided."
+                                },
+                                "public": {
+                                    "type": "boolean",
+                                    "description": "Specifies the visibility of the comment. A value of `true` makes the comment public, while `false` makes it internal. Defaults to `true`."
+                                },
+                                "uploads": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "An array of tokens corresponding to file attachments, which must be obtained from the Uploads API."
+                                },
+                                "author_id": {
+                                    "type": "integer",
+                                    "description": "The unique identifier for the author of the comment, who can be either an agent or an end user."
+                                }
+                            },
+                            "description": "An object that adds a comment to the ticket. This object must contain a `body` key for the comment's text.",
+                            "required": [
+                                "body"
+                            ]
+                        },
+                        "custom_fields": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "description": "The ID of the custom field."
+                                    },
+                                    "value": {
+                                        "type": "object",
+                                        "description": "The value for the custom field."
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "value"
+                                ]
+                            },
+                            "description": "A list of custom fields to associate with the ticket. Each object in the list must contain an `id` for the field and its corresponding `value`."
+                        },
+                        "custom_status_id": {
+                            "type": "integer",
+                            "description": "The ID of the custom status to assign to the ticket."
+                        },
+                        "due_at": {
+                            "type": "string",
+                            "description": "The due date for the ticket, applicable only when the `type` is 'task'. The date must be a string in ISO 8601 format."
+                        },
+                        "email_cc_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "A list of agent or end-user IDs to be CC'ed on the ticket. This parameter is ignored if the \"CCs and followers\" feature is not enabled."
+                        },
+                        "email_ccs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "description": "ID of the user."
+                                    },
+                                    "user_email": {
+                                        "type": "string",
+                                        "description": "Email of the user."
+                                    },
+                                    "action": {
+                                        "type": "string",
+                                        "description": "Action to perform. Possible values: \"put\",\n        \"delete\"."
+                                    }
+                                }
+                            },
+                            "description": "An array of objects representing agent or end-user email CCs to add or remove from the ticket. Each object must be a dictionary that contains a specific set of keys."
+                        },
+                        "external_id": {
+                            "type": "string",
+                            "description": "An identifier for linking a Zendesk Support ticket to a corresponding record in your local system."
+                        },
+                        "follower_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "An array of agent IDs to be set as followers on the ticket. This property is ignored if the 'CCs and followers' feature is disabled."
+                        },
+                        "followers": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "description": "ID of the user."
+                                    },
+                                    "user_email": {
+                                        "type": "string",
+                                        "description": "Email of the user."
+                                    },
+                                    "action": {
+                                        "type": "string",
+                                        "description": "Action to perform. Possible values: \"put\",\n        \"delete\"."
+                                    }
+                                }
+                            },
+                            "description": "An array of objects that represents agent followers to add to or delete from the ticket. Each object is a dictionary that contains keys to identify the agent and the intended action."
+                        },
+                        "group_id": {
+                            "type": "integer",
+                            "description": "The unique identifier (ID) for the group to which the ticket is assigned."
+                        },
+                        "macro_id": {
+                            "type": "integer",
+                            "description": "The ID of a macro to be recorded in the ticket's audit log. This is a write-only property."
+                        },
+                        "macro_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "An array of macro IDs to be recorded in the ticket's audit log."
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "system": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "Contains system-related metadata for the ticket."
+                                },
+                                "custom": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "A user-defined field for attaching any custom metadata not covered by the standard ticket properties."
+                                }
+                            },
+                            "description": "A write-only field containing metadata for auditing purposes. This information is set upon creation and cannot be retrieved or modified afterward."
+                        },
+                        "organization_id": {
+                            "type": "integer",
+                            "description": "The unique identifier for the organization to which the requester belongs."
+                        },
+                        "priority": {
+                            "type": "string",
+                            "description": "Specifies the ticket's priority level, which indicates how urgently it should be addressed. The value must be one of the following strings: `urgent`, `high`, `normal`, or `low`."
+                        },
+                        "problem_id": {
+                            "type": "integer",
+                            "description": "The identifier of the problem to which an incident is linked. This field is only applicable when creating a ticket with a type of 'incident'."
+                        },
+                        "raw_subject": {
+                            "type": "string",
+                            "description": "The dynamic content placeholder for the subject, which defaults to the literal `subject` value if a placeholder is not provided."
+                        },
+                        "recipient": {
+                            "type": "string",
+                            "description": "The email address of the ticket's original recipient."
+                        },
+                        "requester": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the requester for the new ticket."
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "The email address of the new requester associated with the ticket."
+                                },
+                                "locale_id": {
+                                    "type": "integer",
+                                    "description": "The identifier for the new requester's locale, which determines their language and region settings."
+                                }
+                            },
+                            "description": "Specifies the details for a new requester to be created along with the ticket. This property is only used during the initial POST request."
+                        },
+                        "requester_id": {
+                            "type": "integer",
+                            "description": "The unique identifier of the user who requested the ticket. This parameter is mandatory if a new user is not being created using the `requester` object."
+                        },
+                        "safe_update": {
+                            "type": "boolean",
+                            "description": "An optional boolean that protects against ticket update collisions. When enabled, it prevents an update from proceeding if the ticket has been modified by a concurrent process."
+                        },
+                        "sharing_agreement_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "description": "An array of identifiers for the sharing agreements associated with this ticket."
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "The current state of the ticket. This value must be one of the following strings: `new`, `open`, `pending`, `hold`, `solved`, or `closed`."
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "A brief, descriptive title for the ticket."
+                        },
+                        "submitter_id": {
+                            "type": "integer",
+                            "description": "The unique identifier for the user submitting the ticket."
+                        },
+                        "tags": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "An array of tags to be applied to the ticket."
+                        },
+                        "ticket_form_id": {
+                            "type": "integer",
+                            "description": "The ID of the ticket form to apply to the ticket; this feature is available on Enterprise plans only."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "The type of the ticket. It must be one of the following predefined values: `problem`, `incident`, `question`, or `task`."
+                        },
+                        "updated_stamp": {
+                            "type": "string",
+                            "description": "A write-only timestamp indicating the last update time received from the API. This value must be formatted as an ISO 8601 string."
+                        },
+                        "via": {
+                            "type": "object",
+                            "properties": {
+                                "channel": {
+                                    "type": "string",
+                                    "description": "Specifies the channel through which the ticket was created."
+                                },
+                                "source": {
+                                    "type": "object",
+                                    "properties": {
+                                        "rel": {
+                                            "type": "string",
+                                            "description": "Specifies the relationship type of the `source` from which the ticket creation event originated."
+                                        }
+                                    },
+                                    "description": "An object that provides specific details about the ticket's point of origin."
+                                }
+                            },
+                            "description": "The source through which the ticket was created."
+                        },
+                        "via_followup_source_id": {
+                            "type": "integer",
+                            "description": "The ID of a closed ticket, used when creating a follow-up ticket. This parameter applies to POST requests only."
+                        },
+                        "via_id": {
+                            "type": "integer",
+                            "description": "A write-only property that specifies the internal ID of the 'via' object, which represents the channel through which the ticket was created."
+                        },
+                        "voice_comment": {
+                            "type": "object",
+                            "properties": {
+                                "recording_url": {
+                                    "type": "string",
+                                    "description": "The URL of the voice recording associated with the voice comment."
+                                }
+                            },
+                            "description": "Specifies a comment to be added when creating a ticket that originates from a voicemail. This is a write-only property and will not be returned when retrieving the ticket's details."
+                        }
+                    },
+                    "description": "A dictionary representing the ticket to be created. This object must contain keys for `requester_id` and `comment`.",
+                    "required": [
+                        "comment",
+                        "requester_id"
+                    ]
+                }
+            },
+            "required": [
+                "ticket"
+            ]
+        }
+    },
+    {
+        "name": "create_user",
+        "description": "Creates a new user, provided the user's identifier does not already exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the user."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The user's name, provided as a string."
+                },
+                "email": {
+                    "type": "string",
+                    "description": "A string that specifies the email address of the user."
+                },
+                "role": {
+                    "type": "string",
+                    "description": "The assigned role of the user, which defaults to `end-user`."
+                }
+            },
+            "required": [
+                "email",
+                "name",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_organization",
+        "description": "Delete an existing organization using its unique integer identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "organization_id": {
+                    "type": "integer",
+                    "description": "A unique integer identifier for the organization."
+                }
+            },
+            "required": [
+                "organization_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_ticket",
+        "description": "Deletes an existing ticket. The ticket is identified and removed using its unique identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticket_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the ticket."
+                }
+            },
+            "required": [
+                "ticket_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_user",
+        "description": "Deletes an existing user. It requires the user's unique integer identifier to perform the deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the user."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "get_organization_details",
+        "description": "Retrieves details for a specific organization based on its unique identifier. The function returns a dictionary containing organization details (including ID, name, industry, location, and associated domain names) or an error dictionary if the organization is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "organization_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the organization."
+                }
+            },
+            "required": [
+                "organization_id"
+            ]
+        }
+    },
+    {
+        "name": "get_ticket_details",
+        "description": "Retrieves details for a specific ticket using its unique integer identifier. Returns a dictionary containing the ticket details, or an error message `{'error': 'Ticket not found'}` if the ticket is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticket_id": {
+                    "type": "integer",
+                    "description": "A unique integer identifier for the ticket."
+                }
+            },
+            "required": [
+                "ticket_id"
+            ]
+        }
+    },
+    {
+        "name": "get_user_details",
+        "description": "Retrieves the details of a specific user based on their unique identifier. The function returns a dictionary of user details upon success, or `{'error': 'User not found'}` if the user ID does not exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the user."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "list_organizations",
+        "description": "Lists all organizations. It returns a list of dictionaries, where each dictionary represents an organization and includes keys such as 'id', 'name', 'industry', 'location', and 'domain_names'.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "list_tickets",
+        "description": "Lists all tickets. Returns a list of dictionaries, where each dictionary represents a ticket and includes keys for 'id', 'title', 'description', 'status', 'user_id', and 'organization_id'.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "list_users",
+        "description": "Lists all users. Returns a list where each element is a dictionary containing user details such as their ID, name, email, and organization ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "update_organization",
+        "description": "Updates an existing organization by its unique identifier. Optionally, provide a new name or a list of associated domain names to update its details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "organization_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the organization."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The new name of the organization. This parameter is optional and defaults to `None`."
+                },
+                "domain_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Specifies a list of domain names (strings) associated with the organization. This parameter is optional and defaults to `None`."
+                }
+            },
+            "required": [
+                "organization_id"
+            ]
+        }
+    },
+    {
+        "name": "update_ticket",
+        "description": "Updates an existing ticket by its unique identifier, allowing modification of its subject, comment body, priority, type, and status.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticket_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the ticket."
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "The new subject for the ticket. This parameter is an optional string and defaults to `None`."
+                },
+                "comment_body": {
+                    "type": "string",
+                    "description": "The new body of the comment. It is an optional string that defaults to `None`."
+                },
+                "priority": {
+                    "type": "string",
+                    "description": "The new priority to assign to the ticket. This optional string parameter defaults to `None`, meaning the ticket's priority will not be updated if not provided."
+                },
+                "ticket_type": {
+                    "type": "string",
+                    "description": "The new type of the ticket. This parameter defaults to `None`."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Specifies the new status to apply to the ticket. This parameter is optional and defaults to `None`."
+                }
+            },
+            "required": [
+                "ticket_id"
+            ]
+        }
+    },
+    {
+        "name": "update_user",
+        "description": "Updates an existing user's details, such as name, email, or role, using their unique identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "description": "The unique integer identifier for the user."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The new name to assign to the user. This parameter is optional; if not provided or `None`, the user's current name will remain unchanged."
+                },
+                "email": {
+                    "type": "string",
+                    "description": "The new email address for the user, defaulting to `None`."
+                },
+                "role": {
+                    "type": "string",
+                    "description": "Specifies the new role to assign to the user. This parameter defaults to `None`."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    }
+]

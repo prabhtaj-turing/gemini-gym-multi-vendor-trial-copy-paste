@@ -1,0 +1,1919 @@
+[
+    {
+        "name": "copy_file",
+        "description": "Creates a copy of a file, provided that sufficient quota is available.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The ID of the file to be copied, which must be provided as a non-empty string."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the copied file. If a name is not provided, it defaults to the format \"Copy of {original_file_name}\"."
+                        },
+                        "parents": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of parent folder IDs where the file copy will be placed. If this property is not provided, the copy inherits the parent folders from the original file."
+                        },
+                        "permissions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "Permission ID."
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "description": "The role granted by this permission. Allowed values:\n        - 'viewer': Can view the file\n        - 'commenter': Can view and comment on the file\n        - 'editor': Can view, comment, and edit the file\n        - 'owner': Has full control over the file"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "description": "The type of the grantee. Allowed values:\n        - 'user': Permission granted to a specific user\n        - 'group': Permission granted to a group\n        - 'domain': Permission granted to a domain\n        - 'anyone': Permission granted to anyone with the link"
+                                    },
+                                    "emailAddress": {
+                                        "type": "string",
+                                        "description": "The email address of the user or group."
+                                    },
+                                    "domain": {
+                                        "type": "string",
+                                        "description": "The domain name of the entity this permission refers to."
+                                    },
+                                    "allowFileDiscovery": {
+                                        "type": "boolean",
+                                        "description": "Whether the permission allows the file to be discovered through search."
+                                    },
+                                    "expirationTime": {
+                                        "type": "string",
+                                        "description": "The time at which this permission will expire, in RFC 3339 format."
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "role",
+                                    "type"
+                                ]
+                            },
+                            "description": "A list of permission objects, where each object contains a set of fields that define a single permission."
+                        }
+                    },
+                    "description": "A dictionary that specifies properties for the file, structured with a predefined set of keys."
+                },
+                "ignoreDefaultVisibility": {
+                    "type": "boolean",
+                    "description": "A boolean that determines whether to ignore the default visibility settings configured by domain administrators. Defaults to `False`, which applies the administrator's settings."
+                },
+                "keepRevisionForever": {
+                    "type": "boolean",
+                    "description": "Specifies whether the new revision is kept forever and protected from automatic deletion. Defaults to `False`."
+                },
+                "ocrLanguage": {
+                    "type": "string",
+                    "description": "Specifies the language to use for Optical Character Recognition (OCR). If not provided, this parameter defaults to an empty string."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether the operation should support all drives. The default value is `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether to support team drives. This value defaults to `False`."
+                },
+                "includePermissionsForView": {
+                    "type": "string",
+                    "description": "Specifies an additional view whose permissions should be included. Defaults to an empty string, indicating no additional permissions are applied."
+                },
+                "includeLabels": {
+                    "type": "string",
+                    "description": "A comma-separated string of labels to include with the file, which defaults to an empty string if not specified."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "create_comment_reply",
+        "description": "Creates a reply to a specific comment within a file. It requires the file's ID, the comment's ID, and a `body` dictionary containing the reply details. The `body` must include a 'content' string for the reply text and can optionally include an 'author' dictionary with display name, email, and photo link.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The ID of the file, provided as a string."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "The string ID of the comment."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "content": {
+                            "type": "string",
+                            "description": "A required string representing the content of the reply."
+                        },
+                        "displayName": {
+                            "type": "string",
+                            "description": "Specifies the author's display name as a string."
+                        },
+                        "emailAddress": {
+                            "type": "string",
+                            "description": "The author's email address, provided as a string within the `author` dictionary of the reply body."
+                        },
+                        "photoLink": {
+                            "type": "string",
+                            "description": "A string representing the URL to the author's profile photo."
+                        }
+                    },
+                    "description": "A dictionary containing the reply details. It must include a `content` key (string) for the reply's text and can optionally include an `author` key. If present, the `author` key must be a dictionary with `displayName`, `emailAddress`, and `photoLink` (all strings) describing the author.",
+                    "required": [
+                        "content",
+                        "displayName",
+                        "emailAddress",
+                        "photoLink"
+                    ]
+                }
+            },
+            "required": [
+                "body",
+                "commentId",
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "create_file_comment",
+        "description": "Adds a new comment to a specified Google Drive file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The unique identifier of the file that will receive the comment."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "content": {
+                            "type": "object",
+                            "description": "The content of the comment, provided in plain text format."
+                        },
+                        "author": {
+                            "type": "object",
+                            "properties": {
+                                "displayName": {
+                                    "type": "string",
+                                    "description": "The display name of the author."
+                                },
+                                "emailAddress": {
+                                    "type": "string",
+                                    "description": "A valid email address for the author."
+                                }
+                            },
+                            "description": "An object containing information about the author.",
+                            "required": [
+                                "displayName",
+                                "emailAddress"
+                            ]
+                        },
+                        "quotedFileContent": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "description": "The text of the file content that is being quoted. This field is required when the `quotedFileContent` object is provided."
+                                },
+                                "mimeType": {
+                                    "type": "string",
+                                    "description": "The MIME type of the quoted content, which is required if the `quotedFileContent` parameter is provided."
+                                }
+                            },
+                            "description": "The content to be quoted in the comment, which is structured using keys.",
+                            "required": [
+                                "mimeType",
+                                "value"
+                            ]
+                        },
+                        "anchor": {
+                            "type": "string",
+                            "description": "Defines the specific location within the file where the comment should be attached."
+                        },
+                        "resolved": {
+                            "type": "boolean",
+                            "description": "Specifies whether the comment is resolved, defaulting to `False` if not provided."
+                        }
+                    },
+                    "description": "A dictionary of properties for the comment, constrained to a specific set of supported keys. If `None` is provided, an empty dictionary is used.",
+                    "required": [
+                        "content"
+                    ]
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "create_file_or_folder",
+        "description": "Creates a new file or folder with permissions, provided the storage quota is not exceeded.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the file or folder to be created."
+                        },
+                        "mimeType": {
+                            "type": "string",
+                            "description": "The MIME type that specifies the type of file or folder to create. This must be one of the following supported values: 'application/vnd.google-apps.document', 'application/vnd.google-apps.spreadsheet', 'application/vnd.google-apps.presentation', 'application/vnd.google-apps.drawing', 'application/vnd.google-apps.folder', or 'application/vnd.google-apps.script'."
+                        },
+                        "parents": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of IDs for the parent folders that will contain the new file or folder."
+                        },
+                        "size": {
+                            "type": "string",
+                            "description": "The size of the file in bytes, provided as a string that must be convertible to an integer."
+                        },
+                        "permissions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "Permission ID"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "description": "Permission role (e.g., 'owner', 'reader', 'writer')"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "description": "Permission type (e.g., 'user', 'group', 'domain', 'anyone')"
+                                    },
+                                    "emailAddress": {
+                                        "type": "string",
+                                        "description": "Email address for user/group permissions"
+                                    }
+                                },
+                                "required": [
+                                    "emailAddress",
+                                    "id",
+                                    "role",
+                                    "type"
+                                ]
+                            },
+                            "description": "A list of permission objects that define the access controls for the file or folder, where each object is structured with a specific set of keys."
+                        }
+                    },
+                    "description": "A dictionary of properties for the file, where each key represents a specific file attribute.",
+                    "required": [
+                        "mimeType",
+                        "name",
+                        "parents",
+                        "permissions",
+                        "size"
+                    ]
+                },
+                "media_body": {
+                    "type": "object",
+                    "properties": {
+                        "size": {
+                            "type": "integer",
+                            "description": "The size of the file in bytes."
+                        },
+                        "md5Checksum": {
+                            "type": "string",
+                            "description": "The MD5 checksum that is calculated from the file's content."
+                        },
+                        "sha1Checksum": {
+                            "type": "string",
+                            "description": "The SHA1 checksum of the file's content, used to verify data integrity upon upload."
+                        },
+                        "sha256Checksum": {
+                            "type": "string",
+                            "description": "The SHA256 checksum calculated from the file's content."
+                        },
+                        "mimeType": {
+                            "type": "string",
+                            "description": "The MIME type for the file's content."
+                        },
+                        "imageMediaMetadata": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "Metadata associated with an image file."
+                        },
+                        "videoMediaMetadata": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "Additional metadata for a video."
+                        },
+                        "filePath": {
+                            "type": "string",
+                            "description": "The path to the file on the local file system that will be uploaded."
+                        }
+                    },
+                    "description": "A dictionary that specifies properties for the media content, structured with a specific set of keys.",
+                    "required": [
+                        "filePath",
+                        "imageMediaMetadata",
+                        "md5Checksum",
+                        "mimeType",
+                        "sha1Checksum",
+                        "sha256Checksum",
+                        "size",
+                        "videoMediaMetadata"
+                    ]
+                },
+                "enforceSingleParent": {
+                    "type": "boolean",
+                    "description": "Specifies whether the new file or folder is restricted to a single parent location. Defaults to `False`, which allows an item to have multiple parents."
+                },
+                "ignoreDefaultVisibility": {
+                    "type": "boolean",
+                    "description": "A boolean that determines whether to ignore the default visibility settings. Set to `True` to disregard the default visibility; otherwise, the default is applied. Defaults to `False`."
+                },
+                "keepRevisionForever": {
+                    "type": "boolean",
+                    "description": "Specifies whether to keep this revision of the file forever. The default value is `False`."
+                },
+                "ocrLanguage": {
+                    "type": "string",
+                    "description": "Specifies the language for Optical Character Recognition (OCR), which defaults to an empty string if not provided."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether to support all drives for the current operation. This value defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether to support Team Drives. This defaults to `False`."
+                },
+                "useContentAsIndexableText": {
+                    "type": "boolean",
+                    "description": "Specifies whether the file's content should be treated as indexable text, making it available for search. This value defaults to `False`."
+                },
+                "includePermissionsForView": {
+                    "type": "string",
+                    "description": "Specifies an additional view from which to include permissions. This defaults to an empty string, meaning no additional permissions are included."
+                },
+                "includeLabels": {
+                    "type": "string",
+                    "description": "A comma-separated list of labels to include, which defaults to an empty string if not provided."
+                }
+            }
+        }
+    },
+    {
+        "name": "create_file_revision",
+        "description": "Creates a new revision for a file using the provided content. It assigns a unique ID, structures the revision content in the expected JSON format, and adds it to the file's list of revisions.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The string identifier for the user who is creating the revision. This ID must correspond to an existing user in the system."
+                },
+                "file_id": {
+                    "type": "string",
+                    "description": "The string ID of the file to which the new revision is being added."
+                },
+                "content": {
+                    "type": "object",
+                    "description": "The content for the new revision. This parameter expects the content to be provided in bytes format."
+                }
+            },
+            "required": [
+                "content",
+                "file_id",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "create_permission",
+        "description": "Creates a permission for a specified file or shared drive. This permission defines the grantee's `role` (e.g., 'viewer', 'editor') and `type` (e.g., 'user', 'group'), and can specify an `emailAddress` or `expirationTime`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The ID of the file or shared drive. This string parameter must not be empty."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "role": {
+                            "type": "string",
+                            "description": "Specifies the access level granted by this permission, defaulting to 'reader' (an alias for 'viewer'). Possible roles include 'viewer' (can view), 'commenter' (can view and comment), 'editor' (can view, comment, and edit), and 'owner' (has full control over the file)."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Specifies the type of entity to which permission is granted, defaulting to 'user'. Possible values include 'user' (a specific user), 'group' (a group), 'domain' (a domain), or 'anyone' (anyone with the link)."
+                        },
+                        "emailAddress": {
+                            "type": "string",
+                            "description": "The email address of the user or group to whom the permission is granted. This address will be normalized to lowercase."
+                        },
+                        "domain": {
+                            "type": "string",
+                            "description": "The domain name of the entity to which this permission refers. For example, use 'example.com'."
+                        },
+                        "allowFileDiscovery": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating whether the permission allows the file to be discovered through search. This parameter defaults to `False`."
+                        },
+                        "expirationTime": {
+                            "type": "string",
+                            "description": "The time at which this permission will expire. It must be provided in RFC 3339 format, for example: `'2025-06-30T12:00:00Z'` (UTC) or `'2025-06-30T08:00:00-04:00'`."
+                        }
+                    },
+                    "description": "A dictionary specifying the properties for the new permission. It can contain keys such as `role` (default 'reader', with values like 'editor' or 'owner') and `type` (default 'user', with values like 'group' or 'anyone'). Other properties include `emailAddress`, `domain` (e.g., 'example.com'), `allowFileDiscovery` (default `False`), and `expirationTime` (in RFC 3339 format, e.g., '2025-06-30T12:00:00Z').",
+                    "required": [
+                        "allowFileDiscovery",
+                        "domain",
+                        "emailAddress",
+                        "expirationTime",
+                        "role",
+                        "type"
+                    ]
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "create_shared_drive",
+        "description": "Creates a new shared drive. If a `requestId` is provided, it is used as the drive's unique identifier and ensures the operation is idempotent. If a `requestId` is not provided, a unique ID is automatically generated.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string",
+                    "description": "A unique identifier, such as a UUID, to specify the drive's ID. If a drive with the provided ID already exists, that drive is returned. If this parameter is `None` or empty, a new drive is created with an internally generated ID."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "A human-readable name for the shared drive."
+                        },
+                        "restrictions": {
+                            "type": "object",
+                            "properties": {
+                                "adminManagedRestrictions": {
+                                    "type": "boolean",
+                                    "description": "Determines if administrative privileges are required to modify the shared drive's restrictions."
+                                },
+                                "copyRequiresWriterPermission": {
+                                    "type": "boolean",
+                                    "description": "Specifies whether to disable the ability for readers and commenters to copy, print, or download files within the shared drive."
+                                },
+                                "domainUsersOnly": {
+                                    "type": "boolean",
+                                    "description": "Specifies whether access to the shared drive and its items is restricted to only users within the domain to which the shared drive belongs."
+                                },
+                                "driveMembersOnly": {
+                                    "type": "boolean",
+                                    "description": "A boolean that, if `true`, restricts access to items inside the shared drive to members only."
+                                }
+                            },
+                            "description": "A dictionary specifying the restrictions to apply to the drive, where each key corresponds to a specific restriction.",
+                            "required": [
+                                "adminManagedRestrictions",
+                                "copyRequiresWriterPermission",
+                                "domainUsersOnly",
+                                "driveMembersOnly"
+                            ]
+                        },
+                        "hidden": {
+                            "type": "boolean",
+                            "description": "Specifies whether the shared drive is hidden from the default view."
+                        },
+                        "themeId": {
+                            "type": "string",
+                            "description": "The identifier for the theme to apply to the shared drive."
+                        }
+                    },
+                    "description": "A dictionary specifying the properties for the new shared drive. This dictionary only accepts a predefined set of valid keys."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_comment_reply",
+        "description": "Deletes a specific reply, identified by its `replyId`, within a given `fileId` and `commentId`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string identifier for the file."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "The string ID of the comment."
+                },
+                "replyId": {
+                    "type": "string",
+                    "description": "The string ID of the reply to be deleted."
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId",
+                "replyId"
+            ]
+        }
+    },
+    {
+        "name": "delete_file_comment",
+        "description": "Permanently deletes a comment from a file in Google Drive. The comment is identified by its `commentId` and the `fileId` of the file it is associated with. An error is raised if the comment does not exist or the provided IDs are incorrect.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string ID of the file to which the comment belongs. This parameter must be a non-empty string."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "The ID of the comment to delete. This must be a non-empty string."
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "delete_file_permanently",
+        "description": "Permanently deletes a file owned by the user without moving it to trash.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string ID of the file to be permanently deleted."
+                },
+                "enforceSingleParent": {
+                    "type": "boolean",
+                    "description": "A boolean value indicating whether to enforce a single parent for the file. Defaults to `False`."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether the operation should apply to all drive types, including shared drives. This parameter defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether to support team drives. This parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "delete_permission",
+        "description": "Deletes a specific permission associated with a file or shared drive, identified by their respective IDs. Optional flags allow specifying support for all drives, team drives, or using domain admin access to manage the permission.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string ID of the file or shared drive."
+                },
+                "permissionId": {
+                    "type": "string",
+                    "description": "The ID of the permission to delete. It must be a non-empty string."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "A boolean flag indicating whether to support all drives. This parameter defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "A boolean flag indicating whether to support team drives. This parameter defaults to `False`."
+                },
+                "useDomainAdminAccess": {
+                    "type": "boolean",
+                    "description": "Specifies whether to use domain admin access. This parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "fileId",
+                "permissionId"
+            ]
+        }
+    },
+    {
+        "name": "delete_shared_drive",
+        "description": "Permanently deletes a shared drive from the user's account, identified by its unique `driveId`. The user must be an organizer of the drive for this operation to succeed, and all drive contents are irretrievably lost upon deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "A string representing the unique identifier of the shared drive to be deleted. This identifier must be a non-empty string."
+                }
+            },
+            "required": [
+                "driveId"
+            ]
+        }
+    },
+    {
+        "name": "empty_files_from_trash",
+        "description": "Permanently deletes all trashed files owned by the user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "The unique identifier for the shared drive from which to empty the trash."
+                },
+                "enforceSingleParent": {
+                    "type": "boolean",
+                    "description": "Indicates whether to enforce single parent."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Determines whether to support all drives."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether the operation should support team drives."
+                }
+            }
+        }
+    },
+    {
+        "name": "export_file_content",
+        "description": "Exports the content of a file to a different format. It first checks for cached content and returns it if available; otherwise, it decodes the current content, validates the target MIME type, exports the content to that format, and then caches the newly exported content.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user exporting the file content. This parameter must be a string and correspond to an existing user in the system."
+                },
+                "file_id": {
+                    "type": "string",
+                    "description": "The string ID of the file from which to export content."
+                },
+                "target_mime": {
+                    "type": "string",
+                    "description": "A string specifying the target MIME type for export, which defines the desired format of the content."
+                }
+            },
+            "required": [
+                "file_id",
+                "target_mime",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "export_google_doc",
+        "description": "Exports a Google Doc to the requested MIME type. It returns a dictionary containing the exported file's binary content, its ID, MIME type, and a resource type identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "Specifies the ID of the file to export, which must be a non-empty string."
+                },
+                "mimeType": {
+                    "type": "string",
+                    "description": "The MIME type for the exported file. It must be a non-empty string."
+                }
+            },
+            "required": [
+                "fileId",
+                "mimeType"
+            ]
+        }
+    },
+    {
+        "name": "generate_file_ids",
+        "description": "Generates a set of file IDs. The function returns a dictionary that contains the resource type identifier in the 'kind' field and a list of the generated file IDs in the 'ids' field.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "description": "Specifies the number of IDs to generate, which must be an integer."
+                },
+                "space": {
+                    "type": "string",
+                    "description": "A string representing the space in which the IDs can be used. It defaults to `'file'`."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_app_details",
+        "description": "Retrieves details for a specific app using its unique identifier, `appId`, which must be a non-empty string. It returns a dictionary containing comprehensive app details such as its name, supported file types, and installation status, or `None` if the app is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "appId": {
+                    "type": "string",
+                    "description": "The ID of the app to retrieve. This string parameter cannot be empty or contain only whitespace."
+                }
+            },
+            "required": [
+                "appId"
+            ]
+        }
+    },
+    {
+        "name": "get_changes_start_page_token",
+        "description": "Retrieves a non-expiring page token for listing future changes to files in a user's Drive or a shared drive. This token should be stored for subsequent change tracking operations.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "The ID of the shared drive for which the starting page token for listing future changes will be returned. This parameter must be a valid shared drive ID if provided. If left as an empty string, it defaults to the user's My Drive."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether the requesting application supports both My Drives and shared drives. Setting this parameter to `True` enables access to shared drive content. This parameter defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "This parameter is deprecated; use `supportsAllDrives` instead. It will be removed in a future version and defaults to `False`."
+                },
+                "teamDriveId": {
+                    "type": "string",
+                    "description": "This optional string parameter is DEPRECATED and will be removed in a future version; use `driveId` instead. It defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_comment_reply",
+        "description": "Retrieves a specific reply to a comment on a Google Drive file by its ID. Deleted replies are excluded by default unless explicitly requested.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The ID of the file associated with the comment and reply. This parameter must be a non-empty string."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "The ID of the comment. This parameter must be a non-empty string."
+                },
+                "replyId": {
+                    "type": "string",
+                    "description": "The ID of the reply to retrieve. This parameter must be a non-empty string."
+                },
+                "includeDeleted": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include deleted replies in the response. This parameter defaults to `False`. When set to `False`, deleted replies will return `None`."
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId",
+                "replyId"
+            ]
+        }
+    },
+    {
+        "name": "get_drive_account_info",
+        "description": "Retrieves account information for the authenticated user's Google Drive. The response can be filtered using the `fields` parameter, which accepts a comma-separated list of desired field names. Field names are case-sensitive, support `'*'` for all fields, and can use dot notation for nested fields (e.g., `user.displayName,storageQuota.limit`).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "string",
+                    "description": "A comma-separated list of fields to include in the response; use '*' to include all fields (default). Specify partial responses with field names (e.g., 'user,storageQuota') or use dot notation for nested fields (e.g., 'user.displayName,storageQuota.limit'). Field names are case-sensitive, and whitespace around commas is ignored."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_file_comment",
+        "description": "Retrieves a comment by its ID, associated with a specific file ID. It can optionally include deleted comments and returns the comment as a dictionary.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string identifier for the file to which the comment belongs."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "Specifies the ID of the comment to retrieve. This parameter must be a string."
+                },
+                "includeDeleted": {
+                    "type": "boolean",
+                    "description": "Determines whether to include comments that have been marked as deleted. Set to `True` to include them, `False` otherwise."
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "get_file_content",
+        "description": "Retrieves the content of a file. If a revision ID is provided, it returns the content for that specific revision; otherwise, it returns the current content of the file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "Specifies the ID of the user retrieving the file content. This parameter expects a string value."
+                },
+                "file_id": {
+                    "type": "string",
+                    "description": "The string identifier of the file from which to retrieve content."
+                },
+                "revision_id": {
+                    "type": "string",
+                    "description": "An optional string that specifies the revision ID of the file content to retrieve. If provided, the function returns the content of that specific revision; otherwise, the current file content is returned."
+                }
+            },
+            "required": [
+                "file_id",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "get_file_metadata_or_content",
+        "description": "Retrieves a file's metadata as a comprehensive dictionary. This dictionary includes details such as its name, size, MIME type, timestamps, and optionally, its full content and revision history if available.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string ID of the file to retrieve. This parameter must be a non-empty string and cannot consist solely of whitespace."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "get_permission",
+        "description": "Retrieves a specific permission for the specified file using its ID, supporting various access patterns such as shared drives and domain admin access.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The ID of the file or shared drive. This parameter must be a non-empty string."
+                },
+                "permissionId": {
+                    "type": "string",
+                    "description": "The identifier for the specific permission to be retrieved. This parameter must be a non-empty string."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether the requesting application supports both My Drives and shared drives. This parameter defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether to support team drives. This parameter is deprecated; use `supportsAllDrives` instead. It defaults to `False`."
+                },
+                "useDomainAdminAccess": {
+                    "type": "boolean",
+                    "description": "Specifies whether to issue the request as a domain administrator. If set to `true`, this parameter grants access if the file ID refers to a shared drive and the requester is an administrator of that shared drive's domain. It defaults to `False`."
+                }
+            },
+            "required": [
+                "fileId",
+                "permissionId"
+            ]
+        }
+    },
+    {
+        "name": "get_shared_drive_metadata",
+        "description": "Retrieves a shared drive's metadata using its unique ID. It returns a dictionary that includes the drive's kind, ID, name, specific access restrictions (e.g., copy permissions, domain/member-only access), hidden status, theme ID, and creation time; returns `None` if the drive is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "The ID of the shared drive. It must be a non-empty string."
+                }
+            },
+            "required": [
+                "driveId"
+            ]
+        }
+    },
+    {
+        "name": "hide_shared_drive",
+        "description": "Hides a shared drive from the default view. Provide the drive's non-empty string ID, and the function returns the hidden drive resource object upon success or `None` if the drive is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "Specifies the ID of the shared drive to hide; it must be a non-empty string."
+                }
+            },
+            "required": [
+                "driveId"
+            ]
+        }
+    },
+    {
+        "name": "list_changes",
+        "description": "Lists changes for a user or shared drive, retrieving all file additions, modifications, deletions, and permission changes that have occurred since the specified page token.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "pageToken": {
+                    "type": "string",
+                    "description": "A string token used to continue a previous list request for the next page of results. This token must be obtained from a prior `changes.list` request or from `changes.getStartPageToken()`, and it cannot be empty."
+                },
+                "driveId": {
+                    "type": "string",
+                    "description": "The ID of the shared drive for which changes are returned. When specified, only changes to files within this shared drive will be returned. It defaults to an empty string, which signifies the user's My Drive."
+                },
+                "includeCorpusRemovals": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include the file resource in changes if the file is still accessible by the user at the time of the request. Defaults to `False`."
+                },
+                "includeItemsFromAllDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether to include items from both My Drive and shared drives in the results. This parameter defaults to `False`."
+                },
+                "includeRemoved": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to include changes that signify items have been removed from the list. This parameter defaults to `True`."
+                },
+                "includeTeamDriveItems": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include changes for team drive items. This parameter is deprecated; use `includeItemsFromAllDrives` instead. It is a boolean that defaults to `False`."
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of changes to return per page. This value must be an integer between 1 and 1000, inclusive, and defaults to 100."
+                },
+                "restrictToMyDrive": {
+                    "type": "boolean",
+                    "description": "Determines whether to restrict the results to changes inside the My Drive hierarchy. This parameter cannot be used simultaneously with `teamDriveId` or `driveId`. It defaults to `False`."
+                },
+                "spaces": {
+                    "type": "string",
+                    "description": "Specifies a comma-separated list of spaces within the user corpus to query. Supported values include 'drive', 'appDataFolder', and 'photos'; it defaults to 'drive'."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether the requesting application supports both My Drives and shared drives. This parameter defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "This parameter is **DEPRECATED**; use `supportsAllDrives` instead. It specifies whether the requesting application supports Team Drives, defaulting to `False`."
+                },
+                "teamDriveId": {
+                    "type": "string",
+                    "description": "**DEPRECATED**: Specifies the ID of the Team Drive for which changes will be returned. Use the `driveId` parameter instead. This parameter defaults to an empty string."
+                },
+                "includePermissionsForView": {
+                    "type": "string",
+                    "description": "Specifies which additional view's permissions to include in the response. Only 'published' is supported as a value. This parameter defaults to an empty string."
+                },
+                "includeLabels": {
+                    "type": "string",
+                    "description": "A comma-separated list of label IDs to include in the `labelInfo` part of the response. This parameter defaults to an empty string."
+                }
+            },
+            "required": [
+                "pageToken"
+            ]
+        }
+    },
+    {
+        "name": "list_comment_replies",
+        "description": "Lists replies for a specified comment within a given file. It supports filtering to include deleted replies and offers pagination controls for retrieving results.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "Provides the string ID of the file, which must not be empty."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "The ID of the comment. It must not be empty."
+                },
+                "includeDeleted": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include deleted replies in the results. Defaults to `False`, excluding them by default."
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of replies to return per page. This value must be positive and defaults to 20."
+                },
+                "pageToken": {
+                    "type": "string",
+                    "description": "A string token representing an integer, used to retrieve the next page of results. When not provided, it defaults to an empty string, which starts the results from the beginning."
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "list_comments",
+        "description": "Lists comments for a specified file, requiring a non-empty `fileId`. Results can be paginated using `pageSize` (between 1 and 100) and `pageToken` (an integer string). The function also allows filtering by `startModifiedTime` (an RFC 3339 timestamp) and can optionally include deleted comments.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The ID of the file for which comments are to be listed. This parameter cannot be an empty string."
+                },
+                "includeDeleted": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include deleted comments in the response. If `False`, deleted comments are excluded, and this parameter defaults to `False`."
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of comments to return per page. This value must be an integer between 1 and 100, inclusive. It defaults to 20."
+                },
+                "pageToken": {
+                    "type": "string",
+                    "description": "A token used to continue a previous list request, providing the starting point for pagination. If provided, this parameter must be an integer string. It defaults to an empty string."
+                },
+                "startModifiedTime": {
+                    "type": "string",
+                    "description": "Specifies a start time to filter comments, returning only those modified on or after this timestamp. It must be an RFC 3339 timestamp (e.g., '2023-01-01T00:00:00Z') and defaults to an empty string, which applies no time filter."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "list_file_revisions",
+        "description": "Retrieves all revisions for a file, returned as a list of dictionaries. Each dictionary provides revision details including its ID, MIME type, modified time, `keepForever` status, and original filename.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The string ID of the user retrieving the revisions. This parameter must be a string."
+                },
+                "file_id": {
+                    "type": "string",
+                    "description": "The string ID of the file from which to retrieve revisions."
+                }
+            },
+            "required": [
+                "file_id",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "list_installed_apps",
+        "description": "Lists a user's installed apps, with optional filtering by comma-separated file extensions or MIME types. The `languageCode` parameter is accepted for API compatibility but currently does not affect the function's output.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "appFilterExtensions": {
+                    "type": "string",
+                    "description": "A comma-separated list of file extensions used to filter returned apps. Only apps supporting these extensions will be included (e.g., \"pdf,txt,docx\"); defaults to `''` for no filtering."
+                },
+                "appFilterMimeTypes": {
+                    "type": "string",
+                    "description": "A comma-separated list of MIME types used to filter the returned apps. For example, use \"text/plain,application/pdf\" to retrieve only apps supporting those types; providing an empty string (the default) applies no filtering."
+                },
+                "languageCode": {
+                    "type": "string",
+                    "description": "Specifies the language code for localized strings. This parameter is currently unused but accepted for API compatibility and defaults to an empty string ('')."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_permissions",
+        "description": "Lists permissions for a specified file or shared drive. Optionally, include permissions from all drives, team drives, or via domain admin access by setting the respective boolean flags.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "A string representing the ID of the file or shared drive."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that, when set to `True`, extends the returned permissions to include those from all drives. It defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that determines whether to support team drives. When set to `True`, it includes team drive-specific permissions; otherwise, it defaults to `False`."
+                },
+                "useDomainAdminAccess": {
+                    "type": "boolean",
+                    "description": "Indicates whether to use domain administrator access. If `True`, the permissions included will span the entire domain. This parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "list_user_files",
+        "description": "Lists the user's files, providing support for Shared Drives, custom ordering of results, and pagination.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "corpora": {
+                    "type": "string",
+                    "description": "Specifies the corpus (source) of files to search. This parameter accepts a comma-separated list of strings, with valid values including 'user', 'drive', 'domain', and 'allDrives'. It defaults to 'user', which restricts results to files owned by or shared with the user."
+                },
+                "driveId": {
+                    "type": "string",
+                    "description": "Specifies the ID of the shared drive to search. If an empty string is provided, no specific drive filtering is applied."
+                },
+                "includeItemsFromAllDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether to include items from all drives. This parameter defaults to `False`, meaning only items from the user's My Drive are included in the results."
+                },
+                "includeTeamDriveItems": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include team drive items in the results. This boolean parameter defaults to `False`, which excludes team drive items."
+                },
+                "orderBy": {
+                    "type": "string",
+                    "description": "Specifies the sort order for the results. The default order, 'folder,modifiedTime desc,name', first lists folders, then sorts files by modified time in descending order (newest first), and finally sorts items with the same modified time by name. Valid sort fields include 'folder', 'modifiedTime', 'name', 'createdTime', 'size', and 'quotaBytesUsed', which can be combined as a comma-separated list, optionally appending 'desc' for descending order."
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "description": "The maximum number of files to return per page. This value must be a positive integer. It defaults to 10, ensuring at most 10 files are returned per page."
+                },
+                "pageToken": {
+                    "type": "string",
+                    "description": "A string token used to retrieve the next page of results. Provide an empty string to return the first page of results."
+                },
+                "q": {
+                    "type": "string",
+                    "description": "A query string for filtering files, which defaults to no filtering and follows the format `field operator value`. Conditions can be combined using `and` and `or` logical operators (where `and` takes precedence); explicit parentheses for grouping like `A and (B or C)` are not supported, so use disjunctive normal form `(A and B) or (A and C)` (e.g., `(name contains 'report' and mimeType = 'application/pdf') or (name contains 'report' and mimeType = 'text/plain')`). Supported operators include `=`, `!=`, `contains`, numeric/date comparisons (`<`, `<=`, `>`, `>=`), and `in` (e.g., `'value' in fieldName). String values require quotes, booleans use `True`/`False`, and timestamps use ISO 8601 format."
+                },
+                "spaces": {
+                    "type": "string",
+                    "description": "A comma-separated list of spaces to search for files. Valid values include `drive`, `appDataFolder`, and `photos`. By default, this parameter is set to `drive`, which limits the search to files located in the user's Drive."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to enable support for all drives. Defaults to `False`, which means shared drive operations are not supported."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether to enable support for team drive operations. This parameter defaults to `False`, which means team drive operations are not supported."
+                },
+                "teamDriveId": {
+                    "type": "string",
+                    "description": "The ID of the team drive to search. If an empty string is provided, no specific team drive filtering is applied."
+                },
+                "includePermissionsForView": {
+                    "type": "string",
+                    "description": "Specifies which additional view's permissions to include when listing files. This string parameter accepts values such as `published`, `domain`, or `anyone` to filter by specific permission types. It defaults to an empty string, indicating that no additional permissions are included."
+                },
+                "includeLabels": {
+                    "type": "string",
+                    "description": "A comma-separated list of labels to include when filtering files. If this parameter is an empty string, no label filtering is applied. Each label must contain only alphanumeric characters, hyphens, and underscores."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_user_shared_drives",
+        "description": "Lists shared drives that the user is a member of. Filter results by drive properties using the `q` parameter, a query string that supports fields like 'name' and 'createdTime' with various operators (e.g., `=`, `contains`), and allows combining conditions using 'and' or 'or' (e.g., \"name = 'My Drive' and hidden = false\"). Paginate results using `pageSize` to specify the maximum number of drives per page (1-100) and `pageToken` for retrieving subsequent pages.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "pageSize": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of shared drives to return per page. It must be an integer between 1 and 100."
+                },
+                "q": {
+                    "type": "string",
+                    "description": "A query string used to search shared drives. It supports filtering by fields such as 'name', 'id', 'createdTime', 'hidden', and 'themeId', using operators like =, !=, <, <=, >, >=, contains, and in. Conditions can be combined with 'and' or 'or', and string values must be quoted (e.g., `name = 'My Drive'`, `name contains 'Project' and hidden = false`, `createdTime >= '2023-01-01T00:00:00Z'`)."
+                },
+                "pageToken": {
+                    "type": "string",
+                    "description": "An optional base64-encoded token for pagination. This token decodes to a JSON object that specifies `last_row_time` (a string representing the Unix timestamp when the last page was generated) and `offset` (an integer indicating the index to start the next page from)."
+                }
+            }
+        }
+    },
+    {
+        "name": "stop_channel_watch",
+        "description": "Stop watching resources through a channel. Provide the `resource` parameter as a dictionary containing the `'id'` of the channel to stop; if `resource` is `None` or an empty dictionary, no action occurs.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "resource": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "The string ID of the channel to stop. This is a required key within the `resource` dictionary."
+                        },
+                        "resourceId": {
+                            "type": "string",
+                            "description": "The string ID of the resource being watched."
+                        },
+                        "resourceUri": {
+                            "type": "string",
+                            "description": "A string representing the Uniform Resource Identifier (URI) of the resource being watched."
+                        },
+                        "token": {
+                            "type": "string",
+                            "description": "A string token used to authenticate the channel."
+                        },
+                        "expiration": {
+                            "type": "string",
+                            "description": "The time when the channel will expire. It must be provided in RFC3339 format."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "A string specifying the type of the channel."
+                        },
+                        "address": {
+                            "type": "string",
+                            "description": "A string specifying the address where notifications are delivered."
+                        },
+                        "payload": {
+                            "type": "boolean",
+                            "description": "A boolean value that determines whether to include the payload in notifications."
+                        },
+                        "params": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "A dictionary (`Dict[str, Any]`) containing additional, channel-specific parameters."
+                        }
+                    },
+                    "description": "A dictionary specifying the channel properties for stopping a watch. If `None` or an empty dictionary, no action is taken. This dictionary must include the channel 'id' (string) and typically contains other properties like 'resourceId', 'resourceUri', 'token', and 'expiration' that define the channel.",
+                    "required": [
+                        "address",
+                        "expiration",
+                        "id",
+                        "params",
+                        "payload",
+                        "resourceId",
+                        "resourceUri",
+                        "token",
+                        "type"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "subscribe_to_file_changes",
+        "description": "Establishes a subscription to monitor changes to a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "Specifies the ID of the file for which to subscribe to changes."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "Specifies the ID of the channel. This string uniquely identifies the channel associated with the file change subscription."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Specifies the type of the channel."
+                        },
+                        "address": {
+                            "type": "string",
+                            "description": "A string specifying the address where the channel delivers notifications about file changes."
+                        },
+                        "token": {
+                            "type": "string",
+                            "description": "A string representing the channel token. This token is part of the watch properties provided in the `body` parameter when subscribing to file changes."
+                        },
+                        "expiration": {
+                            "type": "string",
+                            "description": "Specifies the expiration time for the watch channel. This value is provided as a string."
+                        }
+                    },
+                    "description": "A dictionary specifying the watch properties. It includes keys for channel `id`, `type`, `address`, `token`, and `expiration`.",
+                    "required": [
+                        "address",
+                        "expiration",
+                        "id",
+                        "token",
+                        "type"
+                    ]
+                },
+                "acknowledgeAbuse": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to acknowledge abuse."
+                },
+                "ignoreDefaultVisibility": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that determines whether to ignore the default visibility settings."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "A boolean flag indicating whether the watch operation should support all drives."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "Specifies whether support for team drives is enabled."
+                },
+                "includePermissionsForView": {
+                    "type": "string",
+                    "description": "A string that specifies which additional view's permissions to include."
+                },
+                "includeLabels": {
+                    "type": "string",
+                    "description": "A comma-separated list of labels to include."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "unhide_shared_drive",
+        "description": "Restores a specified shared drive to its default view by unhiding it. Provide the `driveId` (a non-empty string) of the target shared drive. It returns the unhidden drive's details as a dictionary, or `None` if the drive is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "The ID of the shared drive. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "driveId"
+            ]
+        }
+    },
+    {
+        "name": "update_comment_reply",
+        "description": "Updates a specific reply identified by its file, comment, and reply IDs. Use the `body` parameter, a dictionary, to provide updated reply details such as `content` (string) or `author` information (a dictionary containing `displayName`, `emailAddress`, and `photoLink`).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string identifier for the file."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "The string identifier for the comment."
+                },
+                "replyId": {
+                    "type": "string",
+                    "description": "The ID of the reply to update."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "content": {
+                            "type": "string",
+                            "description": "The updated content of the reply, provided as a string."
+                        },
+                        "author": {
+                            "type": "object",
+                            "properties": {
+                                "displayName": {
+                                    "type": "string",
+                                    "description": "The author's display name."
+                                },
+                                "emailAddress": {
+                                    "type": "string",
+                                    "description": "The author's email address."
+                                },
+                                "photoLink": {
+                                    "type": "string",
+                                    "description": "A link to the author's profile photo."
+                                }
+                            },
+                            "description": "A dictionary containing updated information about the author. It includes keys for the author's display name (`displayName`), email address (`emailAddress`), and a link to their profile photo (`photoLink`).",
+                            "required": [
+                                "displayName",
+                                "emailAddress",
+                                "photoLink"
+                            ]
+                        }
+                    },
+                    "description": "A dictionary containing the updated reply details. It accepts a `content` (string) field for the reply's text and an `author` (dictionary) field. The `author` dictionary includes `displayName`, `emailAddress`, and `photoLink` to update author information.",
+                    "required": [
+                        "author",
+                        "content"
+                    ]
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId",
+                "replyId"
+            ]
+        }
+    },
+    {
+        "name": "update_file_comment",
+        "description": "Updates an existing comment by applying patch semantics. Provide a dictionary of only the comment properties to be updated, such as 'content', 'author', or 'resolved'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string identifier of the file to which the comment belongs."
+                },
+                "commentId": {
+                    "type": "string",
+                    "description": "A string representing the ID of the comment to update."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "content": {
+                            "type": "string",
+                            "description": "Specifies the comment's content as a string."
+                        },
+                        "author": {
+                            "type": "object",
+                            "properties": {
+                                "displayName": {
+                                    "type": "string",
+                                    "description": "The display name of the author."
+                                },
+                                "emailAddress": {
+                                    "type": "string",
+                                    "description": "The email address of the author."
+                                }
+                            },
+                            "description": "A dictionary containing author information. It must include `displayName` (str) for the author's display name and `emailAddress` (str) for their email address.",
+                            "required": [
+                                "displayName",
+                                "emailAddress"
+                            ]
+                        },
+                        "quotedFileContent": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "description": "A string containing the literal content being quoted within the comment."
+                                },
+                                "mimeType": {
+                                    "type": "string",
+                                    "description": "Specifies the MIME type of the content included in `quotedFileContent`. This indicates the format of the `value` property within the quoted content."
+                                }
+                            },
+                            "description": "A dictionary representing quoted content. It includes a 'value' key for the content string and a 'mimeType' key for the content's MIME type.",
+                            "required": [
+                                "mimeType",
+                                "value"
+                            ]
+                        },
+                        "anchor": {
+                            "type": "string",
+                            "description": "Specifies the anchor point for the comment as a string."
+                        },
+                        "resolved": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating whether the comment has been resolved."
+                        }
+                    },
+                    "description": "A dictionary of properties to update the comment. It supports keys such as `content` (string), `anchor` (string), and `resolved` (boolean). Nested dictionaries are also supported for `author` (containing `displayName` and `emailAddress`) and `quotedFileContent` (with `value` and `mimeType`).",
+                    "required": [
+                        "anchor",
+                        "author",
+                        "content",
+                        "quotedFileContent",
+                        "resolved"
+                    ]
+                }
+            },
+            "required": [
+                "commentId",
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "update_file_content",
+        "description": "Updates a file's content with new bytes data. It prepares the data by calculating a checksum, encoding it to base64, and structuring it into the required JSON format. The function then validates this content using the FileContentModel, creates a new revision, and updates the file's content and size.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The string ID of an existing user who is updating the file content."
+                },
+                "file_id": {
+                    "type": "string",
+                    "description": "The string ID of the file whose content will be updated."
+                },
+                "new_content": {
+                    "type": "object",
+                    "description": "The new content to be added to the file. This content must be provided as bytes data."
+                }
+            },
+            "required": [
+                "file_id",
+                "new_content",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "update_file_metadata_or_content",
+        "description": "Updates a file's metadata or content using patch semantics. This means only the fields explicitly provided in the `body` dictionary will be updated, while all other file properties remain unchanged.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string identifier for the file to be updated."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "Specifies the new name for the file. This value must be a string."
+                        },
+                        "mimeType": {
+                            "type": "string",
+                            "description": "Specifies the new MIME type of the file as a string."
+                        },
+                        "parents": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A new list of parent folder IDs for the file. This parameter expects a list of strings, where each string is a folder ID."
+                        },
+                        "permissions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {}
+                            },
+                            "description": "A new list of permission objects, where each object is represented as a dictionary."
+                        }
+                    },
+                    "description": "A dictionary containing the file's metadata properties to update. It accepts the following keys: 'name' (str), 'mimeType' (str), 'parents' (List[str]), and 'permissions' (List[Dict[str, Any]]).",
+                    "required": [
+                        "mimeType",
+                        "name",
+                        "parents",
+                        "permissions"
+                    ]
+                },
+                "media_body": {
+                    "type": "object",
+                    "properties": {
+                        "size": {
+                            "type": "integer",
+                            "description": "Specifies the size of the media content in bytes. This value must be an integer."
+                        },
+                        "md5Checksum": {
+                            "type": "string",
+                            "description": "Specifies the MD5 checksum of the file content. This string value helps verify the integrity of the content provided for the update."
+                        },
+                        "sha1Checksum": {
+                            "type": "string",
+                            "description": "A string representing the SHA1 checksum of the file content."
+                        },
+                        "sha256Checksum": {
+                            "type": "string",
+                            "description": "The SHA256 checksum of the file content."
+                        },
+                        "mimeType": {
+                            "type": "string",
+                            "description": "A string specifying the MIME type of the file content."
+                        },
+                        "imageMediaMetadata": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "A dictionary containing metadata specific to image files."
+                        },
+                        "videoMediaMetadata": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "A dictionary containing metadata specifically for video files."
+                        },
+                        "filePath": {
+                            "type": "string",
+                            "description": "The path to a local file for content upload. Uploading content using this path creates a new revision of the file."
+                        }
+                    },
+                    "description": "A dictionary containing properties to update the file's media content. This includes `size` (int) for file size, `md5Checksum`, `sha1Checksum`, and `sha256Checksum` (str) for content integrity, and `mimeType` (str) for the content's type. Additional keys are `imageMediaMetadata` and `videoMediaMetadata` (Dict[str, Any]) for media-specific details, and `filePath` (str) to specify a local file path for content upload, which creates a new revision.",
+                    "required": [
+                        "filePath",
+                        "imageMediaMetadata",
+                        "md5Checksum",
+                        "mimeType",
+                        "sha1Checksum",
+                        "sha256Checksum",
+                        "size",
+                        "videoMediaMetadata"
+                    ]
+                },
+                "addParents": {
+                    "type": "string",
+                    "description": "A comma-separated string containing the IDs of parent folders to add. This parameter defaults to an empty string (`''`)."
+                },
+                "enforceSingleParent": {
+                    "type": "boolean",
+                    "description": "Specifies whether to enforce a single parent for the file. This boolean parameter defaults to `False`."
+                },
+                "removeParents": {
+                    "type": "string",
+                    "description": "A string containing a comma-separated list of parent IDs to remove. This parameter defaults to an empty string."
+                }
+            },
+            "required": [
+                "fileId"
+            ]
+        }
+    },
+    {
+        "name": "update_permission",
+        "description": "Updates an existing permission for a file or shared drive using patch semantics, meaning only specified fields are modified. This function can also transfer ownership to the updated permission by setting `transferOwnership` to true.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "description": "The string ID of the file or shared drive."
+                },
+                "permissionId": {
+                    "type": "string",
+                    "description": "The unique string identifier for the permission to be updated."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "role": {
+                            "type": "string",
+                            "description": "Specifies the access role granted by this permission. Possible values are 'viewer' (can view the file, aliased as 'reader'), 'commenter' (can view and comment on the file), 'editor' (can view, comment, and edit the file, aliased as 'writer'), and 'owner' (has full control over the file)."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Defines the type of the grantee. Possible values are 'user' (for a specific user), 'group' (for a group), 'domain' (for a domain), or 'anyone' (for permissions granted to anyone with the link)."
+                        },
+                        "emailAddress": {
+                            "type": "string",
+                            "description": "Specifies the email address for the grantee when the permission `type` is 'user' or 'group'."
+                        },
+                        "domain": {
+                            "type": "string",
+                            "description": "Specifies the domain name of the entity to which this permission applies, typically used when the permission's `type` is set to 'domain'."
+                        },
+                        "allowFileDiscovery": {
+                            "type": "boolean",
+                            "description": "A boolean indicating whether the associated permission allows the file to be discovered through search."
+                        },
+                        "expirationTime": {
+                            "type": "string",
+                            "description": "Specifies the time, provided as a string, when this permission will expire."
+                        }
+                    },
+                    "description": "An optional dictionary containing properties to update for a permission. It supports keys such as `role` (possible values: 'viewer', 'commenter', 'editor', 'owner'), `type` (possible values: 'user', 'group', 'domain', 'anyone'), `emailAddress` (string), `domain` (string), `allowFileDiscovery` (boolean), and `expirationTime` (string).",
+                    "required": [
+                        "allowFileDiscovery",
+                        "domain",
+                        "emailAddress",
+                        "expirationTime",
+                        "role",
+                        "type"
+                    ]
+                },
+                "transferOwnership": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to transfer ownership of the file to the user associated with the updated permission. If `True`, the current owner's role is automatically downgraded to a writer."
+                }
+            },
+            "required": [
+                "fileId",
+                "permissionId"
+            ]
+        }
+    },
+    {
+        "name": "update_shared_drive_metadata",
+        "description": "Updates the metadata for the shared drive specified by `driveId`. The new metadata values are provided in the `body`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "driveId": {
+                    "type": "string",
+                    "description": "The unique identifier of the shared drive."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name for the shared drive."
+                        },
+                        "restrictions": {
+                            "type": "object",
+                            "properties": {
+                                "adminManagedRestrictions": {
+                                    "type": "boolean",
+                                    "description": "A boolean indicating whether administrative privileges are required to modify the restrictions on this shared drive."
+                                },
+                                "copyRequiresWriterPermission": {
+                                    "type": "boolean",
+                                    "description": "A boolean that, when set to `true`, prevents users with reader or commenter permissions from copying, printing, or downloading files within the shared drive."
+                                },
+                                "domainUsersOnly": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether access to the shared drive and its items is restricted to users belonging to the same domain as the drive."
+                                },
+                                "driveMembersOnly": {
+                                    "type": "boolean",
+                                    "description": "Specifies whether access to items within the shared drive is restricted to drive members only."
+                                }
+                            },
+                            "description": "A dictionary containing the restrictions to apply, where each key corresponds to a specific restriction type."
+                        },
+                        "hidden": {
+                            "type": "boolean",
+                            "description": "Specifies whether the shared drive is hidden from the default view."
+                        },
+                        "themeId": {
+                            "type": "string",
+                            "description": "The identifier for the theme to apply to the shared drive."
+                        }
+                    },
+                    "description": "A dictionary containing the drive properties to update, where each key represents a specific property of the drive to be modified."
+                }
+            },
+            "required": [
+                "driveId"
+            ]
+        }
+    },
+    {
+        "name": "watch_changes",
+        "description": "Creates a simulated notification channel to watch for changes in Google Drive files within a user's Drive or shared drive. This function stores the channel configuration and validates watch parameters but does not establish actual real-time notifications.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "pageToken": {
+                    "type": "string",
+                    "description": "The token for the initial page of changes to watch from. It must be a non-empty string obtained from `changes.getStartPageToken()` or a previous `changes.list` request."
+                },
+                "resource": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "A unique identifier for the notification channel. This parameter is required and must be a non-empty string. If not provided or empty, a unique ID is automatically assigned."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Required. The type of the notification channel, typically 'web_hook'."
+                        },
+                        "address": {
+                            "type": "string",
+                            "description": "Specifies the required URL where notifications are delivered."
+                        },
+                        "resourceId": {
+                            "type": "string",
+                            "description": "The optional ID of the resource being watched. If not provided, a unique identifier is automatically generated for the channel."
+                        },
+                        "resourceUri": {
+                            "type": "string",
+                            "description": "An optional string representing the URI of the resource being watched."
+                        },
+                        "token": {
+                            "type": "string",
+                            "description": "An optional string token used for authenticating the channel."
+                        },
+                        "expiration": {
+                            "type": "string",
+                            "description": "Optional. Specifies the channel's expiration time, which must be provided in RFC 3339 format."
+                        },
+                        "payload": {
+                            "type": "boolean",
+                            "description": "An optional boolean that determines whether to include the payload in notifications."
+                        },
+                        "params": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "An optional dictionary containing additional channel parameters."
+                        }
+                    },
+                    "description": "A dictionary that specifies notification channel properties. If set to `None`, a minimal channel will be created instead. This dictionary requires `id` (string, unique identifier), `type` (string, e.g., 'web_hook'), and `address` (string, URL for notifications); it also accepts optional keys like `resourceId` (string), `resourceUri` (string), `token` (string), `expiration` (string, in RFC 3339 format), `payload` (boolean), and `params` (dictionary for additional parameters).",
+                    "required": [
+                        "address",
+                        "expiration",
+                        "id",
+                        "params",
+                        "payload",
+                        "resourceId",
+                        "resourceUri",
+                        "token",
+                        "type"
+                    ]
+                },
+                "driveId": {
+                    "type": "string",
+                    "description": "The ID of the shared drive to watch for changes. Notifications are triggered only by changes to files within the specified shared drive. This parameter defaults to an empty string, which monitors changes in the user's My Drive."
+                },
+                "includeCorpusRemovals": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that specifies whether to include notifications for files removed from the corpus but still accessible. It defaults to `False`."
+                },
+                "includeItemsFromAllDrives": {
+                    "type": "boolean",
+                    "description": "Determines if the watch operation should include changes from both My Drive and shared drives; defaults to `False`."
+                },
+                "includeRemoved": {
+                    "type": "boolean",
+                    "description": "Determines whether to include notifications for items that have been removed. This parameter defaults to `True`."
+                },
+                "includeTeamDriveItems": {
+                    "type": "boolean",
+                    "description": "**DEPRECATED**: Specifies whether to include changes for team drive items. Use `includeItemsFromAllDrives` instead; this parameter defaults to `False`."
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of changes to return per notification. This value must be between 1 and 1000, inclusive, and defaults to 100."
+                },
+                "restrictToMyDrive": {
+                    "type": "boolean",
+                    "description": "A boolean flag that restricts notifications to changes occurring solely within the My Drive hierarchy. This parameter cannot be used simultaneously with `driveId` or `teamDriveId`. It defaults to `False`."
+                },
+                "spaces": {
+                    "type": "string",
+                    "description": "A comma-separated list of spaces to watch for changes. Supported values are 'drive', 'appDataFolder', and 'photos', and it defaults to 'drive'."
+                },
+                "supportsAllDrives": {
+                    "type": "boolean",
+                    "description": "Indicates whether the requesting application supports both My Drives and shared drives. This parameter is required to be `True` when `driveId` is specified. It defaults to `False`."
+                },
+                "supportsTeamDrives": {
+                    "type": "boolean",
+                    "description": "A **DEPRECATED** parameter indicating whether the application supports Team Drives. It defaults to `False`; use `supportsAllDrives` instead."
+                },
+                "teamDriveId": {
+                    "type": "string",
+                    "description": "Specifies the ID of the Team Drive for which to watch changes. This parameter is **DEPRECATED**; use `driveId` instead. It defaults to an empty string."
+                },
+                "includePermissionsForView": {
+                    "type": "string",
+                    "description": "Specifies which additional view's permissions to include in change notifications. The only supported value is 'published'. This parameter defaults to an empty string."
+                },
+                "includeLabels": {
+                    "type": "string",
+                    "description": "Specify a comma-separated list of label IDs to include in the `labelInfo` section of change notifications. This parameter defaults to an empty string."
+                }
+            },
+            "required": [
+                "pageToken"
+            ]
+        }
+    }
+]

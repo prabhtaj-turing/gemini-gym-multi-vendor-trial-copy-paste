@@ -1,0 +1,96 @@
+[
+  {
+    "name": "execute_command",
+    "description": "Executes a specified command on a device managed by the enterprise. The command is defined in the `command_request` dictionary, which must include a `command` key (e.g., `sdm.devices.commands.generate_camera_event_image`) and can optionally include a `params` dictionary with command-specific arguments (e.g., `event_id` for `generate_camera_event_image`).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "The unique identifier of the device within the enterprise. For example, \"CAM_001\"."
+        },
+        "project_id": {
+          "type": "string",
+          "description": "The unique identifier for the enterprise or project."
+        },
+        "command_request": {
+          "type": "object",
+          "description": "A dictionary payload that defines the command to execute on the device. It must contain a `command` key (string) specifying one of the predefined actions, for example, `sdm.devices.commands.generate_camera_event_image` to retrieve an image or `sdm.devices.commands.generate_rtsp_stream` to start a stream. Optionally, include a `params` key (dictionary) for command-specific arguments, which are structured according to the chosen command (e.g., `event_id` for `sdm.devices.commands.generate_camera_event_image`, or empty for `sdm.devices.commands.generate_rtsp_stream`).",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "Specifies the name of the command to execute on the device. It must be one of the following: `sdm.devices.commands.generate_camera_event_image` to retrieve an image from a camera via a triggered event. Commands are also available to manage stream modes: `sdm.devices.commands.generate_rtsp_stream` (start), `sdm.devices.commands.stop_rtsp_stream` (stop), and `sdm.devices.commands.generate_image_from_rtsp_stream` (retrieve image from ongoing RTSP stream); similarly, `sdm.devices.commands.generate_web_rtc_stream` (start), `sdm.devices.commands.stop_web_rtc_stream` (stop), and `sdm.devices.commands.generate_image_from_web_rtc_stream` (retrieve image from ongoing WebRTC stream)."
+            },
+            "params": {
+              "type": "object",
+              "description": "A dictionary containing parameters specific to the command, structured as key-value pairs; this field should be `None` if the command does not require any parameters. For example, `sdm.devices.commands.generate_camera_event_image` requires an `event_id` (string), `sdm.devices.commands.stop_rtsp_stream` requires a `stream_extension_token` (string), while `sdm.devices.commands.generate_rtsp_stream` takes `None`."
+            }
+          },
+          "required": [
+            "command",
+            "params"
+          ]
+        }
+      },
+      "required": [
+        "command_request",
+        "device_id",
+        "project_id"
+      ]
+    }
+  },
+  {
+    "name": "get_device_info",
+    "description": "Retrieves information about an authorized device. The returned information includes the device's name, type, traits, and parent relations.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "A unique string identifier for the device within the enterprise."
+        },
+        "project_id": {
+          "type": "string",
+          "description": "A unique identifier for the enterprise or project."
+        }
+      },
+      "required": [
+        "device_id",
+        "project_id"
+      ]
+    }
+  },
+  {
+    "name": "get_events_list",
+    "description": "Returns a list of triggered events. Events can optionally be filtered by a specific `device_id` or an `event_type`. The `event_type` parameter accepts values such as 'Motion', 'Person', 'Sound', 'Chime', or full format strings like 'sdm.devices.events.CameraMotion.Motion'; if no filters are provided, all events are returned.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "An optional unique identifier for a device. Use this parameter to filter the returned events to a specific device, for example, \"CAM_001\"."
+        },
+        "event_type": {
+          "type": "string",
+          "description": "An optional string used to filter events by their type. It must be one of \"Motion\", \"Person\", \"Sound\", or \"Chime\", and also accepts fully qualified formats such as \"sdm.devices.events.CameraMotion.Motion\". If neither this parameter nor `device_id` is provided, all events are returned."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_devices",
+    "description": "Retrieves a list of all devices authorized by the user for a given enterprise. The response is a dictionary containing a `devices` key, which holds a list of device objects, potentially empty if none are found.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "list_structures",
+    "description": "Lists all structures authorized by the user for a given enterprise. It returns a collection of structure objects.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+]

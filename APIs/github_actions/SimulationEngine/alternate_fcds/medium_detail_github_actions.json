@@ -1,0 +1,296 @@
+[
+  {
+    "name": "cancel_workflow_run",
+    "description": "Cancels a specific workflow run. The run is identified by the repository's owner, repository name, and its unique workflow run ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository, typically a username or organization name. This name is not case sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository. This name is not case-sensitive."
+        },
+        "run_id": {
+          "type": "integer",
+          "description": "The unique identifier for the workflow run to be canceled. This parameter must be a positive integer."
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "run_id"
+      ]
+    }
+  },
+  {
+    "name": "get_workflow",
+    "description": "Retrieves details for a specific workflow within a repository. Identify the workflow by its integer ID (as a string) or by its filename, such as `main.yml` or `.github/workflows/main.yml`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The owner of the repository. This string cannot be empty or consist only of whitespace."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository. This string parameter cannot be empty or consist solely of whitespace."
+        },
+        "workflow_id": {
+          "type": "string",
+          "description": "The identifier for the workflow. This can be either the workflow's integer ID (provided as a string) or its filename, such as \"main.yml\" or \".github/workflows/main.yml\"."
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "workflow_id"
+      ]
+    }
+  },
+  {
+    "name": "get_workflow_run",
+    "description": "Retrieves detailed information for a specific workflow run, requiring the repository owner's name, repository name, and the workflow run's unique identifier. It returns a dictionary with comprehensive details, including status, timing, associated commit, involved actors, and the repository it belongs to; all datetime fields are ISO 8601 formatted strings with a 'Z' suffix indicating UTC.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository, whose name is not case sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository. It must not include the `.git` extension and is not case sensitive."
+        },
+        "run_id": {
+          "type": "integer",
+          "description": "The unique identifier for the workflow run. It must be a positive integer."
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "run_id"
+      ]
+    }
+  },
+  {
+    "name": "get_workflow_run_jobs",
+    "description": "Retrieves jobs for a specific workflow run, identified by its owner, repository, and run ID. It allows filtering jobs by their status, accepting 'latest' (default) to return the latest job for each job name, or 'all' to return all jobs for the run. Additionally, it supports paginating through the results with configurable page numbers and results per page.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository. This name is not case sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository, excluding the `.git` extension. This name is not case sensitive."
+        },
+        "run_id": {
+          "type": "integer",
+          "description": "The unique identifier for a workflow run. This parameter must be a positive integer."
+        },
+        "filter": {
+          "type": "string",
+          "description": "Filters jobs based on their status. Specify 'latest' to retrieve the latest job for each job name, or 'all' to retrieve all jobs for the run. This parameter defaults to 'latest'."
+        },
+        "page": {
+          "type": "integer",
+          "description": "The page number of the results to fetch. It starts at 1 and defaults to 1."
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "The number of results to return per page. The maximum allowed value is 100, and it defaults to 30."
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "run_id"
+      ]
+    }
+  },
+  {
+    "name": "get_workflow_usage",
+    "description": "Retrieves the billable usage statistics for a specific workflow, presented with a breakdown by operating system.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository. This name is not case-sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository, which must not include the .git extension and is not case sensitive."
+        },
+        "workflow_id": {
+          "type": "integer",
+          "description": "The identifier for the workflow, which can be its positive integer ID or its filename as a string (e.g., 'ci.yml')."
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "workflow_id"
+      ]
+    }
+  },
+  {
+    "name": "list_workflow_runs",
+    "description": "List all workflow runs for a given repository, optionally narrowed to a specific workflow. This function supports extensive filtering by attributes such as the triggering actor, branch, event, status, creation date, or associated workflow ID, and can exclude runs triggered by pull requests or filter by a check suite ID. Results are paginated via `page` and `per_page` parameters, and all datetime fields in the response are ISO 8601 formatted strings with a 'Z' suffix indicating UTC.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository, whose name is not case-sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository, which must not include the `.git` extension and is not case sensitive."
+        },
+        "workflow_id": {
+          "type": "integer",
+          "description": "Filters runs by a specific workflow ID (integer) or a workflow file name (string)."
+        },
+        "actor": {
+          "type": "string",
+          "description": "Filters workflow runs by the login (username) of the actor who initiated them."
+        },
+        "branch": {
+          "type": "string",
+          "description": "Filters workflow runs. This parameter specifies the name of the branch on which the runs must have executed to be included in the results."
+        },
+        "event": {
+          "type": "string",
+          "description": "Filters workflow runs by the string value representing the event that triggered them."
+        },
+        "status": {
+          "type": "string",
+          "description": "Filters runs by their current status. Valid values for the status include 'queued', 'in_progress', 'completed', 'action_required', 'cancelled', 'failure', 'neutral', 'skipped', 'stale', 'success', 'timed_out', 'waiting', 'requested', and 'pending'."
+        },
+        "created": {
+          "type": "string",
+          "description": "Filters workflow runs by their creation date or date range. Supported formats include a specific day ('YYYY-MM-DD'), on or after a date ('>=YYYY-MM-DD'), on or before a date ('<=YYYY-MM-DD'), or an inclusive date range ('YYYY-MM-DD..YYYY-MM-DD')."
+        },
+        "exclude_pull_requests": {
+          "type": "boolean",
+          "description": "When `true`, excludes workflow runs triggered by 'pull_request' events from the results. This parameter defaults to `false`."
+        },
+        "check_suite_id": {
+          "type": "integer",
+          "description": "Filters workflow runs by the integer ID of an associated check suite."
+        },
+        "page": {
+          "type": "integer",
+          "description": "The page number used for pagination. It starts at 1 and defaults to 1."
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Specifies the number of results to return per page for pagination. It defaults to 30 and has a maximum value of 100."
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ]
+    }
+  },
+  {
+    "name": "list_workflows",
+    "description": "Lists workflows within a specified GitHub repository. This function supports pagination to retrieve the workflows in manageable chunks.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository. This name is not case-sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository, which must be provided without the `.git` extension. The name is not case-sensitive."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Specifies the integer page number for the results to fetch, used for pagination. It defaults to 1."
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "The number of results to return per page. This value has a maximum of 100 and defaults to 30."
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ]
+    }
+  },
+  {
+    "name": "rerun_workflow",
+    "description": "Re-run a previously executed workflow run. This function creates a new workflow run attempt based on the original run's configuration, and the new run will start in a 'queued' state.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository; the name is not case sensitive."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The name of the repository, provided without the `.git` extension. This name is not case-sensitive."
+        },
+        "run_id": {
+          "type": "integer",
+          "description": "The unique identifier for the workflow run to be re-executed. This parameter must be a positive integer."
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "run_id"
+      ]
+    }
+  },
+  {
+    "name": "trigger_workflow",
+    "description": "Triggers a workflow dispatch event for a specified workflow, simulating the actual event. The actor initiating this simulated workflow run is hardcoded.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The account owner of the repository. This string must not be empty or contain only whitespace."
+        },
+        "repo": {
+          "type": "string",
+          "description": "Specifies the name of the target repository. This parameter must not include the `.git` file extension."
+        },
+        "workflow_id": {
+          "type": "string",
+          "description": "The ID of the workflow or its corresponding file name (e.g., 'main.yaml', 'ci.yml')."
+        },
+        "ref": {
+          "type": "string",
+          "description": "The Git reference for the workflow. This can be a branch name (e.g., 'main'), a tag name (e.g., 'v1.0.0'), or a commit SHA."
+        },
+        "inputs": {
+          "type": "object",
+          "properties": {},
+          "description": "Input parameters to pass to the workflow, corresponding to the 'inputs' defined in the workflow's `on.workflow_dispatch` trigger. This parameter can be omitted or provided as an empty dictionary if the workflow does not expect any inputs."
+        }
+      },
+      "required": [
+        "owner",
+        "ref",
+        "repo",
+        "workflow_id"
+      ]
+    }
+  }
+]

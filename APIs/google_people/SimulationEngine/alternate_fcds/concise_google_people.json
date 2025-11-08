@@ -1,0 +1,587 @@
+[
+  {
+    "name": "create_contact",
+    "description": "Creates a new contact in Google Contacts, which must have at least one name and one email address, and has its resource name automatically generated.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "person_data": {
+          "type": "object",
+          "properties": {
+            "names": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of name objects, requiring at least one object with a `displayName`, `givenName`, or `familyName`."
+            },
+            "emailAddresses": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of one or more email address objects, each requiring a `value` key."
+            },
+            "phoneNumbers": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of objects representing the contact's phone numbers."
+            },
+            "addresses": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of the person's physical addresses."
+            },
+            "organizations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of the person's associated organizations."
+            },
+            "birthdays": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of objects representing the contact's birthdays."
+            },
+            "photos": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of photo objects for the contact."
+            },
+            "urls": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of the contact's URL objects."
+            },
+            "userDefined": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "A list of user-defined field objects."
+            }
+          },
+          "description": "A dictionary of person information that must include the `names` and `emailAddresses` fields.",
+          "required": [
+            "addresses",
+            "birthdays",
+            "emailAddresses",
+            "names",
+            "organizations",
+            "phoneNumbers",
+            "photos",
+            "urls",
+            "userDefined"
+          ]
+        }
+      },
+      "required": [
+        "person_data"
+      ]
+    }
+  },
+  {
+    "name": "create_contact_group",
+    "description": "Create a new contact group, which must have a name; its resource name is generated automatically.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "contact_group_data": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The required name for the contact group."
+            },
+            "groupType": {
+              "type": "string",
+              "description": "The type of the contact group, either `\"USER_CONTACT_GROUP\"` (default) or `\"SYSTEM_CONTACT_GROUP\"`."
+            },
+            "memberResourceNames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "A list of contact resource names to add to the group, each starting with `people/`."
+            }
+          },
+          "description": "A dictionary of contact group information, requiring a `name` and optionally including `groupType` and `memberResourceNames` (a list of strings, each starting with \"people/\").",
+          "required": [
+            "groupType",
+            "memberResourceNames",
+            "name"
+          ]
+        }
+      },
+      "required": [
+        "contact_group_data"
+      ]
+    }
+  },
+  {
+    "name": "delete_contact",
+    "description": "Permanently deletes a person contact from Google Contacts; this action cannot be undone.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the person to delete, which must start with `people/` (e.g., `people/123456789`)."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "delete_contact_group",
+    "description": "Permanently deletes a contact group, with an option to also delete all of its member contacts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "Resource name of the contact group to delete, which must start with `contactGroups/` (e.g., `contactGroups/family`)."
+        },
+        "delete_contacts": {
+          "type": "boolean",
+          "description": "If `True`, deletes all contacts within the group; otherwise, only the group is deleted. Defaults to `False`."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "get_batch_get",
+    "description": "Retrieves a collection of people from the user's contacts by their resource names in a single request.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of 1 to 50 resource names for the people to retrieve, each formatted as `people/PERSON_ID`."
+        },
+        "person_fields": {
+          "type": "string",
+          "description": "A comma-separated list of person fields to include in the response. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, `updated`."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of data sources, limited to `READ_SOURCE_TYPE_PROFILE`, `READ_SOURCE_TYPE_CONTACT`, `READ_SOURCE_TYPE_DOMAIN_PROFILE`, or `READ_SOURCE_TYPE_DIRECTORY`."
+        }
+      },
+      "required": [
+        "resource_names"
+      ]
+    }
+  },
+  {
+    "name": "get_contact",
+    "description": "Retrieves a single person by their unique resource name, which is formatted as `people/{personId}`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the person to retrieve, which must start with `people/` (e.g., `people/123456789`)."
+        },
+        "person_fields": {
+          "type": "string",
+          "description": "A comma-separated list of fields to return, which defaults to all fields if unspecified. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, `updated`."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of data sources to query. Valid sources are `READ_SOURCE_TYPE_PROFILE`, `READ_SOURCE_TYPE_CONTACT`, `READ_SOURCE_TYPE_DOMAIN_PROFILE`, and `READ_SOURCE_TYPE_DIRECTORY`."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "get_contact_group",
+    "description": "Retrieves a single contact group by its resource name, which must be formatted as `contactGroups/{groupId}`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the contact group, which must start with `contactGroups/` (e.g., `contactGroups/family`)."
+        },
+        "max_members": {
+          "type": "integer",
+          "description": "Maximum number of members to return, an integer between 1 and 1000, defaulting to all members if unspecified."
+        },
+        "group_fields": {
+          "type": "string",
+          "description": "A comma-separated list of group fields to return; if unspecified, all fields are returned. Valid fields: `name`, `groupType`, `memberResourceNames`, `memberCount`, `resourceName`, `etag`, `created`, `updated`."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "get_directory_person",
+    "description": "Retrieves a specific user from the Google Workspace directory by their resource name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the directory person, which must start with `directoryPeople/` (e.g., `directoryPeople/123456789`)."
+        },
+        "read_mask": {
+          "type": "string",
+          "description": "A comma-separated list of fields to return. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, `updated`."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of valid data sources, including `READ_SOURCE_TYPE_PROFILE`, `READ_SOURCE_TYPE_CONTACT`, `READ_SOURCE_TYPE_DOMAIN_PROFILE`, and `READ_SOURCE_TYPE_DIRECTORY`."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "get_other_contact",
+    "description": "Gets a specific \"other contact\" by its resource name, which is a contact accessible via the account but not stored in the main Google contact system.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the other contact, which must be prefixed with `otherContacts/` (e.g., `otherContacts/123456789`)."
+        },
+        "read_mask": {
+          "type": "string",
+          "description": "A comma-separated string of fields to include in the response, such as `names`, `emailAddresses`, or `phoneNumbers`. If omitted, all fields are returned."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The sources to retrieve data from; valid options include `READ_SOURCE_TYPE_PROFILE`, `READ_SOURCE_TYPE_CONTACT`, `READ_SOURCE_TYPE_DOMAIN_PROFILE`, and `READ_SOURCE_TYPE_DIRECTORY`."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "list_connections",
+    "description": "Lists the authenticated user's contacts, with support for pagination and sorting.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name to return connections for; must start with `people/` and defaults to `people/me` (the authenticated user)."
+        },
+        "person_fields": {
+          "type": "string",
+          "description": "A comma-separated list of person fields to return. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, `updated`."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "The number of connections to include in the response, from 1 to 1000, defaulting to 100."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "A page token from a previous response that specifies the next page to return."
+        },
+        "sort_order": {
+          "type": "string",
+          "description": "The sort order for connections, with valid values being `LAST_MODIFIED_ASCENDING`, `LAST_MODIFIED_DESCENDING`, `FIRST_NAME_ASCENDING`, or `LAST_NAME_ASCENDING`."
+        },
+        "sync_token": {
+          "type": "string",
+          "description": "A token for incremental sync, returned by a previous call."
+        },
+        "request_sync_token": {
+          "type": "boolean",
+          "description": "Indicates whether to include a sync token in the response. Defaults to `False`."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_contact_groups",
+    "description": "Lists all contact groups owned by the authenticated user, supporting pagination and field filtering.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "page_size": {
+          "type": "integer",
+          "description": "The number of resources to return per page, between 1 and 1000, with a default of 100."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "A token from a previous response to fetch the next page."
+        },
+        "sync_token": {
+          "type": "string",
+          "description": "A sync token from a previous response, used for incremental sync."
+        },
+        "group_fields": {
+          "type": "string",
+          "description": "A comma-separated list of group fields to return (valid fields: `name`, `groupType`, `memberResourceNames`, `memberCount`, `resourceName`, `etag`, `created`, `updated`), defaulting to all fields if unspecified."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_directory_people",
+    "description": "Lists users from the organization's Google Workspace directory.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "read_mask": {
+          "type": "string",
+          "description": "A comma-separated list of fields to restrict the response to, including `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, or `updated`."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "The number of directory people to return, between 1 and 1000, with a default of 100."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "A page token from a previous response to retrieve the next page of results."
+        },
+        "sync_token": {
+          "type": "string",
+          "description": "A sync token from a previous response for incremental synchronization."
+        },
+        "request_sync_token": {
+          "type": "boolean",
+          "description": "Specifies whether to include a sync token in the response, defaulting to `False`."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_other_contacts",
+    "description": "Lists other contacts accessible by the user's account but not stored in Google Contacts, with support for pagination and field filtering.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "read_mask": {
+          "type": "string",
+          "description": "A field mask to restrict which fields are returned; if unspecified, all fields are returned. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, and `updated`."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "The number of other contacts to return (1-1000), with a default of 100."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "The token for the next page of results, obtained from a previous response."
+        },
+        "sync_token": {
+          "type": "string",
+          "description": "A sync token received from a previous response, used for incremental sync."
+        },
+        "request_sync_token": {
+          "type": "boolean",
+          "description": "Specifies whether to include a sync token in the response; defaults to `False`."
+        }
+      }
+    }
+  },
+  {
+    "name": "modify_contact_group_members",
+    "description": "Adds and/or removes members from a contact group in a single request.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the contact group to modify, which must start with `contactGroups/`. Example: `contactGroups/family`."
+        },
+        "request_data": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary with optional `resourceNamesToAdd` and `resourceNamesToRemove` keys, containing lists of contact resource names that must start with `people/`."
+        }
+      },
+      "required": [
+        "request_data",
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "search_directory_people",
+    "description": "Searches the organization's directory for people using a plain-text query across names, email addresses, and organization information.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A case-insensitive, partial-match search query that cannot be empty and is limited to 1000 characters."
+        },
+        "read_mask": {
+          "type": "string",
+          "description": "A comma-separated string of fields to return for each person. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, `updated`."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "The number of directory people to return, between 1 and 1000, with a default of 100."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "A token from a previous response to retrieve the next page of results."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The data sources to search. Valid values are `READ_SOURCE_TYPE_PROFILE`, `READ_SOURCE_TYPE_CONTACT`, `READ_SOURCE_TYPE_DOMAIN_PROFILE`, and `READ_SOURCE_TYPE_DIRECTORY`."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "search_other_contacts",
+    "description": "Performs a plain-text search of the authenticated user's 'other contacts', which are contacts accessible through the account but not stored in the main contact system.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A case-insensitive, partial-matching plain-text query that must be between 1 and 1000 characters."
+        },
+        "read_mask": {
+          "type": "string",
+          "description": "A comma-separated field mask to restrict returned fields, defaulting to all fields if unspecified. Valid fields include: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, and `updated`."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "The number of other contacts to include in the response, from 1 to 1000, defaulting to 100."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "A page token from a previous response, used to retrieve the next page of results."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "search_people",
+    "description": "Searches for people in the authenticated user's contacts across names, email addresses, and other contact information.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A case-insensitive, partial-matching plain-text query that must be between 1 and 1000 characters."
+        },
+        "read_mask": {
+          "type": "string",
+          "description": "A comma-separated string of fields to return for each person. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`, `resourceName`, `etag`, `created`, `updated`."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of data sources to search. Valid sources include `READ_SOURCE_TYPE_PROFILE`, `READ_SOURCE_TYPE_CONTACT`, `READ_SOURCE_TYPE_DOMAIN_PROFILE`, and `READ_SOURCE_TYPE_DIRECTORY`."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "update_contact",
+    "description": "Updates an existing person contact, allowing for a full update or a partial update of specific fields.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the person to update, which must be prefixed with `people/` (e.g., `people/123456789`)."
+        },
+        "person_data": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary containing only the person fields to update."
+        },
+        "update_person_fields": {
+          "type": "string",
+          "description": "A comma-separated list specifying which person fields to update. If omitted, all provided fields are updated. Valid fields: `names`, `emailAddresses`, `phoneNumbers`, `addresses`, `organizations`, `birthdays`, `photos`, `urls`, `userDefined`."
+        }
+      },
+      "required": [
+        "person_data",
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "update_contact_group",
+    "description": "Updates an existing contact group, modifying either all of its fields or a specified subset.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the contact group to update, which must start with `contactGroups/` (e.g., `contactGroups/family`)."
+        },
+        "contact_group_data": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary containing only the contact group fields to be updated."
+        },
+        "update_group_fields": {
+          "type": "string",
+          "description": "A comma-separated list of specific fields to update; if omitted, all provided fields are updated. Valid fields: `name`, `groupType`, `memberResourceNames`."
+        }
+      },
+      "required": [
+        "contact_group_data",
+        "resource_name"
+      ]
+    }
+  }
+]

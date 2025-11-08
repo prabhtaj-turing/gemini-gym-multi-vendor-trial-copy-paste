@@ -1,0 +1,381 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:53.594048Z",
+  "results": {
+    "airline/airline.py": {
+      "functions": {
+        "list_all_airports": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  It correctly mentions that the function returns a dictionary mapping airport IATA codes to city names. The type hinting for the return value (`Dict[str, str]`) is also correct. However, the docstring's description of the return value is slightly misleading. It states that the dictionary maps \"city IATA codes\" to city names, but the implementation shows that it maps *airport* IATA codes to city names. This is a minor inconsistency.  The docstring also lacks a description of potential exceptions that the function might raise (e.g., if `DB.get(\"flights\", {})` fails or if `_AIRPORT_CITY_MAPPING` is improperly formatted).  While the docstring is functional,  clarifying the key-value relationship in the return dictionary and adding a \"Raises\" section would improve its quality."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `list_all_airports` does not have any functional input parameters.  Therefore, the question of Pydantic model usage or other input validation methods is not applicable.  The function relies on the globally defined `DB` and `_AIRPORT_CITY_MAPPING`, which are outside the scope of input validation for this function."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_all_airports` does not have any functional input parameters.  Therefore, there is no input parameter validation to assess.  The function relies solely on the global `DB` and the `_AIRPORT_CITY_MAPPING` which are considered outside the scope of input parameter validation in this context."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_all_airports` has no parameters.  The return type is clearly specified as `Dict[str, str]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves flight data from the global `DB`, extracts origin and destination airport codes, and uses them to filter a pre-existing airport-city mapping (`_AIRPORT_CITY_MAPPING`).  The returned dictionary accurately maps airport IATA codes to city names, as promised in the docstring.  There are no unused functional parameters, placeholders, or exceptions to handle (as no exceptions are documented). The logic is complete and functional given the use of the global `DB`. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_all_airports` does not handle any phone number or email address inputs.  It operates solely on airport IATA codes and city names retrieved from a database (`DB.get(\"flights\", {})`) and an internal mapping (`_AIRPORT_CITY_MAPPING`). Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "search_direct_flight": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  The descriptions are clear and helpful.  Types are correctly specified for parameters and the return value, including nested dictionaries. The documentation of the `available_seats` and `prices` dictionaries is thorough, listing all keys and their types.  The `Raises` section accurately reflects the exception that the function can throw."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `origin`, `destination`, and `date` parameters.  It checks that they are non-empty strings and that the `date` parameter conforms to the YYYY-MM-DD format using regular expressions. While Pydantic could be used to achieve the same validation, the current manual approach is sufficient and correctly handles the required input validation.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and null/empty checks for all three functional input parameters (origin, destination, date).  It also includes a regular expression check to validate the date format. However, it lacks validation of the three-letter airport code format. While the code ensures they are non-empty strings, it doesn't verify that they conform to the expected IATA airport code standard.  More robust validation could involve checking against a database of valid airport codes.  Therefore, while the validation is good, it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (origin, destination, date) are properly type-annotated with their expected types (str). The function's return type is clearly specified as List[Dict[str, Any]].  No **kwargs parameters are used.  Complex types within the return type annotation are also correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly validates the input parameters `origin`, `destination`, and `date` according to the specified format and raises `CustomValidationError` as documented.  It also uses all functional input parameters in its call to `utils.search_flights`. However, the implementation relies entirely on the `utils.search_flights` function, whose implementation is not provided.  Without knowing the implementation details of `utils.search_flights`, we cannot definitively confirm that the returned data structure matches the docstring's specification for the list of dictionaries.  The function's logic is therefore incomplete without seeing the implementation of the helper function.  Assuming `utils.search_flights` correctly returns data as specified, the function would be fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `search_direct_flight` does not handle any phone number or email address inputs.  Its inputs are an origin airport code, a destination airport code, and a date. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the date format using a regular expression."
+          }
+        },
+        "search_onestop_flight": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and their types. The description of the return value is detailed, correctly outlining the nested list structure and the contents of each dictionary.  The `Raises` section correctly identifies the `CustomValidationError`.  Type hints are used effectively for parameters and return values.  The documentation of the nested dictionaries within the return value is thorough, specifying keys and types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `origin`, `destination`, and `date` parameters.  It checks that they are non-empty strings and that the `date` parameter conforms to the YYYY-MM-DD format using a regular expression. While Pydantic could be used to achieve the same validation, the existing manual validation is sufficient and correctly handles the required checks.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on all three functional input parameters (`origin`, `destination`, and `date`).  Type checking ensures they are strings.  Empty string checks are also in place.  The `date` parameter additionally undergoes format validation using a regular expression to ensure it conforms to YYYY-MM-DD.  While the validation is good, it could be improved by adding more robust checks for the airport codes (e.g., checking against a known list of valid airport codes) to ensure they are valid three-letter codes.  Currently, it only checks for non-empty strings."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (origin, destination, date) are properly type-annotated with their expected types (str). The function's return type is clearly specified as List[List[Dict[str, Any]]].  No **kwargs parameters are used.  Complex types within the return annotation are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly validates the input parameters `origin`, `destination`, and `date` for type and format, raising `CustomValidationError` as documented.  It uses all functional input parameters in calling `utils.search_onestop_flights`. However, the implementation relies entirely on the `utils.search_onestop_flights` function, whose implementation is not provided.  Assuming `utils.search_onestop_flights` correctly fetches and formats flight data according to the docstring, the function is mostly complete.  Without seeing the implementation of `utils.search_onestop_flights`, it's impossible to definitively say whether the return value perfectly matches the docstring's description.  The core logic of input validation is present and correct."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_onestop_flight` function does not handle any phone number or email address inputs.  Its inputs are an origin airport code, a destination airport code, and a date. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the date format using a regular expression."
+          }
+        },
+        "get_user_details": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the structure of the complex nested dictionary returned, and lists all possible exceptions.  The types are consistently specified for all parameters and return values, including the nested dictionaries and lists. The descriptions of the dictionary keys and nested structures are detailed and helpful.  There is perfect alignment between the docstring's description of the function's behavior, return value, and raised exceptions, and the actual implementation.  The docstring is complete enough for someone to use the function effectively without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if `user_id` is a non-empty string. This is sufficient input validation for the single functional parameter.  While a Pydantic model could be used, it's not strictly necessary for this level of validation.  The current approach is clear, concise, and effective.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_user_details` performs comprehensive validation of its single functional input parameter, `user_id`.  It checks that `user_id` is a non-empty string using `isinstance` for type checking and a length check for emptiness.  Appropriate exceptions (`CustomValidationError` and `UserNotFoundError`) are raised with informative error messages for invalid inputs and missing users respectively.  All aspects of validation (type, value (emptiness), and error handling) are present for the single functional input."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_user_details` has excellent parameter design and type annotations.  The single parameter `user_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The type annotation for the return value is comprehensive, though it could be improved by specifying more precise types within the dictionary rather than using `Any`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly handles the `user_id` input parameter, raising `CustomValidationError` if it's not a non-empty string.  It also correctly raises `UserNotFoundError` if the user is not found. However, the function's implementation is overly simplistic. It directly returns the result of `utils.get_user(user_id)`.  This assumes that `utils.get_user` returns a dictionary matching the complex structure specified in the docstring.  There's no validation or transformation of the data retrieved from `utils.get_user`.  If `utils.get_user` returns data that doesn't conform to the expected structure, the function will return incorrect data or raise exceptions elsewhere in the system.  The function should explicitly check and potentially transform the data to ensure it matches the specified return type.  A more robust implementation would validate the structure and handle potential missing fields."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_user_details` does not handle any phone number or email address inputs.  It only takes a `user_id` as input and retrieves user details from a presumed `utils.get_user` function.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function's focus is on retrieving user data, not on processing or validating contact information."
+          }
+        },
+        "get_reservation_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and the `reservation_id` type and example. The `Returns` section is comprehensive, detailing the structure of the dictionary, including nested dictionaries and lists, with types specified for each key.  The `Raises` section correctly lists the exceptions.  Type hints are used effectively throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if `reservation_id` is a non-empty string. This is sufficient input validation for the single functional parameter.  Using a Pydantic model would add unnecessary complexity for this simple validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_reservation_details` performs comprehensive validation on its single functional input parameter, `reservation_id`.  It checks for both the correct data type (string) using `isinstance` and for a non-empty string using `not reservation_id`.  Appropriate exceptions (`CustomValidationError` and `ReservationNotFoundError`) are raised with informative error messages for invalid inputs and non-existent reservations, respectively.  All aspects of input validation are covered for the single functional parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_reservation_details` has excellent parameter design.  The single parameter `reservation_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the return dictionary are described in the docstring, although not formally enforced by type hints (which would require significantly more complex type hinting).  The type annotations are complete for the function signature itself."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves reservation details based on the provided `reservation_id`.  It handles the cases where the input is invalid or the reservation is not found by raising the appropriate exceptions. The function uses the `reservation_id` parameter effectively.  The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  There are no placeholders or incomplete logic.  The function's logic is complete and functional within the context of using a global `utils.get_reservation` function (presumably accessing the global DB)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_reservation_details` does not handle any phone number or email address inputs.  Its sole input is a reservation ID string, and it performs only basic validation on that ID's type and non-emptiness.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving reservation details based on a given ID."
+          }
+        },
+        "calculate": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's core task: calculating a mathematical expression. The Args, Returns, and Raises sections are present and generally well-structured, correctly listing the types of parameters and return values, and specifying the exceptions that the function might raise.  Type completeness is good."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `expression` parameter. It checks if the input is a non-empty string and if it contains only valid characters.  While a Pydantic model could be used, the current manual validation is sufficient and arguably more readable in this simple case.  Using Pydantic would add complexity without significant benefit.  No other functional parameters exist that require validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `calculate` has a single functional input parameter, `expression`.  The validation is comprehensive for this parameter.  It checks for the correct data type (string) using `isinstance`, checks for emptiness (`not expression`), validates that the string contains only allowed characters, and handles potential errors during evaluation with a `try-except` block, raising specific exceptions with informative messages.  All aspects of type, value, and null/empty checks are present for the single functional input."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has one parameter, `expression`, which is correctly type-annotated as `str`.  The return type is also clearly specified as `str`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly handles the `expression` parameter and implements the core functionality of calculating a mathematical expression.  It correctly raises `CustomValidationError` and `InvalidExpressionError` as documented.  The rounding to two decimal places and conversion to a string as specified in the docstring are also implemented. However, the use of `eval` presents a significant security risk.  `eval` should be avoided in production code due to its vulnerability to arbitrary code execution if the input string is not carefully sanitized.  While the code attempts to mitigate this by using an empty dictionary for the globals and locals, it's not a foolproof solution. A safer approach would involve using a dedicated mathematical expression parsing and evaluation library.  This makes the implementation \"Mostly Complete\" rather than \"Fully Implemented\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `calculate` does not handle phone numbers or email addresses.  Its purpose is to evaluate mathematical expressions, and it correctly validates the input string to ensure it only contains valid mathematical characters.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "cancel_reservation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  The Args and Returns sections are comprehensive, accurately detailing the parameters and the structure of the returned dictionary, including nested structures.  The Raises section correctly lists the potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `cancel_reservation` uses a simple `if` statement to validate that `reservation_id` is a non-empty string.  This is sufficient validation for this single input parameter.  While a Pydantic model could be used, it's not strictly necessary for this level of validation.  The current approach is clear and concise."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `cancel_reservation` performs comprehensive validation on its single functional input parameter, `reservation_id`.  It checks that `reservation_id` is a non-empty string using both type checking (`isinstance(reservation_id, str)`) and value checking (`not reservation_id`).  Appropriate exceptions (`CustomValidationError` and `ReservationNotFoundError`) are raised with informative error messages for invalid inputs.  All aspects of input validation are covered for the single functional parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `cancel_reservation` has excellent parameter design.  The single parameter `reservation_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  All type annotations are complete and accurate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `reservation_id` to retrieve and update the reservation in the global `DB`.  It handles the `CustomValidationError` and `ReservationNotFoundError` exceptions as documented. The logic for adding refund entries to the `payment_history` is implemented. However, the function's docstring states that it returns \"The updated reservation with a 'cancelled' status\". While it does update the reservation's status, the returned dictionary might not contain all the keys specified in the docstring (e.g., `flights`, `passengers`, etc.) if the original reservation lacked those keys.  The function should explicitly ensure all keys are present in the returned dictionary, even if with default values (e.g., empty lists), to fully match the docstring's specification.  This makes it \"Mostly Complete\" rather than \"Fully Implemented\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `cancel_reservation` function does not handle any phone number or email address inputs.  Its input is solely a `reservation_id` string, and its functionality is focused on retrieving and updating reservation data within an internal database (`DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_reservation_passengers": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section is detailed, correctly specifying the type and outlining the structure of the dictionary, including nested dictionaries within `flights` and `passengers`.  The `Raises` section correctly lists the exceptions that the function might raise.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `TypeAdapter` and `validate_python` to validate the `passengers` list.  However, it performs a separate manual check on the `reservation_id` using `isinstance` and a length check. While the manual check is good, integrating `reservation_id` validation into a Pydantic model would improve consistency and potentially allow for more sophisticated validation (e.g., regex for specific ID formats).  Using a Pydantic model for both `reservation_id` and `passengers` would provide a more unified and robust input validation approach."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `reservation_id` parameter.  It checks for the correct type (string) and non-emptiness.  The `passengers` parameter is validated using Pydantic, which likely handles type and value validation comprehensively (though the specifics of the `Passenger` Pydantic model are not shown). However, there's no explicit check for `passengers` being `None` or an empty list, which could be considered a minor gap.  While Pydantic likely covers this, explicit checks would improve robustness and clarity.  The validation is focused on the functional parameters, and the error handling is appropriate with custom exceptions."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters `reservation_id` and `passengers` are properly type-annotated.  `reservation_id` is annotated as `str`, and `passengers` is correctly annotated as `List[Dict[str, Any]]`. The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly updates the passenger information for a given reservation ID.  It handles the `CustomValidationError`, `PydanticValidationError`, `ReservationNotFoundError`, and `MismatchedPassengerCountError` exceptions as documented.  The input parameters `reservation_id` and `passengers` are both used correctly.  The function's logic is mostly complete and functional, given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_reservation_passengers` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on updating passenger information within an existing reservation, using a provided list of passenger dictionaries.  There's no input field for phone numbers or emails in the passenger data structure."
+          }
+        },
+        "update_reservation_baggages": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section correctly identifies the return type and provides a comprehensive description of the dictionary structure, including nested structures.  The `Raises` section lists all potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation on all functional parameters (`reservation_id`, `total_baggages`, `nonfree_baggages`, `payment_id`) using `isinstance` checks and range checks.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks adequately cover the validation requirements for the input parameters.  Using Pydantic would be an improvement in terms of code organization and readability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All four functional input parameters (`reservation_id`, `total_baggages`, `nonfree_baggages`, and `payment_id`) are validated.  Type validation is performed for each parameter using `isinstance`.  Value validation checks ensure `total_baggages` and `nonfree_baggages` are non-negative integers, and `reservation_id` and `payment_id` are non-empty strings.  Appropriate `CustomValidationError` exceptions are raised with informative messages for invalid inputs.  There are no gaps in validation for the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (reservation_id, total_baggages, nonfree_baggages, payment_id) are properly type-annotated with their expected types (str, int, int, str respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the docstrings are also properly reflected in the type annotations (though the Any type in the return is somewhat generic)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles input validation, retrieves data from the global `DB`, updates the reservation based on the provided parameters, and handles potential errors with appropriate exceptions. The logic for updating the payment method's amount and adding payment history entries is also correctly implemented.  However, the `payment_id` parameter is used only for error handling and payment history updates; it doesn't play a role in determining the price calculation.  The price calculation currently only considers the difference between the new and old `nonfree_baggages`.  A more robust implementation might consider other factors that could influence the price, potentially making use of the `payment_id` in a more comprehensive way.  Also, the function lacks error handling for cases where `reservation.get(\"nonfree_baggages\", 0)` might not be an integer, which could lead to unexpected behavior.  Finally, while the docstring mentions various keys in the returned dictionary, it doesn't explicitly state that only the updated `reservation` dictionary is returned.  Clarifying this in the docstring would improve clarity."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_reservation_baggages` does not handle any phone number or email address inputs.  Its parameters and logic are solely focused on updating reservation baggage information using reservation IDs and payment IDs. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_reservation_flights": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the arguments and their types. The `Returns` section is quite detailed, accurately describing the structure of the returned dictionary, including nested structures. The `Raises` section lists the exceptions, which is good.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `TypeAdapter` and `validate_python` to validate the `flights` parameter.  However, the other functional parameters (`reservation_id`, `cabin`, `payment_id`) are validated using basic type checking and length checks.  While this provides some validation, using Pydantic models for these parameters would provide a more robust and structured approach, including data type enforcement and potentially more sophisticated validation rules (e.g., regular expressions for specific formats).  The current manual checks are sufficient for basic validation, but Pydantic would improve the code's maintainability and readability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters: `reservation_id`, `cabin`, and `payment_id`.  Each is checked to ensure it is a non-empty string using `isinstance` and length checks.  Appropriate `CustomValidationError` exceptions are raised with informative messages if these checks fail.  The `flights` parameter is validated using Pydantic, which handles type and value validation according to the `FlightInput` model (though the details of this model are not shown in the provided code snippet).  All functional parameters are validated before being used in any subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (reservation_id, cabin, flights, payment_id) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `List` and `Dict` are properly specified, including nested dictionaries within the `flights` parameter."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using all functional input parameters (`reservation_id`, `cabin`, `flights`, `payment_id`).  It handles the documented exceptions (`CustomValidationError`, `PydanticValidationError`, `ReservationNotFoundError`, `UserNotFoundError`, `FlightNotFoundError`, `SeatsUnavailableError`).  However, it's missing handling for `PaymentMethodNotFoundError` and `InsufficientFundsError`, which are raised but not caught.  The logic for updating flights and handling payments seems largely correct, assuming the `DB` and `TypeAdapter` function correctly. The docstring accurately reflects the function's behavior and return type.  The function correctly handles existing flights, preventing duplicate entries.  The addition of a new `PaymentMethodNotFoundError` exception is a minor gap.  The function also doesn't explicitly handle cases where `reservation` or `flights` might be empty, although this is implicitly handled by the loop conditions.  Adding explicit checks for these edge cases would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_reservation_flights` does not handle any phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on updating flight reservation data based on provided inputs like reservation ID, cabin class, flight details, and payment ID.  There's no input field for either phone numbers or email addresses."
+          }
+        },
+        "send_certificate": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose, arguments, return value, and raised exceptions.  The descriptions are clear and concise.  Types are correctly specified for parameters and the return value.  The `Raises` section accurately reflects the exceptions that the function can throw."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `user_id` and `amount` parameters through type checking and conditional statements.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all necessary checks for the functional parameters.  Using Pydantic here would be an improvement in terms of code style and maintainability, but it's not strictly necessary for the validation itself."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `send_certificate` performs comprehensive validation on both functional input parameters: `user_id` and `amount`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`user_id` and `amount`) are properly type-annotated with `str` and `int` respectively.  The return type is also clearly specified as `str`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the sending of a certificate by adding a payment method entry to the user's data in the global `DB`.  All functional input parameters (`user_id` and `amount`) are used.  The documented exceptions (`CustomValidationError` and `UserNotFoundError`) are properly raised under the specified conditions. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The use of a `while` loop ensures uniqueness of payment IDs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `send_certificate` function does not handle any phone number or email address inputs.  Its inputs are a user ID (string) and an amount (integer). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on user certificate management within a database and does not involve communication methods that would require such input processing."
+          }
+        },
+        "think": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and adequately describes the function's purpose: appending a thought to a log without modifying the database.  The description is clear and helpful in the context of an MCP server.  The Args and Returns sections are correctly formatted and include type information.  All claims in the docstring are consistent with the function's implementation; it accurately reflects that the function returns an empty string.  There are no exceptions to document, and no default parameter values to specify.  The docstring could be slightly improved by explicitly mentioning that the \"log\" is internal to the system, and perhaps giving a more concrete example of what constitutes a \"thought\". However, the current docstring is sufficient for a user to understand and use the function correctly."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `think` has only one input parameter, `thought`, which is type hinted as `str`.  While there's no explicit input validation beyond the type hint,  no further validation is strictly necessary for the function's purpose. The function simply appends the input to a log (represented by the global `DB`).  The type hint provides sufficient validation in this case, and using a Pydantic model would be unnecessary overhead."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `think` has one input parameter, `thought`, which is a string.  However, there is no input validation performed on this parameter. No type checks, value checks, null/empty checks, or any other form of validation is present.  Therefore, the input validation is completely absent."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `think` has excellent parameter design.  All parameters (`thought`) are properly type-annotated with their expected types (str). The return type is clearly specified as `str`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements its docstring.  It takes a `thought` parameter (which is used implicitly by the docstring's description of appending to a log, even if not explicitly in the code), returns an empty string as promised, and doesn't attempt any database interaction beyond what's implied by the docstring (which states it won't modify the database). There are no placeholders, exceptions, or unused functional parameters.  The implementation matches the docstring perfectly within the context of the global `DB` being used for logging (as per the provided context)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `think` does not handle phone numbers or email addresses as input.  It simply accepts a string, ostensibly a \"thought,\" and returns an empty string.  Therefore, there is no normalization or validation to assess."
+          }
+        },
+        "transfer_to_human_agents": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose within the context of an MCP server.  It accurately describes the function's arguments and return value, including types. The `Raises` section correctly identifies the `CustomValidationError`.  The docstring aligns well with the function's implementation.  All aspects are covered, making it easy for someone to understand how to use the function.  There are no inconsistencies between the docstring and the implementation.  The only minor improvement would be to add a more descriptive example in the docstring to illustrate its usage, but this is not strictly necessary for a function this simple."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `summary` argument is a non-empty string. This is sufficient input validation for the single functional parameter.  While using a Pydantic model would be an alternative approach, it's not strictly necessary for this simple validation task.  The current method is clear, concise, and effective."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `transfer_to_human_agents` has one functional input parameter: `summary`.  The validation is comprehensive for this parameter.  It checks that `summary` is of type `str` and that it is not empty.  Appropriate exceptions (`CustomValidationError`) with clear error messages are raised for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  All parameters are properly type-annotated (`summary: str`). The return type is also clearly specified (`-> str`).  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the transfer functionality as described in its docstring.  It validates the input `summary` parameter as a non-empty string and raises the `CustomValidationError` as documented if the validation fails. The return value (\"Transfer successful\") matches the docstring's description.  There are no placeholders, TODOs, or unused functional parameters.  The logic is complete and functional within the specified constraints."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `transfer_to_human_agents` does not handle phone numbers or email addresses as input.  It only takes a summary string as input and performs basic validation on that string to ensure it's not empty.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "book_reservation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the `book_reservation` function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and their types, including detailed explanations of the nested dictionary structures for `flights`, `passengers`, and `payment_methods`. The `Returns` section adequately describes the structure of the returned dictionary, although it could benefit from specifying the type of `created_at` (e.g., `str`). The `Raises` section is comprehensive, listing all potential exceptions with informative descriptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses Pydantic's `TypeAdapter` to validate the `passengers`, `flights`, and `payment_methods` lists against their respective Pydantic models (Passenger, FlightInput, PaymentMethodInReservation - assumed to be defined elsewhere).  This is a proper and effective use of Pydantic for input validation.  Basic validation for other parameters (strings, integers) is also performed using `isinstance` checks, ensuring non-negative integers and non-empty strings. While this manual validation is redundant given the assumed structure of the Pydantic models, it doesn't detract from the overall proper use of Pydantic for the complex list inputs."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types (List, Dict) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and implements the core booking logic correctly, using all functional input parameters.  The exception handling is comprehensive, covering all documented exceptions. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  However, the `_generate_random_id` function is not defined within the provided code, and the `DB` is a global variable, which makes testing difficult.  The hardcoded \"2024-05-15T15:00:00\" for `created_at` should be replaced with a dynamic timestamp.  While these are minor issues, they prevent a \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `book_reservation` function does not handle any phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on flight booking details and payment processing, using user IDs and other identifiers instead of contact information."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "airline": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files."
+      }
+    }
+  }
+}

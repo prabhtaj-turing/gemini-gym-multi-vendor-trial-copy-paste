@@ -1,0 +1,173 @@
+[
+  {
+    "name": "get_installed_apps",
+    "description": "Retrieves the list of applications installed on the device. The returned list consists of dictionaries, where each dictionary contains the application name under a \"name\" field.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "open_app",
+    "description": "Opens the requested application on the device. If an exact match for \"alarms\" or \"timers\" is unavailable, it attempts to open any clock app as a less-preferred fallback.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "app_name": {
+          "type": "string",
+          "description": "The name of the application to open. This name must exactly match one of the names returned by `get_installed_apps`."
+        },
+        "app_package_name": {
+          "type": "string",
+          "description": "An optional string that specifies the package name of the application to open."
+        },
+        "extras": {
+          "type": "string",
+          "description": "A JSON string containing additional data to send to the opened application. This parameter is exclusively used when opening \"Pixel Screenshots\". When used, it must contain a \"query\" key whose value is the information-seeking part of the user prompt, which should ideally be a full question or sentence."
+        }
+      },
+      "required": [
+        "app_name"
+      ]
+    }
+  },
+  {
+    "name": "open_camera",
+    "description": "Opens the device's camera. Specify whether to use the 'FRONT', 'REAR', or 'DEFAULT' camera, and set the initial functional mode to either 'PHOTO' or 'VIDEO'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "camera_type": {
+          "type": "string",
+          "description": "Specifies the type of camera to open. This parameter must be one of 'FRONT', 'REAR', or 'DEFAULT'."
+        },
+        "camera_operation": {
+          "type": "string",
+          "description": "Specifies the initial functional mode for the camera upon opening. This parameter must be set to either 'PHOTO' or 'VIDEO'."
+        },
+        "camera_mode": {
+          "type": "string",
+          "description": "This parameter is deprecated and retained for binary compatibility."
+        }
+      }
+    }
+  },
+  {
+    "name": "open_home_screen",
+    "description": "Navigate to the home screen on the device.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "open_url",
+    "description": "Opens the requested URL in a browser. Use this function only if the user prompt contains a URL or explicitly asks to open a website. When providing the URL, do not include the protocol (e.g., `https://`) if the user prompt does not include it.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The URL to open. Do not include the protocol (e.g., `https://`) if it is absent from the user's original prompt."
+        },
+        "website_name": {
+          "type": "string",
+          "description": "Specifies the name of the website to open. This parameter must not include the top-level domain."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  },
+  {
+    "name": "open_websearch",
+    "description": "Opens a Google search page with the provided query in the default web browser.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The text string representing the search query. This parameter specifies the content that will be used to open a Google search page in the user's default browser."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "power_off_device",
+    "description": "Intended to power off the device, this function only opens the power options menu.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "record_video",
+    "description": "Records a video using the device camera. Any requested recording delay will be ignored, and the recording will begin immediately.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "camera_type": {
+          "type": "string",
+          "description": "Specifies the type of camera to use for recording. It must be one of 'FRONT', 'REAR', or 'DEFAULT'."
+        },
+        "self_timer_delay": {
+          "type": "string",
+          "description": "This parameter is deprecated. It is retained solely for binary compatibility."
+        },
+        "video_duration": {
+          "type": "string",
+          "description": "Specifies the duration for the video recording. This parameter expects a string in the format of a request, such as \"record a 15 second video\"."
+        }
+      }
+    }
+  },
+  {
+    "name": "restart_device",
+    "description": "Opens the power options menu; this is the function's sole action to facilitate device restart.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "ring_phone",
+    "description": "Sends an action to the device to remotely ring the user's paired phone.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "take_photo",
+    "description": "Takes a photo using the device camera. Configure the camera type as 'FRONT' (for selfies), 'REAR', or 'DEFAULT'. You can also set a `self_timer_delay` (defaults to 3 seconds) or specify the camera mode as 'DEFAULT' or 'PORTRAIT'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "camera_type": {
+          "type": "string",
+          "description": "Specifies the type of camera to open. This parameter accepts one of three string values: 'FRONT', 'REAR', or 'DEFAULT'. When a selfie is requested, the value 'FRONT' should be used."
+        },
+        "self_timer_delay": {
+          "type": "string",
+          "description": "Specifies the delay time before taking a photo. If this parameter is not provided, it defaults to '3 seconds'."
+        },
+        "camera_mode": {
+          "type": "string",
+          "description": "Defines the mode the camera should use for capturing a picture. Valid options are 'DEFAULT' or 'PORTRAIT'."
+        }
+      }
+    }
+  },
+  {
+    "name": "take_screenshot",
+    "description": "Takes a screenshot on the device, returning a dictionary that details the action's result.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+]

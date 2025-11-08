@@ -1,0 +1,232 @@
+[
+  {
+    "name": "download_polyhaven_asset",
+    "description": "Downloads a Polyhaven asset, identified by its `asset_id` and `asset_type`, and imports it into Blender.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "description": "The string ID of the asset to download."
+        },
+        "asset_type": {
+          "type": "string",
+          "description": "The asset type (`hdris`, `textures`, `models`)."
+        },
+        "resolution": {
+          "type": "string",
+          "description": "The resolution to download (e.g., `1k`, `2k`, `4k`); defaults to `1k`."
+        },
+        "file_format": {
+          "type": "string",
+          "description": "Optional file format; for example, `hdr` or `exr` for HDRIs, `jpg` or `png` for textures, and `gltf` or `fbx` for models. Defaults to `None`."
+        }
+      },
+      "required": [
+        "asset_id",
+        "asset_type"
+      ]
+    }
+  },
+  {
+    "name": "generate_hyper3d_model_via_images",
+    "description": "Generate a 3D asset from input images using Hyper3D, importing it into Blender with built-in materials and a normalized size that may require re-scaling; provide either `input_image_paths` or `input_image_urls` as dictated by the Hyper3D Rodin mode.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "input_image_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of absolute paths to input images, which must be provided even for a single image; required if Hyper3D Rodin is in `MAIN_SITE` mode, otherwise defaults to `None`."
+        },
+        "input_image_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The URLs of input images, provided as a list (even for a single image); this parameter is required if Hyper3D Rodin is in FAL_AI mode and defaults to `None`."
+        },
+        "bbox_condition": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "An optional list of 3 integers that controls the ratio between the model's Length, Width, and Height. Defaults to `None`."
+        }
+      }
+    }
+  },
+  {
+    "name": "generate_hyper3d_model_via_text",
+    "description": "Generates a 3D asset using Hyper3D from a description and imports it into Blender, where the asset has built-in materials and a normalized size, potentially requiring re-scaling.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "text_prompt": {
+          "type": "string",
+          "description": "A short English description of the desired model."
+        },
+        "bbox_condition": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "An optional list of 3 floats that controls the [Length, Width, Height] ratio of the model."
+        }
+      },
+      "required": [
+        "text_prompt"
+      ]
+    }
+  },
+  {
+    "name": "get_hyper3d_status",
+    "description": "Check if Hyper3D Rodin integration is enabled in Blender and return a message indicating feature availability.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_object_info",
+    "description": "Get detailed information about a specific object in the Blender scene.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "object_name": {
+          "type": "string",
+          "description": "The name of the object to get information about."
+        }
+      },
+      "required": [
+        "object_name"
+      ]
+    }
+  },
+  {
+    "name": "get_polyhaven_categories",
+    "description": "Retrieve categories for a specified Polyhaven asset type.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "asset_type": {
+          "type": "string",
+          "description": "The asset type for which to retrieve categories; one of `hdris`, `textures`, `models`, or `all`. Defaults to `hdris`."
+        }
+      }
+    }
+  },
+  {
+    "name": "get_polyhaven_status",
+    "description": "Returns a message detailing PolyHaven integration status and feature availability in Blender.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_scene_info",
+    "description": "Retrieve comprehensive information about the current Blender scene, encompassing its name, counts of cameras, objects, and lights, the active camera, world environment settings, and rendering configurations.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "import_hyper3d_generated_asset",
+    "description": "Import a Hyper3D Rodin-generated asset using `task_uuid` or `request_id` (only one allowed) after its generation task completes.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The desired name for the imported object in the scene; a suffix may be added to ensure uniqueness if the name already exists."
+        },
+        "task_uuid": {
+          "type": "string",
+          "description": "The `task_uuid` for Hyper3D Rodin's `MAIN_SITE` mode, provided during the model generation step; defaults to `\"null\"`."
+        },
+        "request_id": {
+          "type": "string",
+          "description": "The request ID for Hyper3D Rodin FAL_AI mode, given in the generate model step. Defaults to \"null\"."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "name": "poll_hyper3d_rodin_job_status",
+    "description": "Polls the Hyper3D Rodin generation task status, inferring the operational mode and completion criteria from the provided `subscription_key` (MAIN_SITE: all component statuses are 'Done') or `request_id` (FAL_AI: overall status is 'COMPLETED').",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "subscription_key": {
+          "type": "string",
+          "description": "The subscription key provided during the model generation step, used for polling in MAIN_SITE mode; defaults to `None`."
+        },
+        "request_id": {
+          "type": "string",
+          "description": "The request_id given in the generate model step, used for polling in FAL_AI mode; defaults to None."
+        }
+      }
+    }
+  },
+  {
+    "name": "run_python_script_in_blender",
+    "description": "Execute arbitrary Python code in the Blender simulation environment, designed for step-by-step execution, with access to dynamic API modules, SimulationEngine.models, and the _simulation_db object.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The arbitrary Python code string for execution within the Blender simulation environment."
+        }
+      },
+      "required": [
+        "code"
+      ]
+    }
+  },
+  {
+    "name": "search_polyhaven_assets",
+    "description": "Search Polyhaven assets, optionally filtered by `asset_type` (e.g., 'hdris', 'textures', 'models', or 'all') and a comma-separated list of `categories`, returning a list of matching assets with basic information.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "asset_type": {
+          "type": "object",
+          "description": "The type of asset to search for, defaulting to 'all'. Valid types include 'hdris', 'textures', 'models', or 'all'."
+        },
+        "categories": {
+          "type": "object",
+          "description": "An optional comma-separated list of categories for filtering assets; defaults to `None`."
+        }
+      }
+    }
+  },
+  {
+    "name": "set_object_texture",
+    "description": "Apply a previously downloaded Polyhaven texture to an object.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "object_name": {
+          "type": "string",
+          "description": "Object name for texture application."
+        },
+        "texture_id": {
+          "type": "string",
+          "description": "The ID of the Polyhaven texture to apply, which must be downloaded first."
+        }
+      },
+      "required": [
+        "object_name",
+        "texture_id"
+      ]
+    }
+  }
+]

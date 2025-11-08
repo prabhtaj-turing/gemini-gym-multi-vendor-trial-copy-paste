@@ -1,0 +1,154 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/cursor-api-simulator-schema.json",
+    "title": "Cursor API Simulator State",
+    "description": "Schema defining the state of the Cursor API Simulator, including its virtual file system and operational status.",
+    "type": "object",
+    "properties": {
+      "workspace_root": {
+        "description": "The absolute, normalized path representing the root of the simulated workspace.",
+        "type": "string",
+        "pattern": "^/.*$"
+      },
+      "cwd": {
+        "description": "The current working directory (absolute, normalized path) within the simulated workspace.",
+        "type": "string",
+        "pattern": "^/.*$"
+      },
+      "file_system": {
+        "description": "The core database representing the file system. Maps normalized, absolute file/directory paths to their corresponding node objects.",
+        "type": "object",
+        "patternProperties": {
+          "^/.*$": {
+            "$ref": "#/$defs/fileSystemNode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "last_edit_params": {
+        "description": "Stores the parameters of the most recent 'edit_file' API call, used for the 'reapply' operation. Null if no edit has been performed yet.",
+        "type": [ "object", "null" ],
+        "properties": {
+          "target_file": { "type": "string" },
+          "code_edit": { "type": "string" },
+          "instructions": { "type": "string" },
+          "explanation": { "type": "string" }
+        },
+        "required": [
+          "target_file",
+          "code_edit",
+          "instructions"
+        ],
+        "additionalProperties": false
+      },
+      "background_processes": {
+        "description": "A map of simulated background processes. Keys are simulated PIDs (as strings), values are the command strings being 'run'.",
+        "type": "object",
+        "patternProperties": {
+          "^[1-9]\\d*$": {
+            "type": "string",
+            "description": "The command string associated with the PID."
+          }
+        },
+        "additionalProperties": false
+      },
+      "_next_pid": {
+          "description": "Internal counter for assigning the next simulated background process ID.",
+          "type": "integer",
+          "minimum": 1
+      }
+    },
+    "required": [
+      "workspace_root",
+      "cwd",
+      "file_system",
+      "last_edit_params",
+      "background_processes",
+      "_next_pid"
+    ],
+  
+    "$defs": {
+      "fileSystemNode": {
+        "description": "Represents a single file or directory within the simulated file system.",
+        "oneOf": [
+          {
+            "title": "File Node",
+            "type": "object",
+            "properties": {
+              "path": {
+                "description": "The normalized, absolute path of the file. Should match the key in the 'file_system' map.",
+                "type": "string",
+                "pattern": "^/.*$"
+              },
+              "is_directory": {
+                "description": "Flag indicating if this node is a directory.",
+                "const": false
+              },
+              "content_lines": {
+                "description": "An array where each string represents a line in the file.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "size_bytes": {
+                "description": "The calculated size of the file content in bytes (e.g., UTF-8 encoded).",
+                "type": "integer",
+                "minimum": 0
+              },
+              "last_modified": {
+                "description": "The timestamp of the last modification in ISO 8601 format.",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "path",
+              "is_directory",
+              "content_lines",
+              "size_bytes",
+              "last_modified"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "title": "Directory Node",
+            "type": "object",
+            "properties": {
+              "path": {
+                "description": "The normalized, absolute path of the directory. Should match the key in the 'file_system' map.",
+                "type": "string",
+                "pattern": "^/.*$"
+              },
+              "is_directory": {
+                "description": "Flag indicating if this node is a directory.",
+                "const": true
+              },
+               "content_lines": {
+                "description": "Must be empty for directories.",
+                "type": "array",
+                "maxItems": 0
+              },
+              "size_bytes": {
+                "description": "Size is typically 0 for directories in this simulation.",
+                "const": 0
+              },
+              "last_modified": {
+                "description": "The timestamp of the last modification (e.g., creation) in ISO 8601 format.",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "path",
+              "is_directory",
+              "content_lines",
+              "size_bytes",
+              "last_modified"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  }

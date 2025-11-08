@@ -1,0 +1,297 @@
+[
+  {
+    "name": "create_new_jupyter_notebook",
+    "description": "Generates a new Jupyter Notebook (.ipynb) in VS Code, an interactive document type commonly used for data exploration, analysis, visualization, and combining code with narrative text. This tool should only be called when explicitly requested by the user.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "create_new_workspace",
+    "description": "Generates step-by-step instructions for creating any project in a VS Code workspace. This includes various project types such as TypeScript-based projects, Model Context Protocol (MCP) servers, VS Code extensions, Next.js, and Vite projects.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A string that provides a clear and concise description of the new workspace to be generated. This parameter must be a non-empty string."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "file_search",
+    "description": "Searches for files in the workspace using a glob pattern. It returns a list of file paths relative to the workspace root that match the pattern, with the search limited to 20 results. Glob patterns are matched starting from the workspace root, making this suitable when the filename pattern is known.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "glob_pattern": {
+          "type": "string",
+          "description": "A string that defines the glob pattern to search for files. This pattern is matched starting from the workspace root. Examples include `'**/*.{js,ts}'` for all js/ts files, `'src/**'` for all files under the top-level 'src' folder, and `'**/foo/**/*.js'` for all js files under any 'foo' folder."
+        }
+      },
+      "required": [
+        "glob_pattern"
+      ]
+    }
+  },
+  {
+    "name": "get_changed_files",
+    "description": "Retrieves git diffs for current file changes within the active git repository. For each changed file, it provides its path, status (e.g., 'modified', 'added', 'deleted', 'renamed', 'copied'), the diff output in unified format, and the original path if the file was renamed or copied.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_errors",
+    "description": "Retrieves compile or lint errors from a specified code file, representing issues a user might encounter or for validating file changes. The results are returned as a list of dictionaries, with each dictionary describing an error and including details such as `file_path`, `line_number`, `message`, and `severity`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "The string path to the code file that will be analyzed for errors. This parameter must not be empty, must be a valid path, and must point to an existing file rather than a directory."
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "get_project_setup_info",
+    "description": "Provides project setup information for a Visual Studio Code workspace based on a specified project type and programming language. This function requires a workspace to be initialized first.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project_type": {
+          "type": "string",
+          "description": "The type of the project, such as 'typescript_server', 'vscode_extension', or 'python_datascience'."
+        },
+        "language": {
+          "type": "string",
+          "description": "Specifies the primary programming language of the project. Examples include 'typescript' and 'python'."
+        }
+      },
+      "required": [
+        "language",
+        "project_type"
+      ]
+    }
+  },
+  {
+    "name": "get_terminal_output",
+    "description": "Retrieves the standard output, standard error, running status, and exit code for a previously started terminal process. This function reads any new output generated since the last call for the same terminal ID. If the process has finished, it retrieves all remaining output and the final exit code.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "terminal_id": {
+          "type": "string",
+          "description": "The ID of a background terminal process. This ID must be a string containing only digits and should have been returned by the function that initiated the background process."
+        }
+      },
+      "required": [
+        "terminal_id"
+      ]
+    }
+  },
+  {
+    "name": "get_vscode_api",
+    "description": "Retrieve relevant VS Code API references for VS Code extension development. This function is used to answer questions about VS Code APIs, capabilities, or best practices, and is applicable within all VS Code extension development workspaces.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A string representing the query to search VS Code documentation. It must include all relevant context to yield accurate results."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Performs a text search within the user's workspace. This function is limited to 20 results and is intended for use when the exact string or regular expression to search for is known.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "search_pattern": {
+          "type": "string",
+          "description": "A string representing either an exact literal text or a regular expression, used to search for content within the workspace."
+        }
+      },
+      "required": [
+        "search_pattern"
+      ]
+    }
+  },
+  {
+    "name": "insert_edit_into_file",
+    "description": "Inserts new code into an existing file in the workspace, processing all modifications for that file in a single call. Prior to calling, generate the `explanation` for the changes. Structure `edit_instructions` concisely: use comments (e.g., `// ...existing code...`) to denote unchanged code, and provide only new or modified blocks, for example using the pattern `// ...existing code...\\n{ changed code }\\n// ...existing code...`, or to add an `age` property and `getAge` method to an existing `Person` class: `class Person { // ...existing code... age: number; // ...existing code... getAge() { return this.age; } }`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "A string representing the path of the file within the workspace to be modified."
+        },
+        "edit_instructions": {
+          "type": "string",
+          "description": "The content representing changes to be applied to a file. This parameter must follow a concise diff-like format, using comments like `// ...existing code...` to represent unchanged code regions and providing only the new or modified code blocks."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A natural language explanation of the changes being made in this edit. This string must be generated first."
+        }
+      },
+      "required": [
+        "edit_instructions",
+        "explanation",
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "install_extension",
+    "description": "Installs a Visual Studio Code extension. This function is exclusively intended for use as part of a new workspace creation process.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "extension_id": {
+          "type": "string",
+          "description": "The unique identifier for the Visual Studio Code extension to be installed. It must follow the format 'publisher.name', for example 'ms-python.python'."
+        }
+      },
+      "required": [
+        "extension_id"
+      ]
+    }
+  },
+  {
+    "name": "list_code_usages",
+    "description": "Lists all usages, such as references, definitions, and implementations, for a specified code symbol like a function, class, method, or variable. Use this function to find sample implementations, check symbol usage throughout the codebase, or ensure comprehensive updates when changing a symbol.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "The absolute path to the file containing the symbol for which usages are to be found. This path must point to an existing file and cannot be empty."
+        },
+        "line_number": {
+          "type": "integer",
+          "description": "The 1-based line number in the specified file where the symbol is located. This number typically refers to the start of the symbol's identifier."
+        },
+        "column_number": {
+          "type": "integer",
+          "description": "The 1-based column number (character offset) on the specified line in the file where the symbol is located. This value typically refers to the start of the symbol's identifier."
+        }
+      },
+      "required": [
+        "column_number",
+        "file_path",
+        "line_number"
+      ]
+    }
+  },
+  {
+    "name": "list_dir",
+    "description": "Lists the contents of a specified directory, providing the name of each child item. Folder names are indicated by a trailing slash ('/'), while file names do not have this suffix.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "A string representing the path to the directory whose contents are to be listed."
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Reads a specified range of lines from a file. It may also provide an outline of the file structure if the range is part of a larger file, and can be called repeatedly to retrieve additional content.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Specifies the path to the file to be read. It must be a string."
+        },
+        "start_line": {
+          "type": "integer",
+          "description": "An integer that specifies the 1-based starting line number for the content to be retrieved. It must be a positive value, meaning the first line is 1."
+        },
+        "end_line": {
+          "type": "integer",
+          "description": "The 1-based ending line number for the content to retrieve. This integer must be greater than or equal to 1 and not less than the `start_line` parameter."
+        }
+      },
+      "required": [
+        "end_line",
+        "file_path",
+        "start_line"
+      ]
+    }
+  },
+  {
+    "name": "run_in_terminal",
+    "description": "Run a shell command in a terminal, maintaining a persistent state across calls. Set `is_background` to `True` for long-running processes; this returns a terminal ID for retrieving output via `get_terminal_output`. Commands typically using pagers (e.g., `git log`, `man`, `less`) must be modified to disable the pager (e.g., `git --no-pager log`) or pipe output to a non-pager command (e.g., `git log | cat`) to prevent stalled execution.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The shell command to execute. This is a required parameter. Commands that typically use a pager (e.g., `git log`, `man`) must be modified to disable the pager (e.g., `git --no-pager log`) or pipe their output to a non-pager command (e.g., `git log | cat`) to prevent stalled execution or unexpected behavior."
+        },
+        "is_background": {
+          "type": "boolean",
+          "description": "If set to `True`, the command runs as a background process, causing the method to return immediately with a terminal ID. If `False` (default), the command runs in the foreground, and the method waits for its completion before returning output."
+        }
+      },
+      "required": [
+        "command"
+      ]
+    }
+  },
+  {
+    "name": "semantic_search",
+    "description": "Performs a natural language search for relevant code or documentation comments within the user's current workspace. It returns relevant code snippets if the workspace is large, or the full contents of the workspace if it is small.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The natural language string to use as a search query. This parameter must be a non-empty string."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "test_search",
+    "description": "Searches for the related counterpart file for a given `file_path`. If `file_path` specifies a source file, it identifies its corresponding test file; conversely, if it specifies a test file, it locates the code under test. The function returns the path to the related file (if found), its relationship type, and a confidence score.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "The absolute path to a source code or test file. This parameter is used to find the file's related counterpart."
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  }
+]

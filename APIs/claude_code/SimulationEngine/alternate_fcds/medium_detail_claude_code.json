@@ -1,0 +1,162 @@
+[
+  {
+    "name": "glob",
+    "description": "Finds files matching a glob pattern within the simulated workspace. Results include all files whose absolute paths match the provided pattern, optionally scoped to a specific directory.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "A glob pattern for matching files (e.g., '*.py', '**/*.md', or 'src/**/*.ts')."
+        },
+        "path": {
+          "type": "string",
+          "description": "An optional directory to search in. If relative, it is resolved against the workspace root; if omitted, the search starts at the workspace root."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "list_directory",
+    "description": "Lists the direct children of a workspace directory, returning basic metadata for each file or subdirectory found in that path.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The absolute directory path to list. The path must be within the configured workspace root."
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional glob patterns to exclude from the results, such as ['*.log', 'node_modules']."
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Reads text content from a file in the workspace with optional pagination. Enforces workspace boundaries and respects .claudeignore patterns.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The absolute path to the file to read. The path must be within the workspace root and not ignored by .claudeignore patterns."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "For text files, the 1-based starting line to read from. When set, it should be used together with 'limit' for pagination."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "The maximum number of lines to read when 'offset' is provided. Defaults to 2000."
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "run_shell_command",
+    "description": "Executes a shell command in the simulated workspace environment, returning stdout, stderr, and the exit code. Validates that the working directory remains inside the workspace.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The shell command to execute. Must be a non-empty string."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief, human-readable description of the command's purpose."
+        },
+        "directory": {
+          "type": "string",
+          "description": "The directory to execute the command in. If relative, it is resolved against the workspace root; defaults to the workspace root when omitted."
+        },
+        "background": {
+          "type": "boolean",
+          "description": "Whether to run the command in the background. This is currently not implemented and is ignored."
+        }
+      },
+      "required": [
+        "command"
+      ]
+    }
+  },
+  {
+    "name": "search_file_content",
+    "description": "Searches for a regular expression pattern within file contents under a specified directory (or the workspace root). Supports optional file filtering via a glob-like include pattern.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "A valid regular expression pattern to match against each line of text content."
+        },
+        "path": {
+          "type": "string",
+          "description": "An optional directory to search within. If relative, it is resolved against the workspace root; defaults to the workspace root."
+        },
+        "include": {
+          "type": "string",
+          "description": "An optional file name pattern (e.g., '*.py') to limit which files are searched."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "write_file",
+    "description": "Writes content to a file in the workspace, creating any missing parent directories and overwriting existing content. Ensures the target path is inside the workspace.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "The absolute path of the file to write. The path must be located within the workspace root."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content to write to the file. Existing content will be fully replaced."
+        },
+        "modified_by_user": {
+          "type": "boolean",
+          "description": "Optional flag indicating whether the content was modified by the user."
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "web_fetch",
+    "description": "Fetches content from a given URL using an HTTP GET request and returns the response text and status code.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The URL to fetch. Must be a valid string URL."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  }
+]

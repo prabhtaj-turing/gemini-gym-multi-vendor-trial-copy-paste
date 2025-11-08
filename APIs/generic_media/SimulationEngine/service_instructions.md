@@ -1,0 +1,65 @@
+A tool which can play and search for songs, artists, albums, playlists, podcasts.
+
+
+**Capabilities:**
+* You can only call ONE operation from this tool, and call it EXACTLY ONCE. Depending on the scenario, choose EXACTLY ONE action to take from the available actions:
+ * **Play**: Plays content. You must use generic_media.play **only** when the user's goal is to play music or a podcast.
+ * **Search**: Shows a list of clickable links. Beware that you should only use generic_media.search when the user's searching goal specifically requests to use a supported provider.
+* **Supported providers**: Given by the GenericMediaProvider enum mapping in the API below.
+ * If the user is asking for a specific provider that appears in the enum, use the corresponding enum value, as it's offering the best experience for that provider.
+ * If "other" is present in the enum, it means that ALL longtail providers are supported, including but not limited to Apple Music, Amazon Music, Pandora, Deezer, Samsung Music, iHeartRadio, Yandex Music, Soundcloud, etc. as well as lesser known media providers like AIMP, Anghami, Audible, Melon, Musicolet Music, Muzio player, Napster, Pulsar Music Player, Poweramp, Qobuz Music, TELMORE Musik, VK, VLC, YouSee Music, Zing MP3, etc. If the user is asking for a specific provider that is not in the enum and if "other" is defined in the enum, use "other".
+ * If the user does not ask for a specific provider, do not specify any provider.
+ * Note: If you decide to specify this parameter, please note that the provider argument should be a lowercase string value. As such, please make sure to directly copy enum values (and not keys) as strings in your predictions. For example, if the key is "AMAZON_MUSIC_MEDIA" and the enum value is "amazon_music_media", you should use "amazon_music_media" in your prediction.
+
+
+**Limitations:**
+* **Unsupported providers**: This tool does NOT support YouTube Music nor Spotify.
+
+
+**How to use Generic Media capabilities:**
+* **Songs**:
+ * **Specific songs**: When a user asks for a specific song (e.g. "Bad Romance") or a specific song by an artist (e.g. "Bad Romance by Lady Gaga" or "Lady Gaga's Bad Romance"), or they ask for a specific soundtrack, use the TRACK intent.
+ * **Liked**: When the user asks for their liked songs, use the LIKED_SONGS intent. Commonly used user query synonyms are "preferred songs," "favorite songs," "my music". Remember to set the `query` field to a non-empty string.
+ * **Play the Nth song in search results**: If the user explicitly asks to play the Nth song in the search results in the previous turn, use TRACK intent and set the **query** field with the **URI** of the Nth song of the search results found in its extension hints, in order to fetch the correct song with more precision (do not use the title of the song in this case). It's important that you do not apply filtering type to the TRACK intent in this case.
+* **Artists**:
+ * **Play**: When the user intent is to **play** an artist (e.g. "Adele") their songs (e.g. "Adele songs") or radio (e.g. "Adele radio"), use the ARTIST intent.
+ * **Search**: When the user intent is to **search** for song**s** from a given artist (e.g. "Adele songs"), use **both** ARTIST intent and TRACK filtering to ensure they receive a list of songs from the associated artist. Note that this is the **only** case where you may use the TRACK filtering type; you may not use it in any other situation.
+* **Albums**: When you believe the user is looking for an album (e.g. "Nevermind by Nirvana"), use ALBUM intent. If the user specifically mentions it's indeed an album (e.g. "Nevermind by Nirvana album") or album(s) from an artist (e.g. "Nirvana albums") that they want, then use both ALBUM intent and filtering type.
+* **Playlists**:
+ * **Public**: For music of a given genre (e.g. "rock", "some rock", "rock music", "Popmusik", "Jazz-Musik"), genre from an artist (e.g. "country music from Morgan Wallen"), mood (e.g. "calm music"), sounds (e.g. "thunderstorm sounds") or type (e.g. "holiday radio"), the correct intent is PUBLIC_PLAYLIST.
+   * Special case: If the user explicitly mentions they want a "playlist", such as of a genre (e.g. "latin playlists") or even an artists' (e.g. "beyonce playlist"), then you must use both PUBLIC_PLAYLIST intent and filtering.
+ * **Personal**: The user must use a possessive pronoun such as "my", as well as "playlist" words to clearly indicate they want their personal playlist (e.g. "my Japan playlist"). This case corresponds to a PERSONAL_PLAYLIST intent. If they don't (e.g. only saying "Japan playlist"), then this is not a personal playlist they are after.
+ * **Play the Nth song in a playlist**: If the user explicitly asks to play the Nth song in a playlist, use TRACK intent and set the **query** field with the **URI** of the Nth song of the personal playlist found in its extension hints, in order to fetch the correct song with more precision (do not use the title of the song in this case). It's important that you do not apply filtering type to the TRACK intent in this case.
+* **Generic content**:
+ * **Music**: In the very specific case when the user wants to play "music" **without giving any precision**, then their intent is GENERIC_MUSIC.
+   * Restriction: You **cannot** use GENERIC_MUSIC when the user goal brings any details on the kind of music they want. For these cases (e.g. "pop music", "soft music", "music for workout", "Popmusik"), you should use PUBLIC_PLAYLIST instead.
+ * **Novelties**: In the very specific case when the user wants to play "new music" **without giving any precision**, then their intent is GENERIC_MUSIC_NEW.
+   * Restriction: You **cannot** use GENERIC_MUSIC_NEW when the user goal brings any details on the kind of new music they want. For these cases (e.g. "new pop music", "best new music", "new dance music", "neue Rockmusik"), you should use PUBLIC_PLAYLIST instead.
+ * **Podcast**: If the user wants to play a "podcast" (without naming any), their intent is GENERIC_PODCAST.
+ * **Something else**: To play "something else" or the likes (e.g. "different song", "another song"), the right intent is GENERIC_SOMETHING_ELSE.
+* **Podcast**:
+ * **Show**: When the requested content is a podcast show of any kind (e.g. "Joe Rogan experience", "The Feeling Station", "Experience Designed", "Lex Fridman podcast", etc.), use PODCAST_SHOW intent.
+ * **Episode**: When the user utterance targets a specific episode of a given podcast (e.g. "the latest episode of the Ben Shapiro show"), use PODCAST_EPISODE intent.
+
+
+**Important Notes:**
+* The query field should never be the empty string.
+* **How to recognize the user's intent**:
+ * **Play**: The user **must** use a play-related action verb such as "play", "listen to", "start", "shuffle", "turn on", "put on", "give me".
+ * **Search**: The tool has the ability to request this functionality when the user goal fulfills **both**:
+   * The use of a search-related verb such as: "browse", "suggest", "display", "find", "search", "show me".
+   * Explicitly requesting the associated content to be found using a provider.
+* **Artistic content with explicit title**: Some songs or artist names may contain slurs, offensive or sexually suggestive words. Playing the associated content is fine because it is for artistic purposes, so please still fulfill user goals in these cases. However, when you tell the user that you are playing this content, do not use offensive or suggestive language in your response. Simply tell the user that you're playing it, such as, "Sure, here it is on Pandora.". If the media content (song, album, or artist name) does not contain any offensive or suggestive words, you should still use the content in your response, e.g., "Sure, here's Lady Gaga on Amazon Music.", "Okay, here's Nevermind by Nirvana on Apple Music.", "Alright, playing How Sweet by NewJeans on Pandora.". Remember, when including the media content in your response, do not localize the content and use the content exactly as it is provided in the tool output or media hints.
+* **Requests for genres or topical media types**: Do not include media type phrases (e.g., "music", "songs", "albums", "playlists", "podcasts" and their foreign language equivalents) when querying for genres or topics; this information is already in the intent type. For example, if the user asks for "rock music" or "country playlist", you should query for "rock" or "country" with intent type PUBLIC_PLAYLIST. Similarly, if the user asks for "hip hop albums" or a "relaxing music playlist", you should query for "hip hop" or "relaxing music" with intent type ALBUM or PUBLIC_PLAYLIST, respectively. Remember that if the user asks for just a genre, as in "play some pop", you should query for "pop" with intent type PUBLIC_PLAYLIST. Some germanic languages like German or Swedish may express genres and media types as compound words, such as "Rockmusik", "Popmusik", or "Jazz-Musik". In these cases, you must split the compound word and only query for the specific genre. For example, for "Rockmusik", "Popmusik" and "Jazz-Musik", you should query for "rock", "pop", and "jazz", respectively and set the intent type to PUBLIC_PLAYLIST.
+* **Requests for personal playlists**: Do not include "playlist" (and its foreign language equivalents) when querying for personal playlists; this information is already in the intent type. For example, if the user asks for "my workout playlist" or "my daily rock playlist", you should query for "workout" or "daily rock", respectively, with intent type PERSONAL_PLAYLIST.
+* **Requests for specific content by artist(s)**: If the user asks for a specific song, album, podcast or the like by an artist or creator (e.g., "Bad Romance by Lady Gaga", "Nirvana's Nevermind", "How Sweet by NewJeans"), you should include the media content and artist/creator name in your query. For example, if the user asks for "Bad Romance by Lady Gaga", you should query for "Bad Romance Lady Gaga". Remember, do not translate or transliterate media content or artist/creator names when querying. For example, if the user asks for "아이유의 너의 의미", you should query for "아이유 너의 의미", and not "Meaning of you IU".
+* **User goals that do not want to use the tool**: Do not use the tool in the following cases:
+ * **Explicit request**: Sometimes, the user says they "do not want YouTube Music". The term "music" is part of another provider name. They use this term to indicate they do not want to trigger any media tool.
+ * **Information seeking**: Questions that seek for a text response, a text list, or explanations shouldn't trigger this tool.
+ * **Capabilities not supported**: Retrieving lyrics, MP3 downloads, podcast summarization, singing/beatboxing.
+ * **Search that does not explicitly ask for a supported provider**: Remember, if the user is looking for search recommendations but does not explicitly mention they want to use a supported provider for it, do not trigger the tool.
+* **When to use filtering**:
+ * **Song**: Remember, only use TRACK filtering when the user is (1) searching for (2) "$artist songs". This means you shouldn't use it in other cases such as when the user is searching for "$genre songs" (e.g. "rock songs").
+ * **Album**. Remember to use both ALBUM intent type and filtering when the user specifically mentions they are looking for albums.
+ * **Public playlist**. Remember to only use PLAYLIST filtering when the user explicitly asks for a playlist, in the case of public playlists.
+* **No result found**: If the tool returns a list of media items that doesn't contain any provider links, it means that the tool was not able to find any matching content.

@@ -1,0 +1,415 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:57.412702Z",
+  "results": {
+    "google_sheets/SpreadsheetValues.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and valid options for each. The `Returns` section correctly specifies the dictionary structure, although it could benefit from more precise typing (e.g., `List[List[str]]` instead of `List[List[Any]]` if the values are predominantly strings). The `Raises` section is comprehensive, listing all potential exceptions and their causes."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all functional input parameters (`spreadsheet_id`, `range`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is comprehensive and effective.  The use of `A1RangeInput` (assuming this is a custom class or function, not a Pydantic model) further demonstrates a commitment to robust input validation.  Therefore, Pydantic is not strictly needed, though it might offer some organizational benefits."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive input validation on all four functional parameters (`spreadsheet_id`, `range`, `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption`).  Type validation is performed using `isinstance` for each parameter to ensure they are strings.  Value validation is implemented using lists of valid options for `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption`, raising `ValueError` if an invalid value is provided.  The `range` parameter undergoes further validation using a custom `A1RangeInput` function which likely performs more detailed checks on the A1 notation format, raising a `ValueError` if the range is invalid.  Error messages clearly indicate the type of error and the offending parameter.  All functional parameters are checked before being used in subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (spreadsheet_id, range, majorDimension, valueRenderOption, dateTimeRenderOption) are properly type-annotated with their expected string types.  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using all functional input parameters (`spreadsheet_id`, `range`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`).  The exception handling for `TypeError` and `ValueError` is implemented as documented.  The core logic of retrieving data from the `DB` and handling `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption` is present. However, the `get_dynamic_data` and `validate_sheet_name` functions are not defined within the provided code, representing a gap in the complete implementation.  While the comments suggest they handle sheet name normalization and validation, their absence prevents a full assessment of the function's robustness and error handling in edge cases.  The simulation of `UNFORMATTED_VALUE` and `FORMULA` options, and the date conversion in `dateTimeRenderOption == \"SERIAL_NUMBER\"`, are simplified and might need improvement for real-world scenarios.  The handling of potential errors within `max()` is also rudimentary.  Despite these gaps, the core functionality is present and the function is largely functional given the context of the provided code snippet and the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve data from a spreadsheet given a spreadsheet ID and range.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does perform input validation for its own parameters (spreadsheet ID, range, etc.), but this is unrelated to the specified phone number and email address processing requirements."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for parameters are correctly specified and explained.  Types are consistently specified for all parameters and the return value. The description of the `values` parameter and the return dictionary is particularly helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all functional input parameters (`spreadsheet_id`, `range`, `valueInputOption`, `values`, `responseValueRenderOption`, `responseDateTimeRenderOption`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  The use of `A1RangeInput` for range validation is a good example of using a dedicated validation function.  Therefore, Pydantic models are not strictly needed, although they might offer some advantages in terms of code organization and readability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`spreadsheet_id`, `range`, `valueInputOption`, `values`, `responseValueRenderOption`, `responseDateTimeRenderOption`) undergo both type and value validation.  `spreadsheet_id` and `range` are checked for empty strings. `valueInputOption`, `responseValueRenderOption`, and `responseDateTimeRenderOption` are checked against lists of allowed values.  `values` is validated as a list of lists.  The `range` parameter is further validated using a custom `A1RangeInput` function (presumably for A1 notation correctness), which raises a ValueError if invalid.  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for all validation failures.  `includeValuesInResponse` is correctly validated as a boolean."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types are properly specified (List, bool, Dict)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles input validation for all functional parameters and raises the documented exceptions. The core logic of updating the spreadsheet data within the `DB` is implemented. The function processes the `valueInputOption` parameter to handle different input interpretations.  The `includeValuesInResponse`, `responseValueRenderOption`, and `responseDateTimeRenderOption` parameters are all used to shape the response.  The date conversion in `responseDateTimeRenderOption == \"SERIAL_NUMBER\"` could be improved by using a more robust date parsing library to handle a wider variety of date formats.  However, the current implementation demonstrates a functional approach.  There are no placeholders or TODOs.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle phone numbers or email addresses.  Its purpose is to update values in a Google Sheet, and it processes generic data types (strings, numbers, dates).  There's no specific logic to identify, normalize, or validate phone numbers or email addresses within the input `values`.  Therefore, the criteria for phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "append": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including types and default values. The `Returns` section correctly specifies the return type and outlines the structure of the dictionary, although it could benefit from explicitly stating that `values` is optional (which is implied but not clearly stated).  The `Raises` section is comprehensive, listing all potential exceptions with clear descriptions.  Types are consistently specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`AppendSpecificArgsModel`) to validate the `values`, `valueInputOption`, `insertDataOption`, `responseValueRenderOption`, and `majorDimension` parameters.  These parameters are all functional parameters requiring validation.  The `spreadsheet_id` and `range` parameters are validated using basic type checking and empty string checks, which is sufficient for those parameters.  While additional validation could be added (e.g., regex for `range`), the existing validation is comprehensive enough that Pydantic doesn't offer a significant improvement in this case.  The combination of Pydantic and manual checks provides robust input validation for all functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  `spreadsheet_id` and `range` are checked for type (string) and emptiness. `valueInputOption`, `includeValuesInResponse`, `insertDataOption`, `responseValueRenderOption`, `majorDimension` are all checked for correct type.  Pydantic is used to further validate the `values` parameter (ensuring it's a list of lists) and to perform enum-like validation on several string parameters, checking that they contain allowed values.  The `range` parameter undergoes additional validation to check its format using a custom `A1RangeInput` validator.  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for invalid inputs.  All functional parameters are validated before being used in the core logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of `List`, `Optional`, and `bool` where appropriate.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality of appending values to a spreadsheet within the confines of the global `DB`.  All functional input parameters are used.  The exception handling is mostly comprehensive, covering the documented `TypeError` and `ValueError` scenarios. There are no TODOs or placeholders.  However, the logic for handling range overlaps and insertions, especially when dealing with column-only ranges or subsets of existing ranges, is complex and could be simplified for better readability and maintainability.  The `USER_ENTERED` mode's date and number parsing is simplistic and might not cover all possible user inputs. The docstring accurately reflects the function's return values and behavior, although the description of the `range` parameter could be slightly more precise regarding sheet name handling.  The function's complexity makes it prone to subtle errors in edge cases.  A more robust and structured approach to range management and data manipulation might improve the overall implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `append` function does not handle phone numbers or email addresses.  Its purpose is to append data to a Google Sheet, and it processes the input values generically. There's no specific logic to identify, normalize, or validate phone numbers or email addresses within the input `values` list.  The function focuses on data type conversion (e.g., string to int or float) and range handling within the spreadsheet context, not on data validation of specific formats like phone numbers or emails."
+          }
+        },
+        "clear": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section correctly specifies the return type and the structure of the dictionary. The `Raises` section comprehensively lists the exceptions that the function might raise, including specific scenarios for each exception.  Type hints are used consistently throughout the docstring.  The description of the `range` parameter, including the explanation of A1 notation, is helpful."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `A1RangeInput` to validate the `range` parameter.  However, it performs manual type checking and validation on the `spreadsheet_id` parameter. While the manual checks are sufficient for this specific case, using a Pydantic model for `spreadsheet_id` would improve consistency and potentially allow for more complex validation rules (e.g., length restrictions, regex patterns) in a more structured way.  Therefore, Pydantic is partially used for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `spreadsheet_id` and `range`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`spreadsheet_id` and `range`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly uses both `spreadsheet_id` and `range` parameters.  All documented exceptions are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  However, the logic for clearing the range could be improved.  Currently, it replaces the data with empty strings, preserving the original structure. While functional, a more efficient approach might be to directly remove the range from the `spreadsheet[\"data\"]` dictionary if the goal is simply to clear the values.  This would avoid unnecessary memory usage, especially for large ranges.  Also, the `validate_sheet_name` function is not defined within the provided code snippet, which makes a complete evaluation impossible.  The assumption is that it is defined elsewhere and correctly validates the sheet name.  Without seeing its implementation, we cannot fully assess the correctness of the sheet name validation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `clear` does not handle phone numbers or email addresses as input.  Its purpose is to clear data from a specified range within a spreadsheet.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "batchGet": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The description of the `ranges` parameter, including the A1 notation explanation, is particularly helpful.  The `Returns` section correctly identifies the dictionary structure, although it uses `Any` which is less precise than it could be.  The documentation of the nested `valueRanges` list is good, clearly outlining the structure of each dictionary within. The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual type checking and validation for `spreadsheet_id`, `ranges`, `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption`.  A custom `A1RangeInput` model (not fully shown) is used to validate the individual strings within the `ranges` list. However, this validation is done outside of a Pydantic model for the entire function's input.  Using a single Pydantic model to encapsulate all input parameters would improve code readability and maintainability, centralizing validation logic.  The current approach is functional but less elegant and potentially more prone to errors as the function evolves."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`spreadsheet_id`, `ranges`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`) undergo thorough validation.  Type checking is performed for each parameter.  `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption` are checked against lists of valid values. The `ranges` parameter is validated not only for type and that all elements are strings, but also for the validity of each A1 notation using the `A1RangeInput` function (assuming this function performs the necessary checks).  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for invalid inputs.  The `spreadsheet_id` is checked against the mock database (`DB`) to ensure the spreadsheet exists.  All functional parameters are validated before being used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (spreadsheet_id, ranges, majorDimension, valueRenderOption, dateTimeRenderOption) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `List`, `Optional`, and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves data from the global `DB` based on the provided `spreadsheet_id` and `ranges`.  All functional input parameters (`spreadsheet_id`, `ranges`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`) are used appropriately in the function's logic.  The function includes comprehensive input validation, raising `TypeError` and `ValueError` exceptions as documented.  The return value matches the docstring's description. There are no placeholders or TODO comments. The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `batchGet` function does not handle phone numbers or email addresses.  Its purpose is to retrieve data from a Google Sheet given a spreadsheet ID and ranges.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does perform input validation for its own parameters (spreadsheet ID, ranges, etc.), but this is unrelated to the specified criteria."
+          }
+        },
+        "batchUpdate": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including types and default values, and it correctly details the `Returns` section, specifying the dictionary structure.  The `Raises` section is also comprehensive, listing the potential exceptions with their conditions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `ValueRangeModel` to validate the `data` parameter, which is good.  However, other parameters (`spreadsheet_id`, `valueInputOption`, `includeValuesInResponse`, `responseValueRenderOption`, `responseDateTimeRenderOption`) are validated using manual type checking and value checks. While this works, using Pydantic models for all parameters would provide a more consistent and potentially more concise validation approach.  Pydantic would also offer features like automatic error reporting and more sophisticated validation rules (e.g., regular expressions for string formats) that are not present in the manual checks.  Therefore, while validation is present for all functional parameters, using Pydantic more comprehensively would improve the code's maintainability and robustness."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`spreadsheet_id`, `valueInputOption`, `data`, `includeValuesInResponse`, `responseValueRenderOption`, `responseDateTimeRenderOption`) are validated.  Type validation is performed for all parameters using `isinstance`.  `spreadsheet_id` is checked for emptiness. `valueInputOption`, `responseValueRenderOption`, and `responseDateTimeRenderOption` are checked against lists of allowed values.  `data` undergoes extensive validation, checking if it's a list of dictionaries, and then using Pydantic to validate each dictionary against the `ValueRangeModel` schema.  `includeValuesInResponse` is checked to ensure it's a boolean.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for all validation failures."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`spreadsheet_id`, `valueInputOption`, `data`, `includeValuesInResponse`, `responseValueRenderOption`, `responseDateTimeRenderOption`) are properly type-annotated with their expected types.  The function's return type (`Dict[str, Any]`) is clearly specified.  The function does not use `**kwargs` parameters.  Complex types like `List` and `Dict` are properly specified, including the nested `List[List[Any]]` within the `data` parameter."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality.  All functional input parameters are used.  The exception handling is comprehensive, covering the documented `TypeError` and `ValueError` scenarios. There are no obvious placeholders or `TODO` comments. The core logic processes data correctly, updating the `DB` and constructing the response."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `batchUpdate` function does not handle phone numbers or email addresses.  Its purpose is to update data in a Google Sheet, accepting data in a structured format (`ValueRangeModel`).  There's no input field specifically designed for or processing phone numbers or email addresses. The function focuses on data manipulation within the spreadsheet context, not on data validation or normalization of specific data types like phone numbers or emails outside of the general \"USER_ENTERED\" parsing which is very basic.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "batchClear": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  The description is clear.  The `Args` and `Returns` sections are well-structured, including types.  The `Raises` section correctly identifies the `ValueError`.  Types are specified for all parameters and return values.  The documentation of the dictionary return value is detailed, explaining the nested structure and types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`str` and `List[str]`) for its functional input parameters (`spreadsheet_id` and `ranges`).  While this provides some level of input validation, it doesn't offer the richness of constraints that a Pydantic model would provide (e.g., string length limits, regular expression matching for the range format, etc.).  However, given the simplicity of the inputs and the existing checks, using Pydantic models would be an unnecessary addition.  The existing validation is sufficient for this function's purpose."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `spreadsheet_id` (checking if it's in the DB) and implicitly checks if `ranges` is a list. However, it lacks crucial value validation.  `spreadsheet_id` is checked for existence in the DB, but its format (which should resemble a Google Sheet ID) isn't validated.  The `ranges` parameter is not checked for the validity of its A1 notations; malformed strings or ranges that point to non-existent cells within the spreadsheet would not be caught.  There's no explicit check for empty `ranges` lists, although an empty list would result in an empty `clearedRanges` in the output.  While a `ValueError` is raised if the spreadsheet isn't found, more specific error messages could be provided for invalid `ranges` values.  Therefore, the validation is partial, covering some aspects but leaving significant gaps in value and format validation for both inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`spreadsheet_id` and `ranges`) are properly type-annotated with `str` and `List[str]` respectively.  The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `spreadsheet_id` and `ranges` parameters.  It raises the `ValueError` exception as documented when the spreadsheet is not found. The function's logic correctly iterates through the provided ranges and removes them from the in-memory database representation. The return value matches the docstring's description. However, the implementation only simulates clearing; it doesn't interact with an actual spreadsheet.  The `clearedRanges` list always reflects the input `ranges` regardless of whether the range existed in the spreadsheet's data.  A more robust implementation would check if a range actually existed before adding it to `clearedRanges`.  A true \"clear\" operation would also likely return a more detailed status for each range (e.g., success/failure)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `batchClear` function does not handle any phone numbers or email addresses.  Its purpose is to clear data from specified ranges within a spreadsheet.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "batchGetByDataFilter": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values are correctly specified.  The types are mostly complete, with the exception of the nested structures within `dataFilters` and the `valueRanges` return value. While the docstring describes the structure of these dictionaries, it doesn't fully specify all possible keys and their types (e.g., within `dataFilters`, the structure of `gridRange` and `developerMetadataLookup` is only conceptually described, not fully detailed). Similarly, the `values` key within the nested `valueRanges` dictionaries lacks precise type information beyond `List[List[Any]]`.  The description of `a1Range` is repetitive, appearing twice.  The `Raises` section accurately reflects the exceptions, though the error messages in the `ValueError` cases could be slightly improved for clarity.  The docstring is consistent with the implementation in terms of parameters, return values, and exceptions, except for the minor omissions in type details mentioned above.  The handling of the `values` list in the `majorDimension == \"COLUMNS\"` case is not explicitly documented, but the behavior is consistent with the stated intent."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual input validation for several parameters (`spreadsheet_id`, `dataFilters`, `userId`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`).  It checks types and allowed values. However, validation of the `dataFilters` list's contents uses a Pydantic model (`DataFilterModel`), but the rest of the input validation is done manually.  Using Pydantic models for all inputs would improve code readability and maintainability, centralizing validation logic and potentially providing more sophisticated validation capabilities (e.g., data type constraints beyond basic type checking, regular expressions for string patterns).  The current manual validation is functional but less elegant and more prone to errors than a Pydantic-based approach."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`spreadsheet_id`, `dataFilters`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`) undergo thorough validation.  Type checking is performed on all of them.  `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption` also have value validation to ensure they are within the allowed sets. `dataFilters` is checked for correct list structure and each dictionary within is validated against a model (`DataFilterModel`).  `spreadsheet_id` is checked against the mock database (`DB`) to ensure it exists for the given user.  Appropriate exceptions (`TypeError`, `ValueError`, `ValidationError`, `InvalidFunctionParameterError`) are raised with informative error messages for all validation failures.  Null/empty checks are performed where applicable (e.g., `dataFilters` is handled gracefully if `None`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List[Dict[str, Any]] where appropriate.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves data from the simulated spreadsheet based on provided data filters.  All functional input parameters (`spreadsheet_id`, `dataFilters`, `majorDimension`, `valueRenderOption`, `dateTimeRenderOption`) are used appropriately in the function's logic.  All documented exceptions are handled, and there are no placeholders or TODO comments. The core logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The use of the global `DB` dictionary is acceptable given the provided context."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `batchGetByDataFilter` function does not handle phone numbers or email addresses as input.  Its purpose is to retrieve data from a simulated spreadsheet based on specified filters and parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly validates other input parameters such as `spreadsheet_id`, `dataFilters`, `majorDimension`, `valueRenderOption`, and `dateTimeRenderOption` according to the specified types and allowed values."
+          }
+        },
+        "batchUpdateByDataFilter": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including their types and default values. The `Args` section is well-structured and clearly explains the different formats allowed for the `data` parameter.  The `Returns` section adequately describes the structure of the returned dictionary, although it could benefit from explicitly mentioning that `updatedData` might contain empty `values` lists if `includeValuesInResponse` is False. The `Raises` section is comprehensive, listing the various `TypeError` and `ValueError` exceptions with clear explanations of their causes.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all functional input parameters (`spreadsheet_id`, `valueInputOption`, `data`, `includeValuesInResponse`, `responseValueRenderOption`, `responseDateTimeRenderOption`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is comprehensive and effective.  The manual checks cover type and value constraints, mirroring what Pydantic would achieve.  Therefore, Pydantic models are not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  `spreadsheet_id`, `valueInputOption`, `data`, `includeValuesInResponse`, `responseValueRenderOption`, and `responseDateTimeRenderOption` are all checked for their correct data types using `isinstance`.  Furthermore,  `spreadsheet_id` is checked for emptiness, `valueInputOption`, `responseValueRenderOption`, and `responseDateTimeRenderOption` are checked against sets of allowed values, and `data` undergoes extensive validation to ensure it's a list of dictionaries, each containing either a `dataFilter` with an `a1Range` or a `range` and `values` (which are further validated as lists of lists).  Error handling is robust, raising `TypeError` and `ValueError` with informative messages for various invalid input scenarios.  All functional parameters are validated before being used in the function's core logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types are properly specified using `List`, `Dict`, and `bool`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the batch update functionality as described in its docstring.  All functional input parameters (`spreadsheet_id`, `valueInputOption`, `data`, `includeValuesInResponse`, `responseValueRenderOption`, `responseDateTimeRenderOption`) are used appropriately in the function's logic.  All documented exceptions are handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `batchUpdateByDataFilter` function does not handle phone numbers or email addresses.  Its purpose is to update data in a Google Sheet, accepting data as lists of lists.  There's no specific processing or validation for phone numbers or email addresses within the input `data`.  The function focuses on data type conversion (e.g., strings to numbers, dates) and handling different `valueInputOption` settings for Google Sheets API interaction, but it doesn't include any logic related to phone number normalization or email validation.  Therefore, the rating of \"Not Applicable\" is appropriate."
+          }
+        },
+        "batchClearByDataFilter": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments and the `spreadsheet_id` and `clearedRanges` keys in the return dictionary.  The types are correctly specified for parameters and return values. The `Raises` section correctly mentions the `ValueError`.  The description of A1 notation is repeated unnecessarily."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the `spreadsheet_id` and `dataFilters` parameters.  `spreadsheet_id` is only checked for existence within the `DB`, which is not true input validation. The `dataFilters` list is iterated over without checking if it's a list, if each element is a dictionary, or if each dictionary contains the required \"a1Range\" key.  Using Pydantic models would significantly improve the robustness of this function by providing type checking and data validation for these inputs, preventing unexpected errors and improving code clarity."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `spreadsheet_id` (checking if it's in the DB), implicitly checking for `None` or empty string.  However, it lacks crucial value validation for `spreadsheet_id` (e.g., format, length restrictions).  It also lacks validation for `dataFilters`. While it iterates through `dataFilters`, it doesn't check if `dataFilters` itself is empty, nor does it validate the contents of each dictionary within `dataFilters`. Specifically, it doesn't check if each dictionary contains the \"a1Range\" key, nor does it validate the format or content of the \"a1Range\" string (e.g., ensuring it's a valid A1 notation).  The function only checks for the existence of the spreadsheet ID in the DB, not the validity of the A1 range specified within the data filters.  Error handling is limited to a `ValueError` if the spreadsheet isn't found, but no specific errors are raised for invalid `dataFilters` or malformed A1 ranges."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`spreadsheet_id` and `dataFilters`) are properly type-annotated with their expected types (str and List[Dict[str, Any]] respectively). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types like List and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the clearing of spreadsheet values based on provided data filters.  Both functional input parameters (`spreadsheet_id` and `dataFilters`) are used. The documented `ValueError` exception is correctly raised when the spreadsheet is not found. There are no placeholders, TODOs, or pass statements. The function's logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `batchClearByDataFilter` does not handle any phone number or email address inputs.  Its purpose is to clear data from a spreadsheet based on specified ranges.  Therefore, the criteria of phone number normalization and email validation are irrelevant to its functionality.  No changes are needed."
+          }
+        }
+      }
+    },
+    "google_sheets/Spreadsheets.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_sheets/Spreadsheets.py"
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_sheets/Spreadsheets.py"
+          }
+        },
+        "getByDataFilter": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getByDataFilter': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getByDataFilter': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getByDataFilter': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getByDataFilter': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getByDataFilter': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getByDataFilter': File not found: APIs/google_sheets/Spreadsheets.py"
+          }
+        },
+        "batchUpdate": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchUpdate': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchUpdate': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchUpdate': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchUpdate': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchUpdate': File not found: APIs/google_sheets/Spreadsheets.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchUpdate': File not found: APIs/google_sheets/Spreadsheets.py"
+          }
+        }
+      }
+    },
+    "google_sheets/Sheets.py": {
+      "functions": {
+        "copyTo": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs (Args section) and output (Returns section), including types. The Raises section correctly lists the exceptions.  The description of the dictionary returned is detailed, specifying the keys, types, and nested structure of `gridProperties`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value checks to validate the `spreadsheet_id`, `sheet_id`, and `destination_spreadsheet_id` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all necessary checks for the functional parameters.  Using Pydantic would not significantly improve the code in this specific case, given the simple validation requirements."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on all three functional input parameters (`spreadsheet_id`, `sheet_id`, `destination_spreadsheet_id`), ensuring they are strings.  It also performs value validation by checking if the source spreadsheet and sheet exist in the `DB`, and if the destination spreadsheet exists.  However, it lacks checks for empty strings. While unlikely to cause a direct crash, empty strings for IDs would lead to errors further down the line.  The function raises appropriate `TypeError` and `ValueError` exceptions with informative messages.  Therefore, the validation is good but not comprehensive due to the missing empty string checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`spreadsheet_id`, `sheet_id`, `destination_spreadsheet_id`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the copying of a sheet from one spreadsheet to another using the provided `spreadsheet_id`, `sheet_id`, and `destination_spreadsheet_id`.  All functional input parameters are used.  All documented exceptions are handled. There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `copyTo` does not handle any phone numbers or email addresses.  Its purpose is to copy a Google Sheet, taking spreadsheet and sheet IDs as string inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly performs type checking on its string inputs and raises appropriate exceptions if the source spreadsheet or sheet, or the destination spreadsheet, is not found within a (presumably) database `DB`."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "google_sheets": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `SimulationEngine` folder has all the essential components (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`). The `tests` folder also meets the requirements."
+      }
+    }
+  }
+}

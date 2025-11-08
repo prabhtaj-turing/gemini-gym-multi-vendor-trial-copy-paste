@@ -1,0 +1,283 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:57.773174Z",
+  "results": {
+    "github_actions/list_workflows_module.py": {
+      "functions": {
+        "list_workflows": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for `page` and `per_page` are correctly specified.  The `Args` and `Returns` sections are comprehensive, including descriptions of nested dictionaries within the return value. The types are specified for all parameters and return values using type hints. The `Raises` section accurately lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, `page`, and `per_page` parameters.  It checks types and constraints using `isinstance` and conditional statements. While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing approach is functional and covers all functional input parameters.  The use of Pydantic would be a stylistic improvement, not a functional necessity in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters (`owner`, `repo`, `page`, `per_page`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `page`, `per_page`) are properly type-annotated with their expected types (str, str, Optional[int], Optional[int] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Optional[int]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`owner`, `repo`, `page`, `per_page`) are used to fetch and paginate workflow data.  The documented exceptions (`NotFoundError`, `InvalidInputError`) are properly handled. There are no TODOs, pass statements, or placeholder implementations. The logic for pagination and data retrieval is complete and functional, assuming the `utils.get_repository` function and the structure of `repository_data` are as expected. The return dictionary matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_workflows` does not handle any phone number or email address inputs.  Its inputs are `owner` and `repo` (strings representing a GitHub repository owner and repository name), `page`, and `per_page` (integers for pagination).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and paginating GitHub workflow data, and performs input validation appropriate to its parameters (checking for string emptiness and integer validity for pagination)."
+          }
+        }
+      }
+    },
+    "github_actions/get_workflow_module.py": {
+      "functions": {
+        "get_workflow": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and behavior.  It accurately describes the arguments and their types. The `Returns` section correctly specifies the dictionary type and lists the keys and their types.  The `Raises` section correctly identifies the exceptions.  The docstring clearly explains that the `workflow_id` can be either an integer ID or a filename, which is crucial for understanding how to use the function."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation to check if `owner`, `repo`, and `workflow_id` are empty or contain only whitespace.  This is sufficient for the validation requirements of these parameters.  While Pydantic could be used, it's not strictly necessary given the simple validation logic already in place.  The existing checks are clear, concise, and directly address the potential issues.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`owner`, `repo`, and `workflow_id`).  Each parameter is checked for emptiness and whitespace using `not param or param.isspace()`.  While there's no explicit type checking beyond the type hints (which are not enforced at runtime in Python), the checks for empty strings effectively ensure that the inputs are not `None` and are non-empty strings.  The validation also implicitly checks for the correct format of `workflow_id` by attempting to parse it as an integer; if this fails, it proceeds to check for it as a filename/path.  Appropriate `InvalidInputError` exceptions are raised for invalid inputs, providing clear error messages.  All functional parameters are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `workflow_id`) are properly type-annotated with their expected type `str`. The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic described in its docstring.  All functional input parameters (`owner`, `repo`, `workflow_id`) are used to retrieve and return workflow details.  The documented exceptions (`InvalidInputError`, `NotFoundError`) are properly raised in the appropriate scenarios. There are no TODOs, placeholders, or `pass` statements. The function's logic correctly handles both integer workflow IDs and filename-based workflow IDs. The returned dictionary matches the structure specified in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_workflow` does not handle any phone numbers or email addresses.  Its inputs are `owner`, `repo`, and `workflow_id`, which are all treated as strings representing repository and workflow identifiers.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "github_actions/get_workflow_usage_module.py": {
+      "functions": {
+        "get_workflow_usage": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving billable usage statistics for a workflow, broken down by OS. The Args section correctly lists and describes the parameters, including their types.  The Returns section accurately describes the structure of the returned dictionary, including nested dictionaries and their keys.  The Raises section correctly lists the exceptions.  Type hints are used consistently throughout the docstring.  The documentation of the nested `billable` dictionary is thorough, explaining the structure and meaning of its keys."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, and `workflow_id` parameters.  It performs type checking and checks for empty strings and invalid values (e.g., non-positive integers for `workflow_id`). While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks are comprehensive enough for this specific function.  Using Pydantic would add extra complexity without significant benefits in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`owner`, `repo`, and `workflow_id`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `workflow_id`) are properly type-annotated with their expected types (str, str, Union[int, str] respectively).  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves usage statistics based on the provided owner, repo, and workflow_id.  All functional input parameters (`owner`, `repo`, `workflow_id`) are used.  The function correctly handles various input validation scenarios and raises the documented exceptions (`InvalidInputError`, `NotFoundError`). The logic for handling different types of `workflow_id` (integer ID or string filename) is complete and accurate. The function's return value matches the docstring's description.  There are no placeholders or TODO comments. The reliance on `utils.get_workflow_by_id_or_filename` and `utils.get_repository` is acceptable given the context of using a global DB."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_workflow_usage` does not handle any phone number or email address inputs.  Its inputs are an owner string, a repository string, and a workflow ID (which can be an integer or string).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates its own inputs (owner, repo, workflow_id) for type and emptiness, but this is unrelated to the prompt's specific requirements."
+          }
+        }
+      }
+    },
+    "github_actions/list_workflow_runs_module.py": {
+      "functions": {
+        "list_workflow_runs": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's filtering capabilities and pagination.  All parameters, including their default values (where applicable), are documented with types and descriptions. The `Returns` section correctly specifies the dictionary structure, although it could be improved by using a more concise and structured format for documenting the nested dictionaries within `workflow_runs`.  The documentation of the nested structures within the `workflow_runs` dictionary is quite extensive, which is helpful but could be made more readable with a more structured approach (e.g., using a table or a more hierarchical format).  The `Raises` section correctly lists the potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function performs manual input validation for several parameters (`owner`, `repo`, `page`, `per_page`, `status`).  This validation checks types and constraints.  However, it does not use Pydantic models. While the manual checks are present, using Pydantic models would improve the code's readability, maintainability, and potentially add more sophisticated validation (e.g., data type validation combined with constraints in a single declaration).  The `created` parameter's validation relies on a helper function (`utils._parse_created_filter`), which is not directly visible and might not be as robust as a Pydantic model.  Therefore, the validation is partially implemented, and Pydantic could enhance it."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for most functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, Union, List, and Dict where appropriate.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using most input parameters for filtering and pagination.  The `created` parameter's date range parsing relies on a `utils._parse_created_filter` function, which is assumed to be correctly implemented elsewhere.  The error handling for parsing `created_at` within the loop is robust, preventing failures due to malformed data.  The sorting of results before pagination ensures consistent ordering. However, there's a potential for improvement: the function assumes the existence of `repository_data['workflow_runs']` without explicit null checks, which could lead to a `KeyError` if the repository has no workflow runs.  Adding a check for `'workflow_runs' in repository_data` would enhance robustness.  Also, the `MAX_PER_PAGE` constant is used but not defined within the function's scope; it should be either defined locally or imported."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_workflow_runs` does not handle any phone number or email address inputs.  Its parameters and purpose are related to retrieving and filtering GitHub workflow run data, which does not involve such data types. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "github_actions/get_workflow_run_module.py": {
+      "functions": {
+        "get_workflow_run": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's inputs and outputs. The `Args` and `Returns` sections are well-structured, and the detailed description of the dictionary structure in the `Returns` section is particularly helpful.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation using `isinstance` checks and basic conditionals to validate the `owner`, `repo`, and `run_id` parameters.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling string length constraints or more complex data types), the existing validation is sufficient for the basic type and constraint checks performed.  The use of Pydantic would be an improvement in terms of code readability and maintainability but is not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`owner`, `repo`, and `run_id`) are validated.  `owner` and `repo` are checked to ensure they are non-empty strings. `run_id` is checked to ensure it's a positive integer.  Type and value validation are both present for all functional parameters.  Appropriate `InvalidInputError` exceptions are raised with informative messages for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `run_id`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves workflow run data using the provided `owner`, `repo`, and `run_id`.  All functional input parameters are used for data retrieval and input validation.  The documented exceptions (`InvalidInputError` and `NotFoundError`) are properly implemented and handle cases where input is invalid or the workflow run is not found. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, correctly handling the case where the repository exists but the workflow run does not. The docstring accurately reflects the function's behavior, including the return type and the structure of the returned dictionary.  The removal of unnecessary fields (`jobs`, `repo_owner_login`, `repo_name`) further demonstrates adherence to the docstring's specification."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_workflow_run` does not handle any phone number or email address inputs.  Its inputs are a repository owner name (string), repository name (string), and a run ID (integer).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the input types and values for its intended parameters."
+          }
+        }
+      }
+    },
+    "github_actions/get_workflow_run_jobs_module.py": {
+      "functions": {
+        "get_workflow_run_jobs": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for optional parameters are correctly specified and explained.  The types are specified for all parameters and the return value.  The documentation of the dictionary structure in the return value is comprehensive, detailing all keys, types, and nested structures."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for all functional parameters (`owner`, `repo`, `run_id`, `filter`, `page`, `per_page`).  It checks types and constraints. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and effective.  Using Pydantic would not significantly improve the code in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `run_id`, `filter`, `page`, `per_page`) are properly type-annotated with their expected types (str, str, int, Optional[str], Optional[int], Optional[int] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional`, `List`, and `Dict` are used correctly in both parameter and return type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic described in its docstring.  All functional input parameters (`owner`, `repo`, `run_id`, `filter`, `page`, `per_page`) are used appropriately in the input validation, data retrieval, filtering, pagination, and response formatting stages.  The documented exceptions (`NotFoundError`, `InvalidInputError`) are properly handled and raised under the correct conditions. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, correctly handling different filter modes and pagination scenarios. The return dictionary structure and content precisely match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_workflow_run_jobs` does not handle any phone number or email address inputs.  Its inputs are `owner` (string), `repo` (string), `run_id` (integer), `filter` (string), `page` (integer), and `per_page` (integer).  None of these are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "github_actions/trigger_workflow_module.py": {
+      "functions": {
+        "trigger_workflow": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's simulation of a workflow dispatch event and its interaction with a database (though the implementation details of the database are abstracted away appropriately).  All arguments are documented with types and descriptions, and the default value for the `inputs` parameter is correctly specified and explained. The `Returns` section accurately reflects that an empty dictionary is returned.  The `Raises` section lists all potential exceptions with informative descriptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`owner`, `repo`, `workflow_id`, `ref`, `inputs`).  It performs type checking and various checks for emptiness, correct format (e.g., for `repo` and `ref`), and specific constraints. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual approach is comprehensive and covers all functional input parameters.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all four functional input parameters (`owner`, `repo`, `workflow_id`, `ref`).  Each is checked for correct type (string), emptiness, and specific format constraints.  `owner` and `repo` are checked for whitespace-only strings. `repo` is further checked to ensure it doesn't contain the \".git\" extension. The `ref` parameter undergoes particularly thorough validation, checking for whitespace, \"..\" sequences, and ending with a period or a slash (with exceptions for known ref prefixes).  The optional `inputs` parameter is also validated to ensure it's either `None` or a dictionary.  All invalid inputs result in the raising of an `InvalidInputError` with informative messages.  Therefore, all functional parameters receive type and value validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `workflow_id`, `ref`, `inputs`) are properly type-annotated with their expected types (str, str, str, str, Optional[Dict[str, Any]]). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core functionality of triggering a workflow dispatch event.  All functional input parameters (`owner`, `repo`, `workflow_id`, `ref`, `inputs`) are used.  The documented exceptions (`InvalidInputError`, `NotFoundError`, `WorkflowDisabledError`) are all handled. There are no TODOs or placeholders. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `trigger_workflow` does not handle any phone number or email address inputs.  Its inputs are focused on repository and workflow metadata (owner, repo, workflow ID, ref, and workflow inputs), none of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "github_actions/cancel_workflow_run_module.py": {
+      "functions": {
+        "cancel_workflow_run": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the three functional parameters (`owner`, `repo`, `run_id`).  It checks the type and content of each parameter. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all aspects of input validation required for the functional parameters.  Using Pydantic wouldn't add significant value in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`owner`, `repo`, `run_id`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `run_id`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and correctly implements the cancellation logic, handling various scenarios and raising appropriate exceptions as documented.  All functional input parameters (`owner`, `repo`, `run_id`) are used. The logic for updating the job and step statuses within a workflow run is a good addition, enhancing the completeness of the cancellation process."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `cancel_workflow_run` does not handle any phone numbers or email addresses.  Its inputs are `owner` (string), `repo` (string), and `run_id` (integer), which are all related to a workflow run within a repository and do not represent contact information. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "github_actions/rerun_workflow_module.py": {
+      "functions": {
+        "rerun_workflow": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's behavior of re-running a workflow.  The Args, Returns, and Raises sections are comprehensive and clearly explain the parameters, return type, and potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for the `owner`, `repo`, and `run_id` parameters using `isinstance` checks and string/integer value checks.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling more complex validation rules or data type conversions), the existing manual validation covers the basic requirements for these parameters.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`owner`, `repo`, and `run_id`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `run_id`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the re-running of a workflow run.  All functional input parameters (`owner`, `repo`, `run_id`) are used to retrieve the original run data, check for its existence and status, and create a new run entry.  All documented exceptions (`InvalidInputError`, `NotFoundError`, `ConflictError`) are properly raised under the appropriate conditions.  The logic is complete and functional, creating a new workflow run entry with updated timestamps and a `QUEUED` status. The function's return value (an empty dictionary) matches the docstring's description. There are no placeholders or TODO comments.  The function uses the global `utils` module (which presumably interacts with the global `DB` dictionary) as expected within the context of this codebase."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `rerun_workflow` does not handle any phone numbers or email addresses.  Its inputs are `owner` (string), `repo` (string), and `run_id` (integer), all related to a workflow run within a repository.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly validates the input types and values for its intended purpose."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "github_actions": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The SimulationEngine folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`). The tests folder has a comprehensive set of test files. The main API folder contains the API modules."
+      }
+    }
+  }
+}

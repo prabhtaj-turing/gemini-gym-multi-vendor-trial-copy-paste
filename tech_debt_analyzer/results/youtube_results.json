@@ -1,0 +1,1421 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.727747Z",
+  "results": {
+    "youtube/Activities.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and their types, including optional parameters and their default values (although it doesn't explicitly state the defaults, it implies them through the `Optional` type hints). The `Args` section is well-structured and informative.  The `Returns` section correctly identifies the return type as a dictionary, but its description of the nested structure (`items` list and its contents) is quite detailed and helpful, though it could be slightly more concise.  The docstring correctly reflects the function's use of filtering based on the provided parameters."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation without using Pydantic models.  It checks for the presence and type of certain parameters implicitly through conditional statements (e.g., `if channelId:`).  While this approach works, it's not as robust or comprehensive as using Pydantic models.  Pydantic would provide more explicit type checking, data type coercion, and the ability to define more complex validation rules (e.g., constraints on `maxResults` or date format validation for `publishedAfter` and `publishedBefore`).  However, given the simple nature of the current validation, using Pydantic might be considered overkill. The existing validation is sufficient for the current implementation but could be improved with Pydantic for better maintainability and robustness."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[bool], Optional[int]). The function's return type is clearly specified as Dict[str, List].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves activities from the global `DB[\"activities\"]` and applies filters based on `channelId`, `mine`, `maxResults`, `publishedAfter`, `publishedBefore`, and `regionCode`.  The filtering logic is implemented correctly. The function returns a dictionary with an \"items\" key containing the filtered list of activities, matching the docstring.  However, the `part` and `pageToken` parameters are not used in the function's logic, representing a minor gap in completeness.  The `regionCode` parameter's usage in the docstring is slightly misleading, as it doesn't actually filter by a video chart in a specific region; it simply filters by the `regionCode` field in the activity data.  While functional, this is a minor inconsistency between the docstring and implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its parameters and functionality are focused on retrieving YouTube activity data based on various criteria (channel ID, publication dates, region code, etc.).  Therefore, the assessment of phone number normalization and email validation is not applicable."
+          }
+        }
+      }
+    },
+    "youtube/VideoCategory.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The description of the return value is also mostly accurate, specifying the dictionary structure and potential keys (`items` and `error`).  The documentation of the `items` key is detailed, outlining the nested structure and types within the list of dictionaries.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It explicitly checks the type and value of the `part` parameter.  While other parameters have type hints (Optional[str], Optional[int]), there's no further validation beyond type checking implicitly performed by Python.  Using Pydantic would provide a more structured and potentially more comprehensive validation approach, allowing for things like string length limits or regular expression checks on `region_code` or `id`, but the existing validation is sufficient for the current implementation.  The absence of Pydantic does not indicate a problem in this case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `part` parameter, checking if it's a string and if it equals \"snippet\".  It also implicitly validates `id` and `region_code` by checking if they are not None and using them in conditional logic.  `max_results` is checked for None and then used in a conditional statement that also includes a sanity check (limiting it to 50). However, there's no explicit value validation for `max_results` (e.g., checking for negative values).  No validation is performed on the `hl` parameter, which is marked as unused.  Therefore, while some validation is present, it is not comprehensive.  The validation present is primarily type and null checks, with a limited value check for `max_results`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `hl`, `id`, `region_code`, `max_results`) are properly type-annotated with their expected types (str, Optional[str], Optional[int]). The function's return type is clearly specified as `Dict[str, Union[List[Dict[str, Any]], str]]`.  No **kwargs parameters are used.  Complex types are properly specified using List, Dict, Optional, and Union."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves video categories from the global `DB` based on the provided `part`, `id`, `region_code`, and `max_results` parameters.  All functional parameters are used appropriately. The function handles the case of an invalid `part` parameter by returning an error message as documented.  The logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The `hl` parameter is correctly identified as unused in the docstring, and its omission from the function's logic is acceptable given the provided context."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  It's designed to retrieve video category data from a database (`DB[\"videoCategories\"]`) based on parameters like `part`, `id`, `region_code`, and `max_results`.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses solely on data retrieval and filtering, not on input sanitization or validation of contact information."
+          }
+        }
+      }
+    },
+    "youtube/CommentThread.py": {
+      "functions": {
+        "insert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values (though it could be more explicit about `snippet` and `top_level_comment` being optional). The `Returns` section correctly specifies the dictionary structure and the types of its keys.  The `Raises` section is also comprehensive, listing all potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses Pydantic models (`SnippetInputModel` and `TopLevelCommentInputModel`) to validate the `snippet` and `top_level_comment` parameters, respectively.  These are the only functional parameters requiring validation beyond basic type checking.  The `part` parameter is validated using a simple type check and a business rule check.  Therefore, all functional input parameters are validated, with Pydantic appropriately handling the complex validation needs of the dictionary parameters.  No further input validation is needed."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters (`part`, `snippet`, `top_level_comment`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `snippet`, `top_level_comment`) are properly type-annotated with their expected types (str, Optional[Dict], Optional[Dict] respectively).  The function's return type is clearly specified as `Dict[str, Dict]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the insertion of a new comment thread into the global `DB`.  All functional input parameters (`part`, `snippet`, `top_level_comment`) are used appropriately in the logic.  All documented exceptions (`TypeError`, `InvalidPartParameterError`, `pydantic.ValidationError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior, including return types and exception handling.  The use of Pydantic for validation adds robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  It focuses on inserting comment threads into a database, validating input parameters (`part`, `snippet`, `top_level_comment`) against their expected types and structures using Pydantic.  There is no input field designed to receive or process phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose. It accurately describes the function's parameters, including their types and default values.  The `Args` section is comprehensive, listing all parameters with their types and descriptions. The `Returns` section correctly specifies the return type as a dictionary containing a list of dictionaries.  The `Raises` section lists the potential exceptions.  Type information is consistently provided for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks types and constraints such as positive integers for `max_results` and non-empty strings for `part`.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and effectively handle the input validation requirements.  The use of Pydantic would not significantly improve the code in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters are checked for correct data types using `isinstance`.  The `part` parameter is checked for emptiness. The `max_results` parameter is checked for both type and value (positive integer).  Error handling is implemented using custom exceptions (`MissingPartParameterError`, `InvalidMaxResultsError`) and standard `TypeError`.  All functional parameters are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the correct specification of complex types like List and Dict.  The return type annotation is also clearly specified.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using most of the functional input parameters to filter the results from the global `DB`.  The input validation is thorough, and the documented exceptions are properly implemented.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone numbers or email addresses.  Its parameters and logic are all focused on retrieving and filtering comment threads from a database based on various YouTube-related identifiers (channel IDs, video IDs, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: deleting a comment thread by ID.  The Args section correctly documents the `thread_id` parameter with its type and description. The Returns section accurately specifies the return type as a dictionary.  It correctly lists the possible keys (\"success\" and \"error\") and their associated string values.  The docstring accurately reflects the function's behavior in handling the case where the thread ID is not found."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the provided `thread_id` exists in the `DB`.  This is sufficient input validation for the single functional parameter.  While using a Pydantic model would be possible, it's not strictly necessary for this simple check.  The current approach is clear, concise, and effective.  Adding a Pydantic model would add complexity without significant benefit."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by specifying `thread_id: str` in the function signature.  However, it lacks value validation.  While it checks for the existence of the `thread_id` in the `DB`, this is more of a presence check within the application's context rather than a validation of the `thread_id` itself as a valid input.  There's no check for empty strings or other potential invalid string formats that might represent a `thread_id`.  No exceptions are raised for invalid inputs; instead, an error message is returned.  Therefore, while type validation is present, crucial value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  The `thread_id` parameter is properly type-annotated as `str`. The return type is clearly specified as `Dict[str, str]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a comment thread from the global `DB` dictionary if it exists.  The `thread_id` parameter is used correctly. The function returns a dictionary with either a \"success\" or \"error\" key and message as documented, matching the docstring's description.  There are no placeholders, TODOs, or exceptions to handle (the only potential exception is handled implicitly by the `in` operator). The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its input is a `thread_id` which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its intended task of deleting a comment thread from a database (represented by `DB`)."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the arguments and their types, including the optional nature of `snippet` and `comments`. The description of the return value is also good, clearly outlining the structure of the dictionary in both success and error scenarios.  The docstring correctly mentions the types for all parameters and the return value.  It also adequately explains the default values of `snippet` and `comments` as being optional."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation without using Pydantic models.  It checks if `thread_id` exists in the DB and if either `snippet` or `comments` are provided. This validation is sufficient for the function's needs and using Pydantic would add unnecessary complexity.  The type checking is implicit through the function signature (str, Optional[Dict], Optional[List[str]]), which is adequate given the simplicity of the input data.  More sophisticated validation (e.g., schema validation for the `snippet` dictionary) could be added, but isn't strictly required by the current function logic."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but has gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`thread_id`, `snippet`, `comments`) are properly type-annotated with their expected types (str, Optional[Dict], Optional[List[str]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`thread_id`, `snippet`, `comments`) are used appropriately in the function's logic.  The function handles the cases where no update parameters are provided and when the thread ID is not found in the database, returning appropriate error messages as documented.  The return value matches the docstring's specification. There are no placeholders, TODOs, or exceptions that are documented but not handled. The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  Its purpose is to update a comment thread in a database based on a thread ID, an optional snippet, and an optional list of comments.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "youtube/Search.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's primary role in returning search results based on various parameters.  All parameters are listed with their types and descriptions in the Args section. The Returns section correctly specifies the dictionary type and gives a good overview of the expected keys. Default values for optional parameters are also mentioned."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It checks the `part` parameter for validity against `valid_parts`, and it handles the `order` parameter to ensure it's one of the allowed values.  The `type` parameter is also processed to handle comma-separated values and provide defaults. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  The use of Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary for the function to work correctly."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for several parameters, but it has some gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the correct specification of complex types like List[Dict] and Dict[str, Any]. The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using most of the functional input parameters to filter and sort search results from the global `DB`.  The `part` parameter is correctly validated. The logic for handling different search types (`video`, `channel`, `playlist`) and filtering options is implemented.  The sorting based on `order` parameter is also implemented. The function returns a dictionary matching the specified structure in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its parameters and functionality are focused on querying and filtering YouTube-like video, channel, and playlist data.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "youtube/ChannelSection.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's role in retrieving channel sections with filtering options, relevant to an MCP server context. Default values are correctly mentioned.  The `Args` and `Returns` sections are well-structured, and types are specified for all parameters and the return value. The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`part`, `channel_id`, `hl`, `section_id`, `mine`, `on_behalf_of_content_owner`).  It performs type checking and specific value checks (e.g., ensuring `part` is not empty or contains only invalid components). While Pydantic could provide a more concise and potentially more robust way to express these validations, the existing manual approach is comprehensive and covers all functional parameters.  The use of Pydantic would not significantly improve the validation in this specific case, given the relatively simple validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`part`, `channel_id`, `hl`, `section_id`, `mine`, `on_behalf_of_content_owner`) are validated.  `part` receives comprehensive validation: type checking, empty/whitespace checks, and a check that at least one of its comma-separated components is a valid part (\"id\", \"snippet\", \"contentDetails\"). The other parameters have type checks and null/empty checks where appropriate (allowing None for optional parameters).  Error handling is implemented using `TypeError` and a custom `InvalidPartParameterError`, providing informative error messages.  All functional parameters are checked before being used in the core logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and bool for the boolean parameter. The function's return type is clearly specified as Dict[str, List[Dict]].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly implements input validation for all functional parameters, raising the documented exceptions (`TypeError`, `InvalidPartParameterError`). The core logic uses `channel_id`, `section_id`, and `mine` appropriately in filtering the `sections` from the global `DB`.  The `part` parameter's validation is robust, ensuring it's not empty or contains only invalid components.  The function's return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its parameters are all related to YouTube channel sections and metadata, including `part`, `channel_id`, `hl`, `section_id`, `mine`, and `on_behalf_of_content_owner`.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on filtering and retrieving data from a database based on these parameters.  The existing input validation is relevant to the function's purpose but unrelated to phone number or email processing."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including default values for `on_behalf_of_content_owner`. The `Args` and `Returns` sections are well-structured and informative.  The `Raises` section correctly lists the `TypeError` exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking to validate the `section_id` and `on_behalf_of_content_owner` parameters.  While Pydantic could be used, the existing validation is sufficient and clear.  Using Pydantic would add complexity without significant benefit in this simple case.  The validation covers all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both functional input parameters: `section_id` and `on_behalf_of_content_owner`.  `section_id` is checked to ensure it's a string. `on_behalf_of_content_owner` is checked to ensure it's a string if provided (handles the optional nature correctly).  However, it lacks value validation.  For example,  `section_id` could be an empty string \"\", which might be invalid depending on the database structure and application logic.  There's no check for this.  Therefore, while type validation is comprehensive for functional parameters, value validation is missing, resulting in a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`section_id` and `on_behalf_of_content_owner`) are properly type-annotated with their expected types (str and Optional[str], respectively). The function's return type is clearly specified as `Dict[str, bool]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a channel section from the global `DB` dictionary if it exists.  It handles the `section_id` parameter correctly and raises the documented `TypeError` exceptions for invalid input types. The `on_behalf_of_content_owner` parameter, while not used in the core logic, is correctly validated as per the docstring. The function's return value matches the docstring's description.  There are no placeholders or incomplete logic. The KeyError raised internally is handled and converted to the expected dictionary response, preventing it from propagating to the caller."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses as input.  Its inputs are `section_id` and `on_behalf_of_content_owner`, both expected to be strings representing identifiers, not phone numbers or emails. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates that these inputs are strings."
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It correctly documents the arguments, including their types and default values (even though the default values are `None` and not explicitly stated as such, it's clear from the function signature). The `Args` section is well-structured. The `Returns` section accurately describes the structure of the dictionary returned on success and error, although it uses `Dict[str, any]` which is less precise than it could be (it could specify the keys and types more precisely).  The `Raises` section correctly lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `part` parameter, checking if it's one of \"snippet\" or \"contentDetails\".  The `snippet` parameter is a string and is not explicitly validated beyond type checking (which is implicit in Python).  No validation is performed on the optional parameters `on_behalf_of_content_owner` and `on_behalf_of_content_owner_channel` because they are not functional parameters.  While Pydantic could be used to formalize the validation, the existing manual check is sufficient for this simple case.  Adding Pydantic would add complexity without significant benefit given the current validation needs."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `part` parameter.  It checks for the correct data type (str) and validates that the value is one of \"snippet\" or \"contentDetails\" using a value check.  This is comprehensive validation for this parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `snippet`, `on_behalf_of_content_owner`, `on_behalf_of_content_owner_channel`) are properly type-annotated with their expected types (str and Optional[str]). The function's return type is clearly specified as `Dict[str, any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly inserts a new channel section into the global `DB` dictionary.  It handles the `part` parameter as documented, raising a `ValueError` for invalid inputs.  The `snippet` parameter is used to populate the new section.  Exception handling is implemented for `KeyError` and `ValueError`, and a generic `Exception` catch-all is included. The return value matches the docstring's description, providing a dictionary indicating success or failure with appropriate details.  The function's logic is complete and functional within the context of using the global `DB`.  There are no placeholders or TODO comments. The `on_behalf_of_content_owner` and `on_behalf_of_content_owner_channel` parameters are correctly identified as unused MCP contextual parameters and are not penalized."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle any phone number or email address inputs.  Its parameters (`part`, `snippet`, `on_behalf_of_content_owner`, `on_behalf_of_content_owner_channel`) are all strings and do not represent or expect phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on inserting data into a database, and its input validation is limited to checking the `part` parameter."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The `Returns` section correctly specifies the dictionary structure, although it could be improved by explicitly listing the `str` types for `success` and `error` keys within the dictionary description (e.g., `{\"success\": str, \"error\": str}`).  The `Raises` section correctly lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using `if` statements to check the `part` parameter against allowed values and the `section_id` against the keys in the `DB`.  While Pydantic could be used, the existing validation is sufficient and clear.  The `snippet` parameter's validation is implicit; it's treated as a string and assigned directly to the database if provided.  No validation is needed for `on_behalf_of_content_owner` as it's a contextual parameter.  Therefore, Pydantic is not needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (part, section_id, snippet, on_behalf_of_content_owner) are properly type-annotated with their expected types (str, str, Optional[str], Optional[str] respectively). The function's return type is clearly specified as Dict[str, str].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`part`, `section_id`, `snippet`) are used appropriately in the logic.  The documented exceptions (`ValueError`, `KeyError`) are handled correctly. There are no placeholders or TODO comments. The return type and behavior match the docstring's description. The `on_behalf_of_content_owner` parameter is correctly identified as an unused MCP contextual parameter and is not penalized."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  Its purpose is to update a channel section in a database based on provided parameters (`part`, `section_id`, `snippet`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles potential errors related to its intended functionality (invalid `part` parameter, missing `section_id`)."
+          }
+        }
+      }
+    },
+    "youtube/Channels.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including their types and default values. The `Returns` section correctly specifies the return type as `Dict[str, List[Dict]]` and gives a reasonable description of the structure.  The `Raises` section lists the potential exceptions.  Type information is consistently provided for parameters and return values.  The documentation of the dictionary structure in the `Returns` section could be improved by explicitly listing the keys and their types within the `items` list (e.g.,  `- id (str): Unique channel identifier`, etc.).  However, this is a minor omission."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and range validation for its functional input parameters.  While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks adequately cover the required input validation for the functional parameters.  The use of Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters are checked for correct data types.  `max_results` is further validated to ensure it falls within the acceptable range (1-50).  The validation uses type checking (`isinstance`) and range checks.  All functional parameters are checked for `None` before type checking, handling the optional nature of the parameters effectively.  Appropriate `TypeError` and `MaxResultsOutOfRangeError` exceptions are raised with informative messages for invalid inputs.  There are no missing validation checks for functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types using Optional for nullable parameters and specifying List and Dict where appropriate.  The function's return type is clearly specified as `Dict[str, List[Dict]]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  The `channel_id` parameter's usage assumes a single channel ID rather than a comma-separated list as described in the docstring.  The docstring states that `channel_id` is a comma-separated list of IDs, implying that the filtering logic should handle multiple IDs.  The current implementation only checks for equality with a single ID.  To be fully implemented, the logic should be updated to handle comma-separated lists and filter accordingly.  All other functional parameters are used correctly, and exception handling is in place.  The return type and structure match the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its purpose is to retrieve a list of YouTube channels based on various filter criteria, none of which involve phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does perform input validation for its own parameters, ensuring correct data types, but this is unrelated to phone number or email processing."
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's role in creating a new channel resource.  All parameters are listed with their types and descriptions, including default values. The `Args` section is well-structured and informative. The `Returns` section correctly identifies the Union type, but the description of the dictionary structures could be improved.  While it mentions the `success` and `channel` keys in the success case, it doesn't explicitly state their types (bool and Dict[str, Any], respectively).  Similarly, it only mentions the `error` key in the error case without specifying its type (str).  The `Raises` section correctly lists the exceptions.  The docstring accurately reflects the function's behavior in handling exceptions and returning appropriate dictionaries.  However, the documentation of the return value's structure could be more precise by explicitly listing the types of the dictionary keys and values.  The docstring is complete enough for someone to use the function, but a more detailed description of the return dictionary structure would enhance clarity."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using a simple `if` statement to check if the `part` parameter is empty.  While this is sufficient for this specific case, it doesn't leverage Pydantic.  However, given the simplicity of the validation and the limited number of parameters requiring validation, using Pydantic would likely add unnecessary complexity.  The existing validation is adequate for the current functionality.  The other parameters are either optional or have implicit type checking (e.g., `bool`, `int`, `str`).  More robust validation could be added for specific parameter constraints (e.g., length restrictions on strings, range checks on integers), but it's not strictly necessary based on the current implementation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation and null checks for the `part` parameter.  It checks if `part` is empty and raises a ValueError if it is. However, no other input parameters receive any validation.  `max_results`, for example, could be validated to ensure it's a positive integer.  String parameters like `category_id` and `on_behalf_of_content_owner` could be checked for length or format restrictions. Boolean parameters (`managed_by_me`, `mine`, `my_subscribers`) don't require further validation beyond type checking, assuming the type system is enforced correctly.  The validation is therefore only partial, focusing solely on the `part` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types using Optional and Union where appropriate.  The return type is also clearly specified using Union[Dict[str, Any], Dict[str, str]]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a new channel entry in the global `DB` dictionary.  All functional input parameters (`part`, `category_id`, `for_username`, `hl`, `managed_by_me`, `max_results`, `mine`, `my_subscribers`, `on_behalf_of_content_owner`) are used appropriately in constructing the `new_channel` dictionary. The `channel_id` parameter is explicitly marked as unused in the docstring, which is acceptable.  The function handles `ValueError` and `KeyError` exceptions as documented, and includes a catch-all for unexpected errors. The return value matches the docstring's description, providing a dictionary indicating success or failure with appropriate details.  There are no placeholders or TODOs. The logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle any phone number or email address inputs.  It deals with creating YouTube channel resources and uses parameters like `part`, `category_id`, `forUsername`, etc., which are all strings related to YouTube channel data, not contact information.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's arguments, including default values for `properties`. The types are correctly specified for parameters and return values.  The `Args` and `Returns` sections are well-structured and informative. The `Raises` section correctly lists the `ValueError` and `KeyError` exceptions.  The documentation of the `properties` dictionary is adequate, listing valid keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Dict[str, str | bool]`) and manual checks (`if not properties`) to validate the input.  While this provides some validation, it's not as comprehensive as a Pydantic model.  A Pydantic model could enforce the allowed keys within the `properties` dictionary and provide more robust type checking and error messages.  However, the existing validation is sufficient for the basic checks performed.  The absence of Pydantic doesn't automatically mean validation is missing; it simply means a more structured approach isn't used."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on `channel_id` (checking if it's a string) and `properties` (checking if it's a dictionary or None).  It also includes a null check for `properties`, raising a ValueError if no update parameters are provided.  A database lookup is performed to check if the `channel_id` exists.  However, it lacks value validation for the `properties` dictionary. While it checks for the existence of keys, it doesn't validate the values themselves against allowed formats or ranges (e.g., ensuring `categoryId` is a valid YouTube category ID, or that string lengths are within acceptable limits).  Therefore, the validation is good but not comprehensive due to the missing value validation within the `properties` dictionary."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`channel_id` and `properties`) are properly type-annotated with their expected types.  The `properties` parameter correctly uses `Dict[str, str | bool]` to specify that it accepts a dictionary where keys are strings and values are either strings or booleans. The return type annotation `-> Dict[str, str]` is also clearly specified.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  Both `channel_id` and `properties` (functional parameters) are used correctly.  The function handles `KeyError` and `ValueError` exceptions as documented, and includes a catch-all for unexpected exceptions. The return value matches the docstring's specification. There are no placeholders or TODOs. The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  Its purpose is to update metadata for YouTube channels, using a channel ID and a dictionary of properties.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles potential errors during database operations."
+          }
+        }
+      }
+    },
+    "youtube/Memberships.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the `part`, `has_access_to_level`, `filter_by_member_channel_id`, `max_results`, `mode`, and `page_token` parameters, including their types and descriptions.  The default values are also correctly stated.  The `Returns` section accurately describes the structure of the dictionary returned when `part` is \"snippet\"."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It checks the `part` parameter explicitly and uses `if` statements to conditionally filter results based on the other parameters (`has_access_to_level`, `filter_by_member_channel_id`, `max_results`, `mode`). While not as structured as Pydantic, this approach provides basic type and value checks for the functional parameters.  Using Pydantic would add more structure and potentially improve error handling, but the existing validation is sufficient to prevent obvious errors.  The `page_token` parameter is explicitly noted as not used, so no validation is needed."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through type hints (though these are not enforced at runtime in Python).  It also performs value validation for the `part` parameter, checking if it equals \"snippet\".  However, it lacks validation for other functional parameters:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[int]). The function's return type is clearly specified as `Dict[str, Union[List[Dict], str]]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves and filters members from the global `DB` based on the provided parameters (`part`, `has_access_to_level`, `filter_by_member_channel_id`, `max_results`, `mode`).  The `page_token` parameter is correctly identified as unused in the docstring and is not used in the implementation.  The function returns the expected dictionary structure as documented, including an \"error\" message if the `part` parameter is invalid, and a list of \"items\" otherwise.  All functional input parameters are used appropriately. There are no placeholders, TODOs, or exceptions to handle. The implementation matches the docstring perfectly."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its parameters and functionality are related to retrieving membership information from a database based on various criteria (part, access level, channel ID, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  The Args and Returns sections are present and generally accurate in describing the parameters and return types.  The types are specified for all parameters and return values.  The documentation of the nested dictionary structure within the return value is a strength."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `part` parameter is equal to \"snippet\".  This is sufficient validation for this parameter. The `snippet` parameter is of type `Dict[str, Any]`, which doesn't inherently require further validation in this specific function.  While Pydantic could be used to define more specific schemas for `snippet`, it's not strictly necessary given the current implementation and the lack of specific constraints on the `snippet` dictionary's contents within this function.  Adding Pydantic would add complexity without providing significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `part` parameter (checking if it's a string) and value validation (checking if it equals \"snippet\").  However, it lacks validation for the `snippet` parameter.  While the type hint suggests it's a dictionary, there's no check to ensure it's actually a dictionary or that it contains the expected keys and data types.  No null or empty checks are performed on either parameter.  Error handling is present for an invalid `part` parameter, but not for issues with `snippet`.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`part` and `snippet`) are properly type-annotated.  The `part` parameter is annotated as `str`, and the `snippet` parameter is annotated as `Dict[str, Any]`. The return type is also clearly specified using `Dict[str, Union[bool, Dict, str]]`, accurately reflecting the different possible return structures.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a membership entry in the global `DB` dictionary, based on the provided `snippet` and a generated ID.  The `part` parameter is correctly used to validate the input and return an error if it's invalid. The function's logic is complete, and the return value matches the docstring's description.  There are no placeholders, exceptions to handle, or unused functional parameters.  The docstring accurately reflects the function's behavior and return types."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle any phone number or email address inputs.  It deals with creating a membership based on a `part` parameter and a `snippet` dictionary.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function's purpose is entirely different."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: deleting a membership.  The Args and Returns sections are well-structured, correctly identifying the `id` parameter type and the dictionary return type. The description of the dictionary's structure and the `success` key's boolean type is accurate.  The docstring accurately reflects the function's behavior.  However, it could be improved by adding a \"Raises\" section, although the function doesn't explicitly raise any exceptions.  While no exceptions are raised, mentioning that the function handles the case where the ID is not found would enhance clarity and completeness.  The docstring is complete enough for someone to use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if id in DB.get(\"memberships\", {}):` check to ensure the ID exists before attempting deletion. This serves as basic input validation.  While a Pydantic model isn't used, the existing check is sufficient for this function's needs.  Adding a Pydantic model would add unnecessary complexity for this simple validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by specifying `id: str` in the function signature.  However, it lacks value validation.  It checks if the `id` exists in the `DB`, but it doesn't validate the format or content of the `id` itself.  There's no check for an empty string or `None` value for `id`, which could lead to unexpected behavior or errors.  While it handles the case where the ID is not found, it doesn't explicitly raise exceptions for invalid input types (though Python's type hinting might cause a runtime error if a non-string is passed).  Therefore, the validation is partial, covering type but missing crucial value and null checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design and type annotations.  The single parameter `id` is correctly type-annotated as `str`. The return type `Dict[str, bool]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a membership from the global `DB` dictionary if it exists and returns a dictionary indicating success or failure as documented in the docstring.  The `id` parameter, the only functional parameter, is used correctly. There are no placeholders, exceptions to handle (as it's a simple key-value store operation), or inconsistencies between the docstring and the implementation.  The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses.  Its input is an `id` string, and its purpose is to delete a membership from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  The Args and Returns sections are present and generally accurate in describing the parameters and the main return structure.  Types are specified for parameters and return values.  The documentation of the nested `membership` dictionary within the return value is fairly comprehensive."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking and manual validation for the `part` and `id` parameters.  It checks if `part` is equal to \"snippet\" and if `id` exists as a key in the `memberships` dictionary. While not using Pydantic, this provides sufficient input validation for the functional parameters.  The `snippet` parameter is a `Dict[str, Any]`, which is not strictly validated, but its internal structure is handled within the function's logic.  Using Pydantic models would add more structure and potentially more robust validation (e.g., schema validation for the `snippet` dictionary), but the existing validation is adequate for the current implementation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `part` (checking it's a string) and implicitly for `id` (as it's used as a key in a dictionary, implying it must be a string or hashable type).  It also performs value validation on `part`, checking if it equals \"snippet\". However, it lacks validation for the `snippet` parameter.  No checks are performed to ensure `snippet` is not None, empty, or contains the expected keys and data types.  There's also no check to ensure that the keys within the `snippet` dictionary are valid for updating a membership.  While the function handles the case where the membership ID is not found, it doesn't explicitly handle potential exceptions that might arise from updating the nested `snippet` dictionary (e.g., `KeyError` if a required key is missing).  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `id`, `snippet`) are properly type-annotated with their expected types (`str`, `str`, `Dict[str, Any]`, respectively). The function's return type is clearly specified as `Dict[str, Union[bool, Dict, str]]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core update logic using the global `DB`.  It handles the cases where the `part` parameter is invalid and when the membership ID is not found, returning the appropriate dictionaries as specified in the docstring.  The `id` and `snippet` parameters are correctly used. However, the error handling could be improved.  The function assumes that `membership[\"snippet\"]` always exists. If a membership exists but lacks a \"snippet\" key, this will cause a `KeyError`.  Adding a check for the existence of `membership[\"snippet\"]` before updating would make the function more robust.  Also, while the docstring mentions the `memberChannelId`, `hasAccessToLevel`, and `mode` fields within the returned `membership` object, the function doesn't explicitly guarantee their presence.  The update operation only modifies the snippet; these fields might not always be present in the updated snippet.  Adding a check or ensuring these fields are always present in the snippet before the update would improve consistency with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  Its purpose is to update a membership record in a database based on a provided ID and snippet of data.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended task of updating membership data, but it does not interact with phone numbers or emails in any way."
+          }
+        }
+      }
+    },
+    "youtube/Comment.py": {
+      "functions": {
+        "set_moderation_status": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including default values for `ban_author`. The description of the return value is also mostly accurate, specifying the structure in case of success.  Types are specified for parameters and return values.  The documentation of the dictionary structure in the return value is detailed enough to be helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `comment_id` and `moderation_status` parameters.  It checks if `comment_id` exists in the `DB[\"comments\"]` dictionary and if `moderation_status` is one of the allowed values.  While Pydantic could be used to achieve the same validation, the existing manual checks are sufficient and correctly handle the input validation requirements.  The `ban_author` parameter is a boolean and requires no further validation.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`comment_id`, `moderation_status`, `ban_author`) are properly type-annotated with their expected types (str, str, bool respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types (Dict) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`comment_id`, `moderation_status`, and `ban_author`) are used appropriately in the function's logic.  The function handles the cases where the comment ID is not found or the moderation status is invalid by returning appropriate error messages.  There are no placeholders, TODO comments, or incomplete logic. The return dictionary structure matches the docstring's description.  The function's logic is complete and functional within the context of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `set_moderation_status` does not handle any phone number or email address inputs.  Its purpose is to update the moderation status of a comment in a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are irrelevant and not applicable to this function."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  The Args and Returns sections are present and correctly identify the `comment_id` parameter type and the dictionary return type.  The description of the return dictionary is *partially* adequate; it correctly states that `success: bool` is returned on success, but it fails to mention that the `error: str` key is only present in the case of failure.  This omission is a significant inconsistency. The docstring does not mention the possibility of exceptions, which is a minor omission.  While the docstring is functional, the incomplete description of the return dictionary makes it less than ideal.  A more precise description of the return value would improve clarity and prevent potential misunderstandings."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `comment_id` exists in the `DB[\"comments\"]` dictionary before attempting deletion. This serves as basic input validation, ensuring the `comment_id` refers to an existing comment.  While a Pydantic model could be used, it's not strictly necessary for this simple validation task. The existing check is sufficient and arguably more concise for this specific case.  No other functional parameters exist requiring validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a type check on `comment_id` by implicitly expecting it to be a string (used as a key in the `DB[\"comments\"]` dictionary).  However, it lacks value validation.  It checks for the existence of the `comment_id` in the `DB`, but doesn't validate the format or content of the `comment_id` itself.  For example, it doesn't check for empty strings or strings containing invalid characters.  There are no explicit checks for `None` input.  Therefore, while a type check is present, crucial value validation is missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design and type annotations.  The single parameter `comment_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, bool | str]`, accurately reflecting the possible return values.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a comment from the global `DB[\"comments\"]` dictionary if it exists.  The `comment_id` parameter is used correctly. The function returns the expected dictionary indicating success or failure with the correct data types.  The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle.  The logic is complete and functional within the constraints of using the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its purpose is to delete a comment from a database given a comment ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The description of the return value is also present and mostly accurate.  The types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation.  The `part` parameter is checked for emptiness.  While this is a simple check, it's sufficient for this function's needs.  Using Pydantic would add overhead without significant benefit in this case, given the simplicity of the validation requirements.  The other parameters (`snippet`, `moderation_status`, `banned_author`) have default values or are of simple types (dict, str, bool) that are implicitly validated by Python's type system.  More complex validation might justify using Pydantic, but for this function's current implementation, it's not necessary."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a null check on the `part` parameter, ensuring it's not empty.  This is a good start, but it lacks type validation for `part` (it should be a string), and it doesn't validate `moderation_status` (it should likely be one of a predefined set of statuses, e.g., \"published\", \"pending\", \"rejected\").  The `snippet` parameter has a type hint (Optional[Dict]), but no validation is performed to ensure the contents of the dictionary are valid if provided.  `banned_author` is correctly handled as a boolean.  Therefore, while some validation is present, significant gaps exist, leading to a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `snippet`, `moderation_status`, `banned_author`) are properly type-annotated with their expected types.  The function's return type (`Dict[str, Any]`) is clearly specified.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly inserts a new comment into the global `DB[\"comments\"]` dictionary.  All functional input parameters (`part`, `snippet`, `moderation_status`, `banned_author`) are used appropriately in constructing the new comment object.  The function handles the case of an invalid `part` parameter by returning an error message. The return value matches the docstring's description, providing either a success message with the new comment details or an error message. There are no placeholders, TODOs, or exceptions to handle (as none are documented). The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle any phone number or email address inputs.  Its parameters and functionality are focused on inserting comments into a database, dealing with parameters like `part`, `snippet`, `moderation_status`, and `banned_author`.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the arguments and their types, including default values. The description of the return value is also present, specifying the dictionary structure in case of success. However, there are several areas for improvement:"
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using `if not part:` to check if the `part` parameter is provided.  While this is a simple check, it's sufficient for this function's needs.  The other parameters are optional and don't require strict validation beyond their type hints (which are present).  Using Pydantic would add unnecessary complexity for this level of validation.  The existing `if` statement and type hints provide adequate input validation for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a type check and a null check on the `part` parameter.  It correctly handles the case where `part` is missing. However, there's no validation on `max_results`. While it's an optional integer,  it could be negative or excessively large, leading to unexpected behavior or resource exhaustion.  No validation is performed on `comment_id` or `parent_id` beyond checking if they are present;  the code assumes these IDs are valid without verifying their existence or format within the `comments_dict`.  The `page_token` and `text_format` parameters are explicitly marked as \"Currently not used\" and therefore do not require validation.  The validation is therefore partial, focusing only on the mandatory `part` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[int]). The function's return type is clearly specified as `Dict[str, List[Dict] | str]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves comments from the global `DB` based on the `part`, `comment_id`, and `parent_id` parameters.  The `max_results` parameter is also correctly used to limit the number of returned comments.  The docstring accurately reflects the function's behavior and return type. However, the `page_token` and `text_format` parameters are explicitly marked as \"Currently not used\" in the docstring, but they are functional parameters.  While not strictly an error given the context, their presence as unused functional parameters suggests a potential area for improvement or future implementation.  The function could be improved by either removing these parameters or utilizing them in a future version."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  It operates solely on parameters related to retrieving comments from a database, using parameters like `part`, `comment_id`, `parent_id`, etc.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "mark_as_spam": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  The Args section correctly documents the `comment_id` parameter with its type and description. The Returns section correctly identifies the return type as `Dict[str, Any]`. However, the description of the return value is incomplete and misleading.  The docstring states that the return dictionary will contain either a `success` and `comment` key *or* an `error` key.  This implies mutual exclusivity, which is not entirely accurate.  While the function *does* return an error message if the comment isn't found, it also returns a dictionary with a `success` and `comment` key if the comment is found and updated.  The docstring should clarify that the `error` key is only present in case of failure, and that the `success` and `comment` keys are present in case of success.  Furthermore, the structure of the `comment` dictionary is not documented, which is a significant omission given it's a nested structure.  The docstring also fails to mention that the function modifies the global `DB`. While not strictly an error, it's a significant side effect that should be documented for clarity.  No exceptions are raised, so the absence of a Raises section is not a problem in this specific case.  The docstring is adequate but could be significantly improved by addressing these issues."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `comment_id` exists in the `DB` before proceeding.  This is sufficient input validation for the single functional parameter.  Using a Pydantic model would add unnecessary complexity for this simple check.  The type of `comment_id` is already specified in the function signature as `str`."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `comment_id` by declaring it as a string in the function signature.  However, it lacks value validation.  It checks for the existence of the `comment_id` in the `DB`, but this is more of a lookup than a validation of the `comment_id` itself.  There's no check for empty strings or other invalid string formats.  No exceptions are raised for invalid inputs; instead, an error message is returned.  While the type is checked, crucial value checks are missing, making the validation only partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `mark_as_spam` has excellent parameter design and type annotations.  The single parameter `comment_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `comment_id` parameter to check if a comment exists in the DB and updates its `moderationStatus` if found.  The return values match the docstring's description. However, the function only handles the case where a comment is not found; it doesn't explicitly handle other potential errors (e.g., database errors, issues updating the DB).  Adding more robust error handling would make it more complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `mark_as_spam` does not handle any phone numbers or email addresses.  Its input is a `comment_id` (string), and its functionality is solely focused on updating the moderation status of a comment within a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are irrelevant to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and optional nature. The description of the return value is also present and mostly accurate.  The docstring correctly mentions that the function returns an error if no update parameters are provided or if the comment ID is not found.  Default values for optional parameters are clearly stated.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation without using Pydantic.  It checks if at least one of `snippet`, `moderation_status`, or `banned_author` is provided and verifies the existence of the `comment_id` in the `DB`.  While this validation is present, using Pydantic models would provide a more structured and robust approach.  Pydantic could enforce type hints (e.g., ensuring `moderation_status` is a string, `banned_author` is a boolean, and `snippet` is a dictionary), and allow for more complex validation rules (e.g., length restrictions on strings, data type validation within the `snippet` dictionary).  However, the existing validation is sufficient for the current functionality, making Pydantic not strictly *needed*."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (comment_id, snippet, moderation_status, banned_author) are properly type-annotated with their expected types (str, Optional[Dict], Optional[str], Optional[bool] respectively).  The function's return type is clearly specified as Dict[str, str].  No **kwargs parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a comment in the global `DB` dictionary based on the provided `comment_id`, `snippet`, `moderation_status`, and `banned_author`.  All functional input parameters are used appropriately. The function handles the case where no update parameters are provided and the case where the `comment_id` is not found. The return value consistently matches the docstring's description.  There are no placeholders, TODOs, or exceptions to handle (as none are documented). The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  Its purpose is to update comment data in a database, using a comment ID, snippet, moderation status, and banned author status as input parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "youtube/Caption.py": {
+      "functions": {
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and generally well-written. It clearly explains the function's purpose (deleting a caption) and accurately describes the arguments, including their types and default values.  The `Returns` section correctly specifies the dictionary structure and type. The `Raises` section correctly identifies the `ValueError`.  Types are consistently specified for all parameters and return values. The documentation of the dictionary return value is sufficient."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if id not in DB[\"captions\"]:` check to validate the existence of the caption ID before attempting deletion.  This is sufficient input validation for the functional parameter `id`. The other parameters (`onBehalfOf` and `onBehalfOfContentOwner`) are explicitly marked as not currently used and therefore do not require validation.  While Pydantic could be used, it's not strictly necessary given the simple validation already in place.  The existing approach is clear, concise, and effective for this specific function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `id` parameter by implicitly treating it as a string within the `if id not in DB[\"captions\"]:` check.  It also performs a value check by ensuring the `id` exists as a key in the `DB[\"captions\"]` dictionary.  However, it lacks explicit type validation for the `id` parameter and does not perform any validation on the `onBehalfOf` and `onBehalfOfContentOwner` parameters, even though the docstrings indicate they are not currently used.  While the `ValueError` provides a clear message, more robust validation of the `id` parameter (e.g., checking for specific formats or lengths if applicable) would improve the function's security.  The absence of validation for unused parameters is acceptable given the context."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `onBehalfOf`, `onBehalfOfContentOwner`) are properly type-annotated with their expected types (str and Optional[str]). The function's return type is clearly specified as `Dict[str, bool]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a caption from the global `DB[\"captions\"]` dictionary given a valid `id`.  It raises a `ValueError` as documented if the `id` is not found. The return value matches the docstring.  The `onBehalfOf` and `onBehalfOfContentOwner` parameters are correctly identified as unused MCP contextual parameters and are not penalized for not being used in the function's logic.  There are no placeholders or incomplete parts in the implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its input and output are solely related to caption IDs and a success boolean. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "download": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and generally well-written. It accurately describes the function's purpose, parameters, return value, and exceptions.  Default values for optional parameters are correctly noted.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It checks if the `id` exists in the `DB`, and it validates the `tfmt` parameter against a predefined set of allowed formats.  While Pydantic could be used to structure and validate the inputs, the existing manual checks are sufficient for this function's needs.  The `onBehalfOf` and `onBehalfOfContentOwner` parameters are correctly ignored as they are not functional parameters.  Adding Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for the `id` and `tfmt` parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `onBehalfOf`, `onBehalfOfContentOwner`, `tfmt`, `tlang`) are properly type-annotated with their expected types (str and Optional[str]). The function's return type is clearly specified as `str`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly downloads caption tracks based on the provided ID, format, and language.  All functional parameters (`id`, `tfmt`, `tlang`) are used appropriately.  The documented exceptions (`ValueError` for caption not found and unsupported format) are correctly implemented. There are no placeholders or TODOs. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type.  The parameters `onBehalfOf` and `onBehalfOfContentOwner` are correctly identified as unused MCP contextual parameters and are therefore not considered in the evaluation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `download` function does not handle any phone number or email address inputs.  Its parameters and functionality are solely focused on downloading caption tracks based on an ID and format specifications. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the arguments, including their types and default values (though it notes that some are not currently used). The `Args` section is well-structured.  The `Returns` section correctly identifies the dictionary structure, but it **overpromises** on the content. The docstring states that the returned dictionary will contain a nested `caption` dictionary with `id` and `snippet` keys *only if* `part` is valid. However, the function *always* returns a dictionary with `success` and `caption` regardless of the `part` value (as long as no `ValueError` is raised).  This is an inconsistency.  The `Raises` section accurately reflects the exception handling.  While the documentation of the nested `caption` dictionary is somewhat lacking in detail (it doesn't specify the types within the `snippet` dictionary), this is a minor issue compared to the inconsistency in the `Returns` section. The docstring is complete enough for basic usage, but the discrepancy between the described return value and the actual return value needs to be addressed."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to validate the `part` parameter.  While this achieves basic validation, it doesn't leverage Pydantic. However, given the simplicity of the validation and the single functional parameter (`part`), using Pydantic would add unnecessary complexity.  The other parameters (`snippet`, `onBehalfOf`, `onBehalfOfContentOwner`, `sync`) are either not used functionally or have simple types (dict, optional string, bool) that don't require extensive validation beyond basic type checking (implicitly handled by Python).  Therefore, the existing validation is sufficient, and Pydantic is not needed."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `part` parameter.  It correctly checks that `part` is a string and that its value is \"snippet\", raising a ValueError with a clear message if it's not.  However, it lacks validation for the `snippet` parameter. While the type hint suggests it should be a dictionary, there's no runtime check to ensure this.  Furthermore, there's no validation of the contents of the `snippet` dictionary to ensure it contains the necessary keys or values for proper database insertion.  The `onBehalfOf` and `onBehalfOfContentOwner` parameters, while not currently used, are also not validated.  The `sync` parameter is a boolean and is correctly handled by the type hint, but no further validation is needed.  Therefore, while some validation is present, it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `snippet`, `onBehalfOf`, `onBehalfOfContentOwner`, `sync`) are properly type-annotated with their expected types.  The return type is also clearly specified using `-> Dict[str, Union[bool, Dict, str]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly inserts a new caption into the global `DB` dictionary.  The `part` parameter is correctly validated, raising a `ValueError` if it's not \"snippet\". The `snippet` parameter is used to populate the new caption's data. The function returns a dictionary with \"success\" and \"caption\" as promised in the docstring.  The `onBehalfOf`, `onBehalfOfContentOwner`, and `sync` parameters are not used, but this is acceptable as noted in the problem description because they are MCP contextual parameters.  There are no placeholders, TODOs, or other implementation gaps. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle any phone number or email address inputs.  Its purpose is to insert caption data into a database, and its parameters only deal with caption-related information (`part`, `snippet`, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's core task: retrieving a list of captions. The Args section correctly lists all parameters with types and descriptions, including explanations for the unused `onBehalfOf` and `onBehalfOfContentOwner` parameters.  Default values are also correctly noted. The Returns section correctly specifies the dictionary structure, although it could be improved by explicitly mentioning that the `items` list might be empty if no captions match the criteria. The Raises section accurately reflects the `ValueError`.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to validate the `part` parameter.  While not using Pydantic, this provides sufficient validation for the functional input parameters.  The other parameters (`videoId`, `id`, `onBehalfOf`, `onBehalfOfContentOwner`) are either strings (implicitly validated by the function signature) or optional, and thus do not require explicit validation in this context.  Using Pydantic would add unnecessary complexity for this level of validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation.  The `part` parameter is checked for valid values (\"id\" or \"snippet\") using a value check and raises a ValueError with a clear message if invalid.  The `videoId` and `id` parameters, while not explicitly type-checked in the code, are implicitly checked through their usage within the list comprehension (attempting to access `.get(\"snippet\", {}).get(\"videoId\")` and `cap[\"id\"]` will raise exceptions if they are not strings or if the keys are missing).  However, there's no explicit check for empty strings or None values for `videoId` and `id`, which could lead to unexpected behavior or exceptions further down the line.  The `onBehalfOf` and `onBehalfOfContentOwner` parameters are correctly omitted from validation as they are noted to be MCP contextual parameters.  Adding explicit checks for empty strings or None in `videoId` and `id` would improve the robustness of the validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `videoId`, `id`, `onBehalfOf`, `onBehalfOfContentOwner`) are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as `Dict[str, List[Dict]]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves captions based on the `videoId` and optionally `id` parameters.  The `part` parameter is correctly validated, raising a ValueError if invalid. The function uses all functional input parameters (`part`, `videoId`, `id`). The return value matches the docstring's description.  There are no placeholders, TODOs, or incomplete logic. The exception handling is correctly implemented.  The `onBehalfOf` and `onBehalfOfContentOwner` parameters are correctly identified as unused MCP contextual parameters and are not penalized."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its parameters and functionality are focused on retrieving caption data from a database based on video IDs and other identifiers. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the arguments, including their types and default values (although it notes that some are not currently used). The description of the return value is mostly accurate, specifying the dictionary structure and possible keys.  The `Raises` section correctly identifies the `ValueError`.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic input validation with a conditional statement (`if part not in [\"snippet\"]:`).  While not using Pydantic, it checks the `part` parameter and raises a ValueError if it's invalid. The `id` parameter is checked against the existence in the `DB`.  Pydantic would add more structure and potentially more sophisticated validation (e.g., data type checking beyond the implicit type checking in the function signature), but the existing validation is sufficient for the current functionality.  The other parameters (`snippet`, `onBehalfOf`, `onBehalfOfContentOwner`, `sync`) are optional and don't have explicit validation, but this is acceptable given their current non-functional role.  Adding Pydantic would be an improvement for robustness and maintainability, but the current validation isn't strictly missing."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type and value validation on the `part` parameter, checking that it is \"snippet\".  It also implicitly checks if `id` exists in the `DB[\"captions\"]` dictionary, acting as a value check for `id`. However, it lacks validation for the `snippet` parameter. While it checks for `None`, it doesn't validate the structure or content of the dictionary if provided.  No validation is performed on the `id` parameter beyond the implicit existence check in the DB.  The `onBehalfOf`, `onBehalfOfContentOwner`, and `sync` parameters are not validated, but this is acceptable as they are noted as not currently used and are considered MCP contextual parameters.  Therefore, validation is partial, covering only some of the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `id`, `snippet`, `onBehalfOf`, `onBehalfOfContentOwner`, `sync`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Union[bool, str]]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly updates a caption in the DB if it exists and the 'part' parameter is 'snippet'.  It also correctly handles the case where the caption is not found. The exception handling for an invalid 'part' parameter is implemented correctly. However, the docstring states that the `part` parameter can be \"id\" or \"snippet\", but the code only raises a ValueError if `part` is not \"snippet\".  This is a minor inconsistency.  The `id` parameter is used correctly, but `snippet` is the only functional parameter used;  `onBehalfOf`, `onBehalfOfContentOwner`, and `sync` are unused but are marked as such in the docstring, so this is acceptable.  The return values match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update` function does not handle any phone number or email address inputs.  Its purpose is to update caption resources in a database, using parameters like `part`, `id`, and `snippet`.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "youtube/Videos.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the `part` parameter and the optional filtering parameters (`chart`, `id`, `my_rating`). The descriptions of `max_results` and `page_token` are also correct.  The `Args` section correctly lists all arguments with types. The `Returns` section correctly identifies the return type as `Dict[str, Any]` and describes the main keys (`kind`, `items`, `pageInfo`).  The nested structure of `pageInfo` is also documented.  The documentation of the optional `error` key in the return dictionary is helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `part`, `chart`, `id`, `my_rating`, and `max_results` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing checks are sufficient to ensure that the function receives valid input.  The validation is not exhaustive (e.g., it doesn't check the format of video IDs in the `id` parameter), but it addresses the core requirements outlined in the docstrings.  No Pydantic models are used, but the existing validation is adequate for the task."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for the `part`, `chart`, `id`, and `max_results` parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[int]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `part`, `chart`, `id`, and `max_results` parameters in its logic.  The `page_token` and `user_id` parameters are unused functional parameters, however,  the `user_id` parameter is only required when `my_rating` is used, and the function correctly handles this dependency.  The function correctly handles the case where no filter is specified, and it correctly validates the `chart` parameter. The error handling is also well-implemented.  The docstring accurately reflects the function's behavior and return type.  The only minor gap is the lack of usage of the `page_token` parameter, which could be used for pagination in a more complete implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  It's designed to retrieve and filter video data from a dictionary (`DB[\"videos\"]`), using parameters like `part`, `chart`, `id`, etc.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "rate": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's main task of rating videos and mentions the accepted rating values. The description of the `on_behalf_of` parameter as ignored is accurate.  The Args and Returns sections are present and generally well-formed, specifying types.  The Returns section correctly identifies the dictionary structure, but it lacks detail on the structure of the error message.  The docstring correctly states that the function returns a dictionary with a \"success\" key (boolean), but it *omits* that an \"error\" key (string) may also be present in the return dictionary, which is inconsistent with the implementation.  No exceptions are raised, so the absence of a Raises section is acceptable.  While the docstring is usable, the omission of the potential \"error\" key in the return value makes it incomplete and slightly misleading.  The docstring should be updated to reflect the possibility of an \"error\" key in the returned dictionary."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `video_id` and `rating` parameters.  `video_id` is checked for existence in the `DB[\"videos\"]` dictionary, and `rating` is checked against an allowed list of strings.  While Pydantic could be used to structure this validation, the existing manual checks are sufficient and correctly handle the input validation requirements.  The `on_behalf_of` parameter is optional and does not require validation as per the problem description.  Therefore, using Pydantic would add unnecessary complexity in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`video_id`, `rating`, `on_behalf_of`) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the rating logic as described in its docstring.  It handles the three rating types (\"like\", \"dislike\", \"none\") appropriately, updating the like and dislike counts in the global `DB` accordingly.  The input parameters `video_id` and `rating` are both used correctly. The `on_behalf_of` parameter is correctly ignored as per the docstring.  The function returns a dictionary indicating success or error as documented. There are no placeholders, TODOs, or exceptions that are documented but not handled.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `rate` does not handle any phone number or email address inputs.  Its purpose is to manage video likes and dislikes, taking only a video ID and a rating type as string inputs. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "report_abuse": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the arguments and their types, including the optional `on_behalf_of_content_owner`. The description of the return value is also accurate in stating that it returns a dictionary. However, the docstring's description of the dictionary's structure is incomplete.  While it mentions `success` (bool) and `error` (str, optional), it doesn't explicitly state that these are the *only* keys, and that the dictionary will only contain one of these keys at a time.  This is a minor omission, but it could lead to confusion.  More critically, the docstring **fails to mention the potential for a \"Video not found\" error**. This is a significant inconsistency between the documented behavior and the actual implementation.  The docstring should include a \"Returns\" section that explicitly lists this possible error condition.  Finally, while the function doesn't explicitly *raise* exceptions, it returns error messages within a dictionary. The docstring could be improved by explicitly mentioning this error handling mechanism."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using `if` statements to check if `video_id` exists in the `DB` and if `reason_id` is not empty.  While not using Pydantic, this achieves basic validation of the functional parameters.  Using Pydantic would add more structure and potentially allow for more sophisticated validation (e.g., data type validation beyond simple string checks, regular expression matching for ID formats), but the current validation is sufficient for the function's purpose.  The `on_behalf_of_content_owner` parameter is optional and does not require validation as per the problem description."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly (by using `str` type hints and string operations) for `video_id` and `reason_id`. It also includes a null check for `reason_id` (`if not reason_id`).  However, it lacks value validation for both `video_id` and `reason_id`.  There's no check to ensure `video_id` exists in a more robust way than just checking the mock database (e.g., checking against a predefined format or length).  Similarly, `reason_id` could benefit from validation against a list of allowed reason IDs.  The `on_behalf_of_content_owner` parameter, while optional, is not validated at all.  While the function checks for the existence of `video_id` in the `DB`, this is more of a domain-specific constraint check than a full value validation.  The error handling is minimal, only returning a simple error string.  Therefore, validation is partial, with some checks present but significant gaps remaining."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (video_id, reason_id, on_behalf_of_content_owner) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly checks for the existence of the video and a valid reason ID.  The return value matches the docstring's description. However, it lacks any handling or logging of successful report submissions to the database.  The `on_behalf_of_content_owner` parameter is not used, but as per the instructions, this is acceptable as it's likely an MCP contextual parameter.  Adding a mechanism to record the report in the DB would make it fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `report_abuse` does not handle any phone number or email address inputs.  Its parameters are `video_id`, `reason_id`, and an optional `on_behalf_of_content_owner`, all of which are strings representing IDs, not phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function only checks for the existence of a video ID and a reason ID."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  It accurately documents the `id` and `on_behalf_of_content_owner` arguments, including their types and descriptions. The `Args` and `Returns` sections are well-structured.  The docstring correctly states the return type as `Dict[str, Any]`, and it describes the possible keys (\"success\" and \"error\") within the dictionary.  However, it **omits the possibility of an \"error\" key being returned when the video is not found**.  The implementation *does* return `{\"error\": \"Video not found\"}` in this case, which is an inconsistency.  The docstring also doesn't mention that the function implicitly relies on a global `DB` variable, although this is acceptable given the provided context.  Finally, a `Raises` section would improve the docstring by explicitly stating that no exceptions are raised.  Despite these minor omissions, the docstring is comprehensive enough for a developer to understand the function's behavior and usage."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using a simple `if` statement to check if the provided `id` exists in the `DB[\"videos\"]` dictionary.  While not using Pydantic, this check ensures that the `id` is at least present in the database before attempting deletion.  Pydantic would add more structure and potentially more robust validation (e.g., checking the `id`'s data type or format more rigorously), but the current validation is sufficient for the simple functionality.  The `on_behalf_of_content_owner` parameter is optional and doesn't require validation in this context."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `id` parameter by implicitly checking if it's a key in the `DB[\"videos\"]` dictionary.  However, this only indirectly validates the type; it doesn't explicitly check if `id` is a string.  There's no value validation on `id` (e.g., checking for length, format, or allowed characters).  The `on_behalf_of_content_owner` parameter is optional and receives no validation whatsoever.  While the function handles the case where the video ID is not found, this is not strictly input validation; it's error handling after the fact.  Therefore, the validation is partial, with only implicit type checking on one parameter and no other validation checks present."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All parameters (`id` and `on_behalf_of_content_owner`) are properly type-annotated with their expected types (str and Optional[str], respectively). The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a video from the global `DB[\"videos\"]` dictionary if it exists.  The `id` parameter is used correctly to identify the video to delete. The function returns a dictionary indicating success or failure as documented.  There are no placeholders, TODOs, or exceptions to handle. The docstring accurately reflects the function's behavior and return type. The `on_behalf_of_content_owner` parameter is an MCP contextual parameter and is correctly not used in the function's logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its purpose is to delete a video from a database given a video ID.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The description of the return value is also adequate, correctly specifying the dictionary structure in success and error cases.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using manual checks for the `part` and `body` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient to ensure that the function receives valid input.  The `on_behalf_of` and `on_behalf_of_content_owner` parameters are considered MCP contextual parameters and do not require validation in this context.  Therefore, using Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `part` and `body` parameters, which are the core functional parameters.  `part` is checked for emptiness and then validated against a list of allowed values. `body` is checked for emptiness and the presence of the \"id\" key.  These checks cover type and value validation to a significant degree.  However, there's no explicit type checking for `part` (it's assumed to be a string) and the `body` parameter's contents beyond the \"id\" key are not validated for type or content.  The `on_behalf_of` and `on_behalf_of_content_owner` parameters, while functional, are not validated at all, which is acceptable given the context that they are MCP parameters and do not require validation in this function.  Therefore, while the validation is not comprehensive, it's sufficient to rate it as \"Good\" due to the thorough checks on the critical `part` and `body` parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part`, `body`, `on_behalf_of`, `on_behalf_of_content_owner`) are properly type-annotated.  The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`part` and `body`) are used. The function handles invalid input gracefully, returning appropriate error messages.  The logic for updating the video in the `DB` is complete and functional. The docstring accurately reflects the function's behavior and return types.  The `on_behalf_of` and `on_behalf_of_content_owner` parameters are not used, but this is acceptable as noted in the instructions, as they are for MCP context. There are no placeholders, TODOs, or other implementation gaps."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  It's designed to update video metadata in a database based on a provided `body` and `part` parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "upload": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a fairly comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior in most aspects.  The nested structure of the `body` dictionary and the return dictionary are meticulously documented, including types and descriptions for each key.  The `Raises` section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`VideoUploadModel`) to validate the `body` parameter.  However,  additional validation checks are performed outside of the Pydantic model, such as checking for the existence of channel and category IDs in the `DB` and comparing channel titles. While the Pydantic model likely handles data type and structure validation, these additional checks suggest that the model might not be fully comprehensive, and some validation logic is duplicated.  A more robust solution would integrate all validation rules within the Pydantic model itself, eliminating redundancy and improving maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of the `body` parameter, which is the only functional input.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `upload` has excellent parameter design.  All parameters are properly type-annotated, including the use of complex types like `Dict[str, Any]` and `List[str]` to precisely specify the expected structure of the input data. The return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the upload functionality as described in its docstring.  All functional input parameters (`body`) are used. All documented exceptions are properly handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including return types and raised exceptions.  The function generates a new video ID, adds the video data to the database, and returns the complete video data including the newly generated `id`, `publishedAt` timestamp, and default statistics."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `upload` function does not handle phone numbers or email addresses.  Its input and output are structured to represent video data, including metadata like title, description, thumbnails, and upload status. There are no fields within the input `body` dictionary that would represent phone numbers or email addresses, and therefore no normalization or validation of such data is performed or required.  The function focuses solely on video data processing and database interaction."
+          }
+        }
+      }
+    },
+    "youtube/ChannelStatistics.py": {
+      "functions": {
+        "comment_count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  It correctly explains that the function either sets or retrieves the comment count. The Args section accurately describes the `comment_count` parameter and its optional nature. The Returns section correctly identifies the dictionary type and the `commentCount` key.  Types are specified for both the parameter and return value.  The documentation of the dictionary's structure is sufficient."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `comment_count` has only one functional parameter, `comment_count`, which is annotated as `Optional[int]`.  While this provides basic type hinting, it doesn't perform runtime validation.  However, the function implicitly validates the input: if `comment_count` is not `None`, it's used directly; otherwise, a default value is retrieved from the database.  This implicit validation is sufficient for this simple function.  Using a Pydantic model would add unnecessary complexity.  No explicit input validation beyond type hinting is needed."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function `comment_count` has one functional input parameter: `comment_count`.  Type validation is performed; it checks if `comment_count` is `None` or an integer. However, there's no value validation.  For instance, it doesn't check if the `comment_count` is a negative number (which would be illogical for a comment count). While the type check is present, the lack of value range validation prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `comment_count` has excellent parameter design and type annotations.  The single parameter `comment_count` is correctly annotated as `Optional[int]`. The return type `Dict[str, int]` is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval and setting of the comment count using the global `DB` dictionary.  The `comment_count` parameter is fully utilized to determine whether to retrieve or set the comment count. The function's logic is complete, and the docstring accurately reflects the function's behavior and return type.  There are no placeholders, TODOs, or exceptions to handle."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `comment_count` does not handle any phone number or email address inputs.  It solely deals with retrieving and setting an integer representing a comment count from a database. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "hidden_subscriber_count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  It correctly explains that the function either sets or retrieves the hidden subscriber count. The Args section accurately documents the `hidden_subscriber_count` parameter, including its type and optional nature.  The Returns section correctly identifies the return type as `Dict[str, bool]`.  It also adequately describes the structure of the dictionary, specifying the key `\"hiddenSubscriberCount\"` and its boolean value, differentiating between the cases where a value is provided and when it's retrieved.  Default parameter values are mentioned."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function has only one functional input parameter, `hidden_subscriber_count`, which is annotated with `Optional[bool]`.  While this provides basic type hinting, it doesn't enforce the type at runtime.  However, the function's internal logic correctly handles the case where `hidden_subscriber_count` is `None` or a boolean value.  Therefore, a Pydantic model is not strictly necessary for input validation in this specific case.  The existing type hint and conditional logic sufficiently handle the input.  Adding a Pydantic model would add unnecessary complexity without providing significant additional validation benefits."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `hidden_subscriber_count` parameter by implicitly checking if it's `None` or a boolean value.  It doesn't explicitly check the type, relying on Python's dynamic typing.  However, it correctly handles both `None` (retrieving from the DB) and boolean values (setting the value).  There's no value validation beyond checking for `None`.  No explicit error handling is present for invalid input types (though a runtime error would occur if a non-boolean, non-None value is passed).  While the type checking is implicit, the handling of `None` and boolean values covers the expected use cases.  Therefore, the validation is good but could be improved with explicit type checking and error handling for robustness."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `hidden_subscriber_count` has excellent parameter design and type annotations.  The single parameter `hidden_subscriber_count` is correctly annotated as `Optional[bool]`. The return type `Dict[str, bool]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring. It handles both cases: when `hidden_subscriber_count` is provided (setting the value) and when it's not (retrieving the value from the DB).  All functional input parameters are used. There are no placeholders, exceptions to handle, or inconsistencies between the docstring and the implementation. The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `hidden_subscriber_count` does not handle any phone number or email address inputs.  Its purpose is to manage a boolean flag indicating whether a subscriber count is hidden, interacting with a database (`DB`).  Therefore, the criteria of phone number normalization and email validation are irrelevant and not applicable to this function."
+          }
+        },
+        "subscriber_count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It correctly explains that the function can either retrieve or set the subscriber count. The description of the arguments and return values is accurate, including the specification of types and the conditional return based on the input `subscriber_count`.  The default value of `None` for `subscriber_count` is also correctly documented.  The documentation of the dictionary return value is clear and precise."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `subscriber_count` has only one functional parameter, `subscriber_count`, which is annotated with `Optional[int]`.  While this provides basic type hinting, it doesn't perform runtime validation.  However, given that the parameter is optional and the function handles the `None` case gracefully, and the only other possible value is an integer which is already handled by the function,  a Pydantic model would be unnecessary overhead.  The existing type hint is sufficient for this simple case.  No further input validation is needed."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `subscriber_count` parameter by specifying it as `Optional[int]`.  However, it lacks value validation.  There's no check to ensure that `subscriber_count`, if provided, is a non-negative integer, which would be a reasonable constraint for a subscriber count.  While a `None` value is handled correctly, more robust value validation is missing.  Therefore, the validation is only partially complete."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `subscriber_count` has excellent parameter design and type annotations.  The single parameter `subscriber_count` is correctly annotated as `Optional[int]`. The return type is clearly specified as `Dict[str, int]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring. It uses the `subscriber_count` parameter as intended, either setting the subscriber count or retrieving it from the global `DB`.  The return type is a dictionary as specified, containing the `subscriberCount` key with the appropriate integer value. There are no placeholders, exceptions to handle, or inconsistencies between the docstring and implementation.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `subscriber_count` does not handle any phone numbers or email addresses.  Its sole purpose is to manage a subscriber count, interacting with a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "video_count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It correctly describes the function's dual functionality: retrieving and setting the video count. The description of arguments and return values is accurate, including the types.  The docstring correctly points out the conditional return based on the `video_count` parameter.  Default values are mentioned.  However, the documentation of the return dictionary could be improved. While it correctly states that the dictionary contains `\"videoCount\"`, it doesn't explicitly state that this is the *only* key in the dictionary, which could prevent confusion.  The docstring also omits any mention of potential exceptions (e.g., database errors if `DB.get` fails), which would make it more complete.  Finally, while the docstring accurately reflects the *structure* of the return, it doesn't explicitly state that the `videoCount` value will always be an integer, even when retrieved from the database (the `get` method might return `None` if the key is missing, but the function handles this by defaulting to 0).  Adding this detail would enhance clarity."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `video_count` has only one functional parameter, `video_count`, which is an optional integer.  The function implicitly validates this input by checking if it's `None` and using it directly if it's an integer.  While a Pydantic model isn't used, the existing check is sufficient for this simple case.  Using a Pydantic model would add unnecessary complexity for this specific function.  More robust validation might be needed if the function were to handle more complex scenarios or different data types."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function `video_count` has one functional input parameter: `video_count`.  Type validation is present; it checks if `video_count` is an integer or None. However, there's no value validation.  For instance, it doesn't check if `video_count` is a non-negative integer, which would be a reasonable constraint for the number of videos.  No error handling is implemented for invalid input values (though this is not strictly required).  Therefore, while type checking is done, value validation is missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `video_count` has excellent parameter design and type annotations.  The single parameter `video_count` is correctly annotated as `Optional[int]`. The return type is clearly specified as `Dict[str, int]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring. It uses the `video_count` parameter as intended: if provided, it sets the `videoCount` in the returned dictionary; otherwise, it retrieves the `videoCount` from the global `DB`.  There are no placeholders, exceptions to handle, or unused functional parameters. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `video_count` does not handle any phone number or email address inputs.  It only deals with an optional integer representing a video count. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its intended input and output."
+          }
+        },
+        "view_count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It correctly explains that the function can either retrieve or set the view count. The description of arguments and return values is accurate, including the specification of types.  The docstring correctly points out the conditional return based on the `view_count` parameter.  Default values are mentioned and explained.  The documentation of the dictionary return value is clear and complete."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `view_count` has only one functional parameter, `view_count`, which is an optional integer.  While the function doesn't use Pydantic, it implicitly validates the input: if `view_count` is provided, it's used directly; if it's `None`, a default value is retrieved from the database.  The type is implicitly checked by the function's signature (Optional[int]).  Using Pydantic would add unnecessary complexity for this simple case.  More robust validation (e.g., checking for negative view counts) could be added, but it's not strictly required by the function's specification."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function `view_count` has one functional input parameter: `view_count`.  Type validation is present; it's declared as `Optional[int]`. However, there's no value validation.  The function accepts any integer value without checking for negative values (which might be inappropriate for a view count) or extremely large values that could indicate an error.  No explicit error handling is implemented for invalid input values (though a negative or extremely large number would be silently accepted).  Therefore, while type checking is present, value validation and error handling are missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `view_count` has excellent parameter design and type annotations.  The single parameter `view_count` is correctly annotated as `Optional[int]`. The return type `Dict[str, int]` is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring. It uses the `view_count` parameter as intended: if provided, it sets the view count; otherwise, it retrieves it from the `DB`.  The return type is a dictionary as specified, containing the `viewCount` key with the appropriate integer value. There are no placeholders, exceptions to handle (as the DB access is assumed to be reliable within this context), and the logic is complete and functional given the use of the global `DB`.  The docstring accurately reflects the implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `view_count` does not handle any phone number or email address inputs.  It only deals with an optional integer representing a view count. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its intended input and output."
+          }
+        }
+      }
+    },
+    "youtube/ChannelBanners.py": {
+      "functions": {
+        "insert": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  It correctly lists the arguments and their types, including default values (though without explicitly stating that they are optional). The description of the `on_behalf_of` parameters is repetitive and could be more concise."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation.  While the type hints (`Optional[str]`) provide some indication of expected types, they don't enforce validation at runtime.  There's no checking for empty strings, unexpected characters, or length restrictions on the `channel_id`, `on_behalf_of_content_owner`, or `on_behalf_of_content_owner_channel` parameters.  Using Pydantic models would significantly improve this by adding runtime validation and providing more informative error messages if invalid input is provided.  For example, a Pydantic model could enforce string length constraints or regular expression patterns to ensure data integrity."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function performs no input validation on any of its parameters.  `channel_id`, `on_behalf_of_content_owner`, and `on_behalf_of_content_owner_channel` are all accepted without any checks for type, value, or null/empty conditions.  While they are declared as `Optional[str]`, this only handles the case where the value is `None`; it doesn't check for empty strings or other invalid string values if a string is provided.  No exceptions are raised for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (channel_id, on_behalf_of_content_owner, on_behalf_of_content_owner_channel) are properly type-annotated with Optional[str]. The return type is clearly specified as Dict[str, Optional[str]].  The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly inserts a new banner into the global `DB` dictionary.  All functional input parameters (`channel_id`, `on_behalf_of_content_owner`, `on_behalf_of_content_owner_channel`) are used to construct the `new_banner` dictionary. The function's logic is complete and functional. The docstring accurately describes the function's behavior and return type.  There are no placeholders, TODOs, or exceptions to handle."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle any phone numbers or email addresses.  Its inputs and outputs are all optional strings representing channel IDs and content owner information, none of which are formatted as phone numbers or emails. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "youtube/Subscriptions.py": {
+      "functions": {
+        "insert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's primary role: inserting a new subscription. The Args section accurately documents the parameters, including their types and descriptions. The Returns section correctly specifies the dictionary return type.  The documentation of the nested dictionary structures within the return value is also good, clearly outlining the structure in case of success and error.  The default value for the `snippet` parameter (Optional[Dict]) is correctly mentioned."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if not part:` check to ensure the `part` parameter is not empty.  While this is basic validation, it's sufficient for this function's needs.  The `snippet` parameter is optional and doesn't require explicit validation because it's handled gracefully by the code (using `snippet or {}`).  Using Pydantic models would add unnecessary complexity for this simple validation.  The existing approach is clear, concise, and effective."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a null/empty check on the `part` parameter, which is good.  However, it lacks type validation for `part` (it should be a string, but this isn't explicitly checked).  There's also no value validation on `part` to ensure it conforms to any expected format or constraints (e.g., length restrictions, allowed characters). The `snippet` parameter has a null check (using `snippet or {}`), but no type or value validation is performed to ensure it's a dictionary with specific keys or values if it's provided.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`part` and `snippet`) are properly type-annotated with their expected types (`str` and `Optional[Dict]`, respectively). The function's return type is clearly specified as `Dict[str, Optional[Dict]]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly inserts a new subscription into the global `DB` dictionary.  The `part` parameter is used to check for a required value;  if missing, it returns an appropriate error message. The `snippet` parameter is correctly used in creating the new subscription object, handling the case where it's `None`. The function's logic is complete, and the return value matches the docstring's description for both success and error scenarios.  There are no placeholders, TODOs, or exceptions to handle (as none are documented). The docstring accurately reflects the function's behavior and return types."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with a `part` parameter (string) and an optional `snippet` dictionary, neither of which are related to phone numbers or email addresses.  No assessment of normalization or validation can be made."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  The Args section correctly documents the `subscription_id` parameter with its type and a description. The Returns section correctly identifies the return type as `Dict[str, bool]`. However, the description of the return value is INCOMPLETE and INCONSISTENT with the implementation.  The docstring states that the return dictionary will contain either a `success` (bool) key or an `error` (str) key.  While it correctly describes the `success` case, it fails to specify that the `error` value is a string.  The docstring also omits the possibility of other errors that might occur during the deletion process (e.g., database errors).  The docstring does not mention any exceptions that might be raised, even though the function implicitly handles the case where the subscription ID is not found.  While the function itself handles this gracefully, the docstring should explicitly mention this possible scenario.  The documentation of the dictionary structure is also incomplete; it should explicitly state that only one key (\"success\" or \"error\") will be present in the returned dictionary.  Therefore, while functional, the docstring could be significantly improved for clarity and completeness."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `subscription_id` exists in the `DB`.  This is sufficient input validation for this specific function.  While a Pydantic model could be used, it's not strictly necessary for this level of validation.  The current approach is concise and effective.  Adding a Pydantic model would add complexity without significant benefit."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation by specifying `subscription_id: str`.  It also implicitly performs a value validation by checking if the `subscription_id` exists as a key in the `DB[\"subscriptions\"]` dictionary.  However, it lacks explicit checks for empty strings or `None` values for `subscription_id`.  While the `in` operator handles empty strings to some extent (they won't be found), a more robust approach would explicitly check for `subscription_id == \"\"` or `subscription_id is None` before accessing the DB.  Therefore, while most input validation is present, the lack of explicit null/empty checks prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design.  The single parameter `subscription_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, bool]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a subscription from the global `DB` dictionary if it exists.  The `subscription_id` parameter is used correctly. The function returns the expected dictionary:  `{\"success\": True}` on success and `{\"error\": \"Subscription not found\"}` if the subscription ID is not found.  The docstring accurately reflects the function's behavior and return types. There are no placeholders, TODOs, or exceptions to handle (as the only potential error is explicitly handled).  The logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its input is a `subscription_id` (string), which is treated as a key in a database.  Therefore, there is no phone number normalization or email validation to assess."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's arguments and their types, including default values. The description of the return value is also present and mostly accurate.  All parameters are documented, even those not directly used in the simplified filtering logic (e.g., `on_behalf_of_content_owner`)."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It checks if the `part` parameter is provided. While it doesn't use Pydantic's declarative approach, it does have basic type and existence checks for the `part` parameter.  The other parameters are optional and the function handles them gracefully.  Using Pydantic would add more structure and potentially allow for more sophisticated validation (e.g., string length limits, enum values for `order` parameter), but the current validation is sufficient for the basic functionality.  The absence of Pydantic doesn't necessarily indicate a problem in this specific case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a basic null check on the `part` parameter, which is essential.  However, it lacks comprehensive validation for other functional parameters.  `max_results`, while checked for being greater than 0, doesn't have a check for being a valid integer type.  There's no validation on the `order` parameter (e.g., checking if it's one of the allowed values).  Similarly,  `channel_id`, `subscription_id`, `for_channel_id`, `on_behalf_of_content_owner`, `on_behalf_of_content_owner_channel`, and `page_token` (all strings) are not checked for format or valid values.  The boolean parameters (`mine`, `my_recent_subscribers`, `my_subscribers`) are implicitly validated by their boolean nature, but no explicit checks are performed.  The function only checks for the presence of `part`, not its format or content.  While error handling is present, it's generic and doesn't pinpoint the exact cause of the error related to invalid input parameters.  Therefore, the validation is partial, covering only a small subset of the necessary checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], bool, Optional[int]). The function's return type is clearly specified as `Dict[str, List[Dict]]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves subscriptions from the global `DB` and applies most of the specified filters.  The `part`, `subscription_id`, `channel_id`, `for_channel_id`, `mine`, `my_subscribers`, `max_results` parameters are all used correctly.  However, the `my_recent_subscribers` and `order` parameters are not used in the filtering logic.  The `on_behalf_of_content_owner` and `on_behalf_of_content_owner_channel` parameters, while present, are also unused, but these are likely MCP contextual parameters and thus are exempt from the evaluation.  The function handles the case where the `part` parameter is missing and returns an appropriate error message.  Exception handling is present, although it's quite broad.  The docstring accurately reflects the function's behavior and return type.  The conversion of the subscriptions dictionary to a list is unnecessary and could be simplified.  The function's logic is mostly complete and functional, but the unused parameters represent minor gaps."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone numbers or email addresses.  Its purpose is to retrieve a list of YouTube subscriptions based on various filter parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "youtube/Playlists.py": {
+      "functions": {
+        "list_playlists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The `Returns` section is detailed, correctly specifying the dictionary structure and nested types, although it could be slightly improved by explicitly mentioning that the `items` list might be empty. The `Raises` section correctly lists the exceptions and their conditions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `channel_id` and `max_results` parameters.  Type checking and range checks are performed directly within the function. While Pydantic could be used to achieve the same validation, the current implementation is sufficient and avoids the overhead of introducing a Pydantic model for this simple case.  The existing validation is comprehensive for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "Both functional input parameters, `channel_id` and `max_results`, have comprehensive validation.  `channel_id` is checked for type (string) and existence in the database. `max_results` is checked for type (integer) and value (between 1 and 50 inclusive).  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for invalid inputs.  All validation checks are performed before the parameters are used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`channel_id` and `max_results`) are properly type-annotated with their expected types (Optional[str] and Optional[int], respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within the return type annotation are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves playlists from the global `DB`, filters them by `channel_id` if provided, and limits the results using `max_results`.  All functional input parameters (`channel_id` and `max_results`) are used appropriately.  The documented exceptions (`ValueError` and `TypeError`) are correctly raised for invalid inputs. The function handles the case where no playlists are found and returns an empty list. The docstring accurately describes the function's behavior, input parameters, return value, and exceptions.  There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_playlists` does not handle any phone number or email address inputs.  Its parameters and functionality are solely focused on retrieving a list of YouTube playlists based on a channel ID and a maximum result count.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types (`playlist_id` as string), meticulously details the structure of the dictionary returned (including nested dictionaries and lists within), specifies the types of all return values, and lists all possible exceptions (`ValueError`, `TypeError`). The nested structure of the returned dictionary is fully documented, making it easy for a developer to understand the data structure.  The docstring aligns perfectly with the function's implementation; there are no inconsistencies between the docstring's promises and the actual behavior or return types.  All aspects of the function's behavior are covered, making it highly usable based solely on the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` parameter. It checks if the parameter is provided and if it's a string.  While Pydantic could be used, the current manual validation is sufficient for this simple case.  Using Pydantic would add unnecessary complexity for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get` performs comprehensive validation of its single functional input parameter, `playlist_id`.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get` has excellent parameter design.  The `playlist_id` parameter is properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the return dictionary are also hinted at, although not strictly enforced by the type hinting (this is acceptable given the dynamic nature of the returned dictionary)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a playlist from the global `DB` based on the provided `playlist_id`.  It handles the cases where `playlist_id` is missing, not a string, or the playlist is not found by raising the appropriate exceptions as documented. The return value matches the docstring's description. All functional input parameters (`playlist_id`) are used. There are no placeholders or TODO comments.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle any phone numbers or email addresses.  Its purpose is to retrieve a playlist from a database using a playlist ID, which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including default values and types. The `Returns` section adequately details the structure of the dictionary returned. The `Raises` section correctly lists the potential exceptions.  The documentation of the `thumbnails` parameter and the nested structure within the return dictionary is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual type checking and validation for several parameters (`ownerId`, `title`, `privacyStatus`, `list_of_videos`, `thumbnails`, `description`).  However, it only uses a Pydantic model (`ThumbnailInputModel`) for validating the `thumbnails` parameter.  The other parameters could benefit from Pydantic models to improve code readability and maintainability.  A Pydantic model could encapsulate the validation rules for each parameter, making the code cleaner and easier to understand.  The current manual checks are repetitive and prone to errors.  While the function does perform input validation, the incomplete use of Pydantic models means it's only partially utilizing this powerful validation tool."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all functional parameters.  `ownerId` and `title` are checked for both type (string) and non-emptiness. `privacyStatus` is checked for type (string) and whether its value is one of ['public', 'private', 'unlisted']. `list_of_videos` is checked for type (list) and whether each video ID exists in the database. `thumbnails` is checked for type (dictionary) and its structure against a model (`ThumbnailInputModel`).  `description` is checked for type (string).  All checks raise appropriate `ValueError` or `TypeError` exceptions with informative messages.  The validation covers type, value, and null/empty checks for all functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List for optional and list parameters, and Dict for dictionaries.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a playlist, using all functional input parameters.  Exception handling for `ValueError` and `TypeError` is comprehensive, covering all documented cases.  The logic for handling default values and generating the playlist ID is complete. The function correctly populates the `DB` with the newly created playlist. The docstring accurately reflects the function's behavior, including return types and exceptions.  There are no placeholders or TODO comments. The thumbnail handling, including default and custom thumbnail logic, is correctly implemented.  The validation of the `thumbnails` dictionary using `ThumbnailInputModel` is also correctly implemented (assuming `ThumbnailInputModel` and `ValidationError` are defined elsewhere and function correctly)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create` does not handle any phone numbers or email addresses.  Its inputs and outputs relate to YouTube playlist creation, using parameters like `ownerId`, `title`, `description`, and video IDs.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and types. The `Returns` section is detailed, correctly specifying the dictionary structure and nested types.  The `Raises` section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `ThumbnailInputModel` (presumably defined elsewhere) to validate the `thumbnails` parameter.  However, other parameters (`playlist_id`, `title`, `description`, `privacyStatus`) are validated using manual type checking and value checks (e.g., checking for empty strings, valid privacy statuses). While this provides some validation, using Pydantic models for all input parameters would provide a more consistent, concise, and potentially more robust validation approach.  The manual checks are prone to errors and omissions, and Pydantic would centralize validation logic, improving maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`playlist_id`, `title`, `description`, `privacyStatus`, `thumbnails`) have type validation using `isinstance`.  `playlist_id` is checked for being non-empty. `title` is checked for being non-empty. `privacyStatus` is checked against a list of allowed values. `thumbnails` is checked for type and then validated against a schema using `ThumbnailInputModel` (presumably a Pydantic model or similar).  All checks raise appropriate exceptions with informative error messages.  The validation covers type, value, and null/empty checks where applicable."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (playlist_id, title, description, privacyStatus, thumbnails) are properly type-annotated with their expected types, including the use of Optional for optional parameters and Dict for the thumbnails parameter.  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`playlist_id`, `title`, `description`, `privacyStatus`, `thumbnails`) are used appropriately in the function's logic.  All documented exceptions (`ValueError`, `TypeError`, `ValidationError`) are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, return type, and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone numbers or email addresses.  Its purpose is to update YouTube playlist information, dealing with parameters like playlist ID, title, description, privacy status, and thumbnails.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose, arguments, return value, and exceptions.  The description (\"Deletes a playlist\") is clear and concise.  The Args, Returns, and Raises sections are well-structured and informative. Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation to check if `playlist_id` is provided, is a string, and exists in the `playlists` dictionary.  While Pydantic could be used, the existing validation is sufficient and correctly handles the required checks.  Using Pydantic would add complexity without significant benefit in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete` has one functional input parameter: `playlist_id`.  The validation is comprehensive for this parameter.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `bool`. The function does not use `**kwargs` parameters.  The parameter name `playlist_id` is clear and descriptive."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a playlist based on its ID.  It handles the cases where the `playlist_id` is missing, not a string, or the playlist is not found in the database, raising the appropriate exceptions as documented. The logic for deleting the playlist from the `playlists` dictionary within the global `DB` is correctly implemented. The function's return value and behavior match its docstring. All functional input parameters (`playlist_id`) are used. There are no placeholders or TODOs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses.  Its input is a playlist ID, which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles input validation for its intended purpose (checking for a non-empty string playlist ID and its existence in a database)."
+          }
+        },
+        "add_video": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types, meticulously details the structure of the dictionary returned, and lists all possible exceptions. The nested structure of the returned dictionary is fully documented, making it easy for a developer to understand the data format.  There is perfect alignment between the docstring's description of the function's behavior and the actual implementation.  All aspects of the function's functionality are covered, including the handling of errors. The type hinting is complete and accurate."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` and `video_id` parameters.  It checks for the presence of values, checks that they are strings, and then checks for their existence within the mock database (`DB`).  While Pydantic could be used to achieve the same validation, the current manual approach is sufficient and correctly handles the required input validation.  Using Pydantic would add unnecessary complexity in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of both functional input parameters, `playlist_id` and `video_id`.  Type validation is performed using `isinstance` to ensure both are strings.  Null/empty checks are done using `if not playlist_id` and `if not video_id`.  Value validation checks if the provided IDs exist in the mock database (`DB`) before proceeding, raising `ValueError` if a playlist or video is not found.  All checks are performed before the parameters are used, and appropriate `ValueError` and `TypeError` exceptions are raised with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id` and `video_id`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used.  Complex types within the return dictionary are also properly specified (e.g., `List[str]`, `Dict`)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the addition of a video to a playlist.  Both `playlist_id` and `video_id` are used correctly.  All documented exceptions (`ValueError` and `TypeError`) are handled appropriately. There are no placeholders or TODO comments. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `add_video` does not handle any phone numbers or email addresses.  Its input and output are solely focused on YouTube playlist and video IDs, which are treated as strings without any normalization or validation beyond basic type and existence checks.  Therefore, the criteria for phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete_video": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments (`playlist_id` and `video_id`), their types, and their purpose. The `Returns` section correctly specifies the return type (`bool`) and its meaning. The `Raises` section correctly lists the `ValueError` and `TypeError` exceptions that the function might raise, along with their conditions.  Type information is complete for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` and `video_id` parameters.  It checks for the presence of values, checks that they are strings, and then performs additional validation checks against the mock database (`DB`) to ensure the playlist exists and the video is within that playlist. While Pydantic could be used to structure this validation, the current manual approach is sufficient and correctly handles all necessary checks for the functional parameters.  Using Pydantic wouldn't offer significant advantages in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of both functional input parameters, `playlist_id` and `video_id`.  Type validation is performed using `isinstance` to ensure both are strings.  Null/empty checks are done using `if not playlist_id` and `if not video_id`. Value validation checks if the `playlist_id` exists in the `playlists` dictionary within the DB and if the `video_id` exists within the specified playlist's list of videos.  Appropriate `ValueError` and `TypeError` exceptions are raised with informative messages for all validation failures.  All functional input parameters are checked before being used in any operation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id` and `video_id`) are properly type-annotated with their expected type, `str`. The function's return type is clearly specified as `bool`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a video from a playlist within the global `DB`.  All functional input parameters (`playlist_id` and `video_id`) are used.  All documented exceptions (`ValueError` and `TypeError`) are properly raised in the appropriate scenarios. There are no placeholders or TODO comments. The logic is complete and functional, and the docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_video` does not handle any phone numbers or email addresses.  Its inputs and outputs are solely related to YouTube playlist and video IDs, which are treated as strings. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "reorder": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and their types. The `Returns` section is detailed, correctly outlining the structure of the dictionary returned, including nested dictionaries and lists.  The `Raises` section correctly lists the exceptions and their conditions.  Types are consistently specified for all parameters and return values.  The documentation of the dictionary structure in the `Returns` section is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` and `video_order` parameters.  It checks for the presence of both, their types (string and list respectively), and whether `video_order` contains the same videos as the existing playlist.  While Pydantic could provide a more structured and potentially more concise way to perform these checks, the existing manual validation is comprehensive for the given task.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `playlist_id` and `video_order`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id` and `video_order`) are properly type-annotated with their expected types (str and List[str], respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like List and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly reorders videos in a playlist based on the provided `playlist_id` and `video_order`.  It handles all documented exceptions (`ValueError` and `TypeError`), validates that `video_order` contains the same videos as the existing playlist, updates the playlist in the `DB`, and returns the updated playlist data. All functional input parameters (`playlist_id` and `video_order`) are used. The implementation matches the docstring's description of the function's behavior and return type. There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `reorder` does not handle any phone numbers or email addresses.  Its purpose is to reorder videos within a YouTube playlist, taking a playlist ID and a list of video IDs as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "youtube": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations.  The SimulationEngine folder contains all the essential components (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The tests folder has multiple test files following the `test_` naming convention."
+      }
+    }
+  }
+}

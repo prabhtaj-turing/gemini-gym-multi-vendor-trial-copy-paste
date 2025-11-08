@@ -1,0 +1,471 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.753019Z",
+  "results": {
+    "mongodb/connection_server_management.py": {
+      "functions": {
+        "switch_connection": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in switching MongoDB connections and explains the use of the `connectionString` parameter, including its default behavior.  The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values.  The documentation of the dictionary return value is thorough, listing all keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `connectionString` parameter. It checks if the input is a string, not empty or whitespace-only, and starts with \"mongodb://\" or \"mongodb+srv://\".  While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is sufficient and covers all aspects of the functional input.  No Pydantic model is used for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `connectionString` parameter.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `switch_connection` has an excellent parameter design.  The single parameter `connectionString` is properly type-annotated as `Optional[str]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The `Optional` type annotation correctly reflects that the parameter can be `None`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements its intended functionality.  The input parameter `connectionString` is used correctly.  The function correctly handles cases where `connectionString` is None, empty, or invalid.  Exception handling is present for `InvalidInputError` and attempts to catch exceptions from `DB.switch_connection`, wrapping them in a `ConnectionError`. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code snippet deals with MongoDB connection strings, not phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function correctly validates the format of the MongoDB connection string, ensuring it starts with \"mongodb://\" or \"mongodb+srv://\", and handles empty or whitespace-only strings appropriately.  However, it doesn't process any phone numbers or email addresses, so the rating of \"Not Applicable\" is accurate."
+          }
+        }
+      }
+    },
+    "mongodb/database_operations.py": {
+      "functions": {
+        "list_databases": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  It accurately describes the function's role in listing databases and their sizes. The `Returns` section correctly specifies the list of dictionaries and their key-value types. The `Raises` section correctly lists the exceptions.  The documentation of the dictionary structure within the return value is clear and complete."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The `list_databases` function does not have any functional input parameters.  All data it operates on comes from the global `DB` object. Therefore, input validation using Pydantic models or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_databases` does not have any functional input parameters.  All data it uses comes from the global `DB` object. Therefore, there are no input parameters to validate."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_databases` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly lists all databases from the global `DB` connection, retrieves their sizes using the `_get_database_sizes` utility function, and formats the results as a list of dictionaries matching the docstring specification.  Exception handling for `ConnectionError` (both cases of no active connection and invalid connection) is implemented correctly.  The function's logic is complete and there are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  There are no unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_databases` does not handle any phone number or email address inputs.  Its purpose is to list MongoDB databases and their sizes.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "drop_database": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core action: removing a database and its associated files. The Args section correctly documents the `database` parameter with its type and description. The Returns section accurately describes the dictionary structure, including nested dictionaries and their keys and types.  The Raises section correctly lists and describes the potential exceptions.  Type information is consistently provided for parameters and return values. The documentation of the nested dictionary structure within the return value is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `database` parameter. It checks if the input is a non-empty string and raises appropriate exceptions (`ValueError` and `TypeError`) if not.  While Pydantic could be used, the existing manual validation is sufficient and clear for this simple case.  Using Pydantic would add unnecessary complexity for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `drop_database` performs comprehensive validation of its single functional input parameter, `database`.  It checks for the correct data type (string) using `isinstance`, and it checks for empty or whitespace-only strings using `not database` and `database.isspace()`.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for invalid inputs.  All possible scenarios of invalid input for the `database` parameter are handled."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `drop_database` has excellent parameter design and type annotations.  The single parameter `database` is correctly type-annotated as `str`. The return type `Dict[str, List[Dict[str, str]]]` is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the `drop_database` operation using the provided MongoDB client.  All functional input parameters (`database`) are used.  All documented exceptions (`ConnectionError`, `TypeError`, `ValueError`) are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and the potential error messages.  The function also correctly updates the `DB.current_db` if the dropped database was the currently active one."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `drop_database` does not handle any phone number or email address inputs.  Its sole purpose is to drop a MongoDB database given its name as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles string input validation for the database name, raising appropriate exceptions for invalid input."
+          }
+        }
+      }
+    },
+    "mongodb/collection_management.py": {
+      "functions": {
+        "list_collections": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  The description clearly explains the function's role in listing collections within a specified database.  The `Args` and `Returns` sections are well-structured and informative, including type hints. The `Raises` section comprehensively lists all potential exceptions.  The docstring accurately reflects the function's behavior in handling various error conditions, including specific error messages for validation failures."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`models.ListCollectionsInput`) to validate the `database` input. However, the validation is handled in a try-except block, and the error messages are manually mapped to custom error types.  This is less efficient and less readable than letting Pydantic handle the error raising and messaging directly.  While the core validation is present, the implementation could be significantly improved by directly raising the `custom_errors.ValidationError` within the Pydantic model definition itself, rather than catching and remapping exceptions.  This would simplify the code and make it more maintainable.  Currently, only the `database` parameter is validated; other parameters are not present in this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `list_collections` performs comprehensive validation of its single functional input parameter, `database`.  It uses Pydantic for type validation (ensuring it's a string) and value validation (checking for empty strings and generally valid strings).  It further validates the database name against MongoDB naming conventions using `utils._validate_database_name_conventions(database)`.  Appropriate custom exceptions (`ValidationError`, `DatabaseNotFoundError`) are raised with informative error messages for invalid inputs.  All aspects of type, value, and special constraints (MongoDB naming) are addressed for the `database` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_collections` has excellent parameter design.  The single parameter `database` is properly type-annotated as `str`. The return type is clearly specified as `List[str]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates the input `database` parameter using Pydantic and MongoDB naming conventions. It handles database connection management, checks for the database's existence, retrieves collection names, and returns them as a list of strings.  All documented exceptions are handled appropriately. There are no placeholders or TODO comments. The return type and behavior match the docstring's description.  The function uses the `database` parameter effectively in all steps of its logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_collections` does not handle phone numbers or email addresses as input.  Its sole input is a database name (a string), which it validates for emptiness and adherence to MongoDB naming conventions.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_collection": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate.  It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the return dictionary is thorough, specifying the keys, types, and their meaning. The `Raises` section comprehensively lists all potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `CreateCollectionInput` to validate the `database` and `collection` parameters before further processing.  This is the primary method of input validation for the functional parameters.  No other input validation methods are used for these parameters.  The `try...except PydanticValidationError` block correctly handles potential validation errors.  Therefore, the Pydantic model is used effectively for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its two functional input parameters, `database` and `collection`.  Both undergo type validation implicitly through Pydantic's `CreateCollectionInput` model (we assume this model defines the expected types, likely `str`).  Further, `utils._validate_database_name_conventions` and `utils._validate_collection_name_conventions` handle value validation, enforcing domain-specific constraints (naming conventions) for database and collection names respectively.  The `try...except` block around Pydantic validation ensures that `PydanticValidationError` is raised for any type or format issues caught by the model.  While not explicitly shown, we assume `CreateCollectionInput` handles null/empty checks as well.  The subsequent exception handling for `pymongo` errors provides informative error messages to the user, mapping database-specific exceptions to custom exceptions.  All functional inputs are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database` and `collection`) are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, str]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a collection in a MongoDB database, handling various exceptions as documented.  Both `database` and `collection` input parameters are used.  The logic for handling `pymongo` exceptions is comprehensive, mapping specific error conditions to custom exceptions. The function's return value matches the docstring's description. There are no placeholders or TODO comments.  The use of the global `DB` object is consistent with the provided context and is not considered a flaw."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_collection` does not handle phone numbers or email addresses.  Its inputs are database and collection names, which are strings subject to different validation rules (length, character restrictions, etc.) handled within the function.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "rename_collection": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately reflects the function's behavior, and thoroughly documents all parameters, return values, and exceptions.  The description is helpful for an MCP server context. Default values are correctly specified and explained.  The `Args` and `Returns` sections are detailed and precise, including type information.  The `Raises` section lists all potential exceptions with informative descriptions. The documentation of the dictionary return value is complete, specifying the keys, types, and their meanings. The docstring is consistent with the implementation; there are no inconsistencies between the docstring's promises and the function's actual behavior or return types.  The explanation of the `dropTarget` parameter's effect on existing target collections is particularly clear.  The only minor suggestion would be to use consistent capitalization for error names (e.g., `TargetCollectionExistsError` instead of mixing `TargetCollectionExistsError` and `RenameToSameNameError`)."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`RenameCollectionInput`, although not fully shown) to validate the `database`, `collection`, `newName` (mapped to `new_name` in the model), and `dropTarget` (mapped to `drop_target` in the model) parameters.  These are all functional parameters requiring validation. The `try...except PydanticValidationError` block handles validation errors.  While the code doesn't show the `RenameCollectionInput` model definition, the usage clearly indicates that Pydantic is employed for input validation of all relevant parameters.  No other validation methods are used for these parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for its functional parameters (`database`, `collection`, `newName`, `dropTarget`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, `newName`, `dropTarget`) are properly type-annotated with their expected types (str, str, str, bool). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the renaming of a MongoDB collection as described in its docstring.  All functional input parameters (`database`, `collection`, `newName`, `dropTarget`) are used appropriately in the function's logic.  All documented exceptions are handled, and there are no placeholders or TODO comments. The logic is complete and functional, correctly checking for the existence of the database and collections, handling the case where the new name already exists, and performing the rename operation using the pymongo library. The return value matches the docstring's description.  The function uses appropriate error handling and provides informative error messages."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `rename_collection` does not handle any phone number or email address inputs.  Its purpose is to rename a MongoDB collection, and its input parameters are database and collection names, a new name, and a boolean flag.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "drop_collection": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types, and thoroughly details the return value, including the structure of the dictionary.  The `Raises` section correctly lists all potential exceptions with informative descriptions.  The docstring aligns perfectly with the function's implementation; there are no inconsistencies between what the docstring promises and what the function actually does.  The handling of the case where the collection doesn't exist is explicitly mentioned and the return value in that scenario is correctly documented.  The example messages within the return value description are helpful.  All aspects of the docstring contribute to its overall excellence."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `models.DropCollectionInput` to validate the `database` and `collection` parameters.  This model handles type checking and length constraints.  While additional MongoDB-specific validation is performed afterward, the initial Pydantic validation ensures basic type correctness and prevents null or empty string inputs.  No further input validation is needed beyond what Pydantic provides for these two parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its two functional input parameters, `database` and `collection`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters `database` and `collection` are correctly type-annotated as `str`.  The return type is explicitly specified as `Dict[str, str]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It handles all documented exceptions (`PydanticValidationError`, `InvalidNameError`, `DatabaseNotFoundError`, `ApiError`).  All functional input parameters (`database` and `collection`) are used. The logic is complete and functional, correctly validating inputs, checking for database and collection existence, performing the drop operation, and returning an appropriate dictionary indicating success or failure. There are no placeholders, TODOs, or pass statements. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `drop_collection` does not handle any phone number or email address inputs.  Its inputs are database and collection names, which are strings subject to different validation rules (MongoDB naming conventions) handled within the function.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "collection_schema": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in analyzing a collection's schema by sampling documents. The Args and Returns sections are well-structured, and the description of the nested dictionary structure within the Returns section is thorough and helpful, though it could be slightly improved with examples of the `fields` dictionary.  The Raises section correctly lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`CollectionSchemaInput`) to validate the `database` and `collection` input parameters before proceeding with database operations.  This is the correct and preferred method for input validation in this context.  No other input validation is needed because the Pydantic model handles it comprehensively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `database` and `collection` parameters using Pydantic's `CollectionSchemaInput`.  This implicitly checks for `None` or empty strings, as Pydantic would raise a validation error in those cases.  However, it lacks explicit value validation to ensure that the database and collection names adhere to any specific naming conventions or constraints imposed by the MongoDB system (e.g., length restrictions, disallowed characters).  The function does check for the existence of the database and collection, which is a form of value validation, but it doesn't validate the input *before* attempting to access the database.  Therefore, while type and basic existence checks are present, more robust value validation is missing for the database and collection names."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters, `database` and `collection`, are correctly type-annotated as `str`. The return type is explicitly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurate for the parameter types."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `database` and `collection` parameters to access and analyze the specified collection within the mocked database (using the global `DB` object).  It handles the `DatabaseNotFoundError` and `CollectionNotFoundError` exceptions as documented.  The function also correctly returns a dictionary with \"fields\" and \"num_documents_sampled\" keys, matching the docstring's description of the return value.  However, the implementation relies on an external function `extract_pymongo_client_schema`, whose implementation is unknown.  If this external function does not correctly extract and format the schema information as described in the docstring, the function's completeness would be affected.  The assumption is made that `extract_pymongo_client_schema` works as expected based on the docstring description.  Therefore, while the core logic is present and functional given the external dependency, the lack of visibility into `extract_pymongo_client_schema` prevents a full \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `collection_schema` function does not handle phone numbers or email addresses as input.  Its purpose is to analyze the schema of a MongoDB collection, taking database and collection names as string inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended inputs (database and collection names) and performs its task of schema analysis."
+          }
+        },
+        "collection_storage_size": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the return dictionary is comprehensive, listing all keys and their types.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`models.CollectionStorageSizeInput`) to validate the `database` and `collection` input parameters before any other processing.  This is the primary method of input validation.  The `try...except PydanticValidationError` block correctly handles potential validation errors. No other input validation methods are needed because Pydantic handles this completely."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `collection_storage_size` performs comprehensive validation of its two functional input parameters, `database` and `collection`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `collection_storage_size` has excellent parameter design.  Both parameters, `database` and `collection`, are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  All type annotations are complete and accurate for the function signature."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using both `database` and `collection` parameters.  It handles the documented exceptions (`DatabaseNotFoundError`, `CollectionNotFoundError`, `InvalidNameError`, `ApiError`, `PydanticValidationError`). There are no placeholders or TODO comments.  The docstring accurately reflects the return type and keys."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `collection_storage_size` does not handle any phone numbers or email addresses.  Its input and output are solely related to MongoDB database and collection names and storage statistics. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "collection_indexes": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's role in describing collection indexes within the context of an MCP server. The Args and Returns sections are well-structured and informative, correctly specifying types. The description of the nested dictionary structure in the Returns section is particularly helpful.  The Raises section correctly identifies the `InvalidInputError`.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses the `CollectionIndexesInput` Pydantic model to validate the `database` and `collection` input parameters.  This is the primary method of input validation.  The `try...except` block handles `PydanticValidationError` and raises a custom error, indicating that the validation is indeed being used.  No other input validation methods are present, and Pydantic is sufficient for this task."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses a Pydantic model `CollectionIndexesInput` for input validation.  This likely performs type checking on `database` and `collection` (assuming the model is defined correctly). However, the provided code snippet doesn't show the definition of `CollectionIndexesInput`, so we cannot definitively assess the extent of its validation.  It's possible that it only checks for types (str) and not for empty strings or other constraints on the database and collection names (e.g., length restrictions, disallowed characters).  Therefore, while some validation is present, it's not comprehensive without seeing the `CollectionIndexesInput` model's definition.  The error handling is also minimal, only raising a generic \"Input validation failed\" message. More specific error messages indicating which input failed validation would improve the code."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters `database` and `collection` are correctly type-annotated as `str`. The return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves and formats index information as described in the docstring.  Both `database` and `collection` parameters are used to access and process the index data.  The `InvalidInputError` exception is correctly raised when input validation fails using Pydantic.  There are no placeholders, TODOs, or pass statements. The function's logic is complete and consistent with its docstring, returning a dictionary with the specified structure."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `collection_indexes` does not handle any phone numbers or email addresses.  Its purpose is to retrieve and describe database collection indexes. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_index": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The types are correctly specified for parameters and return values. The description of the dictionary returned is detailed and helpful. The default value for the `name` parameter is correctly documented."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`models.CreateIndexInput`) to perform initial validation on the `database`, `collection`, `keys`, and `name` parameters.  However,  additional validation is performed manually after the Pydantic check.  This manual validation checks for empty `keys`, validates the structure and types within the `keys` dictionary, and performs further checks on the `name` parameter. While the Pydantic model provides a basic level of validation, the subsequent manual checks suggest that the Pydantic model might not be fully comprehensive, or that some validation rules are more easily expressed manually.  A more robust solution might involve consolidating all validation rules within the Pydantic model itself, eliminating redundancy and improving maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters (`database`, `collection`, `keys`, and `name`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, `keys`, `name`) are properly type-annotated with their expected types (str, str, Dict[str, Any], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Dict`, `Optional`, and `List` (in internal code) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of indexes, handling various scenarios including pre-existing indexes with the same specification or name.  All functional input parameters (`database`, `collection`, `keys`, `name`) are used appropriately in the logic.  All documented exceptions (`IndexExistsError`, `InvalidIndexSpecificationError`, `ValidationError`) are properly raised and handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional within the context of using the global DB dictionary (which is the expected behavior). The docstring accurately reflects the function's behavior, including the return type and possible status messages."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  It's a function for creating database indexes, and its inputs are database names, collection names, index keys, and an optional index name.  There's no processing or validation related to phone numbers or email addresses.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "mongodb/data_operations.py": {
+      "functions": {
+        "find": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The code uses a Pydantic model `FindInput` to validate the `database`, `collection`, `filter`, `projection`, `limit`, and `sort` parameters.  These are all functional parameters requiring validation. The `try...except PydanticValidationError` block correctly handles validation errors.  While the code also handles default values for `filter` outside the Pydantic model, this doesn't negate the proper use of Pydantic for validation.  The Pydantic approach is efficient and comprehensive for this function's input validation needs."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (database, collection, filter, projection, limit, sort) are properly type-annotated with their expected types, including the use of Optional and Dict for specifying optional parameters and dictionary types.  The return type is clearly specified as List[Dict[str, Any]].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements a MongoDB find operation using the provided parameters.  All functional input parameters (`database`, `collection`, `filter`, `projection`, `limit`, `sort`) are used in the query.  The documented exceptions (`InvalidQueryError`, `ValueError`, `PydanticValidationError`) are handled appropriately. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, correctly constructing the query, handling the results, and formatting the output as a list of dictionaries matching the docstring's description. The docstring accurately reflects the function's behavior and return type.  The use of `json_util.dumps` for EJSON serialization is appropriate for handling MongoDB documents.  Error handling during serialization adds robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  It's a function designed to query a MongoDB database.  There are no inputs or processing steps related to phone number normalization or email validation.  Therefore, the categories of \"Excellent,\" \"Good,\" or \"Poor\" are not applicable."
+          }
+        },
+        "count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's behavior of counting documents in a MongoDB collection with an optional query. The default value for `query` (None) is correctly mentioned and explained.  All arguments are documented with their types and descriptions. The `Returns` section accurately describes the structure of the returned dictionary, including the use of f-strings to dynamically insert the count and collection name.  The `Raises` section correctly lists `PydanticValidationError` and `InvalidQueryError`. Types are specified for all parameters and the return value.  The description of the dictionary structure in the `Returns` section is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The code uses a Pydantic model (`CountInput`) to validate the input parameters. However, the code does not show the definition of `CountInput`.  Without knowing the fields and validation rules within `CountInput`, we can only assume it validates *some* of the input parameters (`database` and `collection`).  If `CountInput` only validates `database` and `collection`, and not the optional `query` parameter, then the validation is incomplete.  Adding validation rules for the `query` parameter (e.g., ensuring it's a dictionary with specific key types or structures if needed) within the `CountInput` model would improve the input validation.  Therefore, the current implementation is only partially using Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic's `CountInput` model for validation, ensuring type and value checks for `database` and `collection` parameters.  The `query` parameter, while optional, is also validated within the Pydantic model if provided.  The validation covers type checking and likely enforces constraints defined within the `CountInput` model (though the model's definition isn't shown).  Error handling is present, raising `PydanticValidationError` for input validation failures and `InvalidQueryError` for database query issues, providing informative error messages.  All functional input parameters (`database`, `collection`, and `query`) receive validation before being used."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, and `query`) are properly type-annotated with their expected types (str, str, and Optional[Dict[str, Any]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types are properly specified using `Optional` and `Dict`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the counting of documents in a MongoDB collection, handling both the case with and without a query filter.  All functional input parameters (`database`, `collection`, and `query`) are used.  The documented exceptions (`PydanticValidationError`, `InvalidQueryError`, `ConnectionError`) are all handled appropriately. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The use of `CountInput` for validation is assumed to be correctly defined elsewhere and is not a point of concern for this review."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `count` does not handle any phone number or email address inputs.  Its purpose is to count documents in a MongoDB collection based on a provided query.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses solely on database interaction and doesn't process any user-provided data that would require such handling."
+          }
+        },
+        "aggregate": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the return value is particularly helpful, acknowledging the variability based on the aggregation pipeline and providing illustrative examples. The inclusion of `InvalidPipelineError` and `AggregationError` with explanations is beneficial. The attempt to categorize exceptions based on the error message is a good approach to providing more specific guidance to developers."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function utilizes a Pydantic model (`AggregateInput`) to validate the `database`, `collection`, and `pipeline` parameters before processing them.  This ensures that these functional inputs conform to predefined constraints defined within the `AggregateInput` model.  No other input validation mechanisms are necessary because Pydantic handles this comprehensively."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic's `AggregateInput` model for input validation. This ensures type validation (`database` as `str`, `collection` as `str`, `pipeline` as `List[Dict[str, Any]]`) and likely includes value validation (e.g., minimum length checks for strings, structural validation for the pipeline list) defined within the `AggregateInput` model (which is not shown in the provided code).  The `try...except PydanticValidationError` block correctly handles validation errors and re-raises them with user-friendly messages.  All three functional input parameters (`database`, `collection`, `pipeline`) are validated before use.  The additional error handling for `coll.aggregate` further checks for pipeline errors, providing specific error messages based on the type of error."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, `pipeline`) are properly type-annotated with their expected types (str, str, List[Dict[str, Any]] respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses all functional input parameters (`database`, `collection`, `pipeline`).  Exception handling is implemented for `PydanticValidationError`, `ConnectionError`, `InvalidPipelineError`, and `AggregationError`. The attempt to classify errors during aggregation is a good approach, although the keyword-based error classification is heuristic and might not cover all possible scenarios.  The docstring accurately reflects the function's behavior and return type.  However, the error handling relies on string matching within error messages, which is fragile.  A more robust approach would involve inspecting the error structure directly if possible (e.g., accessing specific error codes or attributes provided by the MongoDB driver).  Also, the comment \"// The structural validity of the pipeline (List[Dict], non-empty) // is already ensured by models.AggregateInput.\" is slightly misleading; while Pydantic might validate the *type* of the pipeline, it doesn't guarantee the *semantic* validity of the pipeline stages themselves (e.g., it won't catch typos in stage names or incorrect operator usage).  The current error handling tries to address this, but a more sophisticated validation step before `coll.aggregate()` might be beneficial."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code is for a MongoDB aggregation function.  It does not handle or process phone numbers or email addresses as input.  The function's input consists of a database name, collection name, and an aggregation pipeline (a list of dictionaries defining the aggregation stages).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses solely on interacting with a MongoDB database and executing aggregation pipelines, not on data validation or normalization of individual fields within documents."
+          }
+        },
+        "insert_many": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative.  It clearly explains the function's purpose, arguments, return value, and exceptions.  Types are specified for all parameters and the return value. The description of the return dictionary is detailed, including examples of the nested structure. The `Raises` section accurately lists the exceptions that the function might raise, including helpful descriptions of the conditions under which each exception occurs."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `InsertManyInput` (not shown in the provided code snippet but implied by the code) to validate the `database`, `collection`, and `documents` parameters before processing them.  This is the primary method of input validation.  The `try...except PydanticValidationError` block handles potential validation errors raised by the model.  No other input validation mechanisms are needed because the Pydantic model is sufficient."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic's `InsertManyInput` for validation, which handles type checking for `database` (str), `collection` (str), and `documents` (List[Dict[str, Any]]).  This provides type validation and implicitly handles null/empty checks for the list of documents (an empty list would raise a PydanticValidationError due to model validation). However, it lacks explicit value validation for `database` and `collection` names.  For example, it doesn't check for invalid characters or length restrictions that MongoDB might impose.  While the MongoDB driver itself will catch some invalid collection names, client-side validation would improve robustness and provide earlier error feedback.  Therefore, the validation is good but not comprehensive due to the absence of value validation for the string parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, and `documents`) are properly type-annotated with their expected types (str, str, and List[Dict[str, Any]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly inserts documents into a MongoDB collection (simulated by the global DB dictionary, which is acceptable per the instructions). All functional input parameters (`database`, `collection`, `documents`) are used.  The function handles the documented exceptions (`PydanticValidationError`, `InvalidDocumentError`, `BulkWriteError`, `OperationFailure`) appropriately. There are no placeholders or TODO comments. The return value matches the docstring's description.  The logic is complete and functional given the context of using the global DB dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function `insert_many` is designed to insert documents into a MongoDB collection.  It receives a list of dictionaries as input, and these dictionaries represent the documents to be inserted. There's no processing or validation of the *content* of those dictionaries; it only handles the insertion process itself.  Therefore, any phone number or email address normalization or validation would need to be implemented within the structure of the dictionaries passed to the `documents` parameter.  The function itself doesn't perform these tasks."
+          }
+        },
+        "update_many": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose, arguments, and return value.  Default values for optional parameters are correctly specified and explained. The `Args` and `Returns` sections are comprehensive, including type hints. The `Raises` section accurately lists potential exceptions.  The description of the return dictionary's structure is detailed and helpful, although it could be slightly improved by using a more concise example or by using a more structured format for describing the nested dictionary structure (e.g., using a table)."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `UpdateManyInput` (not shown in the provided code snippet but implied by `validated_args = UpdateManyInput(**input_params)`) to validate the `database`, `collection`, `update`, `filter`, and `upsert` parameters before interacting with the database.  This demonstrates proper use of Pydantic for input validation.  The `try...except PydanticValidationError` block correctly handles validation errors."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic's `UpdateManyInput` for validation, which presumably enforces type and value constraints on `database`, `collection`, `update`, and `filter`.  The code explicitly checks for `filter` and `upsert` being `None`. While the exact constraints within `UpdateManyInput` are not shown, the try-except block around its instantiation demonstrates that type and value validation is performed for all functional input parameters before they are used.  The server-side error handling further refines validation by catching and classifying specific PyMongo errors related to invalid filter or update documents, raising custom exceptions with informative messages.  All functional parameters (`database`, `collection`, `update`, `filter`, `upsert`) receive validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, `update`, `filter`, `upsert`) are properly type-annotated with their expected types (str, str, Dict[str, Any], Optional[Dict[str, Any]], Optional[bool] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update_many operation, using all functional input parameters (`database`, `collection`, `update`, `filter`, `upsert`).  Exception handling is comprehensive, covering `PydanticValidationError`, `InvalidQueryError`, and `InvalidUpdateError` as documented.  The logic correctly handles different scenarios (no matches, matches with/without modifications, upserts), constructing the return message as specified in the docstring.  There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  The error handling cleverly uses the error codes and messages from pymongo to differentiate between filter and update errors, improving robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_many` function does not handle phone numbers or email addresses as input.  Its purpose is to update documents in a MongoDB database based on a filter and update criteria.  The input parameters are a database name, collection name, an update document (using MongoDB update operators), an optional filter, and an optional upsert flag.  There is no processing or validation of email addresses or phone numbers within the function's logic.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "delete_many": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description is concise and helpful for an MCP server context. Default values are correctly mentioned and explained, including the nuanced behavior of a `None` filter.  All arguments and the return value have type hints, and the structure of the returned dictionary is clearly specified. The `Raises` section accurately lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `DeleteManyInput` to validate the `database`, `collection`, and `filter` parameters.  These are the functional parameters of the function.  The validation happens within a `try-except` block, handling `PydanticValidationError`. While the code handles the case where `filter` might be `None`, the Pydantic model itself ensures that `filter` is always a dictionary (due to its type annotation).  This approach ensures that all functional input parameters are validated before proceeding with the database operation.  No other input validation methods are needed because Pydantic handles this comprehensively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation and null checks on the `database` and `collection` parameters implicitly through Pydantic's `DeleteManyInput` model.  The `filter` parameter also benefits from type validation (it's checked to be a dictionary or None) and a null check that converts `None` to an empty dictionary before Pydantic validation.  However, there's no explicit value validation for `database` and `collection` (e.g., checking for allowed characters, length restrictions, or existence in a database).  The `filter` parameter's validation relies entirely on Pydantic and the MongoDB driver, which might not cover all possible invalid query structures. While the `InvalidQueryError` catches exceptions from MongoDB, more specific validation upfront would improve robustness.  Therefore, the validation is good but not comprehensive due to the lack of explicit value validation for `database` and `collection` and the reliance on the MongoDB driver for complete `filter` validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`database`, `collection`, and `filter`) are properly type-annotated with their expected types (str, str, and Optional[Dict[str, Any]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the `delete_many` operation against a MongoDB collection (simulated by the global `DB` dictionary).  All functional input parameters (`database`, `collection`, `filter`) are used.  The function handles the `PydanticValidationError` and a custom `InvalidQueryError` as documented.  The return dictionary matches the docstring's description. There are no placeholders or TODO comments. The logic is complete and functional within the context of the global `DB` dictionary.  The handling of a `None` filter by converting it to an empty dictionary is a reasonable and correct approach."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code is a function for deleting documents from a MongoDB database.  It does not handle or process phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on database interaction and query filtering."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "mongodb": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`). The tests folder has a good number of test files, following the `test_*.py` naming convention. The main API folder has the expected `.py` files for API logic."
+      }
+    }
+  }
+}

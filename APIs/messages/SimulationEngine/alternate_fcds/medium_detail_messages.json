@@ -1,0 +1,259 @@
+[
+    {
+        "name": "ask_for_message_body",
+        "description": "Displays the recipient in a card to prompt the user for the message body. This function is used specifically when there is a single recipient with a single endpoint, but the message body has not been provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "recipient": {
+                    "type": "object",
+                    "properties": {
+                        "contact_id": {
+                            "type": "string",
+                            "description": "The unique identifier for a specific contact."
+                        },
+                        "contact_name": {
+                            "type": "string",
+                            "description": "The name of the contact. This parameter is required."
+                        },
+                        "contact_endpoints": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            },
+                            "description": "A list containing the endpoints for the contact."
+                        },
+                        "contact_photo_url": {
+                            "type": "string",
+                            "description": "A URL that links to the photo of the contact."
+                        }
+                    },
+                    "description": "The recipient of the message, which is displayed as auxiliary information on the card shown to the user.",
+                    "required": [
+                        "contact_endpoints",
+                        "contact_name"
+                    ]
+                }
+            },
+            "required": [
+                "recipient"
+            ]
+        }
+    },
+    {
+        "name": "prepare_chat_message",
+        "description": "Prepares interactive message cards for sending SMS/MMS messages to one or more recipients. This function validates the message body and recipient list but does not actually send the messages.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message_body": {
+                    "type": "string",
+                    "description": "The text message content to send to the recipients. This value must be a non-empty string."
+                },
+                "recipients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "contact_id": {
+                                "type": "string",
+                                "description": "Unique identifier for the contact"
+                            },
+                            "contact_name": {
+                                "type": "string",
+                                "description": "The name of the contact"
+                            },
+                            "contact_endpoints": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                },
+                                "description": "List of endpoints for the contact"
+                            },
+                            "contact_photo_url": {
+                                "type": "string",
+                                "description": "URL to the contact's photo"
+                            }
+                        },
+                        "required": [
+                            "contact_endpoints",
+                            "contact_name"
+                        ]
+                    },
+                    "description": "A list of recipient objects, where each object defines a single recipient and their corresponding properties."
+                }
+            },
+            "required": [
+                "message_body",
+                "recipients"
+            ]
+        }
+    },
+    {
+        "name": "send_chat_message",
+        "description": "Sends a message via SMS/MMS to a recipient. This function validates that the recipient has exactly one phone number before sending.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "recipient": {
+                    "type": "object",
+                    "properties": {
+                        "contact_id": {
+                            "type": "string",
+                            "description": "The unique identifier for the contact."
+                        },
+                        "contact_name": {
+                            "type": "string",
+                            "description": "The name of the contact. This parameter is required."
+                        },
+                        "contact_endpoints": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "endpoint_type": {
+                                        "type": "string",
+                                        "description": "Must be \"PHONE_NUMBER\""
+                                    },
+                                    "endpoint_value": {
+                                        "type": "string",
+                                        "description": "The phone number"
+                                    },
+                                    "endpoint_label": {
+                                        "type": "string",
+                                        "description": "Label for the endpoint"
+                                    }
+                                },
+                                "required": [
+                                    "endpoint_type",
+                                    "endpoint_value"
+                                ]
+                            },
+                            "description": "A list that must contain exactly one endpoint."
+                        },
+                        "contact_photo_url": {
+                            "type": "string",
+                            "description": "A valid URL pointing to the contact's photo."
+                        }
+                    },
+                    "description": "An object that contains the recipient's contact information. This object must specify exactly one endpoint for message delivery.",
+                    "required": [
+                        "contact_endpoints",
+                        "contact_name"
+                    ]
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The text message content, which cannot be empty. It should be written with correct grammar and punctuation, and any included lists must be formatted with asterisks as bullets."
+                },
+                "media_attachments": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "media_id": {
+                                "type": "string",
+                                "description": "Unique identifier of the media"
+                            },
+                            "media_type": {
+                                "type": "string",
+                                "description": "Type of media, defaults to \"IMAGE\""
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "Source of media (\"IMAGE_RETRIEVAL\", \"IMAGE_GENERATION\",\n  \"IMAGE_UPLOAD\", or \"GOOGLE_PHOTO\")"
+                            }
+                        },
+                        "required": [
+                            "media_id",
+                            "media_type",
+                            "source"
+                        ]
+                    },
+                    "description": "A list of metadata objects for media attachments. Currently, only image attachments are supported, and each object must contain the required metadata fields."
+                },
+                "recipient_name": {
+                    "type": "string",
+                    "description": "Specifies the name of the message recipient. This is a legacy parameter."
+                },
+                "recipient_phone_number": {
+                    "type": "string",
+                    "description": "A legacy parameter for the recipient's phone number."
+                },
+                "recipient_photo_url": {
+                    "type": "string",
+                    "description": "A legacy parameter for the URL of the recipient's profile photo."
+                }
+            },
+            "required": [
+                "message_body",
+                "recipient"
+            ]
+        }
+    },
+    {
+        "name": "show_message_recipient_choices",
+        "description": "Displays a card with a list of potential message recipients for user selection. This is used when multiple recipients are found or when a single recipient has multiple endpoints, requiring the user to clarify who to send the message to.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "recipients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "contact_id": {
+                                "type": "string",
+                                "description": "Unique identifier for the contact"
+                            },
+                            "contact_name": {
+                                "type": "string",
+                                "description": "The name of the contact"
+                            },
+                            "contact_endpoints": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                },
+                                "description": "List of endpoints for the contact"
+                            },
+                            "contact_photo_url": {
+                                "type": "string",
+                                "description": "URL to the contact's photo"
+                            }
+                        },
+                        "required": [
+                            "contact_endpoints",
+                            "contact_name"
+                        ]
+                    },
+                    "description": "A list of potential recipients for the message. Each recipient must contain a specific set of properties."
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The content of the text message to be sent to the recipient. This may be an empty string if the user has not yet provided the message content."
+                }
+            },
+            "required": [
+                "recipients"
+            ]
+        }
+    },
+    {
+        "name": "show_message_recipient_not_found_or_specified",
+        "description": "Inform the user that the message recipient is either not found or not specified. This function is invoked when contact searches yield no results or when a contact name is not provided in the query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "contact_name": {
+                    "type": "string",
+                    "description": "The recipient name that was searched for, which may be `None` if no name was provided in the search."
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The text message content to send to the recipient. This parameter is optional and may be left empty if the user has not specified content."
+                }
+            }
+        }
+    }
+]

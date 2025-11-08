@@ -1,0 +1,2010 @@
+[
+    {
+        "name": "batch_delete_messages",
+        "description": "Deletes multiple messages simultaneously. It permanently removes messages identified by a provided list of IDs and cleans up any unreferenced attachments after deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value `'me'` to indicate the authenticated user; this parameter defaults to `'me'`."
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings, where each string represents a message ID to be deleted. This parameter is optional and defaults to `None`."
+                }
+            }
+        }
+    },
+    {
+        "name": "batch_modify_message_labels",
+        "description": "Modifies labels on multiple messages simultaneously. It applies specified label additions and removals, which must be lists of string IDs, to messages identified by a list of string IDs.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user. This parameter defaults to 'me'."
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of message IDs to modify. Each ID in the list must be a string. This parameter defaults to `None` or an empty list."
+                },
+                "addLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of label IDs to add. Label IDs are processed case-insensitively and stored in their uppercase form. This parameter defaults to `None`."
+                },
+                "removeLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of label IDs to remove. These IDs are processed case-insensitively and stored in their uppercase form. Defaults to `None`."
+                }
+            }
+        }
+    },
+    {
+        "name": "check_user_exists",
+        "description": "Checks if a user exists in the database. The `userId` parameter must be a non-empty string and cannot contain only whitespace.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The string ID of the user to check. This ID cannot be empty or contain only whitespace."
+                }
+            },
+            "required": [
+                "userId"
+            ]
+        }
+    },
+    {
+        "name": "create_draft",
+        "description": "Creates a new draft message with the `DRAFT` label, using the content from the `draft` argument. If no content is provided, an empty draft is created. Note that individual attachments cannot exceed 25MB, and the total message size is limited to 100MB.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value `me` can be used to indicate the authenticated user, which is also the default."
+                },
+                "draft": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "A unique identifier for the draft, which is automatically generated if not provided."
+                        },
+                        "message": {
+                            "type": "object",
+                            "properties": {
+                                "threadId": {
+                                    "type": "string",
+                                    "description": "The identifier of the thread to which the message belongs."
+                                },
+                                "raw": {
+                                    "type": "string",
+                                    "description": "An optional, base64url-encoded (RFC 4648 Section 5) string that represents the entire RFC 2822 compliant email message. This string can include multipart MIME attachments, but individual attachments are limited to 25MB, and the total message size must not exceed 100MB. If this parameter is omitted, the message is constructed from the `sender`, `recipient`, and `subject` fields instead."
+                                },
+                                "labelIds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "An array of label IDs to apply to the message."
+                                },
+                                "snippet": {
+                                    "type": "string",
+                                    "description": "A brief excerpt of the message's content."
+                                },
+                                "historyId": {
+                                    "type": "string",
+                                    "description": "The ID of the most recent history record that modified this message."
+                                },
+                                "internalDate": {
+                                    "type": "string",
+                                    "description": "The internal creation timestamp for the message, represented as the number of milliseconds since the Unix epoch."
+                                },
+                                "sizeEstimate": {
+                                    "type": "integer",
+                                    "description": "The estimated size of the message in bytes."
+                                },
+                                "sender": {
+                                    "type": "string",
+                                    "description": "The sender's email address."
+                                },
+                                "recipient": {
+                                    "type": "string",
+                                    "description": "The email address of the message recipient."
+                                },
+                                "subject": {
+                                    "type": "string",
+                                    "description": "The subject line of the message."
+                                },
+                                "body": {
+                                    "type": "string",
+                                    "description": "The text content for the body of the message."
+                                },
+                                "isRead": {
+                                    "type": "boolean",
+                                    "description": "Specifies whether the message is considered read."
+                                },
+                                "date": {
+                                    "type": "string",
+                                    "description": "The date the message was created."
+                                },
+                                "payload": {
+                                    "type": "object",
+                                    "properties": {
+                                        "mimeType": {
+                                            "type": "string",
+                                            "description": "The Multipurpose Internet Mail Extensions (MIME) type of the message payload."
+                                        },
+                                        "parts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "mimeType": {
+                                                        "type": "string",
+                                                        "description": "The MIME type of the part."
+                                                    },
+                                                    "filename": {
+                                                        "type": "string",
+                                                        "description": "The filename for attachment parts."
+                                                    },
+                                                    "body": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "attachmentId": {
+                                                                "type": "string",
+                                                                "description": "The attachment ID reference."
+                                                            },
+                                                            "size": {
+                                                                "type": "integer",
+                                                                "description": "The size of the attachment in bytes (max 25MB per attachment)."
+                                                            }
+                                                        },
+                                                        "description": "The body content with keys:",
+                                                        "required": [
+                                                            "attachmentId",
+                                                            "size"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "body",
+                                                    "mimeType"
+                                                ]
+                                            },
+                                            "description": "A list of message parts, each representing an attachment to the message."
+                                        }
+                                    },
+                                    "description": "The parsed structure of the email message, represented as a key-value object.",
+                                    "required": [
+                                        "mimeType",
+                                        "parts"
+                                    ]
+                                }
+                            },
+                            "description": "An object that contains the properties of the message."
+                        }
+                    },
+                    "description": "An optional dictionary containing the details of the draft message, structured with a specific set of keys.",
+                    "required": [
+                        "message"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "create_label",
+        "description": "Create a new label. The label's properties are taken from the `label` argument; if not provided, default values are used and the label is added to the user's list.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' indicates the authenticated user and is the default value for this parameter."
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The display name for the label. This name must be in uppercase."
+                        },
+                        "messageListVisibility": {
+                            "type": "string",
+                            "description": "Controls the visibility of messages associated with this label in the message list; it must be `'show'` or `'hide'` and defaults to `'show'`."
+                        },
+                        "labelListVisibility": {
+                            "type": "string",
+                            "description": "Controls the visibility of the label within the label list. This parameter must be one of `labelShow`, `labelShowIfUnread`, or `labelHide`. It defaults to `labelShow`."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Defines the label's owner type. For custom labels, it must be 'user' and defaults to this value. While 'system' is an internally valid type, labels created by users must be of 'user' type."
+                        },
+                        "color": {
+                            "type": "object",
+                            "properties": {
+                                "textColor": {
+                                    "type": "string",
+                                    "description": "The text color of the label, represented as a hexadecimal string."
+                                },
+                                "backgroundColor": {
+                                    "type": "string",
+                                    "description": "The background color for the label. It must be represented as a hexadecimal string in the format `#RRGGBB`."
+                                }
+                            },
+                            "description": "A dictionary specifying the label's color. It must contain 'textColor' (a hex string for text) and 'backgroundColor' (a hex string in #RRGGBB format for the background).",
+                            "required": [
+                                "backgroundColor",
+                                "textColor"
+                            ]
+                        }
+                    },
+                    "description": "An optional dictionary that defines the properties for the new label. It supports keys for 'name' (string, in uppercase), 'messageListVisibility' (must be 'show' or 'hide'), 'labelListVisibility' (must be 'labelShow', 'labelShowIfUnread', or 'labelHide'), and 'type' (must be 'user'). Additionally, 'color' can be specified as a dictionary containing 'textColor' and 'backgroundColor' (both hex string representations).",
+                    "required": [
+                        "color",
+                        "labelListVisibility",
+                        "messageListVisibility",
+                        "name",
+                        "type"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "create_send_as_alias",
+        "description": "Creates a new 'Send as' alias configuration, adding a custom 'from' address to the user's account. The alias email address serves as the unique key. Its verification status is typically determined by domain policies or user actions, though it might default to 'accepted' in some implementations.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value `'me'` to indicate the authenticated user; this parameter defaults to `'me'`."
+                },
+                "send_as": {
+                    "type": "object",
+                    "properties": {
+                        "sendAsEmail": {
+                            "type": "string",
+                            "description": "Specifies the email address for the alias. This must be a string."
+                        },
+                        "displayName": {
+                            "type": "string",
+                            "description": "A string representing the display name for the alias."
+                        },
+                        "replyToAddress": {
+                            "type": "string",
+                            "description": "The email address to which replies for messages sent from this alias will be directed."
+                        },
+                        "signature": {
+                            "type": "string",
+                            "description": "The email signature to be appended to messages sent from this alias."
+                        }
+                    },
+                    "description": "An optional dictionary containing properties for the new alias. This dictionary can include keys such as `sendAsEmail` (the email address for the alias), `displayName` (the display name for the alias), `replyToAddress` (the reply-to address), and `signature` (the email signature for the alias). Defaults to `None`, which uses system defaults.",
+                    "required": [
+                        "displayName",
+                        "replyToAddress",
+                        "sendAsEmail",
+                        "signature"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "create_user",
+        "description": "Creates a new user entry. It initializes the user's data structure, including their profile and empty containers for drafts, messages, threads, labels, settings, history, and watch configuration.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The unique identifier for the new user. It must be a string."
+                },
+                "profile": {
+                    "type": "object",
+                    "properties": {},
+                    "description": "A dictionary containing the initial user profile information, which must include an 'emailAddress' key with a string value. Other keys, such as 'displayName', are permitted but are not processed by the function's core logic beyond the validation of 'emailAddress'. For example: `{'emailAddress': 'user@example.com', 'displayName': 'John Doe'}`."
+                }
+            },
+            "required": [
+                "profile",
+                "userId"
+            ]
+        }
+    },
+    {
+        "name": "delete_draft",
+        "description": "Immediately and permanently deletes the specified draft message from the user's mailbox, identified by its ID. This action also cleans up any attachments that are no longer referenced after the draft deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to indicate the authenticated user. This parameter defaults to 'me'."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the draft to delete. This parameter defaults to an empty string ('')."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_label",
+        "description": "Permanently deletes the specified label by removing its ID from the user's list of labels. This operation cannot be undone.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is also the default for this parameter."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The string ID of the label to delete. This parameter defaults to an empty string (`''`)."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_message",
+        "description": "Immediately and permanently deletes the message identified by its ID from the user's mailbox. This operation cannot be undone and also cleans up any attachments no longer referenced after the message deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is also the default value for this parameter."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The string ID of the message to delete. It defaults to an empty string (`''`)."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_send_as_alias",
+        "description": "Deletes a specified 'Send as' alias, which is a custom 'from' address. The alias is identified by its email address and removed from the user's account.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to refer to the authenticated user and is the default."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias to delete. This parameter defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_send_as_smime_info",
+        "description": "Deletes the specified S/MIME certificate configuration. This operation removes the S/MIME information, identified by its ID, from the specified 'Send as' alias configuration.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user, and it defaults to this value."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "Specifies the email address of the 'Send as' alias from which to delete the S/MIME information; defaults to an empty string."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the S/MIME information to delete. It defaults to an empty string (`''`)."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_thread",
+        "description": "Immediately and permanently deletes the specified thread and all its associated messages from the user's mailbox. This operation cannot be undone.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value 'me' to represent the authenticated user; this is also the default value."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the thread to delete. This parameter defaults to an empty string (`''`)."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_auto_forwarding_settings",
+        "description": "Retrieves the auto-forwarding configuration for a specified user's account. This configuration details whether forwarding is enabled, the target email address, and the disposition of forwarded messages.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user, and this parameter defaults to 'me'."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_draft",
+        "description": "Retrieves the specified draft message identified by its ID. The `format` parameter determines the returned data: 'minimal' returns only the message ID and labels; 'full' provides the full email message data with parsed body content; 'raw' returns the full email message data with body content in a raw field; and 'metadata' includes the message ID, labels, and email headers.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value 'me' to indicate the authenticated user, which is also the default value."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the draft to retrieve. It defaults to an empty string."
+                },
+                "format": {
+                    "type": "string",
+                    "description": "Specifies the format for the returned message. Valid options include 'minimal' (returning only the ID and labels), 'full' (returning the complete message with parsed body), 'raw' (returning the full message with content in a raw field), or 'metadata' (returning the ID, labels, and headers). The default value is 'full'."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_imap_settings",
+        "description": "Retrieves the IMAP configuration for a specified user, identified by their email address or the special value 'me' for the authenticated user. This configuration includes settings such as IMAP access enablement, auto-expunge behavior, and the expunge action, which can be 'archive', 'trash', or 'deleteForever'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is the default value."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_label",
+        "description": "Retrieves a specified label resource by its unique ID. The label is fetched for a particular user, identified by their email address or the special value 'me' for the authenticated user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user and is the default value for this parameter."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the label to retrieve. This string parameter defaults to an empty string and must not contain any whitespace."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_language_settings",
+        "description": "Retrieves the language settings for a specified user's account. This includes the current language configuration, such as the display language, returned as a dictionary with a 'displayLanguage' key providing the language code (e.g., 'en-US').",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. A special value of 'me' can be used to represent the authenticated user, and this parameter defaults to 'me'."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_message",
+        "description": "Retrieves the message resource identified by its ID. The response format can be customized using the `format` parameter. This parameter determines the level of detail, allowing the message to be returned as 'minimal' (ID and labels), 'full' (complete data), 'raw' (RFC 2822 compliant base64url-encoded content), or 'metadata' (ID, labels, and headers).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user and is the default."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the message to retrieve; defaults to an empty string."
+                },
+                "format": {
+                    "type": "string",
+                    "description": "Specifies the format for the returned email message data. It must be one of: 'minimal' (returns only message ID and labels), 'full' (returns the full message with body content), 'raw' (returns RFC 2822 compliant raw data, potentially including attachments), or 'metadata' (returns message ID, labels, and headers). The default format is 'full'."
+                },
+                "metadata_headers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of headers to include when the `format` parameter is set to `'metadata'`. All list elements must be strings. Defaults to `None`."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_message_attachment",
+        "description": "Retrieves the content of a specific attachment from the global attachments collection, identified by its ID. The function verifies that the attachment is referenced within the specified message, returning its content only if this condition is met.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is also the default value for this parameter."
+                },
+                "message_id": {
+                    "type": "string",
+                    "description": "The ID of the message containing the attachment. This must be a non-empty string and defaults to an empty string (`''`)."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the attachment to retrieve. It must be a non-empty string and defaults to an empty string (`''`)."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_pop_settings",
+        "description": "Retrieves the POP (Post Office Protocol) configuration for the specified user. This configuration is returned as a dictionary containing settings such as 'accessWindow' for the time window of POP access and 'disposition' for how messages are handled after access.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is the default value."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_send_as_alias",
+        "description": "Retrieves the configuration details for a specific 'Send as' alias. This custom 'from' address is identified by its unique email address.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user. This parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias to retrieve. It defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_send_as_smime_info",
+        "description": "Retrieves a specific S/MIME certificate configuration by its ID. This configuration is associated with a given user ID and 'Send as' email address.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to represent the authenticated user. This parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address that identifies the 'Send as' alias for which S/MIME information is retrieved. It defaults to an empty string ('')."
+                },
+                "smime_id": {
+                    "type": "string",
+                    "description": "The ID of the S/MIME information to retrieve. It defaults to an empty string ('')."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_thread",
+        "description": "Retrieves the details of a specific thread, identified by its ID. The retrieved details can vary in format, including full message data, metadata only, or minimal information, depending on the specified format.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address, defaulting to 'me'. The special value 'me' indicates the authenticated user."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the thread to retrieve. This parameter is a string that defaults to an empty string ('')."
+                },
+                "format": {
+                    "type": "string",
+                    "description": "Specifies the format for the returned messages. Accepted values are `full` for complete message data including body and all fields, `metadata` for message ID, labels, and headers (either specified or default), `minimal` for only message ID and labels, or `raw` which returns full message data (same as `full`). The default format is `full`."
+                },
+                "metadata_headers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings representing headers to include when the `format` parameter is set to 'metadata'. If this parameter is `None`, the default headers (Subject, From, To, To, Date) are included instead. Case-insensitive matching is used for common header names."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_user_profile",
+        "description": "Gets the user's Gmail profile information. It retrieves profile data associated with a specified user ID, which can be an email address or the special value 'me' for the authenticated user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to indicate the authenticated user and is the default value for this parameter."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_vacation_settings",
+        "description": "Retrieves the vacation responder settings for the specified user, including their current auto-reply configuration.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is also the default value for this parameter."
+                }
+            }
+        }
+    },
+    {
+        "name": "import_message",
+        "description": "Imports a message into the mailbox, applying specified labels. It primarily uses the `raw` content from the `msg` parameter and automatically adds the 'DELETED' label if the `deleted` flag is true. Parameters `internal_date_source`, `never_mark_spam`, and `process_for_calendar` are included for API compatibility but are ignored.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' indicates the authenticated user and is also the default."
+                },
+                "msg": {
+                    "type": "object",
+                    "properties": {
+                        "raw": {
+                            "type": "string",
+                            "description": "The raw content of the message, provided as a string. This content is primarily used by the function when importing the message."
+                        }
+                    },
+                    "description": "An optional dictionary containing the message data. It must include a `raw` key for the raw message content, and can contain other optional message properties.",
+                    "required": [
+                        "raw"
+                    ]
+                },
+                "internal_date_source": {
+                    "type": "string",
+                    "description": "Specifies how to determine the internal date, defaulting to 'dateHeader'. This parameter is currently ignored by the system."
+                },
+                "never_mark_spam": {
+                    "type": "boolean",
+                    "description": "A boolean value that, when `True`, prevents the message from being marked as spam. This parameter defaults to `False` but is currently ignored by the API implementation."
+                },
+                "process_for_calendar": {
+                    "type": "boolean",
+                    "description": "Determines whether to process calendar invitations. This parameter defaults to `False` and is currently ignored by the function."
+                },
+                "deleted": {
+                    "type": "boolean",
+                    "description": "Specifies whether to mark the imported message as deleted. Defaults to `False`."
+                }
+            }
+        }
+    },
+    {
+        "name": "insert_message",
+        "description": "Inserts a new message, such as a user-composed draft, into the mailbox and generates a new message and thread ID. The message is automatically labeled 'INBOX' and 'UNREAD' by default, and can optionally be marked 'DELETED'. Be aware that individual attachments cannot exceed 25MB, and the total message size is limited to 100MB.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value `me` can be used to indicate the authenticated user and is the default."
+                },
+                "msg": {
+                    "type": "object",
+                    "properties": {
+                        "threadId": {
+                            "type": "string",
+                            "description": "The identifier for the thread to which the message belongs."
+                        },
+                        "raw": {
+                            "type": "string",
+                            "description": "Specifies the raw, unprocessed content of the message."
+                        },
+                        "sender": {
+                            "type": "string",
+                            "description": "The email address of the message sender."
+                        },
+                        "recipient": {
+                            "type": "string",
+                            "description": "Specifies the email address of the message recipient."
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "The subject line of the message."
+                        },
+                        "body": {
+                            "type": "string",
+                            "description": "The main content or body of the message."
+                        },
+                        "date": {
+                            "type": "string",
+                            "description": "The date of the message."
+                        },
+                        "internalDate": {
+                            "type": "string",
+                            "description": "The internal date of the message."
+                        },
+                        "isRead": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating if the message has been read."
+                        },
+                        "labelIds": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of labels to apply to the message. Each label in the list must be in uppercase."
+                        }
+                    },
+                    "description": "An optional dictionary containing the data for the message, structured with a specific set of keys.",
+                    "required": [
+                        "body",
+                        "date",
+                        "internalDate",
+                        "isRead",
+                        "labelIds",
+                        "raw",
+                        "recipient",
+                        "sender",
+                        "subject",
+                        "threadId"
+                    ]
+                },
+                "internal_date_source": {
+                    "type": "string",
+                    "description": "Specifies the source for the message's `internalDate` if it is not provided in the payload. If set to `'receivedTime'` (the default), the `internalDate` is set to the time the message is processed. If set to `'dateHeader'`, the `internalDate` is derived from the `date` field in the message header; if the `date` field is missing or invalid, the processing time is used as a fallback."
+                },
+                "deleted": {
+                    "type": "boolean",
+                    "description": "A boolean flag that marks the inserted message as deleted. Defaults to `False`."
+                }
+            }
+        }
+    },
+    {
+        "name": "insert_send_as_smime_info",
+        "description": "Inserts a new S/MIME info configuration for the specified 'Send as' alias. It creates a new S/MIME certificate configuration and generates a unique ID for the S/MIME info.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user, and it defaults to this value."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias to associate the S/MIME information with. It defaults to an empty string."
+                },
+                "smime": {
+                    "type": "object",
+                    "properties": {
+                        "encryptedKey": {
+                            "type": "string",
+                            "description": "A string representing the encrypted key for the S/MIME certificate."
+                        }
+                    },
+                    "description": "An optional dictionary containing S/MIME properties. It must include an `encryptedKey` (str) for the S/MIME certificate and can contain other optional properties.",
+                    "required": [
+                        "encryptedKey"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "list_drafts",
+        "description": "Retrieves a list of draft messages from the user's mailbox. Optionally filter these drafts using a query string (`q`) that supports terms like `from:`, `to:`, `subject:`, `body:`, `label:`, and general keywords, which can be combined (e.g., `from:john@example.com subject:meeting`).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address; use the special value `'me'` to indicate the authenticated user. This parameter defaults to `'me'`."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of drafts to return. This value must be a positive integer and defaults to 100."
+                },
+                "q": {
+                    "type": "string",
+                    "description": "A query string used to filter drafts. It supports specific terms like `from:`, `to:`, `subject:`, `body:`, and `label:` (e.g., `from:john@example.com`), in addition to general keywords. Multiple filters can be combined, such as `from:john@example.com subject:meeting`. Defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_history_records",
+        "description": "Lists the history of all changes for a specified user's mailbox. While filtering parameters (`start_history_id`, `label_id`, `history_types`) and pagination (`page_token`) are included for API compatibility, they are not fully implemented. The function currently returns stored history records up to `max_results`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to represent the authenticated user, and it is also the default value for this parameter."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "The maximum number of history records to return. It defaults to 100."
+                },
+                "page_token": {
+                    "type": "string",
+                    "description": "A page token used to retrieve a specific page of results. It defaults to an empty string (`''`) and is currently ignored."
+                },
+                "start_history_id": {
+                    "type": "string",
+                    "description": "Specifies the ID after which history records should be returned. This parameter defaults to an empty string ('') and is currently ignored by the function."
+                },
+                "label_id": {
+                    "type": "string",
+                    "description": "A string representing a label in uppercase, used to retrieve history records specific to that label. This parameter defaults to `''` and is currently ignored."
+                },
+                "history_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Specifies the types of history records to retrieve. This optional parameter expects a list of strings and defaults to `None`, though it is currently ignored by the function."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_labels",
+        "description": "Retrieves a list of all label resources from a user's mailbox. Each label resource includes its unique identifier, display name, visibility settings, total and unread message/thread counts, and assigned color.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to represent the authenticated user, and is the default value."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_messages",
+        "description": "Lists messages in the user's mailbox. This function retrieves messages that match specific query criteria, including filtering by `TRASH` or `SPAM` labels, using a query string (`q`) for keywords and fields like `from:`, `to:`, `label:`, `subject:`, and `attachment:`, or by a list of `labelIds`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user ID. Use the special value 'me' to indicate the authenticated user; this parameter defaults to 'me'."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of messages to return. This value must be a positive integer and defaults to 100."
+                },
+                "q": {
+                    "type": "string",
+                    "description": "A query string for filtering messages, composed of space-delimited tokens combined by an implicit AND where token order does not matter. Supported tokens include `from:<email>` for exact sender, `to:<email>` for exact recipient, `label:<LABEL_ID>` for an uppercase label ID, `subject:<text>` for substring matching in the subject, `<keyword>` for substring matching across subject, body, sender, or recipient, and `\"<phrase>\"` for exact phrase matching in the subject or body. Strings containing spaces must be enclosed in single or double quotes, and all matches are case-insensitive unless specified otherwise."
+                },
+                "labelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of label IDs. Messages must possess all specified label IDs to be included in the results. Each ID in the list must be a string. Defaults to `None`."
+                },
+                "include_spam_trash": {
+                    "type": "boolean",
+                    "description": "Determines whether to include messages from SPAM and TRASH. This boolean parameter defaults to `False`."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_send_as_aliases",
+        "description": "Lists the 'Send as' aliases for the specified user. These aliases are custom 'from' addresses associated with the user's account.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to indicate the authenticated user, and this is also the default value for the parameter."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_send_as_smime_info",
+        "description": "Lists the S/MIME info for a specific 'Send as' alias. It retrieves all S/MIME certificate configurations associated with the given user ID and 'Send as' email address.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value 'me' to indicate the authenticated user; this parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias. Defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_threads",
+        "description": "Lists the threads in the user's mailbox. Although query parameters (`q`, `labelIds`, `include_spam_trash`, `page_token`) are present for API compatibility, filtering based on these parameters is not performed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is also the default value."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of threads to return, defaulting to 100. The actual number of results might be fewer if less threads exist, and the maximum allowed value is 500."
+                },
+                "page_token": {
+                    "type": "string",
+                    "description": "A page token used to retrieve a specific page of results. This parameter defaults to an empty string (`''`) and is currently ignored."
+                },
+                "q": {
+                    "type": "string",
+                    "description": "A query string used to filter threads, supporting the same format as the Gmail search box. It defaults to '', but this parameter is currently ignored."
+                },
+                "labelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of uppercase label IDs used to filter threads. Only threads that match all specified label IDs are returned. This parameter defaults to `None` and is currently ignored."
+                },
+                "include_spam_trash": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to include threads from SPAM and TRASH in the results. This parameter defaults to `False` but is currently ignored."
+                }
+            }
+        }
+    },
+    {
+        "name": "modify_message_labels",
+        "description": "Modifies labels on a specified message by adding or removing them. All labels are handled case-insensitively, converted to uppercase, de-duplicated, and stored in a sorted list, supporting both custom and system labels. Crucially, INBOX is mutually exclusive with SENT, DRAFT, and TRASH: adding one of these automatically removes INBOX, while adding INBOX only succeeds if none of them are present.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user, and it defaults to 'me'."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the message to modify. This parameter is a string and defaults to an empty string ('')."
+                },
+                "addLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of label names to add. Label names are handled case-insensitively, stored in their uppercase form, and the parameter defaults to None."
+                },
+                "removeLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of label names to remove. Label names are handled case-insensitively and stored in their uppercase form. Defaults to None."
+                }
+            }
+        }
+    },
+    {
+        "name": "modify_thread_labels",
+        "description": "Modifies the labels applied to the specified thread. It adds or removes labels from all messages within the thread. A maximum of 100 labels can be added or removed in a single update.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The string ID of the thread to modify."
+                },
+                "addLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list containing the IDs of labels to add to the message. Up to 100 label IDs can be specified per update."
+                },
+                "removeLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of label IDs to remove from this message. This list can contain up to 100 labels per update."
+                }
+            }
+        }
+    },
+    {
+        "name": "patch_label",
+        "description": "Updates the specified label, identified by its ID, by performing a full replacement of its existing properties with those provided in the `label` argument. This function serves as an alias for the `update` function.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user. This parameter defaults to 'me'."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the label to be updated or patched. This parameter defaults to an empty string."
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The display name for the label, provided as a string."
+                        },
+                        "messageListVisibility": {
+                            "type": "string",
+                            "description": "Controls the visibility of messages with this label in the message list. It must be set to either 'show' or 'hide'."
+                        },
+                        "labelListVisibility": {
+                            "type": "string",
+                            "description": "The visibility of the label within the label list. It must be one of 'labelShow', 'labelShowIfUnread', or 'labelHide'."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Specifies the owner type for the label. This must be either 'user' or 'system'."
+                        },
+                        "messagesTotal": {
+                            "type": "integer",
+                            "description": "An integer representing the total number of messages with the label."
+                        },
+                        "messagesUnread": {
+                            "type": "integer",
+                            "description": "Represents the integer count of unread messages associated with the label."
+                        },
+                        "threadsTotal": {
+                            "type": "integer",
+                            "description": "The total number of threads associated with the label, represented as an integer."
+                        },
+                        "threadsUnread": {
+                            "type": "integer",
+                            "description": "An integer representing the number of unread threads associated with the label."
+                        },
+                        "color": {
+                            "type": "object",
+                            "properties": {
+                                "textColor": {
+                                    "type": "string",
+                                    "description": "Specifies the text color for the label. This color must be represented as a hexadecimal string."
+                                },
+                                "backgroundColor": {
+                                    "type": "string",
+                                    "description": "The background color, represented as a hexadecimal string in the format `#RRGGBB`."
+                                }
+                            },
+                            "description": "A dictionary that specifies the label's color. It must include `textColor` (a hex string for the text color) and `backgroundColor` (a hex string in `#RRGGBB` format for the background color).",
+                            "required": [
+                                "backgroundColor",
+                                "textColor"
+                            ]
+                        }
+                    },
+                    "description": "An optional dictionary containing properties to update the label. If `None`, an empty dictionary is used. This dictionary supports optional fields including `name`, `messageListVisibility` ('show'|'hide'), `labelListVisibility` ('labelShow'|'labelShowIfUnread'|'labelHide'), `type` ('user'|'system'), `messagesTotal`, `messagesUnread`, `threadsTotal`, `threadsUnread`, and `color` (a dictionary with `textColor` and `backgroundColor` as hex strings).",
+                    "required": [
+                        "color",
+                        "labelListVisibility",
+                        "messageListVisibility",
+                        "messagesTotal",
+                        "messagesUnread",
+                        "name",
+                        "threadsTotal",
+                        "threadsUnread",
+                        "type"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "patch_send_as_alias",
+        "description": "Updates the specified 'Send as' alias configuration. This function is an alias for the `update` function and modifies an existing alias by performing a full update.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value 'me' to indicate the authenticated user; this parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the alias to be updated or patched. This parameter defaults to an empty string (`''`)."
+                },
+                "send_as": {
+                    "type": "object",
+                    "properties": {
+                        "displayName": {
+                            "type": "string",
+                            "description": "The string representing the display name for the alias."
+                        },
+                        "replyToAddress": {
+                            "type": "string",
+                            "description": "The email address to be used as the reply-to for messages sent from this alias."
+                        },
+                        "signature": {
+                            "type": "string",
+                            "description": "The email signature to be configured for the alias."
+                        }
+                    },
+                    "description": "An optional dictionary containing the properties to update for the 'Send as' alias. Keys include `displayName` for the alias's display name, `replyToAddress` for the reply-to address, and `signature` for the email signature, in addition to other optional `send_as` properties.",
+                    "required": [
+                        "displayName",
+                        "replyToAddress",
+                        "signature"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "patch_send_as_smime_info",
+        "description": "Updates an existing S/MIME certificate configuration. This function is an alias for the `update` function and performs a full update, completely replacing the current configuration.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value 'me' to indicate the authenticated user; this parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias, which defaults to an empty string."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the S/MIME information to update or patch. This parameter defaults to an empty string."
+                },
+                "smime": {
+                    "type": "object",
+                    "properties": {
+                        "encryptedKey": {
+                            "type": "string",
+                            "description": "Specifies the encrypted key as a string for the S/MIME certificate."
+                        }
+                    },
+                    "description": "An optional dictionary specifying S/MIME properties to update. This dictionary must include 'encryptedKey' (string) for the S/MIME certificate and may contain other optional S/MIME properties.",
+                    "required": [
+                        "encryptedKey"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "send_draft",
+        "description": "Sends a draft message. If the draft object contains a valid `id`, this function sends the corresponding existing draft and then deletes it. If no `id` is provided or it is invalid, the message content from the `draft['message']['raw']` field is sent directly, with a size limit of 25MB for individual attachments and 100MB for the total message.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address or the special value `me` to indicate the authenticated user. Defaults to `me` if not provided."
+                },
+                "draft": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "The unique identifier for an existing draft to be sent."
+                        },
+                        "message": {
+                            "type": "object",
+                            "properties": {
+                                "threadId": {
+                                    "type": "string",
+                                    "description": "The identifier of the thread to which this message belongs."
+                                },
+                                "raw": {
+                                    "type": "string",
+                                    "description": "An optional, base64url-encoded (RFC 4648 Section 5) string that represents the entire message. The raw, decoded string must be RFC 2822 compliant and can include attachments, which are limited to 25MB each and a total message size of 100MB. If this parameter is not provided, the message is constructed from other fields like `sender`, `recipient`, and `subject`."
+                                },
+                                "internalDate": {
+                                    "type": "string",
+                                    "description": "The internal creation timestamp for the message, represented in milliseconds since the epoch."
+                                },
+                                "labelIds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "A list of IDs for the labels applied to this message."
+                                },
+                                "snippet": {
+                                    "type": "string",
+                                    "description": "A short excerpt of the message text."
+                                },
+                                "historyId": {
+                                    "type": "string",
+                                    "description": "Identifies the last history record that modified this message."
+                                },
+                                "sizeEstimate": {
+                                    "type": "integer",
+                                    "description": "The estimated size of the message in bytes."
+                                },
+                                "sender": {
+                                    "type": "string",
+                                    "description": "The email address of the message sender."
+                                },
+                                "recipient": {
+                                    "type": "string",
+                                    "description": "The recipient's email address."
+                                },
+                                "subject": {
+                                    "type": "string",
+                                    "description": "The subject of the message."
+                                },
+                                "body": {
+                                    "type": "string",
+                                    "description": "The main text content of the message body."
+                                },
+                                "isRead": {
+                                    "type": "boolean",
+                                    "description": "A boolean value indicating if the message has been read."
+                                },
+                                "date": {
+                                    "type": "string",
+                                    "description": "Specifies the date associated with the message."
+                                },
+                                "payload": {
+                                    "type": "object",
+                                    "properties": {
+                                        "mimeType": {
+                                            "type": "string",
+                                            "description": "Specifies the Multipurpose Internet Mail Extensions (MIME) type, which defines the format of the message's content (e.g., `text/plain` or `text/html`)."
+                                        },
+                                        "parts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "mimeType": {
+                                                        "type": "string",
+                                                        "description": "The MIME type of the part."
+                                                    },
+                                                    "filename": {
+                                                        "type": "string",
+                                                        "description": "The filename for attachment parts."
+                                                    },
+                                                    "body": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "attachmentId": {
+                                                                "type": "string",
+                                                                "description": "The attachment ID reference."
+                                                            },
+                                                            "size": {
+                                                                "type": "integer",
+                                                                "description": "The size of the attachment in bytes (max 25MB per attachment)."
+                                                            }
+                                                        },
+                                                        "description": "The body content with keys:",
+                                                        "required": [
+                                                            "attachmentId",
+                                                            "size"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "body",
+                                                    "mimeType"
+                                                ]
+                                            },
+                                            "description": "A list of the message's parts, where each part functions as a file attachment."
+                                        }
+                                    },
+                                    "description": "An object containing the parsed structure of the email message, which is defined by a set of keys.",
+                                    "required": [
+                                        "mimeType",
+                                        "parts"
+                                    ]
+                                }
+                            },
+                            "description": "An object containing the key-value pairs that constitute the message content."
+                        }
+                    },
+                    "description": "An optional dictionary containing the draft to send, which must be structured with a specific set of keys."
+                }
+            }
+        }
+    },
+    {
+        "name": "send_message",
+        "description": "Sends an RFC 2822 MIME message that has been base64url-encoded. The function automatically parses the raw message to extract its structure and any attachments. Be aware that individual attachments cannot exceed 25MB, and the total message size must not exceed 100MB.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address or the special value `me` to indicate the authenticated user. This parameter defaults to `me`."
+                },
+                "msg": {
+                    "type": "object",
+                    "properties": {
+                        "raw": {
+                            "type": "string",
+                            "description": "The entire message represented as a base64url-encoded string (RFC 4648 Section 5), where the raw decoded string must be RFC 2822 compliant. It may include attachments as multipart MIME, with a 25MB limit per attachment and a 100MB total message size limit. This parameter is optional; if not provided, the message is constructed from other fields like `sender`, `recipient`, and `subject`."
+                        },
+                        "threadId": {
+                            "type": "string",
+                            "description": "The ID of the thread to assign to the message. If a thread ID is not provided, a new thread is automatically created for the message."
+                        },
+                        "labelIds": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of label IDs to apply to the message. The 'SENT' label is automatically applied and does not need to be included in this list."
+                        },
+                        "sender": {
+                            "type": "string",
+                            "description": "Specifies the email address of the message sender."
+                        },
+                        "recipient": {
+                            "type": "string",
+                            "description": "The email address of the message recipient."
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "Specifies the subject line of the message."
+                        },
+                        "body": {
+                            "type": "string",
+                            "description": "The main content of the message, which must be provided in plain text format."
+                        },
+                        "date": {
+                            "type": "string",
+                            "description": "A string representing the message date, which must be formatted according to the RFC 2822 standard."
+                        },
+                        "internalDate": {
+                            "type": "string",
+                            "description": "An internal timestamp, represented as the total number of milliseconds that have elapsed since the Unix epoch."
+                        },
+                        "isRead": {
+                            "type": "boolean",
+                            "description": "Indicates whether the message has been read."
+                        }
+                    },
+                    "description": "An optional dictionary containing the message data, structured with a specific set of keys.",
+                    "required": [
+                        "body",
+                        "date",
+                        "internalDate",
+                        "isRead",
+                        "labelIds",
+                        "recipient",
+                        "sender",
+                        "subject",
+                        "threadId"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "set_default_send_as_smime_info",
+        "description": "Sets the S/MIME information identified by `id` as the default configuration for the specified 'Send as' alias, simultaneously removing the default status from any other S/MIME configurations associated with that alias.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be provided to indicate the authenticated user, and this parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias. This string parameter defaults to an empty string (`''`)."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the S/MIME information to mark as the default for the current 'Send as' alias. It defaults to an empty string ('')."
+                }
+            }
+        }
+    },
+    {
+        "name": "stop_mailbox_watch",
+        "description": "Stop receiving push notifications for a user's mailbox. This action clears the stored watch configuration for the specified user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user, and this parameter defaults to 'me'."
+                }
+            }
+        }
+    },
+    {
+        "name": "trash_message",
+        "description": "Moves the specified message to the trash by adding the 'TRASH' label to it. If the message already has the 'TRASH' label, its state remains unchanged.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to indicate the authenticated user, and is the default value."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the message to trash. It must be a non-empty string that does not contain spaces or consist only of whitespace. Defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "trash_thread",
+        "description": "Moves the specified thread to the trash. This operation marks the thread and all messages within it as trashed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to indicate the authenticated user and is the default value."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the thread to move to the trash. This parameter is a string and defaults to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "untrash_message",
+        "description": "Removes the specified message from the trash by removing its 'TRASH' (uppercase) label. Messages without the 'TRASH' label remain unchanged.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' indicates the authenticated user and is the default value."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the message to untrash. This string parameter defaults to an empty string ('') and must not contain any whitespace."
+                }
+            }
+        }
+    },
+    {
+        "name": "untrash_thread",
+        "description": "Removes a specified thread from the trash. This operation restores the thread and all its contained messages.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to indicate the authenticated user and is the default value."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the thread to untrash, defaulting to an empty string (`''`)."
+                }
+            }
+        }
+    },
+    {
+        "name": "update_auto_forwarding_settings",
+        "description": "Updates the auto-forwarding settings for the specified user. It modifies the user's auto-forwarding configuration based on the `auto_forwarding_settings` dictionary, only updating the fields present within it. This optional dictionary can include 'enabled' (boolean), 'emailAddress' (string, a valid email address), and 'disposition' (string with valid values like 'dispositionUnspecified', 'leaveInInbox', 'archive', 'trash', or 'markRead'); if not provided, no changes are made.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value `'me'` can be used to indicate the authenticated user, and this parameter defaults to `'me'`."
+                },
+                "auto_forwarding_settings": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating whether to enable auto-forwarding."
+                        },
+                        "emailAddress": {
+                            "type": "string",
+                            "description": "The email address to which messages will be forwarded. It must be a valid email address."
+                        },
+                        "disposition": {
+                            "type": "string",
+                            "description": "Determines how forwarded messages are managed after being sent. Valid options include 'dispositionUnspecified', 'leaveInInbox', 'archive', 'trash', or 'markRead'."
+                        }
+                    },
+                    "description": "An optional dictionary used to update auto-forwarding settings. It accepts the following keys: 'enabled' (boolean) to control activation, 'emailAddress' (string) for the forwarding destination, and 'disposition' (string) to define message handling. The 'disposition' value must be one of 'dispositionUnspecified', 'leaveInInbox', 'archive', 'trash', or 'markRead'; defaults to `None`, resulting in no changes.",
+                    "required": [
+                        "disposition",
+                        "emailAddress",
+                        "enabled"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_draft",
+        "description": "Updates an existing draft message, identified by its ID, with the content provided in the `draft` argument. This operation ensures the 'DRAFT' label is applied to the message and returns `None` if the specified draft does not exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value `'me'` to indicate the authenticated user. Defaults to `'me'`."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the draft to update."
+                },
+                "draft": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "The immutable identifier for the message."
+                                },
+                                "threadId": {
+                                    "type": "string",
+                                    "description": "The identifier of the thread to which this message belongs."
+                                },
+                                "raw": {
+                                    "type": "string",
+                                    "description": "The entire email message, represented as a base64url-encoded string (RFC 4648 Section 5). The decoded raw string must be RFC 2822 compliant and may include attachments as a multipart MIME message. This parameter is optional; if not provided, the message is constructed from other fields such as `sender`, `recipient`, and `subject`."
+                                },
+                                "labelIds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "A list of label IDs to apply to the message, which replaces all existing labels. The `DRAFT` label is always preserved, and the `INBOX` label is explicitly removed if included in this list."
+                                },
+                                "snippet": {
+                                    "type": "string",
+                                    "description": "A short excerpt of the message's text content."
+                                },
+                                "historyId": {
+                                    "type": "string",
+                                    "description": "The ID of the most recent history entry that modified this message."
+                                },
+                                "internalDate": {
+                                    "type": "string",
+                                    "description": "The internal message creation timestamp, represented in milliseconds since the Unix epoch."
+                                },
+                                "sizeEstimate": {
+                                    "type": "integer",
+                                    "description": "The estimated size of the message in bytes."
+                                },
+                                "sender": {
+                                    "type": "string",
+                                    "description": "The sender's email address."
+                                },
+                                "recipient": {
+                                    "type": "string",
+                                    "description": "The recipient's email address."
+                                },
+                                "subject": {
+                                    "type": "string",
+                                    "description": "Specifies the subject line of the message."
+                                },
+                                "body": {
+                                    "type": "string",
+                                    "description": "The main text content of the message."
+                                },
+                                "isRead": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether the message has been read."
+                                },
+                                "date": {
+                                    "type": "string",
+                                    "description": "The creation date of the message."
+                                },
+                                "payload": {
+                                    "type": "object",
+                                    "properties": {
+                                        "mimeType": {
+                                            "type": "string",
+                                            "description": "The MIME type of the message payload."
+                                        },
+                                        "parts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "mimeType": {
+                                                        "type": "string",
+                                                        "description": "The MIME type of the part."
+                                                    },
+                                                    "filename": {
+                                                        "type": "string",
+                                                        "description": "The filename for attachment parts."
+                                                    },
+                                                    "body": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "attachmentId": {
+                                                                "type": "string",
+                                                                "description": "The attachment ID reference."
+                                                            },
+                                                            "size": {
+                                                                "type": "integer",
+                                                                "description": "The size of the attachment in bytes."
+                                                            }
+                                                        },
+                                                        "description": "The body content with keys:",
+                                                        "required": [
+                                                            "attachmentId",
+                                                            "size"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "body",
+                                                    "mimeType"
+                                                ]
+                                            },
+                                            "description": "A list of message parts representing the attachments for the message."
+                                        }
+                                    },
+                                    "description": "An object that contains the parsed structure of the email message, organized by a set of keys.",
+                                    "required": [
+                                        "mimeType",
+                                        "parts"
+                                    ]
+                                }
+                            },
+                            "description": "An object containing the key-value pairs to update in the draft message."
+                        }
+                    },
+                    "description": "An optional dictionary containing the updated content for the draft message, which must be structured with a predefined set of keys.",
+                    "required": [
+                        "message"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "update_imap_settings",
+        "description": "Updates the IMAP settings for the specified user. It modifies the user's IMAP configuration based on the provided `imap_settings` dictionary, updating only the fields present within it.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' can be used to represent the authenticated user. This parameter defaults to 'me'."
+                },
+                "imap_settings": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating whether to enable IMAP access."
+                        },
+                        "autoExpunge": {
+                            "type": "boolean",
+                            "description": "A boolean indicating whether to automatically expunge messages."
+                        },
+                        "expungeBehavior": {
+                            "type": "string",
+                            "description": "Specifies the behavior for handling expunged messages. This parameter defines how the system processes messages marked for deletion."
+                        }
+                    },
+                    "description": "An optional dictionary used to update the IMAP settings. It can include keys such as 'enabled' (bool) to enable IMAP access, 'autoExpunge' (bool) for automatic message expunging, and 'expungeBehavior' (str) to define how expunged messages are handled. Defaults to `None`, in which case no IMAP settings are modified.",
+                    "required": [
+                        "autoExpunge",
+                        "enabled",
+                        "expungeBehavior"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_label",
+        "description": "Updates an existing label identified by its ID by performing a full replacement of its properties. Provide the new label properties in the `label` dictionary, which can include `name`, `labelListVisibility` (e.g., 'labelShow', 'labelShowIfUnread', 'labelHide'), `messageListVisibility` (e.g., 'show', 'hide'), `type` ('user' for custom labels), and `color` (with `textColor` and `backgroundColor` as hex strings).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value `'me'` can be used to indicate the authenticated user, and this parameter defaults to `'me'`."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the label to update. While this string parameter defaults to an empty string, it must be a non-empty value without whitespace to identify the specific label for modification."
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The display name of the label, which is automatically converted to uppercase for system labels."
+                        },
+                        "labelListVisibility": {
+                            "type": "string",
+                            "description": "Specifies the label's visibility within the label list. This value must be one of: 'labelShow', 'labelShowIfUnread', or 'labelHide'."
+                        },
+                        "messageListVisibility": {
+                            "type": "string",
+                            "description": "Specifies the visibility of the label in the message list. It must be one of 'show' to display the label or 'hide' to conceal it."
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Specifies the owner type for the label. For custom labels, this type must be 'user'; system labels cannot have their type changed."
+                        },
+                        "color": {
+                            "type": "object",
+                            "description": "A dictionary specifying the label's color, containing `textColor` as a hex string for the text color and `backgroundColor` as a #RRGGBB hex string for the background color.",
+                            "properties": {
+                                "textColor": {
+                                    "type": "string",
+                                    "description": "Specifies the text color of the label. It must be provided as a hex string."
+                                },
+                                "backgroundColor": {
+                                    "type": "string",
+                                    "description": "Specifies the background color, which must be represented as a hex string in the #RRGGBB format."
+                                }
+                            },
+                            "required": [
+                                "backgroundColor",
+                                "textColor"
+                            ]
+                        }
+                    },
+                    "description": "An optional dictionary containing the properties to update for the label. It can include `name` (str), `labelListVisibility` (str, which must be 'labelShow', 'labelShowIfUnread', or 'labelHide'), `messageListVisibility` (str, which must be 'show' or 'hide'), and `type` (str, which must be 'user' for custom labels). An optional `color` dictionary can also be provided with `textColor` (hex string) and `backgroundColor` (hex string #RRGGBB). Defaults to `None`, resulting in no property updates.",
+                    "required": [
+                        "labelListVisibility",
+                        "messageListVisibility",
+                        "name",
+                        "type"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_language_settings",
+        "description": "Updates the language settings for the specified user. This function modifies the user's account language configuration using the provided `language_settings` dictionary. Only the fields present in the input dictionary, such as 'displayLanguage', are updated.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. Use the special value 'me' to indicate the authenticated user; this is also the default value."
+                },
+                "language_settings": {
+                    "type": "object",
+                    "properties": {
+                        "displayLanguage": {
+                            "type": "string",
+                            "description": "Specifies the language code for display, such as 'en-US' for English."
+                        }
+                    },
+                    "description": "An optional dictionary containing language settings to update. This dictionary should include the `displayLanguage` key, which specifies the language code for display as a string (e.g., `en-US`). If omitted or `None`, no language settings are changed.",
+                    "required": [
+                        "displayLanguage"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_pop_settings",
+        "description": "Updates the POP settings for the specified user by modifying the POP configuration based on the provided `pop_settings` dictionary, updating only the fields present in that dictionary.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. The special value 'me' indicates the authenticated user and is the default value."
+                },
+                "pop_settings": {
+                    "type": "object",
+                    "properties": {
+                        "accessWindow": {
+                            "type": "string",
+                            "description": "Specifies the range of messages accessible via POP. Valid values include 'accessWindowUnspecified', 'disabled', 'fromNowOn', and 'allMail'."
+                        },
+                        "disposition": {
+                            "type": "string",
+                            "description": "Describes how messages are handled after POP access. Valid values include 'dispositionUnspecified', 'leaveInInbox', 'archive', 'trash', or 'markRead'."
+                        }
+                    },
+                    "description": "An optional dictionary used to update the POP settings. It can contain `'accessWindow'` (valid values: `'accessWindowUnspecified'`, `'disabled'`, `'fromNowOn'`, `'allMail'`) to define the range of messages accessible via POP, and `'disposition'` (valid values: `'dispositionUnspecified'`, `'leaveInInbox'`, `'archive'`, `'trash'`, `'markRead'`) to specify how messages are handled after POP access. Only the fields provided in this dictionary will be updated; defaults to `None`, which results in no changes.",
+                    "required": [
+                        "accessWindow",
+                        "disposition"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_send_as_alias",
+        "description": "Updates an existing 'Send as' alias configuration, identified by its email address. It performs a full update of the custom 'from' address using properties provided in the `send_as` argument, which is a dictionary containing details such as `displayName`, `replyToAddress`, and `signature`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address; the special value 'me' can be used to indicate the authenticated user. This parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias to be updated. This parameter defaults to `''`."
+                },
+                "send_as": {
+                    "type": "object",
+                    "properties": {
+                        "displayName": {
+                            "type": "string",
+                            "description": "The display name for the alias. This value must be a string."
+                        },
+                        "replyToAddress": {
+                            "type": "string",
+                            "description": "The email address to which replies for this 'Send as' alias should be directed."
+                        },
+                        "signature": {
+                            "type": "string",
+                            "description": "The email signature to be used for the alias. This value must be a string."
+                        }
+                    },
+                    "description": "An optional dictionary containing the updated properties for the 'Send as' alias. It specifies fields such as `displayName` for the display name, `replyToAddress` for the reply-to address, and `signature` for the email signature, along with other optional properties.",
+                    "required": [
+                        "displayName",
+                        "replyToAddress",
+                        "signature"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_send_as_smime_info",
+        "description": "Updates the specified S/MIME certificate configuration identified by its ID. This operation performs a full update, replacing all existing properties.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The email address of the user. The special value 'me' can be used to indicate the authenticated user, and this parameter defaults to 'me'."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias associated with the S/MIME information. This parameter defaults to an empty string."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the S/MIME information to update. This parameter defaults to an empty string."
+                },
+                "smime": {
+                    "type": "object",
+                    "properties": {
+                        "encryptedKey": {
+                            "type": "string",
+                            "description": "A string representing the encrypted key for the S/MIME certificate."
+                        }
+                    },
+                    "description": "An optional dictionary containing the updated S/MIME properties. It must include the `encryptedKey` (string) and may contain other optional S/MIME properties. Defaults to `None`.",
+                    "required": [
+                        "encryptedKey"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "update_vacation_settings",
+        "description": "Updates the vacation responder settings for a specified user. It modifies the user's auto-reply configuration based on the provided `vacation_settings` dictionary, updating only the fields present in the input.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "Specifies the user's email address. The special value 'me' can be used to indicate the authenticated user, and this parameter defaults to 'me'."
+                },
+                "vacation_settings": {
+                    "type": "object",
+                    "properties": {
+                        "enableAutoReply": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating whether to enable the vacation auto-reply feature."
+                        },
+                        "responseSubject": {
+                            "type": "string",
+                            "description": "Specifies the subject line for the vacation auto-reply message."
+                        },
+                        "responseBodyHtml": {
+                            "type": "string",
+                            "description": "Defines the HTML content for the auto-reply message. This parameter expects a string containing the full HTML body."
+                        }
+                    },
+                    "description": "An optional dictionary used to update vacation responder settings. It supports keys such as `enableAutoReply` (bool) for auto-reply status, `responseSubject` (str) for the message subject, and `responseBodyHtml` (str) for the message's HTML body, along with other optional settings. If omitted (defaults to None), no vacation settings are updated.",
+                    "required": [
+                        "enableAutoReply",
+                        "responseBodyHtml",
+                        "responseSubject"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "name": "verify_send_as_alias",
+        "description": "Verifies a specified 'Send as' alias, which represents a custom 'from' email address. This function initiates the verification process, and if the alias exists with a 'pending' verification status, its status may be updated to 'accepted' upon successful completion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address, which defaults to 'me'. The special value 'me' indicates the authenticated user."
+                },
+                "send_as_email": {
+                    "type": "string",
+                    "description": "The email address of the 'Send as' alias to verify, defaulting to an empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "watch_user_mailbox",
+        "description": "Sets up or updates a watch on the user's mailbox by storing the watch request configuration for the specified user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The user's email address. It defaults to the special value `'me'`, which indicates the authenticated user."
+                },
+                "request": {
+                    "type": "object",
+                    "properties": {},
+                    "description": "An optional dictionary for the watch request body. Its exact structure depends on the specific watch configuration requirements. If omitted, the request defaults to None, resulting in an empty watch configuration."
+                }
+            }
+        }
+    }
+]

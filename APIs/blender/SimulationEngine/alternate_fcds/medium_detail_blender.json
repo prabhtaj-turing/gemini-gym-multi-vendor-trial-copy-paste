@@ -1,0 +1,232 @@
+[
+  {
+    "name": "download_polyhaven_asset",
+    "description": "Downloads a Polyhaven asset, identified by its `asset_id` and `asset_type`, and imports it into Blender.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "description": "The unique identifier for the Polyhaven asset to be downloaded."
+        },
+        "asset_type": {
+          "type": "string",
+          "description": "Specifies the type of asset to download. This parameter must be one of the following values: 'hdris', 'textures', or 'models'."
+        },
+        "resolution": {
+          "type": "string",
+          "description": "Specifies the download resolution for the asset, such as '1k', '2k', or '4k'. It defaults to '1k'."
+        },
+        "file_format": {
+          "type": "string",
+          "description": "Specifies an optional file format for the asset, such as `hdr` or `exr` for HDRIs, `jpg` or `png` for textures, and `gltf` or `fbx` for models. If not specified, it defaults to `None`."
+        }
+      },
+      "required": [
+        "asset_id",
+        "asset_type"
+      ]
+    }
+  },
+  {
+    "name": "generate_hyper3d_model_via_images",
+    "description": "Generates a 3D asset using Hyper3D from provided images and imports the generated asset into Blender. The created 3D asset includes built-in materials and has a normalized size, so re-scaling might be beneficial after generation. Provide only one of `input_image_paths` or `input_image_urls` at a time, depending on the current Hyper3D Rodin mode.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "input_image_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list containing the absolute paths of input images. Even if only one image is provided, it must be wrapped in this list. This parameter is required when Hyper3D Rodin is operating in MAIN_SITE mode and defaults to `None`."
+        },
+        "input_image_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of URLs for input images. Even if only one image is provided, it must be wrapped within this list. This parameter is required when Hyper3D Rodin is in FAL_AI mode and defaults to None."
+        },
+        "bbox_condition": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "An optional parameter that controls the ratio between the Length, Width, and Height of the generated model. If provided, it must be a list of three integers. It defaults to None."
+        }
+      }
+    }
+  },
+  {
+    "name": "generate_hyper3d_model_via_text",
+    "description": "Generates a 3D asset using Hyper3D from a description and imports it into Blender. The asset includes built-in materials and has a normalized size, which may require re-scaling after generation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "text_prompt": {
+          "type": "string",
+          "description": "A short English description of the desired 3D model."
+        },
+        "bbox_condition": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "An optional parameter that, if provided, must be a list of three floats. It controls the ratio between the Length, Width, and Height of the model."
+        }
+      },
+      "required": [
+        "text_prompt"
+      ]
+    }
+  },
+  {
+    "name": "get_hyper3d_status",
+    "description": "Checks if Hyper3D Rodin integration is enabled in Blender. It returns a dictionary containing a boolean `is_enabled` status, an optional string `mode` (e.g., 'MAIN_SITE', 'FAL_AI') for the operational mode, and a human-readable `message` about the integration's status and configuration.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_object_info",
+    "description": "Retrieves detailed information for a specific Blender scene object, identified by its name. The function returns a dictionary containing attributes such as name, type, location, rotation, scale, dimensions, visibility, renderability, material names, and, for mesh objects, vertex, edge, and face counts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "object_name": {
+          "type": "string",
+          "description": "The string name of the specific object within the Blender scene for which to retrieve detailed information."
+        }
+      },
+      "required": [
+        "object_name"
+      ]
+    }
+  },
+  {
+    "name": "get_polyhaven_categories",
+    "description": "Retrieve a list of categories for a specified asset type from Polyhaven. The `asset_type` parameter, which defaults to 'hdris', must be one of 'hdris', 'textures', 'models', or 'all'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "asset_type": {
+          "type": "string",
+          "description": "Specifies the type of asset for which to retrieve categories. Valid options are 'hdris', 'textures', 'models', or 'all'. This parameter defaults to 'hdris'."
+        }
+      }
+    }
+  },
+  {
+    "name": "get_polyhaven_status",
+    "description": "Checks if PolyHaven integration is enabled in Blender. Returns a dictionary that includes an `is_enabled` boolean indicating functionality and a `message` string detailing the availability of PolyHaven features.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_scene_info",
+    "description": "Retrieves comprehensive information about the current Blender scene. This includes the scene's name, counts of cameras, objects, and lights, and the name of the active camera if present. It also provides world environment settings such as ambient and horizon colors, along with rendering configurations like the engine, resolution, and output filepath.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "import_hyper3d_generated_asset",
+    "description": "Import an asset generated by Hyper3D Rodin after its generation task is completed. This requires providing either the `task_uuid` or `request_id` identifier, but crucially, only one of them, depending on the Hyper3D Rodin mode used for generation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The desired name for the imported object in the scene. This string cannot be empty. If an object with the specified name already exists, a numerical suffix (e.g., `name.001`) will be automatically appended to ensure uniqueness."
+        },
+        "task_uuid": {
+          "type": "string",
+          "description": "The `task_uuid` obtained during the model generation step, used specifically for Hyper3D Rodin's `MAIN_SITE` mode. This parameter defaults to the string 'null'."
+        },
+        "request_id": {
+          "type": "string",
+          "description": "The `request_id` is the identifier for the generated model, specifically used when Hyper3D Rodin is in FAL_AI mode. This value must be the `request_id` obtained from the generate model step. It defaults to 'null' and should not be provided if `task_uuid` is also specified."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "name": "poll_hyper3d_rodin_job_status",
+    "description": "Checks the status of a Hyper3D Rodin generation task, with its behavior and interpretation of status depending on whether a `subscription_key` (MAIN_SITE mode) or `request_id` (FAL_AI mode) is provided. For MAIN_SITE mode, the task completes when all job-related statuses are \"Done\" and fails if \"Failed\" is present. For FAL_AI mode, the task is complete when the overall status is \"COMPLETED\", in progress if \"IN_PROGRESS\", and potentially failed for other statuses.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "subscription_key": {
+          "type": "string",
+          "description": "An optional string representing the subscription key obtained during the model generation step. This key is specifically used for polling the job status when operating in `MAIN_SITE` mode. It defaults to `None`."
+        },
+        "request_id": {
+          "type": "string",
+          "description": "The request ID provided during the model generation step. This identifier is used for polling the job status when operating in FAL_AI mode and defaults to `None`."
+        }
+      }
+    }
+  },
+  {
+    "name": "run_python_script_in_blender",
+    "description": "Execute arbitrary Python code within the Blender simulation environment. This function supports access to functions/classes from dynamically discovered API modules (e.g., object.py, scene.py), classes from `SimulationEngine.models`, and the `_simulation_db` object. Due to its step-by-step operation, provide code in smaller, manageable chunks.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The Python code string to be executed within the Blender simulation environment. This code must be valid, non-empty, and should be provided in manageable chunks, with access to dynamically discovered API modules, classes from `SimulationEngine.models`, and the `_simulation_db` object."
+        }
+      },
+      "required": [
+        "code"
+      ]
+    }
+  },
+  {
+    "name": "search_polyhaven_assets",
+    "description": "Searches for Polyhaven assets, allowing filtering by `asset_type` (such as 'hdris', 'textures', 'models', or 'all') and an optional comma-separated list of `categories`. It returns a list of matching assets with basic information.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "asset_type": {
+          "type": "object",
+          "description": "The type of asset to search for. Valid options include 'hdris', 'textures', 'models', or 'all', which is the default. Internal validation ensures a valid asset type is provided."
+        },
+        "categories": {
+          "type": "object",
+          "description": "An optional string parameter used to filter assets by categories. Provide categories as a comma-separated list (e.g., 'nature, architecture'); it defaults to `None` and its type is validated internally."
+        }
+      }
+    }
+  },
+  {
+    "name": "set_object_texture",
+    "description": "Applies a Polyhaven texture to a specified object. The texture must be downloaded before it can be applied.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "object_name": {
+          "type": "string",
+          "description": "The string name of the object to which the texture will be applied."
+        },
+        "texture_id": {
+          "type": "string",
+          "description": "The ID of the Polyhaven texture to apply. This texture must be downloaded before it can be applied."
+        }
+      },
+      "required": [
+        "object_name",
+        "texture_id"
+      ]
+    }
+  }
+]

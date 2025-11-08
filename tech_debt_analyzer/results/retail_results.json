@@ -1,0 +1,493 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:59.057437Z",
+  "results": {
+    "retail/calculate_tool.py": {
+      "functions": {
+        "calculate": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's input (a mathematical expression) and output (the result of the calculation). The `Args` and `Returns` sections are well-structured and include type information.  The `Raises` section correctly lists the exceptions that the function might raise."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `CalculateInput` to validate the `expression` parameter. However, the try-except block around the model instantiation is insufficient.  The subsequent check `if not all(char in \"0123456789+-*/(). \" for char in expression):` duplicates some of the model's validation logic and is a less robust method.  A more comprehensive Pydantic model could eliminate the need for this additional check and potentially handle more edge cases.  The current implementation only partially leverages Pydantic's capabilities for input validation.  A more robust Pydantic model could improve the validation process."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by specifying `expression: str` in the function signature.  It also includes a check for invalid characters within the string, acting as a form of value validation.  However, it's missing crucial checks:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has one parameter, `expression`, which is correctly type-annotated as `str`.  The return type is also clearly specified as `str`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function generally works as intended, correctly calculating mathematical expressions and handling some exceptions.  The use of `eval()` is a significant security risk and should be replaced with a safer method of evaluating mathematical expressions (e.g., using a library like `ast.literal_eval` for safer evaluation or a dedicated math expression parser). The `CalculateInput` function and `ValidationError` are not defined in the provided code snippet, making it impossible to fully assess the exception handling.  While the docstring mentions handling `InvalidExpressionError` and `InvalidInputError`, the actual implementation relies on catching a generic `Exception`, which might mask other potential errors.  The rounding to two decimal places is implemented as requested.  The function correctly uses the `expression` parameter."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `calculate` does not handle phone numbers or email addresses as input.  Its purpose is to evaluate mathematical expressions, and it only accepts strings representing arithmetic calculations.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "retail/cancel_pending_order_tool.py": {
+      "functions": {
+        "cancel_pending_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the cancellation process, including user confirmation, refund handling (differentiating between gift card and other payment methods), and the time it takes for refunds to process. The Args and Returns sections are well-structured and detailed, including nested structures within the dictionary return value.  All possible exceptions are listed in the Raises section. Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `CancelPendingOrderInput` to validate the `order_id` and `reason` parameters before processing.  This is the primary method of input validation.  The `try...except` block handles `ValidationError` exceptions raised by Pydantic, converting them to a custom `InvalidInputError`.  This approach ensures that invalid inputs are caught before they reach the core logic of the function.  No other input validation is needed because Pydantic handles it comprehensively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on both functional input parameters.  `order_id` is implicitly validated for type (it's used as a key in a dictionary, implying string type) and the presence of a '#' at the beginning is not explicitly checked.  `reason` is validated against a set of allowed values.  However, there's no explicit check for `order_id` being an empty string or `reason` being a string with only whitespace.  Also, the function relies on a custom `CancelPendingOrderInput` class (not shown in the provided code) for validation, which might handle more comprehensive checks.  Without seeing the implementation of `CancelPendingOrderInput`, we can only assess the explicitly visible validation in the provided function code.  Therefore, while most validation is present, minor gaps exist, leading to a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id` and `reason`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the cancellation logic as described in the docstring.  Both `order_id` and `reason` parameters are used appropriately in the function's logic.  All documented exceptions (`OrderNotFoundError`, `NonPendingOrderError`, `InvalidCancelReasonError`, `InvalidInputError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB` dictionary. The return value matches the docstring's description.  The refund logic correctly handles gift card payments separately."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `cancel_pending_order` function does not handle any phone numbers or email addresses as input.  Its inputs are an order ID (string) and a cancellation reason (string). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on order management within a database."
+          }
+        }
+      }
+    },
+    "retail/modify_pending_order_address_tool.py": {
+      "functions": {
+        "modify_pending_order_address": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in modifying a pending order's address and the requirement for user confirmation (although this confirmation process isn't shown in the code itself). The Args section is well-written, specifying types and providing examples.  The Returns section is comprehensive, detailing the structure of the dictionary returned, including nested dictionaries and lists.  All possible exceptions are listed in the Raises section. Types are specified for all parameters and return values.  The documentation of the dictionary structure in the Returns section is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `ModifyPendingOrderAddressInput` to validate some of the input parameters (`order_id`, `address1`, `address2`, `city`, `state`, `country`, `zip_code`). However, the model definition is not shown, so we cannot assess the completeness of its validation rules.  If the model only partially validates these inputs (e.g., missing length restrictions, format checks, or allowed character sets), or if it doesn't validate all inputs, then the validation is only partially used.  Adding more comprehensive validation rules to the Pydantic model would improve the robustness of the input validation.  The `order_id` validation is particularly important, as it needs to check for the '#' prefix."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses a `ModifyPendingOrderAddressInput` class (presumably a Pydantic model) to perform type validation on the input parameters `order_id`, `address1`, `address2`, `city`, `state`, `country`, and `zip_code`.  This addresses type validation. However, the extent of value validation within `ModifyPendingOrderAddressInput` is not shown in the provided code snippet.  We can only assume it performs some level of value validation.  There's no explicit null/empty checks demonstrated in the provided code, nor are there checks for special constraints (e.g., zip code format, state code format). While the function raises `InvalidInputError` if `ModifyPendingOrderAddressInput` validation fails, the specific checks performed within that class are unknown.  Therefore, the validation is partial because the details of value validation, null/empty checks, and special constraints are not visible.  The only visible validation is type checking via the Pydantic model."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id`, `address1`, `address2`, `city`, `state`, `country`, `zip_code`) are properly type-annotated with their expected string types.  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles the `OrderNotFoundError` and `NonPendingOrderError` exceptions. Input parameters `address1`, `address2`, `city`, `state`, `country`, and `zip_code` are all used correctly to update the order address.  The function also correctly updates the `orders` dictionary in the global `DB`. However, the `InvalidInputError` exception handling relies on a `ModifyPendingOrderAddressInput` and `ValidationError` which are not defined in the provided code snippet.  The function also lacks the user confirmation step mentioned in the docstring (\"The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.\").  The implementation correctly returns a dictionary matching the docstring's description.  Therefore, while the core functionality is present, the missing input validation and user confirmation make it \"Mostly Complete\" instead of \"Fully Implemented\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `modify_pending_order_address` does not handle any phone numbers or email addresses.  Its input parameters are all related to a shipping address (address lines, city, state, country, zip code), and there is no processing or validation related to email or phone number formats. Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "retail/modify_pending_order_items_tool.py": {
+      "functions": {
+        "modify_pending_order_items": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core logic: modifying items in a pending order. The Args section is comprehensive, detailing each parameter's type and purpose, including helpful examples.  The Returns section is also well-structured, clearly outlining the structure of the dictionary returned, including nested dictionaries and lists.  The Raises section correctly lists all potential exceptions.  Types are consistently specified for parameters and return values.  The documentation of the dictionary structure in the Returns section is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `ModifyPendingOrderItemsInput` to validate `order_id`, `item_ids`, `new_item_ids`, and `payment_method_id`.  However, the validation within the Pydantic model itself is not shown in the provided code snippet.  The subsequent code performs additional validation checks (e.g., checking if the order exists, if items are found, etc.), which are redundant if the Pydantic model is properly defined to perform these checks.  A fully comprehensive Pydantic model would eliminate the need for much of the subsequent manual validation, leading to cleaner and more maintainable code.  Therefore, while Pydantic is used, it's not fully utilized to its potential for comprehensive input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (order_id, item_ids, new_item_ids, payment_method_id) are properly type-annotated with their expected types (str, List[str], List[str], str respectively).  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types like List and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles most of the expected exceptions and uses all functional input parameters (`order_id`, `item_ids`, `new_item_ids`, `payment_method_id`). The logic for updating the order items, handling price differences, and updating payment methods is implemented.  However, there's a potential issue: the function assumes that `products[product_id][\"variants\"][new_item_id]` always exists if `new_item_id` is in `products[product_id][\"variants\"]`.  It should add a check to explicitly handle cases where this might not be true to prevent unexpected errors.  Additionally, error handling could be improved by providing more specific error messages in some cases (e.g., instead of a generic \"Error: order not found\").  Finally, the function modifies the global `db.DB` directly; while this is acceptable given the context, it's generally better practice to return the updated order data and let the calling function handle the database update for better separation of concerns."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `modify_pending_order_items` does not handle any phone numbers or email addresses.  Its inputs and outputs are order IDs, item IDs, payment method IDs, and other order-related data. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "retail/modify_pending_order_payment_tool.py": {
+      "functions": {
+        "modify_pending_order_payment": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core task: modifying a pending order's payment method. The Args section correctly lists and describes the parameters, including helpful examples. The Returns section is comprehensive, detailing the structure of the returned dictionary, including nested dictionaries and lists.  The Raises section correctly lists all potential exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the Returns section is quite thorough."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ModifyPendingOrderPaymentInput` to validate the `order_id` and `payment_method_id` parameters before proceeding with the order modification logic.  This model (which is not shown in the provided code but is referenced) presumably defines the expected types and any constraints on these inputs. The `try...except` block catches `ValidationError` exceptions raised by Pydantic, converting them to a custom `InvalidInputError`. This demonstrates proper use of Pydantic for input validation.  No other input validation methods are needed because Pydantic handles it effectively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation and some value validation on both functional input parameters (`order_id` and `payment_method_id`).  `order_id` is implicitly checked for the presence of a '#' at the beginning within the `ModifyPendingOrderPaymentInput` class (though the exact validation within that class isn't shown).  The code also checks if the `order_id` and `payment_method_id` exist in the database and if the `payment_method_id` is valid for the given `order_id`.  However, there's no explicit check for empty strings or null values for either input parameter, which would improve robustness.  The function also relies on the `ModifyPendingOrderPaymentInput` class for validation, but the details of that class are not provided, limiting the complete assessment.  While the existing checks are valuable, the lack of explicit null/empty checks and the opaque nature of `ModifyPendingOrderPaymentInput` prevent a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id` and `payment_method_id`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the modification of a pending order's payment method.  All functional input parameters (`order_id` and `payment_method_id`) are used.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, considering the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and raised exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `modify_pending_order_payment` does not handle any phone number or email address inputs.  Its inputs are `order_id` (a string with a specific format) and `payment_method_id` (a string identifying a payment method). Neither of these are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on order management and payment method updates within a database context."
+          }
+        }
+      }
+    },
+    "retail/exchange_delivered_order_items_tool.py": {
+      "functions": {
+        "exchange_delivered_order_items": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core logic: exchanging items in a delivered order. The Args section is well-written, clearly specifying types and providing helpful examples for each parameter.  The Returns section is comprehensive, detailing the structure of the dictionary returned, including nested structures.  The Raises section lists all potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ExchangeDeliveredOrderItemsInput` to validate the `order_id`, `item_ids`, `new_item_ids`, and `payment_method_id` parameters before processing them.  This model handles type checking and likely other constraints (though the model definition is not shown).  The `try...except` block catches `ValidationError` exceptions raised by the Pydantic model, converting them to a custom `InvalidInputError`. This demonstrates proper use of Pydantic for input validation.  No other input validation methods are needed because Pydantic handles it effectively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on most functional input parameters, but there are some minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (order_id, item_ids, new_item_ids, payment_method_id) are properly type-annotated with their expected types (str, List[str], List[str], str respectively). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types like List and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and implements the core exchange logic.  It correctly handles most of the documented exceptions. However, there's a minor gap: the function doesn't explicitly check if the `order` object is successfully updated in the database after modifying its `status`. While the code updates `orders[order_id]`, a potential failure in this update is not handled.  Additionally, the price difference calculation could be improved for clarity and potential edge cases (e.g., handling negative price differences).  Finally, the function uses all functional input parameters correctly."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `exchange_delivered_order_items` function does not handle any phone numbers or email addresses.  Its inputs and outputs are all order-related IDs and data,  making phone number normalization and email validation irrelevant.  Therefore, the rating is \"Not Applicable\"."
+          }
+        }
+      }
+    },
+    "retail/return_delivered_order_items_tool.py": {
+      "functions": {
+        "return_delivered_order_items": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose, arguments, return value, and exceptions.  The description accurately reflects the function's role in handling order returns within the MCP server context.  All arguments are documented with types and descriptions, and the `Returns` section adequately describes the structure of the dictionary.  The `Raises` section lists all potential exceptions.  Types are specified for all parameters and return values.  The nested structure of the dictionary in the return value is well-documented."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `ReturnDeliveredOrderItemsInput` to validate `order_id`, `item_ids`, and `payment_method_id`.  However, the validation within the Pydantic model is not shown in the provided code snippet.  Without seeing the definition of `ReturnDeliveredOrderItemsInput`, it's impossible to know the extent of its validation capabilities.  The function also performs additional validation checks after the Pydantic model, such as checking if the order exists, its status, and if the payment method is valid. While Pydantic is used, it doesn't cover all validation aspects; some are handled manually.  A more comprehensive Pydantic model could potentially consolidate these checks."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id`, `item_ids`, `payment_method_id`) are properly type-annotated with their expected types (str, List[str], str respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like List and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `order_id`, `item_ids`, and `payment_method_id` parameters.  All documented exceptions are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type. However, the function's logic for checking duplicate `item_ids` could be improved.  The current check `if item_ids.count(item_id) > all_item_ids.count(item_id):` might not be entirely robust in all edge cases (e.g., if an item ID exists in `item_ids` more times than it exists in `all_item_ids`, but the total count of other item IDs in `item_ids` is less than or equal to the total count of other item IDs in `all_item_ids`). A more precise check might involve comparing the counts of each unique item ID in both lists.  Also, the function updates the `orders` dictionary in place, which while functional within the context of the global `DB`, might not be ideal for larger applications.  A more robust approach might involve creating a copy of the order before modification."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `return_delivered_order_items` does not handle any phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on order management and does not involve user contact information in the form of phone numbers or emails."
+          }
+        }
+      }
+    },
+    "retail/modify_user_address_tool.py": {
+      "functions": {
+        "modify_user_address": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  The Args section accurately describes the parameters and their types. The Returns section correctly identifies the return type as a dictionary, but its description is overly verbose and could be more concise.  The nested structure of the returned dictionary is well-documented, which is excellent.  The Raises section correctly lists the exceptions.  All parameters and return values have type hints."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `ModifyUserAddressInput` to validate some of the input parameters. However, the code doesn't show the definition of this model, so we cannot assess the completeness of its validation.  If the model validates all the functional input parameters (`user_id`, `address1`, `address2`, `city`, `state`, `country`, `zip_code`), then the validation would be considered properly used.  However, if the model only validates a subset of these parameters, or if the validation within the model is insufficient, then the validation is only partially used.  Adding comprehensive validation rules within the `ModifyUserAddressInput` Pydantic model would improve the robustness of the input validation.  Currently, we only know that *some* validation is happening, but not how comprehensive it is."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function utilizes a `ModifyUserAddressInput` class (not shown in the provided code) to perform some input validation.  However, the extent of this validation within `ModifyUserAddressInput` is unknown.  The code shows type hinting for all inputs, but this is not runtime validation.  The function performs a check for the existence of the user ID in the database (`users`), but this is not strictly input validation; it's a data lookup.  No other validation is explicitly performed on the address components (`address1`, `address2`, `city`, `state`, `country`, `zip_code`) for things like length, format, or allowed characters.  Therefore, while some validation might exist within the unseen `ModifyUserAddressInput` class, the provided code itself demonstrates only partial input validation.  The `try...except` block handles `ValidationError`, but this only shows that *some* validation is attempted, not what kind or how thorough it is."
+          },
+          "function_parameters": {
+            "status": "Good",
+            "notes": "All parameters are properly type-annotated with their expected string types. The return type is annotated as `Dict[str, Any]`, which is acceptable given the complexity of the returned dictionary.  There is no use of `**kwargs`. However, the type annotation `Dict[str, Any]` for the return type is not as precise as it could be; a more specific type hint would improve the code.  Also, the internal `zip_code` parameter is inconsistently named `zip` within the function body.  This inconsistency, while not a type annotation issue, impacts code clarity."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly modifies the user's address in the global `DB` and handles the `UserNotFoundError` exception.  However, it lacks the user confirmation step described in the docstring.  The `InvalidInputError` is raised, but the validation itself happens within a `try-except` block, making it unclear what validation is actually performed by `ModifyUserAddressInput`.  The function also doesn't include the user's name, email, payment methods, or order history in the returned dictionary, as specified in the docstring's description of the return value.  While the address is updated correctly, the rest of the user data is missing from the response."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `modify_user_address` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on modifying a user's address information, which includes fields like street address, city, state, country, and zip code.  No email or phone number fields are present in the function's parameters or return value."
+          }
+        }
+      }
+    },
+    "retail/find_user_id_by_email_tool.py": {
+      "functions": {
+        "find_user_id_by_email": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's core logic: finding a user ID based on email. The Args, Returns, and Raises sections are present and correctly identify the email parameter type, the return type (string), and the exceptions raised (UserNotFoundError and InvalidInputError).  Type hints are used effectively."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `FindUserIdByEmailInput` (not shown in the provided code snippet, but implied by the `try...except ValidationError` block) to validate the `email` input parameter.  This demonstrates proper usage of Pydantic for input validation.  The `try...except` block catches `ValidationError` exceptions, indicating that the model is indeed used for validation.  No other input validation is needed because the email is the only functional parameter, and it is validated by the Pydantic model."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `email` parameter by declaring it as `str` in the function signature.  However, it lacks crucial value validation.  While it uses `FindUserIdByEmailInput` which presumably performs some validation and raises a `ValidationError`, the specifics of that validation are unknown.  The code only checks for the existence of a user with a matching email (case-insensitive), but doesn't validate the email format itself (e.g., ensuring it contains \"@\" and a domain).  There's also no explicit check for a `None` or empty string email.  Therefore, while type validation is present, value and null/empty checks are missing or insufficient, resulting in a \"Partial\" rating.  The error handling is adequate for the implemented validation, raising `InvalidInputError` for validation failures."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `find_user_id_by_email` has an excellent parameter design.  The single parameter `email` is correctly type-annotated as `str`. The return type is also clearly specified as `str`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `email` parameter to search for a user ID in the `users` dictionary within the global `DB`.  It handles the `UserNotFoundError` exception as documented.  The input validation using `FindUserIdByEmailInput` is a good addition, correctly raising `InvalidInputError` for validation failures. However, the function's return type is documented as `str`, but it raises an exception if the user is not found. While this is technically correct according to the docstring (which specifies raising an exception), a more robust implementation might return a specific value (e.g., an empty string or None) instead of raising an exception in the case of a user not found, aligning better with common practices for functions that search for data.  This minor inconsistency makes the rating \"Mostly Complete\" instead of \"Fully Implemented\"."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The provided function only handles email addresses, not phone numbers.  Therefore, there's no phone number normalization to assess.  The email validation is present but indirect. It relies on a `FindUserIdByEmailInput` class (not shown) and a `ValidationError` exception to handle invalid email formats.  This is a good approach in terms of separating concerns and making the code more readable. However, without seeing the implementation of `FindUserIdByEmailInput`, we cannot definitively say how robust its email validation is.  It *could* be using a comprehensive regular expression or a dedicated validation library, making the validation excellent.  Or, it could be performing minimal checks, making the validation only good.  Because the internal validation mechanism is opaque, we can only rate the provided function as \"Good,\" acknowledging the potential for better email validation depending on the unseen `FindUserIdByEmailInput` class.  The function's structure is well-organized, using exceptions effectively to handle errors."
+          }
+        }
+      }
+    },
+    "retail/find_user_id_by_name_zip_tool.py": {
+      "functions": {
+        "find_user_id_by_name_zip": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly lists the arguments and their types, and it mentions the `UserNotFoundError` and `InvalidInputError` exceptions. The Returns section accurately reflects the return type.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `FindUserIdByNameZipInput` (presumably defined elsewhere) to validate the `first_name`, `last_name`, and `zip_code` inputs before processing them.  The `try...except` block catches `ValidationError` exceptions raised by the Pydantic model, converting them to a custom `InvalidInputError`. This demonstrates proper use of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through type hinting (`first_name: str`, `last_name: str`, `zip_code: str`).  However, it lacks crucial value validation.  While it checks for the existence of a user matching the provided criteria, it doesn't validate the format or content of `first_name`, `last_name`, or `zip_code`. For example, it doesn't check if `zip_code` is a valid zip code format, or if `first_name` and `last_name` contain only allowed characters.  The `FindUserIdByNameZipInput` function is called, but we don't know its implementation, so we cannot assess its validation capabilities.  The function raises `InvalidInputError` if `FindUserIdByNameZipInput` raises a `ValidationError`, but this is insufficient without knowing what validations `FindUserIdByNameZipInput` performs.  Null or empty checks are also missing.  Therefore, while type hinting provides some level of validation, significant value and null/empty checks are absent, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`first_name`, `last_name`, `zip_code`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `str`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `first_name`, `last_name`, and `zip_code` parameters to search the `users` dictionary in the global `DB`.  It correctly raises `UserNotFoundError` if no matching user is found and `InvalidInputError` if input validation fails (assuming `FindUserIdByNameZipInput` and `ValidationError` are properly defined elsewhere).  The docstring accurately reflects the function's behavior and return type. However, the `try...except` block around `FindUserIdByNameZipInput` only handles `ValidationError`.  Other potential exceptions from `FindUserIdByNameZipInput` are not handled, which could lead to unexpected behavior.  Additionally, the function's docstring mentions that it's a fallback mechanism used only if a user isn't found by email.  This aspect is not reflected in the code itself; the function operates in isolation without any indication of email-based lookup attempts."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `find_user_id_by_name_zip` does not handle any phone numbers or email addresses as input.  Its inputs are a first name, last name, and zip code. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function's focus is on searching a database based on provided personal information, not on processing communication details."
+          }
+        }
+      }
+    },
+    "retail/get_order_details_tool.py": {
+      "functions": {
+        "get_order_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  The description is clear and helpful for an MCP server context.  Types are specified for all parameters and the return value.  The documentation of the nested dictionary and list structures within the return value is thorough and well-structured, making it easy to understand the complex data structure.  All possible exceptions are documented."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `GetOrderDetailsInput` to validate the `order_id` input parameter.  A `try-except` block catches `ValidationError` exceptions raised by the model, converting them into a custom `InvalidInputError`. This demonstrates proper use of Pydantic for input validation.  No other input validation is needed because the `order_id` is the only functional parameter, and it is fully handled by Pydantic."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `order_id` parameter by using type hinting (`order_id: str`).  However, it lacks value validation.  The docstring mentions that the order ID starts with '#', but this constraint is not enforced.  There's no check for empty or null `order_id`, nor is there validation to ensure the remaining part of the `order_id` conforms to any expected format or length.  While the `GetOrderDetailsInput` function is called and presumably handles further validation, the details of that validation are not shown, making it impossible to assess its completeness.  The error handling is good in that it catches `ValidationError` and raises `InvalidInputError`, but the specifics of what constitutes an invalid input are not fully clear from the provided code snippet.  Therefore, the validation is only partially complete."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_order_details` has excellent parameter design.  The single parameter `order_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the return dictionary are also properly specified (List, Dict)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `order_id` parameter to retrieve order details from the global `DB` dictionary.  It handles the `OrderNotFoundError` exception as documented. Input validation is performed using `GetOrderDetailsInput`, which raises `InvalidInputError` if the input is invalid.  The function correctly returns a dictionary matching the structure specified in the docstring when an order is found. However, the implementation relies on the existence of `Order` class and `model_dump` method, which are not defined in the provided code snippet.  The completeness of the function depends on the correct implementation of these external components.  Without knowing the specifics of `Order` and `model_dump`, it's impossible to definitively say the function is fully implemented, hence the \"Mostly Complete\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_order_details` function does not handle any phone number or email address inputs.  Its input is an order ID string, and its output is order details from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its designated input and output, raising appropriate exceptions when necessary."
+          }
+        }
+      }
+    },
+    "retail/get_product_details_tool.py": {
+      "functions": {
+        "get_product_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs and outputs, including the structure of the nested dictionaries within the `variants` field of the return value.  The `Args`, `Returns`, and `Raises` sections are well-structured and informative.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `GetProductDetailsInput` to validate the `product_id` parameter. However, the code doesn't show the definition of this model.  Assuming it correctly validates the `product_id` as a string (which is the only functional input parameter), the validation is partially implemented because it only validates one parameter.  Adding validation for other potential parameters (if any existed in the function signature) would make the validation more comprehensive.  If `GetProductDetailsInput` only validates that `product_id` is a string, then more robust validation (e.g., checking length, format, or existence in the database before querying) might be beneficial."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `product_id` by declaring it as a string in the function signature.  However, it lacks value validation.  There's no check to ensure `product_id` is a non-empty string, or that it conforms to any expected format (e.g., numeric only, specific length). While it uses `GetProductDetailsInput` which presumably performs further validation, the code provided doesn't show what validations are performed within that class. The existence of a `try...except` block around `GetProductDetailsInput` suggests that some validation is happening, but the extent is unknown.  The function also raises `InvalidInputError` if `GetProductDetailsInput` raises a `ValidationError`, which is good error handling.  However, without seeing the implementation of `GetProductDetailsInput`, we cannot assess the comprehensiveness of the validation.  Therefore, the validation is only partially complete based on the code provided."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_product_details` has excellent parameter design and type annotations.  The single parameter `product_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  The complex type `Dict[str, Any]` for the return value and nested dictionaries within it are also properly specified, although the `Any` type might benefit from more precise typing if feasible."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `product_id` input parameter to fetch data from the global `DB`.  It handles the `ProductNotFoundError` exception as documented.  The input validation using `GetProductDetailsInput` is a good practice. However, the function's return type is `Dict[str, Any]`, which is less precise than the structured dictionary described in the docstring.  The docstring specifies a nested structure for `variants`, but the actual return type lacks this explicit structure.  While the function likely produces a dictionary with the described fields, the lack of type hinting in the return value makes it less robust and harder to use safely.  Adding type hints to the return value would improve the code."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_product_details` does not handle phone numbers or email addresses as input.  Its input is a `product_id` which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving product details from a database based on a product ID."
+          }
+        }
+      }
+    },
+    "retail/get_user_details_tool.py": {
+      "functions": {
+        "get_user_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and functionality.  It accurately describes the function's arguments and their types. The `Returns` section is detailed, correctly outlining the nested structure of the dictionary, including types for all keys and nested structures.  The `Raises` section correctly lists the exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `GetUserDetailsInput` to validate the `user_id` parameter before accessing the database.  This is the primary functional input, and the try-except block handles `ValidationError` to raise a custom `InvalidInputError`.  This demonstrates proper usage of Pydantic for input validation.  No other input validation is needed because the `user_id` is the only functional parameter requiring validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `user_id` parameter by using type hinting (`user_id: str`).  However, it lacks value validation.  There's no check to ensure the `user_id` follows a specific format (e.g., alphanumeric characters only, minimum/maximum length), or that it exists in the database before attempting to access it.  The `try...except` block handles potential `ValidationError` from a `GetUserDetailsInput` class (which is not shown), but this doesn't cover all potential issues (e.g., a malformed `user_id` might not raise a `ValidationError`). While the function raises `UserNotFoundError` if the user isn't found, this is not strictly input validation; it's handling a condition after the input has been (partially) processed.  The function needs additional checks to ensure the `user_id` is a valid value before database access."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_user_details` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`user_id: str`). The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used.  Complex types within the return dictionary (List, Dict, Optional) are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `user_id` parameter to fetch user details from the global `DB` dictionary.  It handles the `UserNotFoundError` exception as documented. Input validation is performed using `GetUserDetailsInput`, which raises a `ValidationError` that is caught and re-raised as an `InvalidInputError`. The function returns a dictionary structured as specified in the docstring, using `User(**users[user_id]).model_dump(mode=\"json\")`.  However, the implementation relies on the existence of `User` and `model_dump` which are not defined within the provided code snippet.  Assuming these are correctly defined elsewhere and handle the data transformation correctly, the function is mostly complete.  The minor gap is the reliance on external, undefined components (`User` and `model_dump`).  If these components are not correctly implemented, the function's completeness would be significantly reduced."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_user_details` function does not handle phone numbers or email addresses as input.  It only takes a `user_id` string as input and retrieves user data from a database (presumably).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does raise `InvalidInputError` if there's a problem with the `user_id` input based on a `GetUserDetailsInput` validation, but this is not related to phone or email validation."
+          }
+        }
+      }
+    },
+    "retail/list_all_product_types_tool.py": {
+      "functions": {
+        "list_all_product_types": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to several inconsistencies and omissions.  While it correctly states the function's purpose\u2014listing product types\u2014the description of the return value is significantly flawed.  The docstring claims the return type is `Dict[str, Any]`, but the function actually returns a Pydantic model instance (`ListAllProductTypesOutput`) serialized to JSON. This is a critical inconsistency.  The inner structure of the dictionary (`products: Dict[str, str]`) is mentioned, but the actual return type completely contradicts this.  The docstring also fails to mention the use of `model_dump(mode=\"json\")`, which fundamentally alters the return type from what's described.  Furthermore, while the docstring mentions that there are only 50 product types, this information is irrelevant to the function's usage and could be misleading.  The docstring lacks a \"Raises\" section, despite the possibility of exceptions during database interaction (e.g., `KeyError` if the \"products\" key is missing from the `DB`).  Finally, the phrase \"Each product type has a variety of different items...\" is extraneous and doesn't add value to the description of this specific function."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `list_all_product_types` does not have any functional input parameters.  It only interacts with the global `DB` to retrieve data.  Therefore, input validation is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_all_product_types` does not have any functional input parameters.  Therefore, no input parameter validation is needed, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_all_product_types` has no parameters.  The return type is clearly specified as `Dict[str, Any]`, although a more precise type hinting might be possible if the structure of `ListAllProductTypesOutput` is known (e.g., `ListAllProductTypesOutput`). There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves product data from the global `DB` and formats it into the specified dictionary structure.  The sorting of the dictionary is a nice touch. However, the use of `ListAllProductTypesOutput` and `model_dump(mode=\"json\")` suggests the presence of a Pydantic model.  Without seeing the definition of `ListAllProductTypesOutput`, it's impossible to definitively say whether the JSON serialization is correctly implemented and aligns with the docstring's promise.  The docstring states the return type is `Dict[str, Any]`, but the actual return is a JSON string. While functionally it provides the data, this is a mismatch between the docstring and implementation.  If `ListAllProductTypesOutput` correctly handles the conversion and potential errors during serialization, then the implementation would be closer to \"Fully Implemented\".  As it stands, the discrepancy in the return type warrants a \"Mostly Complete\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_all_product_types` does not handle any phone number or email address inputs.  It interacts with a database to retrieve product information. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "retail/think_tool.py": {
+      "functions": {
+        "think": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose within the context of an MCP server.  It accurately describes the function's behavior (appending to a log, not modifying the database). The Args, Returns, and Raises sections are present and correctly reflect the function signature and exception handling.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ThinkInput` to validate the `thought` parameter, which is the only functional input parameter.  The `try...except` block catches `ValidationError` exceptions raised by Pydantic, converting them to a custom `InvalidInputError`. This demonstrates proper use of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function `think` performs type validation on the `thought` parameter by implicitly expecting a string (due to the type hint `thought: str`).  However, it lacks value validation.  There's no check for excessively long strings, potentially leading to issues like buffer overflows or database constraints if `ThinkInput` internally uses the `thought` parameter in a way that's sensitive to length.  While it handles `ValidationError` from `ThinkInput`, we don't know what validations `ThinkInput` performs, making the overall validation status of the `thought` parameter uncertain.  There is no explicit check for an empty string or `None` value.  Therefore, the validation is partial, as type validation is present but crucial value and null checks are missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `think` has excellent parameter design.  All parameters (`thought`) are properly type-annotated with their expected types (str). The return type is also clearly specified as `str`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly appends the input `thought` to the log (presumably via the `ThinkInput` class, which interacts with the global `DB` - this is acceptable per the instructions).  It handles the `ValidationError` exception as documented, raising an `InvalidInputError` as expected. The return value is an empty string as specified in the docstring.  All functional input parameters are used. There are no placeholders or TODOs. The implementation matches the docstring's description of behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `think` function does not process or handle phone numbers or email addresses.  Its input is a generic `thought` string, and it doesn't perform any specific normalization or validation on that string related to phone numbers or emails.  Therefore, the criteria for phone number normalization and email validation are not applicable.  The function simply passes the input to a `ThinkInput` class (which is not defined in the provided code), and handles potential `ValidationError` exceptions.  The core functionality of the `think` function is unrelated to the task of processing phone numbers or email addresses."
+          }
+        }
+      }
+    },
+    "retail/transfer_to_human_agents_tool.py": {
+      "functions": {
+        "transfer_to_human_agents": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: transferring a user to a human agent.  The Args, Returns, and Raises sections are all present and correctly reflect the function's parameters, return value, and exception handling.  Types are specified for parameters and the return value.  The docstring accurately describes the function's behavior.  However, it could be slightly improved by adding more detail about the nature of the confirmation message returned (\"Transfer successful\" is quite generic).  A more descriptive example of the confirmation message or a mention of potential variations based on the outcome would enhance clarity.  There are no inconsistencies between the docstring and the implementation."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`TransferToHumanAgentsInput`) to validate the `summary` parameter, which is the only functional input.  This is the correct and preferred method for input validation in this context.  The `try...except` block correctly handles `ValidationError` exceptions raised by Pydantic. No other input validation is needed."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by using type hinting (`summary: str`).  However, it lacks value validation.  There's no check for the content of the `summary` string; it could be empty, contain only whitespace, or contain invalid characters. While it catches `ValidationError` from `TransferToHumanAgentsInput`, we don't know what validations that class performs.  Therefore, the validation is only partially complete because the crucial value validation of the `summary` parameter is missing or at least not explicitly shown in the provided code snippet.  The function does handle exceptions appropriately, raising `InvalidInputError`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `transfer_to_human_agents` has excellent parameter design.  The single parameter `summary` is correctly type-annotated as `str`. The return type is also clearly specified as `str`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `summary` parameter to create a `TransferToHumanAgentsInput` object and handles the `ValidationError` exception as documented.  The return value matches the docstring. However, the core functionality of actually transferring the user to a human agent is missing.  The code only validates the input and returns a success message; it doesn't interact with any system or database to initiate the transfer.  The implementation assumes that `TransferToHumanAgentsInput` and `ValidationError` handle the actual transfer logic, which is not explicitly shown in the provided code snippet.  This makes the function incomplete in terms of its core purpose, despite correctly handling input validation and exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `transfer_to_human_agents` does not handle phone numbers or email addresses as input.  The input is a string summary, and there's no processing or validation related to phone numbers or emails.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function relies on a `TransferToHumanAgentsInput` class (not shown) and its associated `ValidationError`, suggesting that input validation might happen within that class, but it's not visible in the provided code snippet."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "retail": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `SimulationEngine` folder has all the essential components (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, `error_definitions.json`, `utils.py`). The `tests` folder also meets the requirements, containing an `__init__.py` and multiple test files."
+      }
+    }
+  }
+}

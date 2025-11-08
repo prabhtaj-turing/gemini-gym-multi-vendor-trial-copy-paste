@@ -1,0 +1,752 @@
+[
+    {
+        "name": "append_spreadsheet_values",
+        "description": "Append values to a range in a spreadsheet.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The non-empty string ID of the spreadsheet to which values are appended."
+                },
+                "range": {
+                    "type": "string",
+                    "description": "The A1 notation string defining the range to append values to, using an optional sheet name, column letters, and row numbers for cell coordinates, such as \"Sheet1!A1:D3\" or \"A1:D3\"."
+                },
+                "valueInputOption": {
+                    "type": "string",
+                    "description": "Specifies how the input data should be interpreted; allowed values are 'RAW' or 'USER_ENTERED'."
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "any"
+                        }
+                    },
+                    "description": "The values to append to the range, structured as a list of lists (e.g., `List[List[Any]]`)."
+                },
+                "insertDataOption": {
+                    "type": "string",
+                    "description": "Specifies how input data is inserted, accepting 'OVERWRITE' or 'INSERT_ROWS'; defaults to `None`, which behaves as 'INSERT_ROWS'."
+                },
+                "includeValuesInResponse": {
+                    "type": "boolean",
+                    "description": "Include appended values in the response; defaults to `False`."
+                },
+                "responseValueRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how values are rendered in the response: `FORMATTED_VALUE`, `UNFORMATTED_VALUE`, or `FORMULA`. Defaults to `FORMATTED_VALUE`."
+                },
+                "responseDateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how dates, times, and durations are rendered in the response, allowing `SERIAL_NUMBER` (default) or `FORMATTED_STRING`."
+                },
+                "majorDimension": {
+                    "type": "string",
+                    "description": "Specifies the major dimension of the values; allowed values are 'ROWS' (default) or 'COLUMNS'."
+                }
+            },
+            "required": [
+                "range",
+                "spreadsheet_id",
+                "valueInputOption",
+                "values"
+            ]
+        }
+    },
+    {
+        "name": "batch_clear_spreadsheet_values",
+        "description": "Clears values from multiple ranges in a spreadsheet.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to clear values from."
+                },
+                "ranges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of ranges to clear, specified using A1 notation, which defines cells or ranges with a string containing an optional sheet name and cell coordinates (e.g., \"Sheet1!A1:D3\" or \"A1:D3\")."
+                }
+            },
+            "required": [
+                "ranges",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "batch_clear_spreadsheet_values_by_data_filter",
+        "description": "Clear values from a spreadsheet using data filters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The spreadsheet ID for clearing values."
+                },
+                "dataFilters": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    },
+                    "description": "A list of data filters, where each filter specifies the range to clear using an `a1Range` string formatted in A1 notation (e.g., \"Sheet1!A1:D3\" or \"A1:D3\")."
+                }
+            },
+            "required": [
+                "dataFilters",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "batch_get_spreadsheet_values",
+        "description": "Gets values from multiple spreadsheet ranges.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to retrieve values from."
+                },
+                "ranges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of A1 notation strings, defining cell or cell ranges using column letters and row numbers, optionally prefixed with a sheet name (e.g., `Sheet1!A1:D3` or `A1:D3`)."
+                },
+                "majorDimension": {
+                    "type": "string",
+                    "description": "Specifies the major dimension for results, accepting \"ROWS\" or \"COLUMNS\"."
+                },
+                "valueRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how values are rendered in the output; valid options are `\"FORMATTED_VALUE\"`, `\"UNFORMATTED_VALUE\"`, or `\"FORMULA\"`, defaulting to `\"FORMATTED_VALUE\"`."
+                },
+                "dateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how dates, times, and durations are rendered; valid values are `SERIAL_NUMBER` and `FORMATTED_STRING`, defaulting to `SERIAL_NUMBER`."
+                }
+            },
+            "required": [
+                "ranges",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "batch_get_spreadsheet_values_by_data_filter",
+        "description": "Retrieves values from a simulated spreadsheet data store using data filters and an API-aligned return structure.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to retrieve values from."
+                },
+                "dataFilters": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {}
+                    },
+                    "description": "A list of data filter dictionaries, each specifying one of the following: an A1 notation range (e.g., `{\"a1Range\": \"Sheet1!A1:D3\"}` or `{\"a1Range\": \"A1:D3\"}`), or conceptually, a `gridRange` or `developerMetadataLookup`. Returns an empty `valueRanges` list if None or empty."
+                },
+                "majorDimension": {
+                    "type": "string",
+                    "description": "The major dimension for results, either 'ROWS' or 'COLUMNS'."
+                },
+                "valueRenderOption": {
+                    "type": "string",
+                    "description": "Defines how output values are rendered, accepting \"FORMATTED_VALUE\", \"UNFORMATTED_VALUE\", or \"FORMULA\", with \"FORMATTED_VALUE\" as default."
+                },
+                "dateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how dates, times, and durations are represented in the output; this is ignored if `valueRenderOption` is `FORMATTED_VALUE`. Valid values: `SERIAL_NUMBER` (default) or `FORMATTED_STRING`."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The user ID for accessing the spreadsheet, defaulting to \"me\" if not provided."
+                }
+            },
+            "required": [
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "batch_update_spreadsheet",
+        "description": "Applies one or more updates to the spreadsheet, including adding, deleting, or updating sheets and updating cells.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The spreadsheet ID to update."
+                },
+                "requests": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {}
+                    },
+                    "description": "A list of update request dictionaries, where each contains exactly one key specifying the request type and a dictionary payload; supported types and their required payload fields include `addSheetRequest` (`properties` with `sheetId`), `deleteSheetRequest` (`sheetId`), `updateSheetPropertiesRequest` (`properties` with `sheetId`, `fields`), `updateCells` (`range`, `rows`), and `updateSheetProperties` (`properties` with `sheetId`; `fields` is optional)."
+                },
+                "include_spreadsheet_in_response": {
+                    "type": "boolean",
+                    "description": "Include the updated spreadsheet in the response; defaults to `False`."
+                },
+                "response_ranges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings specifying ranges to include in the response when `include_spreadsheet_in_response` is `True`; defaults to `None`."
+                },
+                "response_include_grid_data": {
+                    "type": "boolean",
+                    "description": "Includes grid data in the response if `include_spreadsheet_in_response` is True; defaults to `False`."
+                }
+            },
+            "required": [
+                "requests",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "batch_update_spreadsheet_values",
+        "description": "Updates values in multiple ranges of a spreadsheet.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to update."
+                },
+                "valueInputOption": {
+                    "type": "string",
+                    "description": "A string indicating how input data is interpreted: `RAW` inserts values as-is, while `USER_ENTERED` parses values like a Sheets user entry, converting formulas, date/time strings, and numbers."
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    },
+                    "description": "A list of update requests, where each request is a dictionary containing a `range` (A1 notation, e.g., \"Sheet1!A1:D3\") and `values` (a list of rows) to update."
+                },
+                "includeValuesInResponse": {
+                    "type": "boolean",
+                    "description": "Includes updated values in the response (defaults to False)."
+                },
+                "responseValueRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how values are rendered in the response, defaulting to \"FORMATTED_VALUE\". Valid values are \"FORMATTED_VALUE\", \"UNFORMATTED_VALUE\" (explicitly handled), and \"FORMULA\" (not currently implemented)."
+                },
+                "responseDateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Defines how dates, times, and durations are rendered in the response, defaulting to `SERIAL_NUMBER`; `SERIAL_NUMBER` is explicitly handled, while `FORMATTED_STRING` is not currently implemented."
+                }
+            },
+            "required": [
+                "data",
+                "spreadsheet_id",
+                "valueInputOption"
+            ]
+        }
+    },
+    {
+        "name": "batch_update_spreadsheet_values_by_data_filter",
+        "description": "Update spreadsheet values using data filters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "ID of the spreadsheet to update."
+                },
+                "valueInputOption": {
+                    "type": "string",
+                    "description": "Determines how input data is interpreted; valid values are `RAW` (stores values as-is) and `USER_ENTERED` (parses values as if entered by a user), with `INPUT_VALUE_OPTION_UNSPECIFIED` not allowed."
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    },
+                    "description": "A list of update requests, each containing values to update a specified range defined by A1 notation (e.g., 'Sheet1!A1:D3' or 'A1:D3') using either a `dataFilter` dictionary with `a1Range` or a direct `range` string."
+                },
+                "includeValuesInResponse": {
+                    "type": "boolean",
+                    "description": "Includes updated values in the response; defaults to `False`."
+                },
+                "responseValueRenderOption": {
+                    "type": "string",
+                    "description": "Determines how values in the response should be rendered, with valid options \"FORMATTED_VALUE\", \"UNFORMATTED_VALUE\", or \"FORMULA\"; defaults to \"FORMATTED_VALUE\"."
+                },
+                "responseDateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Determines how dates, times, and durations are rendered in the response; ignored if `responseValueRenderOption` is `FORMATTED_VALUE`. Valid values are `SERIAL_NUMBER` (default) or `FORMATTED_STRING`."
+                }
+            },
+            "required": [
+                "data",
+                "spreadsheet_id",
+                "valueInputOption"
+            ]
+        }
+    },
+    {
+        "name": "clear_spreadsheet_values",
+        "description": "Clears values from a specified range in a spreadsheet using A1 notation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to clear values from."
+                },
+                "range": {
+                    "type": "string",
+                    "description": "A string representing the A1 notation of the range to append values to, formatted as a sheet name (optional) and cell coordinates, such as `Sheet1!A1:D3` or `A1:D3`."
+                }
+            },
+            "required": [
+                "range",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "copy_sheet_to_spreadsheet",
+        "description": "Copies a sheet to a new spreadsheet.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to copy the sheet from."
+                },
+                "sheet_id": {
+                    "type": "string",
+                    "description": "The ID of the sheet to copy."
+                },
+                "destination_spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the destination spreadsheet."
+                }
+            },
+            "required": [
+                "destination_spreadsheet_id",
+                "sheet_id",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "create_spreadsheet",
+        "description": "Create a new spreadsheet.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "A system-generated ID for the spreadsheet; any value provided is ignored."
+                        },
+                        "properties": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "The title of the spreadsheet, defaulting to `Untitled Spreadsheet`."
+                                },
+                                "locale": {
+                                    "type": "string",
+                                    "description": "The spreadsheet's locale."
+                                },
+                                "autoRecalc": {
+                                    "type": "string",
+                                    "description": "The setting that controls automatic recalculation."
+                                },
+                                "timeZone": {
+                                    "type": "string",
+                                    "description": "The time zone of the spreadsheet."
+                                },
+                                "defaultFormat": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "The default formatting for all cells in the spreadsheet."
+                                },
+                                "iterativeCalculationSettings": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "Settings for iterative calculation."
+                                },
+                                "owner": {
+                                    "type": "string",
+                                    "description": "The email address of the owner."
+                                },
+                                "permissions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {}
+                                    },
+                                    "description": "A list of permissions."
+                                },
+                                "parents": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "A list of parent folder IDs where the file will be placed."
+                                },
+                                "size": {
+                                    "type": "integer",
+                                    "description": "The file size in bytes."
+                                },
+                                "trashed": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether the file is in the trash."
+                                },
+                                "starred": {
+                                    "type": "boolean",
+                                    "description": "Indicates if the file is starred."
+                                },
+                                "createdTime": {
+                                    "type": "string",
+                                    "description": "The time the spreadsheet was created."
+                                },
+                                "modifiedTime": {
+                                    "type": "string",
+                                    "description": "The time the spreadsheet was last modified, as a timestamp."
+                                }
+                            },
+                            "description": "An object containing the properties for the spreadsheet."
+                        },
+                        "sheets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "properties": {
+                                        "type": "object",
+                                        "properties": {
+                                            "sheetId": {
+                                                "type": "string",
+                                                "description": "Unique identifier for the sheet"
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "description": "Title of the sheet"
+                                            },
+                                            "index": {
+                                                "type": "integer",
+                                                "description": "Position of the sheet"
+                                            },
+                                            "sheetType": {
+                                                "type": "string",
+                                                "description": "Type of the sheet"
+                                            },
+                                            "gridProperties": {
+                                                "type": "object",
+                                                "properties": {},
+                                                "description": "Grid properties"
+                                            }
+                                        },
+                                        "description": "Sheet properties including:",
+                                        "required": [
+                                            "index",
+                                            "title"
+                                        ]
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Sheet data using A1 notation. The key is the range in A1 notation. The value is a list of lists of cell values."
+                                    },
+                                    "merges": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Cell merges"
+                                    },
+                                    "conditionalFormats": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Conditional formatting"
+                                    },
+                                    "filterViews": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Filter views"
+                                    },
+                                    "protectedRanges": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Protected ranges"
+                                    },
+                                    "basicFilter": {
+                                        "type": "object",
+                                        "properties": {},
+                                        "description": "Basic filter settings"
+                                    },
+                                    "charts": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Embedded charts"
+                                    },
+                                    "bandedRanges": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Banded ranges"
+                                    },
+                                    "developerMetadata": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Developer metadata"
+                                    }
+                                }
+                            },
+                            "description": "A list of sheet dictionaries; if the list is empty, a default sheet named 'Sheet1' is created."
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "spreadsheetId": {
+                                    "type": "string",
+                                    "description": "The ID of the spreadsheet."
+                                },
+                                "valueRanges": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {}
+                                    },
+                                    "description": "The data for the spreadsheet, specified as a list of value ranges."
+                                },
+                                "properties": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "The properties of the spreadsheet."
+                                },
+                                "sheets": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {}
+                                    },
+                                    "description": "A list of sheets to create in the spreadsheet."
+                                }
+                            },
+                            "description": "A dictionary of spreadsheet data using the specified optional keys.",
+                            "required": [
+                                "properties",
+                                "sheets",
+                                "spreadsheetId",
+                                "valueRanges"
+                            ]
+                        }
+                    },
+                    "description": "An object containing the properties for the spreadsheet."
+                }
+            },
+            "required": [
+                "spreadsheet"
+            ]
+        }
+    },
+    {
+        "name": "get_spreadsheet",
+        "description": "Retrieves the latest version of a spreadsheet by its ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to retrieve."
+                },
+                "ranges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of ranges to retrieve, specified in A1 notation (e.g., 'Sheet1!A1:D3' or 'A1:D3'). Defaults to None."
+                },
+                "includeGridData": {
+                    "type": "boolean",
+                    "description": "Indicates whether to include grid data; defaults to `False`."
+                }
+            },
+            "required": [
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "get_spreadsheet_by_data_filter",
+        "description": "Get spreadsheet data filtered by specified criteria.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The ID of the spreadsheet to retrieve."
+                },
+                "includeGridData": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include grid data, defaulting to `False`."
+                },
+                "dataFilters": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "a1Range": {
+                                "type": "string",
+                                "description": "The range in A1 notation"
+                            },
+                            "gridRange": {
+                                "type": "object",
+                                "properties": {},
+                                "description": "Grid range specification"
+                            },
+                            "developerMetadataLookup": {
+                                "type": "object",
+                                "properties": {
+                                    "metadataKey": {
+                                        "type": "string",
+                                        "description": "Key of the metadata to look up"
+                                    },
+                                    "metadataValue": {
+                                        "type": "string",
+                                        "description": "Value of the metadata"
+                                    }
+                                },
+                                "description": "Developer metadata lookup with keys:"
+                            }
+                        }
+                    },
+                    "description": "A list of data filters, each with a specific structure. Defaults to `None`."
+                }
+            },
+            "required": [
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "get_spreadsheet_values",
+        "description": "Retrieves values from a spreadsheet using an A1 notation range.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The string ID of the spreadsheet to retrieve values from."
+                },
+                "range": {
+                    "type": "string",
+                    "description": "The A1 notation string specifying the range to retrieve values from, such as `Sheet1!A1:D3` or `A1:D3`."
+                },
+                "majorDimension": {
+                    "type": "string",
+                    "description": "The major dimension results should use, defaulting to `ROWS`. Valid values are `ROWS` and `COLUMNS`."
+                },
+                "valueRenderOption": {
+                    "type": "string",
+                    "description": "Defines how output values are rendered, defaulting to `FORMATTED_VALUE`; valid options include `FORMATTED_VALUE`, `UNFORMATTED_VALUE`, and `FORMULA`."
+                },
+                "dateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how dates, times, and durations are rendered, defaulting to `FORMATTED_STRING`; valid options are `SERIAL_NUMBER` and `FORMATTED_STRING`."
+                }
+            },
+            "required": [
+                "range",
+                "spreadsheet_id"
+            ]
+        }
+    },
+    {
+        "name": "update_spreadsheet_values",
+        "description": "Updates values in a specific range of a spreadsheet.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spreadsheet_id": {
+                    "type": "string",
+                    "description": "The string ID of the spreadsheet to update."
+                },
+                "range": {
+                    "type": "string",
+                    "description": "The A1 notation string for the range to append values to, defining a cell or range of cells with optional sheet name and cell coordinates (e.g., \"Sheet1!A1:D3\" or \"A1:D3\")."
+                },
+                "valueInputOption": {
+                    "type": "string",
+                    "description": "Determines how input data is interpreted, supporting \"RAW\" for values inserted as-is or \"USER_ENTERED\" for values parsed as if entered by a user."
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "any"
+                        }
+                    },
+                    "description": "A list of lists, where each inner list represents a row of values to update in the range."
+                },
+                "includeValuesInResponse": {
+                    "type": "boolean",
+                    "description": "Include the updated values in the response, defaulting to `False`."
+                },
+                "responseValueRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how values are rendered in the response, defaulting to `FORMATTED_VALUE`; valid options are `FORMATTED_VALUE`, `UNFORMATTED_VALUE`, or `FORMULA`."
+                },
+                "responseDateTimeRenderOption": {
+                    "type": "string",
+                    "description": "Specifies how dates, times, and durations are rendered in the response, defaulting to \"SERIAL_NUMBER\"; valid values are \"SERIAL_NUMBER\" and \"FORMATTED_STRING\"."
+                }
+            },
+            "required": [
+                "range",
+                "spreadsheet_id",
+                "valueInputOption",
+                "values"
+            ]
+        }
+    }
+]

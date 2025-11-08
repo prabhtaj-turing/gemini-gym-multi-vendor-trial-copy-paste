@@ -1,0 +1,87 @@
+[
+  {
+    "name": "authenticate_service",
+    "description": "Authenticates a specified service, enabling access to its protected API functions. The service must be registered in the system before it can be authenticated.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "description": "The unique identifier of the service to authenticate. Must be a valid service name that exists in the system's service registry."
+        }
+      },
+      "required": [
+        "service_name"
+      ]
+    }
+  },
+  {
+    "name": "deauthenticate_service",
+    "description": "Removes authentication credentials for a specified service, revoking access to its protected API functions. The service will need to be re-authenticated before accessing protected resources.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "description": "The unique identifier of the service to deauthenticate. Must be a currently authenticated service."
+        }
+      },
+      "required": [
+        "service_name"
+      ]
+    }
+  },
+  {
+    "name": "is_service_authenticated",
+    "description": "Checks the current authentication status of a specified service. Returns a boolean indicating whether the service has valid authentication credentials.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "description": "The unique identifier of the service whose authentication status should be checked."
+        }
+      },
+      "required": [
+        "service_name"
+      ]
+    }
+  },
+  {
+    "name": "list_authenticated_services",
+    "description": "Retrieves a comprehensive list of all services that currently have valid authentication credentials. Returns service names along with their authentication timestamps.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "reset_all_authentication",
+    "description": "Performs a complete reset of the authentication system, removing all authentication credentials for every service. This operation requires confirmation and cannot be undone.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "create_authenticated_function",
+    "description": "Creates a wrapper function that enforces authentication requirements before executing the original function. The wrapper automatically checks authentication status and blocks execution if the service is not authenticated.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "description": "The name of the service that must be authenticated before the wrapped function can be executed."
+        },
+        "func": {
+          "type": "object",
+          "description": "The original function object to be wrapped with authentication requirements. This function will only execute if the specified service is authenticated."
+        }
+      },
+      "required": [
+        "service_name",
+        "func"
+      ]
+    }
+  }
+]

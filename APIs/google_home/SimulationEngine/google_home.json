@@ -1,0 +1,1066 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "google_home",
+        "description": "A tool that controls or gets information about smart home devices.\n\n\n***Capabilities***\n*   **Device Control:** Change the state of smart home devices, such as lights and TVs.\n*   **Device Information:** Get information about the user's home and devices, such as states and device names.\n\n\n***Limitations***\nFor the following types of queries, do not use this tool. Do your best to satisfy the user's query using other tools, like search.\n*   **Troubleshooting & Setup:** Cannot diagnose device problems (e.g., strange noises, smells, malfunctions), provide maintenance instructions (e.g., filter changes), or assist with device setup, configuration, or pairing (e.g., \"fix wrong city weather,\" \"pair speakers,\" \"connect Fire TV\").\n*   **How-To & General Queries:** Does not answer 'how-to' questions, explain features (e.g., \"use display as photo frame,\" \"disable mic\"), inquire about device capabilities, or recommend products.\n*   **Specific Media Playback:** Does not handle requests to play specific songs, artists, genres, or types of audio (e.g., \"play music by X,\" \"play white noise\"). *Note: Controlling the playback state (pause/stop/resume) or volume of a device IS supported.*\n*   **General Assistant Tasks:** Cannot set reminders or perform tasks outside of direct smart home device control/information (e.g., \"remind me to turn off AC,\" \"turn on voice access\").\n*   **Ambiguity:** Requires clear and specific commands targeting devices/rooms in the home graph. Cannot interpret vague or incomplete requests (e.g., \"so hot,\" \"turn it off,\" \"wallet\").\n\n\n***Usage Guide***\n1. The user's home graph has been fetched and is shown in the context for this conversation. It contains all the information about the user's home and devices, except for their current dynamic states (e.g. if they're on or off, the current temperature, etc).\n   a) For **Device Control** queries, you have all the information you need to control the devices already. Move on to step 2.\n   b) HOWEVER, for **Device Information** queries, call `google_home.details(devices=device_ids)` to get information about devices' current state. Examples of such queries are: \"is the TV on?\" or \"What is the thermostat at?\".  This state information is crucial because you MUST use it to formulate your final textual answer to the user after showing the device card (see 'show_device_info' below).\n   c) This will return a list of devices, along with information like their names, the room they are in (if any), the traits they support, and their types, along with other data.\n     i) NOTE: Sometimes after calling the `details` method,  you will see the `api_hints` field populated. This field contains information about close device name or room name matches that can be used to help make decisions about which devices to target (see next step).\n\n\n2. The next step is to identify the device(s) to control using the device info from step 1. Use the following criteria:\n   a) Exact Name Matches: If a device name in the home graph exactly matches the user's request. For example, if the user says \"turn off sony tv\", and they have a device named \"Sony TV\", then you should most likely use that device, even if the user has other TV devices. Prefer a longer exact name match over a shorter one.\n   b) Room Name Matches: If the user query is about a specific room, like \"Turn off the lights in the bedroom\", and there is a room named \"Bedroom\", target all \"LIGHT\" devices in that room. Even if there are other rooms with similar names, like \"Master Bedroom\", choose the one that *best* matches the user query.\n       * REMEMBER: If the user is targeting a specific room, DO NOT target devices that are not in that room. SIMULTANEOUSLY, make sure you target ALL relevant devices in that room.\n   c) Device Type Matches: If the user mentions a device type, like \"Turn my thermostat to 72 degrees\", don't target just any device that supports \"TemperatureSetting\" traits. Only target the device that is actually a \"THERMOSTAT\".\n   d) Trait Supported: If the user query is about a specific trait, like \"Turn on the lights\", don't target devices that don't support the \"OnOff\" trait. This is very important!\n   e) [**Important**] Improve device selection accuracy with the user's current location.\n       * **Always** prefer devices in the structure the user is more likely in, or nearest to.\n       * Users rarely intend to control devices outside a normal daily driving distance, so use extreme caution when selecting devices located far away.\n       * **Exceptions:**\n           * If a query has explicitly and unequivocally mentioned a structure by name, ignore the above rule.\n           * If a query is a device information query or broadcast query, ignore the above rule.\n       * Example:\n           * If the user's current location is \"New York,\" and they have homes in \"Jersey City\" and \"San Francisco,\" a query such as \"turn on the lights\" should refer to the lights in the Jersey City home, not the San Francisco home.\n\n\n3. Finally, you need to control the device(s) you identified in step 2. You do this by calling the `run` function. The run function takes in two required parameters, and one optional parameter:\n     a) `devices`: A list of device IDs identified in step 2.\n     b) `op`: The operation to perform on the device(s).\n     c) (Optional) `values`: Some operations require values to be passed in. For example, the `set_temperature` operation requires a value for the temperature. Always pass strings for entries in the `values` list.\n     d) (optional) Time/Delay/Duration modifiers: query may specify a time, a delay or a duration modifier for an operation.\n       i) `time_of_day`, `date`, `am_pm_of_unknown`: For queries specifying an exact time, for example, \"turn on the lights at 7pm\", use these fields to specify the target time.\n       ii) `delay`: For queries specifying a relative target time from now, for example, \"turn on the lights in 10 minutes\", use this field to specify how long before the action should be performed.\n       iii) `duration`: For queries specifying a duration for an operation, for example, \"turn on the lights for 15 minutes\", use this field to specify the duration.\n\n\n **!!! CRITICAL POST-CALL CHECK !!!** After calling `google_home.run`, you **MUST** examine the tool's output. If the output indicates the operation was successful (e.g., contains 'Execution Successful' or a similar confirmation message), **consider the user's requested action FULLY COMPLETED**. Your **ONLY** next step in this case is to generate the 'Final response to user'. **DO NOT CALL `google_home.run` AGAIN** for the exact same action (`devices`, `op`, `values`) within the same turn if the initial call was successful. Repeating successful actions is incorrect and must be avoided.\n\n\n The following are operations that are supported by the `run` function grouped by the trait they belong to:\n     `OnOff`\n     *   **`on`, `off`, `toggle_on_off`:** Turns devices on or off. Use `toggle_on_off` for queries like \"flip the lights\" where it's not clear whether the user wants to turn the lights on or off.\n\n\n     `OpenClose`\n     *   **`open`, `close`:** Opens or closes the device all the way.\n     *   **`open_percent`, `close_percent`:** Opens or closes the device by a percentage (requires a value: 0.0-100.0). Use for queries like \"open the blinds 50%\".\n     *   **`open_percent_absolute`, `close_percent_absolute`:** Opens or closes the device by an absolute amount (requires a value: 0.0-100.0). Use for queries like \"Open the blinds to/at 20%\".\n     *   **`open_ambiguous_amount`, `close_ambiguous_amount`:** Opens or closes the device by an ambiguous amount (value: see Qualifier set 2 below). Use for queries like \"open the blinds a little\".\n\n\n     `StartStop`, `TransportControl`\n     *   **`start`, `stop`, `pause`, `unpause`:** Starts, stops, pauses, or resumes/unpauses the device (e.g., vacuum, speaker, TV).\n         *   A common type of StartStop queries are for cleaning/vacuuming the household. Use `start` for queries like \"start cleaning\" if the user has a vacuum. If a zone is requested, like \"vacuum the kitchen\", you can simply start the device, it will vacuum the requested zone. You don't need to ask for confirmation.\n         *   Confusion with media_control: some queries like \"pause the TV\" are ambiguous between media control and google home control. You MUST pay important attention to the query. If the user is asking to control media playback on a specific device that matches what you see in the home graph (e.g \"resume X on the TV\", \"stop the speaker\", etc.) you must call the google_home tool, not the media_control tool!\n         *   If the user asks to resume something that is paused (e.g \"Resume the TV\"), use `unpause` instead of `start` or 'resume', (resume is not a supported operation for .run).\n     `Scene`\n     *   **`activate_scene`, `deactivate_scene`:** Activates or deactivates a scene (use only with explicit scene names). Queries like: \"activate the party scene\" or sometimes even queries like \"turn on formal\" where the user has a scene named \"formal\" should use this operation. Values: None.\n\n\n     `InputSelector`\n     *   **`next_input`, `previous_input`:** Selects the next or previous input on the device.\n     *   **`set_input`:** Sets the device input (value: input key, e.g., \"hdmi_1\"). Requires a value which can be found from the user query. Prefer lowercase and underscores - e.g. \"hdmi_1\" over \"HDMI 1\".\n\n\n     `AppSelector`\n     *   **`open_app`:** Opens an app on the device (value: app key, e.g., \"netflix\"). Always use the app key in its original English form, regardless of the language of the user's query. Do not translate the app key. Prefer lowercase and underscores - e.g. \"amazon_prime\" over \"Amazon Prime\".\n\n\n     `Brightness`\n     *   **`set_brightness`:** Sets the device brightness (value: 0.0-1.0). Requires a value.\n     *   **`brighter_ambiguous`, `dimmer_ambiguous`:** Increases or decreases brightness (value: ambiguous amount). Requires a value (see Qualifier set 1 below)\n     *   **`brighter_percentage`, `dimmer_percentage`:** Increases or decreases brightness by a percentage (value: percentage 0.0-100.0). Used for *relative* brightness changes (e.g., \"make the lights a 20% brighter\"). Requires a value.\n\n\n     `ColorSetting`\n     *   **`change_color`:** Changes the device color (value: color name, e.g., \"blue\"). Always use the color name in its original English form, regardless of the language of the user's query. Do not translate the color name.\n\n\n     `Dock`\n     *   **`dock`:** Docks the device.\n\n\n     `FanSpeed`\n     *   **`fan_up_ambiguous`, `fan_down_ambiguous`:** Increases or decreases fan speed (value: see Qualifier set 1 below). Requires a value.\n     *   **`set_fan_speed`:** Sets the fan speed (value: qualitative speed, e.g., \"high\", \"low\", \"medium\"). Requires a value.\n     *   **`set_fan_speed_percentage`:** Sets the fan speed to a specific percentage (value: percentage 0.0-100.0). Requires a value.\n     *   **`fan_up_percentage`, `fan_down_percentage`:** Increases or decreases fan speed by a percentage (value: percentage 0.0-100.0). Used for *relative* fan speed changes (e.g., \"make the fan a 20% faster\"). Requires a value.\n\n\n     `TemperatureSetting`\n     *   **`cooler_ambiguous`, `warmer_ambiguous`:** Decreases or increases temperature (value: ambiguous amount). Requires a value (see Qualifier set 1 below).\n     *   **`set_temperature`, `set_temperature_celsius`, `set_temperature_fahrenheit`:** Sets the temperature. If no unit is specified, use `set_temperature`, otherwise use the unit-specific operation. Requires a value.\n     *   **`set_temperature_mode`:** Just sets the temperature mode (value: mode name, e.g., \"cool\", \"heat\"). Requires a value.\n     *   **`set_mode_and_temperature`:** Sets the thermostat mode, and temperature to the given values (value: list of two strings: mode name and temperature). Requires a value. Note: for this particular operation, you may pass in the temperature value *or* \"min\"/\"max\" for queries like \"set the heat to max\".\n     *   **`set_mode_and_temperature_fahrenheit`, `set_mode_and_temperature_celsius`:** Sets the thermostat mode, and temperature to the given values (value: list of three strings: mode name, temperature, and unit). Requires a value.\n     *   **`change_relative_temperature`:** Increases or decreases the temperature from its current value by an exact amount of degrees (e.g., \"increase the temperature by 2 degrees\"). Requires a value. Positive for increasing the temperature, negative for decreasing it.\n\n\n     `Toggles`\n     *   **`toggle_setting`:** Toggles a device setting (value: list of two strings: setting name from the home graph and \"true\"/\"false\").\n\n\n     `Locator`\n     *   **`find_device`:** Finds a locator tag, like tv remote, keys, wallet, or other personal items.\n     *   **`silence_ringing`:** Turns off a currently ringing locator tag.\n\n\n     `Broadcast`\n     *   **`broadcast`:** Plays a message to the targeted devices (value: message: the message to broadcast). Requires a value. Do not invoke the tool with an empty message. Do not generate a dummy message either. Ask the user to provide a message if it is not provided.\n\n\n     `LightEffects`\n     *   **`set_light_effect`:** Sets a light effect (value must be one of: \"sleep\", \"wake\", \"colorLoop\", \"pulse\". For anything else, use 'set_mode' instead).\n     *   **`set_light_effect_with_duration`:** Sets a light effect with a duration (value: list of two strings: effect type and duration in seconds. duration must be a positive integer. For instance, \"sleep for 10 minutes\" should use 600 for the duration).\n\n\n     `Volume`\n     *   **`volume_up`, `volume_down`:** Increases or decreases volume by a relative level. Use for queries like \"turn up the volume by 4\". Requires a value.\n     *   **`volume_up_percentage`, `volume_down_percentage`:** Increases or decreases volume by a percentage (value: percentage 0.0-100.0). Used for *relative* volume changes that specify a percentage (e.g., \"make the TV 20% louder\"). Requires a value.\n     *   **`volume_up_ambiguous`, `volume_down_ambiguous`:** Increases or decreases volume by an ambiguous amount like \"a little\" (value: see Qualifier set 1 below). Requires a value.\n     *   **`set_volume_level`:** Sets the volume level (value: 0-100). Use for queries like \"set the volume to 30\" that don't specify percentage, but do specify an absolute numeric level. Requires a value.\n     *   **`set_volume_percentage`:** Sets the volume to a specific percentage (value: percentage 0.0-100.0). Use for queries like \"set the volume to 30%\" that specify an absolute percentage. Requires a value.\n     *   **`mute`, `unmute`:** Mutes or unmutes the device.\n\n\n     `Modes`\n     *   **`set_mode`:** Sets the device mode (value: list of two strings: mode name and mode value (the id corresponding to the mode value name)). Requires a value which can be found in the home graph.\n\n\n    `DefaultShowDevices` Trait\n\n\n     *   **Purpose:** This is used to display device information cards to the user for **Device Information** queries or traits that aren't supported yet, so you should just show the device instead of controlling it so that the user can interact with it. Note that devices in the home graph do not have this as a trait. It's implied to exist for every device. Don't let that stop you from using this operation.\n\n\n       *   **`show_device_info`**: Displays an informative card about the targeted devices to the user.\n       *   **Usage:** `google_home.run(devices=[device_ids], op='show_device_info')`\n       *   **Note:** Even if you can infer the answer from the home graph, always use `show_device_info` to provide a visual card before responding to the user.  While not all information-seeking queries require you to call `details` beforehand, a good rule of thumb is that if you do this, you definitely have to call `google_home.run(devices=[device_ids], op='show_device_info')`\n       *   **CRITICAL:** Do NOT call show_device_info if you've already controlled devices using any of the above traits. This operation is only for **Device Information** queries.\n       *   **CRITICAL - Generating the Final Response:** After successfully calling `google_home.run` with `op='show_device_info'`, your *next step* is to generate a textual response for the user. This response MUST directly answer the user's original question, potentially using the specific state information (e.g., temperature, on/off status, brightness level, current input, fan speed) obtained from the `google_home.details()` call made in Step 1b. Do NOT simply state that you have shown the information (e.g., avoid responses like 'I've displayed the info for the thermostat'). Instead, provide the answer explicitly (e.g., 'The thermostat is set to 72 degrees.', 'The living room light is currently off.', 'The TV input is set to HDMI 1.').***\n\n\n     *   ** Device Information Query Examples:**\n         *   \"how many tvs do i have?\"\n         *   \"what is the thermostat set to?\"\n         *   \"how many lights are off?\"\n         *   \"devices in the living room?\"\n\n\n     *   **`LockUnlock` Trait:**\n         *   **`lock`**: Locks device (opens link on user's phone).\n         *   **`unlock`**: Unlocks device (opens link on user's phone).\n\n\n     *   **Minimal Support Traits (`CameraStream`, `HumiditySetting`, `ArmDisarm`):**\n         *   **`camera_stream`**: Displays camera stream information card.\n         *   **`humidity_setting`**: Displays humidity setting information card.\n         *   **`arm_disarm`**: Displays arm/disarm information card.\n\n\n   `ViewSchedules/CancelSchedules` Trait\n     *   **`view_schedules`**: Displays scheduled actions information card.\n     *   **`cancel_schedules`**: Cancels scheduled actions.\n\n\n     ***Qualifier Notes***\n     Qualifiers for above ops:\n     *   Qualifier set 1:\n         *   When the user provides a vague amount (e.g., \"a little,\" \"a lot\"):\n             *   \"a fraction\", \"a tad\", \"a tiny bit\", \"a wee bit\", \"little bit\", \"slightly\", \"smidge\", \"tiny\", \"touch\", \"wee\": 1\n             *   \"a bit\", \"a little\", \"two\": 2\n             *   \"some\", \"three\": 3\n             *   \"a lot\", \"four\": 4\n             *   \"as much as possible\", \"five\", \"a ton\", \"way\": 5\n     *   Qualifier set 2 (only used for `open_ambiguous_amount` and `close_ambiguous_amount`):\n         *   When the user provides a vague amount (e.g., \"a lot less,\" \"less,\" \"a little less\"):\n             *   -3 (\"a lot less\")\n             *   -2 (\"less\")\n             *   -1 (\"a little less\")\n             *   1 (\"a little more\")\n             *   2 (\"more\")\n             *   3 (\"a lot more\")\n\n\n4. Here are some examples of how to use this tool, given the home graph context below:\n\n\n       Structure: house {\n         Room: None {\n           THERMOSTAT {\n             id: 002 {\n               name: ecobee\n               supported traits: [TemperatureSetting]\n             }\n           }\n         }\n         Room: Bedroom {\n           LIGHT {\n             id: 007 {\n               name: tall lamp\n               supported traits: [OnOff, ColorSetting, Brightness]\n             }\n             id: 008 {\n               name: smart bulb\n               supported traits: [OnOff, ColorSetting, Brightness]\n             }\n           }\n         }\n         Room: Master Bedroom {\n           OUTLET {\n             id: 004 {\n               name: bedstand outlet\n               supported traits: [OnOff]\n             }\n           }\n           LIGHT {\n             id: 005 {\n               name: Master Bedroom light\n               supported traits: [OnOff, ColorSetting, Brightness]\n             }\n           }\n           TV {\n             id: 001 {\n               name: TV\n               supported traits: [TransportControl,InputSelector, AppSelector, OnOff]\n             }\n           }\n         }\n         Room: Living Room {\n           LIGHT {\n             id: 006 {\n               name: Lamp 1\n               supported traits: [OnOff, Brightness]\n             }\n           }\n           TV {\n             id: 000 {\n               name: Big TV\n               supported traits: [InputSelector, AppSelector, OnOff]\n             }\n           }\n           AC_UNIT {\n             id: 003 {\n               name: AC\n               supported traits: [TemperatureSetting, FanSpeed, OnOff, StartStop]\n             }\n           }\n         }\n       }\n \"\"\"\n\n\n * Example a:\n         User query: make the bedroom lights green\n\n\n         ```tool_code\n         print(google_home.run(devices=['007', '008'], op='change_color', values=['green']))\n         ```\n   **Explanation:**\n         * There is a room called \"Bedroom\" and a room called \"Master Bedroom\" that both have some lights. But \"Bedroom\" is a better match to the user query, so we target \"LIGHT\" devices in \"Bedroom\".\n\n\n * Example b:\n         User query: turn on the big TV\n\n\n         ```tool_code\n         print(google_home.run(devices=['000'], op='on'))\n         ```\n   **Explanation:**\n         * There are a couple of TVs in the user's home, but the user query is targeting the exact device name \"Big TV\".\n\n\n * Example c:\n         User query: all lamps to 90% brightness\n\n\n         ```tool_code\n         print(google_home.run(devices=['007', '006'], op='set_brightness', values=['0.9']))\n         ```\n   **Explanation:**\n         * There are several \"LIGHT\" devices, but only \"Lamp 1\" and \"tall lamp\" match the user query.\n\n\n * Example d:\n         User query: thermostat to 72 degrees\n\n\n         ```tool_code\n         print(google_home.run(devices=['002'], op='set_temperature', values=['72.0']))\n         ```\n   **Explanation:**\n         * There are two devices that support the \"TemperatureSetting\" trait, but only \"ecobee\" is of type \"THERMOSTAT\".\n\n\n * Example e:\n         User query: thermostat temperature?\n\n\n         ```tool_code\n         print(google_home.run(devices=['002'], op='show_device_info'))\n         ```\n   **Explanation:**\n         * The user is asking for information about the thermostat. The `show_device_info` operation is used to satisfy the user by showing them the device information card(s) for the targeted device(s). Note that in this case, google_home.details should be called beforehand to fetch the device state.\n\n\n * Example f:\n         User query: \ub9c8\uc2a4\ud130 \uce68\uc2e4 \uc870\uba85\uc744 \ub179\uc0c9\uc73c\ub85c \ubc14\uafb8\uc138\uc694\n\n\n         ```tool_code\n         print(google_home.run(devices=['005'], op='change_color', values=['green']))\n         ```\n   **Explanation:**\n         * The user is asking to change the color of the light in the master bedroom to green. Even though the query is in Korean, we use the English translation of the color name.\n\n\n * Example g:\n         User query: \u0932\u093f\u0935\u093f\u0902\u0917 \u0930\u0942\u092e \u091f\u0940\u0935\u0940 \u092a\u0930 \u0921\u093f\u091c\u094d\u0928\u0940+ \u0916\u094b\u0932\u0947\u0902\n\n\n         ```tool_code\n         print(google_home.run(devices=['000'], op='open_app', values=['disney+']))\n         ```\n   **Explanation:**\n         * The user is asking to open the Disney+ app on the TV in the living room. Even though the query is in Hindi, we use the English translation of the app key.\n\n\n * Example h:\n     User query: pause the Master Bedroom TV\n\n\n     ```tool_code\n     print(google_home.run(devices=['001'], op='pause'))\n     ```\n   **Explanation:**\n         * The user is asking to pause the TV. Because they are targeting media on a PHYSICAL DEVICE that supports TransportControl, we invoke the pause command through google home.\n\n\n*** Final response guidelines ***\n   * Identify the Core Information: Pinpoint the absolute essential piece of information the user needs to know. For example, the action taken on the specific device.\n   * Eliminate Pleasantries and Fillers: Avoid unnecessary introductory words, phrases, and conversational fluff. Words like \"Sure,\" \"Okay,\" \"I've,\" \"now,\" and articles like \"the\" can often be removed without losing meaning. Focus on the Action and Object: Structure the response around the verb (the action taken) and the noun (the object of the action).\n   * Use Present Tense and Active Voice: Concise responses often use the present tense to confirm the current state. Active voice is generally more direct and shorter than passive voice.\n   * Omit Redundancy: Avoid repeating information that is already clear from the context of the request. If the user asks to turn on the \"Reading light,\" it's redundant to say \"the Reading light.\"\n   * Keep it Declarative: Frame the response as a simple statement of fact about the current state. Avoid questions or more complex sentence structures.\n   * Be Direct and Unambiguous: The meaning should be immediately clear without any extra processing.\n\n\n*** Common behaviors to avoid ***\n   * **CRITICAL - AVOID REPEATING SUCCESSFUL ACTIONS:** As detailed in the **CRITICAL POST-CALL CHECK** in Usage Guide Step 3, **never** call `google_home.run` again for an action that has already succeeded in the current turn. Always proceed to the final response after a successful `run` call.\n   * Do not attempt to call `google_home.run` with `op='show_device_info'` if you've already controlled devices using another operation like `set_temperature` or `on`. The user will get all the information that they need from these operations.\n   * For information queries, DO NOT generate a response like \"I'm showing the information\" after calling `show_device_info`. You MUST use the data fetched by `google_home.details` to provide a specific, textual answer to the user's question.\n   * For information queries, it is NOT enough to only call the .details method. That is just to retrieve the state information before calling the .run method with show_device_info. Calling the run method is necessary to show a device information for the requested device(s) to the user.\n   * `set_modes` or `toggle_setting` are only valid when a device has a matching mode or toggle. Once you have identified a mode and toggle to use, do not use `set_light_effect` or other similar operations.\n   * Avoid selecting devices from multiple structures without utilizing the user's location first.\n",
+        "version": "1.0.2"
+    },
+    "x-client-compatibility": {
+        "requiredClientCapabilities": [
+            "CAPABILITY_ACTION_CARD_SMART_HOME_DEVICE"
+        ]
+    },
+    "paths": {
+        "/get_all_devices": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "get_all_devices",
+                "description": "Retrieves all smart home devices set up by the user.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "trait_hints",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/TraitName"
+                            }
+                        },
+                        "description": "Optional list of traits to filter for. If this is empty, all traits will\nbe allowed (no filter will be enforced).\n",
+                        "required": false
+                    },
+                    {
+                        "name": "type_hints",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/TypeCategories"
+                            }
+                        },
+                        "description": "Optional list of device_types to filter for. If this is empty, all device_types will be allowed (no filter will be enforced).",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Smart home devices in a flattened list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DeviceInfo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_devices": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "get_devices",
+                "description": "Retrieves smart home devices set up by the user relevant to the query.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "trait_hints",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/TraitName"
+                            }
+                        },
+                        "description": "Optional list of traits to filter for. If this is empty, all traits will\nbe allowed (no filter will be enforced).\n",
+                        "required": false
+                    },
+                    {
+                        "name": "type_hints",
+                        "x-google-bard-model-visible": false,
+                        "deprecated": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/TypeCategories"
+                            }
+                        },
+                        "description": "Optional list of device_types to filter for. If this is empty, all device_types will be allowed (no filter will be enforced).",
+                        "required": false
+                    },
+                    {
+                        "name": "include_state",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "Whether to include the dynamic state of the devices.",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Smart home devices in a flattened list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetDevicesResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/devices": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "devices",
+                "description": "Retrieves smart home devices set up by the user relevant to the query.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "traits",
+                        "x-google-bard-model-visible": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Optional list of traits to filter for. If this is empty, all traits will\nbe allowed (no filter will be enforced).\n",
+                        "required": false
+                    },
+                    {
+                        "name": "state",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "Whether to include the dynamic state of the devices.",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Smart home devices in a flattened list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetDevicesResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/details": {
+            "post": {
+                "x-google-bard-model-visible": true,
+                "operationId": "details",
+                "description": "retrieves the state of devices in the user's home, such as the current temperature,\nthe current volume, or the current status of a light.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "UPDATE",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "devices",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Unique identifiers of smart home devices.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Smart home devices in a json hierarchy.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailsResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/see_devices": {
+            "post": {
+                "x-google-bard-model-visible": true,
+                "operationId": "see_devices",
+                "description": "Retrieves smart home devices set up by the user.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "state",
+                        "x-google-bard-model-visible": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "Whether to include the dynamic state of the devices.",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Smart home devices in a Markdown table format.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeeDevicesResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mutate_traits": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "mutate_traits",
+                "description": "Changes traits of smart home devices and returns status of those changes.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "UPDATE",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "device_ids",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Unique identifiers of smart home devices.",
+                        "required": true
+                    },
+                    {
+                        "name": "trait_names",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/TraitName"
+                            }
+                        },
+                        "description": "Name of the trait to change.\n",
+                        "required": false
+                    },
+                    {
+                        "name": "command_names",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/CommandName"
+                            }
+                        },
+                        "description": "Name of the command. Valid values for command_names depend on trait_name.\n",
+                        "required": false
+                    },
+                    {
+                        "name": "command_values",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "New value of the command_name. Valid values for command_values depend on command_name.\n",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response message.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MutateTraitResult"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mutate": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "mutate",
+                "description": "Changes traits of smart home devices and returns status of those changes.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "UPDATE",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "devices",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Unique identifiers of smart home devices.",
+                        "required": true
+                    },
+                    {
+                        "name": "traits",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Name of the trait to change.\n",
+                        "required": false
+                    },
+                    {
+                        "name": "commands",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Name of the command. Valid values for command_names depend on trait_name.\n",
+                        "required": false
+                    },
+                    {
+                        "name": "values",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "New value of the command_name. Valid values for command_values depend on command_name.\n",
+                        "required": false
+                    },
+                    {
+                        "name": "time_of_day",
+                        "x-google-bard-model-visible": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "time in the format of \"HH:MM:SS\"",
+                        "required": false
+                    },
+                    {
+                        "name": "date",
+                        "x-google-bard-model-visible": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "date in the format of \"YYYY-MM-DD\"",
+                        "required": false
+                    },
+                    {
+                        "name": "am_pm_or_unknown",
+                        "x-google-bard-model-visible": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "AM or PM or UNKNOWN",
+                        "required": false
+                    },
+                    {
+                        "name": "duration",
+                        "x-google-bard-model-visible": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "duration in the format of 5s, 20m, 1h",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response message.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MutateTraitResult"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/run": {
+            "post": {
+                "x-google-bard-model-visible": true,
+                "operationId": "run",
+                "description": "Runs a general operation on smart home devices and returns the status.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "UPDATE",
+                        "object": "devices",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "devices",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Unique identifiers of smart home devices.",
+                        "required": true
+                    },
+                    {
+                        "name": "op",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Name of the operation to run.",
+                        "required": true
+                    },
+                    {
+                        "name": "values",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Optional list of values for the operation.",
+                        "required": false
+                    },
+                    {
+                        "name": "time_of_day",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Time to execute the operation, expected in the format of \"HH:MM:SS\"",
+                        "required": false
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Date to execute the operation, expected in the format of \"YYYY-MM-DD\"",
+                        "required": false
+                    },
+                    {
+                        "name": "am_pm_or_unknown",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Whether time_of_day is AM or PM or UNKNOWN",
+                        "required": false
+                    },
+                    {
+                        "name": "delay",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "How long to wait before executing the operation. Example format are 5s, 20m, 1h",
+                        "required": false
+                    },
+                    {
+                        "name": "duration",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "How long the operation should last. Example format are 5s, 20m, 1h",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response message.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MutateTraitResult"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/view_schedules": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "view_schedules",
+                "description": "View scheduled actions of smart home devices and returns status of those changes.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "schedules",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "devices",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Unique identifiers of smart home devices.",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The result of scheduled action viewing.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScheduledActionResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cancel_schedules": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "cancel_schedules",
+                "description": "Cancel scheduled actions of smart home devices and returns status of those changes.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "DELETE",
+                        "object": "schedules",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "devices",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "description": "Unique identifiers of smart home devices.",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The result of scheduled action cancellation.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScheduledActionResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generate_home_automation": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "generate_home_automation",
+                "description": "Generates a home automation script via the Home Agent, and returns the response.\nI must parse the user's query to extract the home name. Then I should make a call to\ngenerate_home_automation with the query and the home name. The query to pass to\ngenerate_home_automation does not need to include the home name.\n# Example 1:\nQuery: \"Generate a home automation for my Valencia Street home to turn on the light in the\nliving room every day at 7pm.\"\nI should choose \"Valencia Street\" as the home name.\nprint(google_home.generate_home_automation(query=\"Generate a home automation to\nturn on the light in the living room every day at 7pm.\", home_name=\"Valencia Street\"))\n# Example 2\nQuery: \"Generate an automation for my Ashbourne home to dim the light and close the blinds\nin the living room when the TV is on in the evening.\"\nI should choose \"Ashbourne\" as the home name.\nprint(google_home.generate_home_automation(query=\"Generate an automation to dim the light\nand close the blinds in the living room when the TV is on in the evening.\",\nhome_name=\"Ashbourne\"))\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "CREATE",
+                        "object": "home automation scripts"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "The query to pass to the Home Agent Bard Service",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "home_name",
+                        "in": "query",
+                        "description": "The home name which the query applies to",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response from the Home Agent, including the home automation script that was generated\nand instructions for the user on how to use the script.\n",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenerateHomeAutomationResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/search_home_events": {
+            "post": {
+                "x-google-bard-model-visible": false,
+                "operationId": "search_home_events",
+                "description": "Queries the home agent for events in the given home, such as those gathered by camera perception.\nI must parse the user's query to extract the home name. Then I should make a call to\nsearch_home_events with the query and the home name. The query to pass to search_home_events\ndoes not need to include the home name.\n# Example 1:\nQuery: \"Did I get any packages today at my Valencia Street home?\"\nI should choose \"Valencia Street\" as the home name.\nprint(google_home.search_home_events(query=\"Did I get any packages today?\",\nhome_name=\"Valencia Street\"))\n# Example 2:\nQuery: \"Were there any unfamiliar faces in the backyard at my Ashbourne home?\"\nI should choose \"Ashbourne\" as the home name.\nprint(google_home.search_home_events(query=\"Were there any unfamiliar faces in the\nbackyard?\", home_name=\"Ashbourne\"))\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "detected objects",
+                        "location": "my home"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "The query to pass to the Home Agent Bard Service",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "home_name",
+                        "in": "query",
+                        "description": "The home name which the query applies to",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response from the Home Agent, including list of camera clips if available.\n",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchHomeEventsResult"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "TraitName": {
+                "description": "Valid device trait names.",
+                "type": "string"
+            },
+            "TypeCategories": {
+                "description": "Valid device type categories.",
+                "type": "string"
+            },
+            "CommandName": {
+                "description": "Valid command names",
+                "type": "string"
+            },
+            "ModesSetting": {
+                "x-google-bard-model-visible": false,
+                "description": "Possible value of Modes setting",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "TogglesModes": {
+                "x-google-bard-model-visible": false,
+                "description": "Details of toggles and modes",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "settings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ModesSetting"
+                        }
+                    }
+                }
+            },
+            "DeviceState": {
+                "x-google-bard-model-visible": false,
+                "description": "Dynamic state of a device",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DeviceInfo": {
+                "x-google-bard-model-visible": false,
+                "description": "Metadata of a device",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "room_name": {
+                        "type": "string"
+                    },
+                    "structure": {
+                        "type": "string"
+                    },
+                    "toggles_modes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TogglesModes"
+                        }
+                    },
+                    "device_state": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeviceState"
+                        }
+                    }
+                }
+            },
+            "MutateTraitCommand": {
+                "x-google-bard-model-visible": false,
+                "description": "A single trait mutating command. Info include trait, command name and values that describes\na concrete trait mutating action/state.\nFor example, {trait: \"OnOff\", command_names: [\"state\"], command_values: [\"on\"]}, {trait: \"Brightness\", command_names: [\"brightness\"], command_values: [\"0.2\"]}\n",
+                "properties": {
+                    "trait": {
+                        "type": "string"
+                    },
+                    "command_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "command_values": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "MutateTraitCommands": {
+                "x-google-bard-model-visible": true,
+                "description": "Trait mutation commands performed on a list of devices.\nFor example, {device_ids: [\"id_1\", \"id_2\"], commands : [{trait: \"OnOff\", command_names: [\"state\"], command_values: [\"on\"]}, {trait: \"ColorSetting\", command_names: [\"colorSetting\"], command_values: [\"purple\"]}]}\n",
+                "properties": {
+                    "device_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "commands": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MutateTraitCommand"
+                        }
+                    },
+                    "schedule_info": {
+                        "$ref": "#/components/schemas/ScheduleInfo"
+                    }
+                }
+            },
+            "ExecutionResult": {
+                "description": "Different types of execution results.\n",
+                "type": "string"
+            },
+            "DeviceExecutionResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Execution result for a single device.\n",
+                "properties": {
+                    "device_id": {
+                        "type": "string"
+                    },
+                    "result": {
+                        "$ref": "#/components/schemas/ExecutionResult"
+                    }
+                }
+            },
+            "DeviceExecutionResults": {
+                "x-google-bard-model-visible": false,
+                "description": "Execution results for a list of devices.\n",
+                "properties": {
+                    "text_to_speech": {
+                        "type": "string"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeviceExecutionResult"
+                        }
+                    }
+                }
+            },
+            "MutateTraitResult": {
+                "x-google-bard-model-visible": false,
+                "x-google-bard-entity": {
+                    "type": "action_card_content",
+                    "entityId": "card_id",
+                    "contentMetadataPath": "action_card_content.content_metadata",
+                    "fieldMapping": {
+                        "action_card_content": "action_card_content_passthrough"
+                    }
+                },
+                "description": "Mutate trait result for one device.",
+                "properties": {
+                    "action_card_content_passthrough": {
+                        "x-google-bard-model-visible": false,
+                        "type": "string"
+                    },
+                    "card_id": {
+                        "x-google-bard-model-visible": false,
+                        "type": "string"
+                    },
+                    "commands": {
+                        "$ref": "#/components/schemas/MutateTraitCommands"
+                    },
+                    "result": {
+                        "type": "string",
+                        "enum": [
+                            "SUCCESS",
+                            "SHOW_DEVICES_ONLY",
+                            "FAILURE"
+                        ]
+                    },
+                    "device_execution_results": {
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DeviceExecutionResults"
+                            }
+                        ]
+                    }
+                }
+            },
+            "GenerateHomeAutomationResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Result of home automation generation, including the resulting script and instructions for\nthe user to use it.\n",
+                "properties": {
+                    "automation_script_code": {
+                        "type": "string"
+                    },
+                    "user_instructions": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SearchHomeEventsResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Result of the home events search, including camera clips if available.\n",
+                "properties": {
+                    "search_home_events_response": {
+                        "type": "string"
+                    },
+                    "camera_clip_urls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "GetDevicesResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Result of get_devices. Includes list of devices, and potentially api hints.\n",
+                "properties": {
+                    "devices": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeviceInfo"
+                        }
+                    },
+                    "api_hints": {
+                        "$ref": "#/components/schemas/ApiHints"
+                    }
+                }
+            },
+            "ScheduledActionResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Result of scheduled actions operation.\n",
+                "properties": {
+                    "tts": {
+                        "type": "string"
+                    },
+                    "operation_type": {
+                        "type": "string"
+                    },
+                    "success": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiHints": {
+                "x-google-bard-model-visible": false,
+                "description": "API hints for a query.",
+                "properties": {
+                    "general_instructions": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SeeDevicesResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Result of see_devices operation.",
+                "properties": {
+                    "devices_info": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DetailsResult": {
+                "x-google-bard-model-visible": false,
+                "description": "Result of details operation.",
+                "properties": {
+                    "devices_info": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ScheduleInfo": {
+                "x-google-bard-model-visible": false,
+                "description": "When to execute a schedule action.",
+                "properties": {
+                    "start_date": {
+                        "type": "string"
+                    },
+                    "start_time_of_day": {
+                        "type": "string"
+                    },
+                    "start_am_pm_or_unknown": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

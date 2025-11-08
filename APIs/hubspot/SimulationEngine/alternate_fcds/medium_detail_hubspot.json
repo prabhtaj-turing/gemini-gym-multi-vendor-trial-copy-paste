@@ -1,0 +1,1999 @@
+[
+    {
+        "name": "archive_campaign",
+        "description": "Archives a campaign. Archived campaigns are excluded from campaign listings.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "campaign_id": {
+                    "type": "integer",
+                    "description": "The integer ID of the campaign."
+                }
+            },
+            "required": [
+                "campaign_id"
+            ]
+        }
+    },
+    {
+        "name": "cancel_marketing_event",
+        "description": "Marks a specific marketing event as cancelled. This action requires the unique identifier for the event from the external system and the unique identifier for the account where the event was created.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "The unique identifier for a marketing event, as assigned by the external system where the event was originally created."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "Represents the unique identifier for the account where the event was created."
+                }
+            },
+            "required": [
+                "externalAccountId",
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "clone_marketing_email",
+        "description": "Clones an existing marketing email by specifying its unique ID and providing a new name for the duplicated email.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email_id": {
+                    "type": "string",
+                    "description": "The required string ID of the marketing email to clone."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Assigns the required name to the new, cloned email."
+                }
+            },
+            "required": [
+                "email_id",
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "create_campaign",
+        "description": "Creates a new campaign using a specified name and optional details such as a slug, description, start/end dates, theme, resource, and color label. The function returns a dictionary containing the complete details of the newly created campaign, including its generated ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "A string representing the campaign's name."
+                },
+                "slug": {
+                    "type": "string",
+                    "description": "A unique, URL-friendly string identifier for the campaign. If not provided, it is automatically generated from the campaign name, converted to lowercase, with spaces replaced by hyphens, and appended with a unique identifier."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "An optional string that provides the description of the campaign."
+                },
+                "start_year": {
+                    "type": "integer",
+                    "description": "The optional integer representing the start year of the campaign."
+                },
+                "start_month": {
+                    "type": "integer",
+                    "description": "The optional integer representing the start month of the campaign."
+                },
+                "start_day": {
+                    "type": "integer",
+                    "description": "An optional integer representing the start day of the campaign."
+                },
+                "end_year": {
+                    "type": "integer",
+                    "description": "The end year for the campaign. This parameter is an optional integer."
+                },
+                "end_month": {
+                    "type": "integer",
+                    "description": "An optional integer representing the end month of the campaign."
+                },
+                "end_day": {
+                    "type": "integer",
+                    "description": "Specifies the optional end day of the campaign as an integer."
+                },
+                "theme": {
+                    "type": "string",
+                    "description": "Specifies the theme of the campaign."
+                },
+                "resource": {
+                    "type": "string",
+                    "description": "The campaign's resource. This parameter is an optional string."
+                },
+                "color_label": {
+                    "type": "string",
+                    "description": "An optional string that specifies the color label for the campaign."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "create_form",
+        "description": "Creates a new marketing form.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "A name that identifies the form."
+                },
+                "submitText": {
+                    "type": "string",
+                    "description": "The text to display on the form's submit button."
+                },
+                "fieldGroups": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "groupType": {
+                                "type": "string",
+                                "description": "The type of the field group."
+                            },
+                            "richTextType": {
+                                "type": "string",
+                                "description": "The type of rich text included. The default value is text."
+                            },
+                            "richText": {
+                                "type": "string",
+                                "description": "A block of rich text or an image. Those can be used to add extra information for the customers filling in the form. If the field group includes fields, the rich text will be displayed before the fields."
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "fieldType": {
+                                            "type": "string",
+                                            "description": "The type of the field. Can be one of: email, phone, mobile_phone, single_line_text, multi_line_text, number, single_checkbox, multiple_checkboxes, dropdown, radio, datepicker, file, payment_link_radio"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "The name of the field."
+                                        },
+                                        "label": {
+                                            "type": "string",
+                                            "description": "The label of the field."
+                                        },
+                                        "required": {
+                                            "type": "boolean",
+                                            "description": "Whether the field is required."
+                                        },
+                                        "placeholder": {
+                                            "type": "string",
+                                            "description": "The placeholder text of the field."
+                                        },
+                                        "defaultValue": {
+                                            "type": "string",
+                                            "description": "The default value of the field."
+                                        },
+                                        "options": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "description": "The options of the field."
+                                        },
+                                        "hidden": {
+                                            "type": "boolean",
+                                            "description": "Whether the field is hidden."
+                                        }
+                                    },
+                                    "required": [
+                                        "fieldType",
+                                        "label",
+                                        "name",
+                                        "required"
+                                    ]
+                                },
+                                "description": "The fields of the field group."
+                            }
+                        },
+                        "required": [
+                            "fields",
+                            "groupType",
+                            "richText",
+                            "richTextType"
+                        ]
+                    },
+                    "description": "An organization of form fields into distinct groups."
+                },
+                "legalConsentOptions": {
+                    "type": "object",
+                    "properties": {
+                        "explicitConsentToProcess": {
+                            "type": "object",
+                            "properties": {
+                                "communicationsCheckboxes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "subscriptionTypeId": {
+                                                "type": "integer",
+                                                "description": "The subscription type ID"
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "description": "The main label for the form field"
+                                            },
+                                            "required": {
+                                                "type": "boolean",
+                                                "description": "Whether this checkbox is required"
+                                            }
+                                        },
+                                        "required": [
+                                            "label",
+                                            "required",
+                                            "subscriptionTypeId"
+                                        ]
+                                    },
+                                    "description": "A list of communication options to be displayed as checkboxes on the form. Each item in the list represents a separate checkbox for a specific type of communication for which explicit consent is required."
+                                },
+                                "communicationConsentText": {
+                                    "type": "string",
+                                    "description": "The text displayed to a user to obtain their explicit consent to receive communications."
+                                },
+                                "consentToProcessCheckboxLabel": {
+                                    "type": "string",
+                                    "description": "The text label displayed next to the checkbox that asks for explicit consent to process data."
+                                },
+                                "consentToProcessFooterText": {
+                                    "type": "string",
+                                    "description": "Specifies the text that appears in the footer of the explicit consent to process section."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Specifies the type of explicit consent that is being processed."
+                                },
+                                "privacyText": {
+                                    "type": "string",
+                                    "description": "Specifies the privacy text displayed to users when asking for explicit consent to process their data."
+                                },
+                                "consentToProcessText": {
+                                    "type": "string",
+                                    "description": "Specifies the text for the consent to process information."
+                                }
+                            },
+                            "description": "A set of options presented on the form to collect a user's explicit consent for data processing.",
+                            "required": [
+                                "communicationConsentText",
+                                "communicationsCheckboxes",
+                                "consentToProcessCheckboxLabel",
+                                "consentToProcessFooterText",
+                                "consentToProcessText",
+                                "privacyText",
+                                "type"
+                            ]
+                        },
+                        "implicitConsentToProcess": {
+                            "type": "object",
+                            "properties": {
+                                "communicationsCheckboxes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "subscriptionTypeId": {
+                                                "type": "integer",
+                                                "description": "The subscription type ID"
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "description": "The main label for the form field"
+                                            },
+                                            "required": {
+                                                "type": "boolean",
+                                                "description": "Whether this checkbox is required"
+                                            }
+                                        },
+                                        "required": [
+                                            "label",
+                                            "required",
+                                            "subscriptionTypeId"
+                                        ]
+                                    },
+                                    "description": "A list of communication checkboxes that will be displayed on the form as part of the implicit consent process. Each checkbox represents a specific communication type for which a user can provide consent."
+                                },
+                                "communicationConsentText": {
+                                    "type": "string",
+                                    "description": "Specifies the text displayed to a user to obtain their implicit consent for communications."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Specifies the type of implicit consent required for data processing."
+                                },
+                                "privacyText": {
+                                    "type": "string",
+                                    "description": "The privacy text that informs a user that they are implicitly consenting to the processing of their data."
+                                },
+                                "consentToProcessText": {
+                                    "type": "string",
+                                    "description": "Specifies the text for the implicit consent message, which informs the user that their information will be processed."
+                                }
+                            },
+                            "description": "Specifies the settings for implicit consent, where a form submission is treated as consent to process the contact's data.",
+                            "required": [
+                                "communicationConsentText",
+                                "consentToProcessText",
+                                "privacyText",
+                                "type"
+                            ]
+                        },
+                        "legitimateInterest": {
+                            "type": "object",
+                            "properties": {
+                                "lawfulBasis": {
+                                    "type": "string",
+                                    "description": "The lawful basis under which user consent is obtained and used for data processing."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Specifies the predefined category that describes the legitimate interest for processing data."
+                                },
+                                "privacyText": {
+                                    "type": "string",
+                                    "description": "The privacy notice text explaining the legitimate interest legal basis."
+                                }
+                            },
+                            "description": "A set of options for configuring the legitimate interest consent section of the form.",
+                            "required": [
+                                "lawfulBasis",
+                                "privacyText",
+                                "type"
+                            ]
+                        }
+                    },
+                    "description": "Specifies the legal consent options for the form. Defaults to `None` if not provided."
+                }
+            },
+            "required": [
+                "fieldGroups",
+                "name",
+                "submitText"
+            ]
+        }
+    },
+    {
+        "name": "create_form_global_event_subscription",
+        "description": "Creates a new webhook subscription for global form events, requiring an `endpoint` string and a `subscriptionDetails` dictionary. The `subscriptionDetails` dictionary must specify `contact_id`, `subscription_id`, `subscribed`, and `opt_in_date`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "endpoint": {
+                    "type": "string",
+                    "description": "A string that specifies the endpoint for the webhook subscription definition."
+                },
+                "subscriptionDetails": {
+                    "type": "object",
+                    "properties": {
+                        "contact_id": {
+                            "type": "string",
+                            "description": "The string identifier for the contact."
+                        },
+                        "subscription_id": {
+                            "type": "string",
+                            "description": "The string identifier for the subscription."
+                        },
+                        "subscribed": {
+                            "type": "boolean",
+                            "description": "A boolean value indicating whether the contact is subscribed to the specified subscription."
+                        },
+                        "opt_in_date": {
+                            "type": "string",
+                            "description": "Specifies the date the contact opted into the subscription, provided as a string."
+                        }
+                    },
+                    "description": "A dictionary containing the full details for the subscription definition. It must include `contact_id` (string), `subscription_id` (string), `subscribed` (boolean), and `opt_in_date` (string).",
+                    "required": [
+                        "contact_id",
+                        "opt_in_date",
+                        "subscribed",
+                        "subscription_id"
+                    ]
+                }
+            },
+            "required": [
+                "endpoint",
+                "subscriptionDetails"
+            ]
+        }
+    },
+    {
+        "name": "create_marketing_email",
+        "description": "Creates a new marketing email, configurable with details such as subject, HTML body, and status. It supports various marketing purposes, including transactional emails, promotions with discount codes or expiration dates, product announcements, and loyalty programs.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The required internal name of the email."
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "The email's subject line. It defaults to None."
+                },
+                "htmlBody": {
+                    "type": "string",
+                    "description": "The HTML content for the email body. This parameter is optional, defaulting to `None`."
+                },
+                "isTransactional": {
+                    "type": "boolean",
+                    "description": "Indicates whether the email is transactional. This parameter defaults to `False`."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Specifies the status of the email, such as 'scheduled' or 'sent'. Defaults to `None`."
+                },
+                "discount_code": {
+                    "type": "string",
+                    "description": "The discount code to include in promotional emails. Defaults to None."
+                },
+                "expiration": {
+                    "type": "string",
+                    "description": "Specifies the expiration date for time-limited offers. This optional string parameter defaults to `None`."
+                },
+                "launch_date": {
+                    "type": "string",
+                    "description": "An optional string representing the launch date for product announcements. This parameter defaults to `None`."
+                },
+                "sale_end_date": {
+                    "type": "string",
+                    "description": "The end date for sales promotions. This parameter defaults to None."
+                },
+                "reward_points": {
+                    "type": "integer",
+                    "description": "Specifies the number of reward points to be awarded with loyalty program emails. This optional parameter accepts an integer value and defaults to `None`."
+                },
+                "access_code": {
+                    "type": "string",
+                    "description": "An optional access code used for VIP or exclusive offers; defaults to `None`."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "create_marketing_event",
+        "description": "Creates a marketing event.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "The unique identifier for a marketing event from the external system in which it was created."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "A unique identifier for the account in the external system where the event was created."
+                },
+                "event_name": {
+                    "type": "string",
+                    "description": "A descriptive name for the marketing event."
+                },
+                "event_type": {
+                    "type": "string",
+                    "description": "Specifies the type of the marketing event."
+                },
+                "event_organizer": {
+                    "type": "string",
+                    "description": "Specifies the organizer responsible for the marketing event."
+                },
+                "start_date_time": {
+                    "type": "string",
+                    "description": "Specifies the date and time when the marketing event is scheduled to begin."
+                },
+                "end_date_time": {
+                    "type": "string",
+                    "description": "The date and time that marks the conclusion of the marketing event."
+                },
+                "event_description": {
+                    "type": "string",
+                    "description": "A description that provides details about the marketing event."
+                },
+                "event_url": {
+                    "type": "string",
+                    "description": "A URL that provides more information about the marketing event."
+                },
+                "custom_properties": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "sourceId": {
+                                "type": "string",
+                                "description": "Source identifier."
+                            },
+                            "selectedByUser": {
+                                "type": "boolean",
+                                "description": "Whether the property was selected by the user."
+                            },
+                            "sourceLabel": {
+                                "type": "string",
+                                "description": "Label of the source."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "Source of the property."
+                            },
+                            "updatedByUserId": {
+                                "type": "integer",
+                                "description": "ID of the user who last updated the property."
+                            },
+                            "persistenceTimestamp": {
+                                "type": "integer",
+                                "description": "Timestamp for persistence."
+                            },
+                            "sourceMetadata": {
+                                "type": "string",
+                                "description": "Source metadata encoded as a base64 string."
+                            },
+                            "dataSensitivity": {
+                                "type": "string",
+                                "description": "Data sensitivity level."
+                            },
+                            "unit": {
+                                "type": "string",
+                                "description": "Unit of measurement."
+                            },
+                            "requestId": {
+                                "type": "string",
+                                "description": "Request identifier."
+                            },
+                            "isEncrypted": {
+                                "type": "boolean",
+                                "description": "Whether the value is encrypted."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Property name."
+                            },
+                            "useTimestampAsPersistenceTimestamp": {
+                                "type": "boolean",
+                                "description": "Whether to use timestamp as persistence timestamp."
+                            },
+                            "value": {
+                                "type": "string",
+                                "description": "Property value."
+                            },
+                            "selectedByUserTimestamp": {
+                                "type": "integer",
+                                "description": "Timestamp when selected by user."
+                            },
+                            "timestamp": {
+                                "type": "integer",
+                                "description": "Property timestamp."
+                            },
+                            "isLargeValue": {
+                                "type": "boolean",
+                                "description": "Whether the value is large."
+                            }
+                        },
+                        "required": [
+                            "dataSensitivity",
+                            "isEncrypted",
+                            "isLargeValue",
+                            "name",
+                            "persistenceTimestamp",
+                            "requestId",
+                            "selectedByUser",
+                            "selectedByUserTimestamp",
+                            "source",
+                            "sourceId",
+                            "sourceLabel",
+                            "sourceMetadata",
+                            "timestamp",
+                            "unit",
+                            "updatedByUserId",
+                            "useTimestampAsPersistenceTimestamp",
+                            "value"
+                        ]
+                    },
+                    "description": "A dictionary of custom properties to associate with the marketing event, where each property must conform to a specific, required structure."
+                }
+            },
+            "required": [
+                "event_name",
+                "event_organizer",
+                "event_type",
+                "externalAccountId",
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "create_or_update_marketing_event_attendee",
+        "description": "Creates a new attendee record for a marketing event. If an attendee already exists for the event, their details are updated.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "The unique identifier for the marketing event, provided by the external system where the event was initially created."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "A unique identifier for the account where the event was created."
+                },
+                "email": {
+                    "type": "string",
+                    "description": "The email address of the attendee."
+                },
+                "joinedAt": {
+                    "type": "string",
+                    "description": "The date and time (as a string) when the attendee joined the event."
+                },
+                "leftAt": {
+                    "type": "string",
+                    "description": "The date and time, as a string, when the attendee left the event."
+                }
+            },
+            "required": [
+                "email",
+                "externalAccountId",
+                "externalEventId",
+                "joinedAt",
+                "leftAt"
+            ]
+        }
+    },
+    {
+        "name": "create_template",
+        "description": "Create a new coded template object within the Design Manager. This template supports various types, such as email or page templates, and includes its source code, category, and storage location.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Specifies the source code for the template."
+                },
+                "created": {
+                    "type": "string",
+                    "description": "The creation date for the template, specified in milliseconds since epoch. If not provided, this parameter defaults to the current time."
+                },
+                "template_type": {
+                    "type": "integer",
+                    "description": "Specifies the type of template to create. This integer parameter defaults to 2 (Email template). Valid values include: 2 (Email), 4 (Page), 11 (Error), 12 (Subscription preferences), 13 (Backup unsubscribe page), 14 (Subscriptions update confirmation), 19 (Password prompt page), 27 (Search results), 29 (Membership login), 30 (Membership registration), 31 (Membership reset password confirmation), and 32 (Membership reset password request)."
+                },
+                "category_id": {
+                    "type": "integer",
+                    "description": "The category type for the template. This integer parameter defaults to `2` (Email). Valid values include `0` (Unmapped), `1` (Landing Pages), `2` (Email), `3` (Blog Post), and `4` (Site Page)."
+                },
+                "folder": {
+                    "type": "string",
+                    "description": "The folder where the template will be saved. It defaults to `/templates/`."
+                },
+                "path": {
+                    "type": "string",
+                    "description": "The path where the template will be saved. It defaults to `/home/templates/`."
+                },
+                "is_available_for_new_content": {
+                    "type": "boolean",
+                    "description": "Specifies whether the template is available for new content. This parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "source"
+            ]
+        }
+    },
+    {
+        "name": "delete_form",
+        "description": "Archives a form. Provide the form's unique string identifier (`formId`) to initiate the archival process.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "formId": {
+                    "type": "string",
+                    "description": "The string identifier for the form to be archived."
+                }
+            },
+            "required": [
+                "formId"
+            ]
+        }
+    },
+    {
+        "name": "delete_form_global_event_subscription",
+        "description": "Deletes a webhook subscription, identified by its integer `subscriptionId`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "subscriptionId": {
+                    "type": "integer",
+                    "description": "The integer ID of the subscription definition."
+                }
+            },
+            "required": [
+                "subscriptionId"
+            ]
+        }
+    },
+    {
+        "name": "delete_marketing_email",
+        "description": "Deletes a marketing email using its unique ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email_id": {
+                    "type": "string",
+                    "description": "The required unique ID of the marketing email to delete."
+                }
+            },
+            "required": [
+                "email_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_marketing_event",
+        "description": "Deletes a marketing event identified by its unique ID from the external system and the unique ID of the account where it was created.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "A unique identifier for the marketing event, defined by the external system where the event was created."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "Specifies the unique identifier of the account where the event was created."
+                }
+            },
+            "required": [
+                "externalAccountId",
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "delete_marketing_event_attendee",
+        "description": "Remove an attendee from a marketing event.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "The unique identifier for the marketing event, as provided by the external system where the event was created."
+                },
+                "attendeeId": {
+                    "type": "string",
+                    "description": "A unique string identifier for the attendee."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "Specifies the unique identifier for the account that created the event."
+                }
+            },
+            "required": [
+                "attendeeId",
+                "externalAccountId",
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "delete_template_by_id",
+        "description": "Marks the specified Template as deleted. The deleted Template can be restored later by sending a POST request to the `restore-deleted` endpoint.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "template_id": {
+                    "type": "string",
+                    "description": "A unique string identifier for the template."
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "description": "The timestamp, in milliseconds since epoch, indicating when the template was deleted. If omitted, the current timestamp will be used."
+                }
+            },
+            "required": [
+                "template_id"
+            ]
+        }
+    },
+    {
+        "name": "get_campaign_by_id",
+        "description": "Retrieves a single campaign using its unique integer ID. If found, returns a dictionary containing the campaign's details; otherwise, returns `None`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "campaign_id": {
+                    "type": "integer",
+                    "description": "The integer identifier for the campaign."
+                }
+            },
+            "required": [
+                "campaign_id"
+            ]
+        }
+    },
+    {
+        "name": "get_campaigns",
+        "description": "Returns a list of marketing campaigns. Results can be filtered by various criteria such as creation or update dates, name, ID, or type, and paginated using limit and offset parameters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "description": "An optional integer that specifies the maximum number of campaigns to return."
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Specifies the number of campaigns to skip from the beginning of the retrieved list of campaigns. This parameter is an optional integer."
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "Filters campaigns by their creation date. Provide the date as a string."
+                },
+                "created_at__gt": {
+                    "type": "string",
+                    "description": "Filters campaigns, including only those whose creation date is after the specified date."
+                },
+                "created_at__gte": {
+                    "type": "string",
+                    "description": "Filters campaigns by their creation date. Only campaigns with a creation date greater than or equal to the specified date string will be included."
+                },
+                "created_at__lt": {
+                    "type": "string",
+                    "description": "Filters campaigns to include only those with a creation date earlier than the specified date string."
+                },
+                "created_at__lte": {
+                    "type": "string",
+                    "description": "Filters campaigns to include only those with a creation date on or before the specified date."
+                },
+                "updated_at": {
+                    "type": "string",
+                    "description": "Filters campaigns by their update date. This parameter accepts a string value."
+                },
+                "updated_at__gt": {
+                    "type": "string",
+                    "description": "A date string used to filter campaigns. Only campaigns with an update date strictly after this specified date will be returned."
+                },
+                "updated_at__gte": {
+                    "type": "string",
+                    "description": "Filters campaigns to include only those updated on or after the specified date string."
+                },
+                "updated_at__lt": {
+                    "type": "string",
+                    "description": "Filters campaigns where the update date is earlier than the provided specific date. This parameter is an optional string representing the date."
+                },
+                "updated_at__lte": {
+                    "type": "string",
+                    "description": "Filters campaigns to include only those with an update date less than or equal to a specified date."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A string that filters campaigns by their exact name."
+                },
+                "name__contains": {
+                    "type": "string",
+                    "description": "The string used to filter campaigns by name. Only campaigns whose name contains this string will be returned."
+                },
+                "name__icontains": {
+                    "type": "string",
+                    "description": "Filters campaigns by name, matching those that contain the specified string using a case-insensitive comparison."
+                },
+                "name__ne": {
+                    "type": "string",
+                    "description": "Filters campaigns by name. Only campaigns whose name does not exactly match the specified string are returned."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Filters campaigns by their ID. This parameter accepts a string value."
+                },
+                "id__ne": {
+                    "type": "string",
+                    "description": "Filters campaigns where the campaign ID is not equal to the specified string value."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "A string representing the campaign type. Use this parameter to filter campaigns, returning only those that exactly match the specified type."
+                },
+                "type__ne": {
+                    "type": "string",
+                    "description": "Filters campaigns where the `type` property is not equal to a specified string value."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_form_by_id",
+        "description": "Retrieves a marketing form using its unique identifier, returned as a dictionary.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "formId": {
+                    "type": "string",
+                    "description": "The string ID of the form to retrieve."
+                }
+            },
+            "required": [
+                "formId"
+            ]
+        }
+    },
+    {
+        "name": "get_form_global_event_subscription_definitions",
+        "description": "Retrieves all global form event subscription definitions. Each definition is a dictionary containing its ID, endpoint, and active status, alongside `subscriptionDetails` which include the contact ID, subscription ID, subscribed status, and opt-in date.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_form_global_event_subscriptions",
+        "description": "Retrieves all configured webhook subscriptions for global form events. Each subscription is a dictionary that includes an `id`, `endpoint`, `active` status, and `subscriptionDetails` containing `contact_id`, `subscription_id`, `subscribed` status, and `opt_in_date`.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_forms",
+        "description": "Retrieves Marketing Forms. The results can be filtered by ID, name, creation date, or update date using various comparison operators, and paginated to control the number of forms returned and their starting point.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "after": {
+                    "type": "string",
+                    "description": "Specifies the string ID of a form. Results will include only forms appearing sequentially after this specified form, enabling cursor-based pagination."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of forms to return."
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "The date the form was created. Provide this parameter as an ISO 8601 formatted string (e.g., 'YYYY-MM-DDTHH:MM:SSZ')."
+                },
+                "created_at__gt": {
+                    "type": "string",
+                    "description": "A string representing the date after which forms must have been created."
+                },
+                "created_at__gte": {
+                    "type": "string",
+                    "description": "Filters forms to include only those created on or after the specified date. Provide the date as an ISO 8601 formatted string."
+                },
+                "created_at__lt": {
+                    "type": "string",
+                    "description": "Filters forms created before the specified date. Provide the date as an ISO-formatted string."
+                },
+                "created_at__lte": {
+                    "type": "string",
+                    "description": "A string representing the date before or equal to which forms were created."
+                },
+                "updated_at": {
+                    "type": "string",
+                    "description": "The date the form was updated. This parameter expects an ISO 8601 formatted string."
+                },
+                "updated_at__gt": {
+                    "type": "string",
+                    "description": "A date string that filters forms to include only those updated after the specified date."
+                },
+                "updated_at__gte": {
+                    "type": "string",
+                    "description": "Filters forms to include only those updated on or after this specified date. This parameter accepts a date as a string, expected to be in ISO 8601 format."
+                },
+                "updated_at__lt": {
+                    "type": "string",
+                    "description": "Filters forms to retrieve only those that were updated before the specified date. This parameter accepts the date as a string."
+                },
+                "updated_at__lte": {
+                    "type": "string",
+                    "description": "Filters forms updated on or before the specified date. Provide the date as an ISO 8601 formatted string."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Specifies the name of the form to retrieve. This is an optional string parameter."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "A string representing the ID of the form."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_marketing_email_by_id",
+        "description": "Retrieves a marketing email by its unique ID. The function returns the email object if found, or `None` if not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email_id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the marketing email. This parameter is required."
+                }
+            },
+            "required": [
+                "email_id"
+            ]
+        }
+    },
+    {
+        "name": "get_marketing_event_attendees",
+        "description": "Retrieves attendees for a specific marketing event using its unique external identifier. It supports pagination and limits the number of attendees returned, with a default of 10 and a maximum of 100. The retrieved attendees are provided as a list under the 'results' key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "A unique string identifier for the marketing event. This ID is assigned by the external system where the event was originally created."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of attendees to return. It defaults to 10 and has a maximum value of 100."
+                },
+                "after": {
+                    "type": "string",
+                    "description": "A string token used for pagination. It specifies the starting point for retrieving the next page of results in a paginated list of attendees."
+                }
+            },
+            "required": [
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "get_marketing_event_by_id",
+        "description": "Retrieves a marketing event using its unique external event identifier and the corresponding external account identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "The unique identifier for the marketing event, as provided by the external system where the event was originally created."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "The unique identifier for the account where the event was created."
+                }
+            },
+            "required": [
+                "externalAccountId",
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "get_marketing_events",
+        "description": "Retrieves all marketing events. This function supports filtering by occurrence time, limiting the number of results, and pagination. Events are returned within a 'results' key inside a dictionary.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "occurredAfter": {
+                    "type": "string",
+                    "description": "Filters events that occurred after the specified string timestamp."
+                },
+                "occurredBefore": {
+                    "type": "string",
+                    "description": "A string timestamp used to filter events that occurred before this specified time."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Defines the optional maximum number of events to return, specified as an integer."
+                },
+                "after": {
+                    "type": "string",
+                    "description": "Specifies a cursor string to retrieve the next page of results in a paginated response."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_template_by_id",
+        "description": "Retrieves a specific template using its unique identifier. The function returns a dictionary containing comprehensive template details, including its ID, category, source code, path, creation timestamp, availability status, archive status, and a list of its historical versions.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "template_id": {
+                    "type": "string",
+                    "description": "A unique string identifier for the template."
+                }
+            },
+            "required": [
+                "template_id"
+            ]
+        }
+    },
+    {
+        "name": "get_templates",
+        "description": "Get all templates. Results can be paginated using `limit` and `offset` parameters. Additionally, templates can be filtered by specific criteria such as `deleted_at`, `id`, `is_available_for_new_content`, `label`, or `path`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of templates to return; the default value is 20."
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Specifies the offset of the first template to return. The default value is 0."
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "description": "Filters templates by their deletion timestamp. The timestamp value must be provided in milliseconds since epoch."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "A unique identifier for a template, used to filter the list of templates."
+                },
+                "is_available_for_new_content": {
+                    "type": "string",
+                    "description": "Filters templates by their availability for new content. Provide the desired availability as a string, such as 'True' or 'False', to match the boolean property."
+                },
+                "label": {
+                    "type": "string",
+                    "description": "A string parameter used to filter templates by their label."
+                },
+                "path": {
+                    "type": "string",
+                    "description": "Filters templates based on their saved path."
+                }
+            }
+        }
+    },
+    {
+        "name": "restore_deleted_template",
+        "description": "Restores a previously deleted template identified by its unique ID. Upon successful restoration, it returns the complete template object, which includes details such as its ID, category, folder, source, and version history. If the template is not found, an error message is returned.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "template_id": {
+                    "type": "string",
+                    "description": "A unique string identifier for the template."
+                }
+            },
+            "required": [
+                "template_id"
+            ]
+        }
+    },
+    {
+        "name": "send_single_email_with_template",
+        "description": "Sends a single transactional email generated from a pre-existing template.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "template_id": {
+                    "type": "string",
+                    "description": "Specifies the ID of a pre-existing transactional email template to use for the message."
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "to": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Required. Email address of the recipient."
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the recipient."
+                                    }
+                                },
+                                "required": [
+                                    "email"
+                                ]
+                            },
+                            "description": "A required list of recipient objects to whom the email will be sent."
+                        },
+                        "cc": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Required. Email address of the CC recipient."
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the CC recipient."
+                                    }
+                                },
+                                "required": [
+                                    "email"
+                                ]
+                            },
+                            "description": "A list of recipient objects to be carbon copied (CC) on the email."
+                        },
+                        "bcc": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Required. Email address of the BCC recipient."
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the BCC recipient."
+                                    }
+                                },
+                                "required": [
+                                    "email"
+                                ]
+                            },
+                            "description": "A list of objects, where each object defines a blind carbon copy (BCC) recipient."
+                        },
+                        "from": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "description": "The required email address of the sender."
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "Specifies the name of the sender."
+                                }
+                            },
+                            "description": "An object that contains the sender's information.",
+                            "required": [
+                                "email"
+                            ]
+                        },
+                        "replyTo": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Required. Reply-to email address."
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Reply-to name."
+                                    }
+                                },
+                                "required": [
+                                    "email"
+                                ]
+                            },
+                            "description": "A list of email addresses that will receive replies to this email."
+                        }
+                    },
+                    "description": "An object specifying the email content and recipient information.",
+                    "required": [
+                        "to"
+                    ]
+                },
+                "customProperties": {
+                    "type": "object",
+                    "properties": {
+                        "customProperty1": {
+                            "type": "string",
+                            "description": "The value for the first custom property. This value can be inserted into the email template to provide personalized content."
+                        },
+                        "customProperty2": {
+                            "type": "string",
+                            "description": "Specifies the value for the custom property named `customProperty2`, which is used to personalize the email template."
+                        }
+                    },
+                    "description": "A set of custom key-value pairs used to personalize the email template. Each key corresponds to a placeholder variable in the template, which will be replaced by its corresponding value.",
+                    "required": [
+                        "customProperty1",
+                        "customProperty2"
+                    ]
+                },
+                "contactProperties": {
+                    "type": "object",
+                    "properties": {
+                        "firstName": {
+                            "type": "string",
+                            "description": "The first name of the contact."
+                        },
+                        "lastName": {
+                            "type": "string",
+                            "description": "The last name of the contact."
+                        }
+                    },
+                    "description": "A collection of property values for the contact receiving the email, which are used to personalize the content of the email template.",
+                    "required": [
+                        "firstName",
+                        "lastName"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "template_id"
+            ]
+        }
+    },
+    {
+        "name": "send_transactional_email",
+        "description": "Sends a single transactional email.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "to": {
+                            "type": "string",
+                            "description": "The recipient's email address."
+                        },
+                        "from": {
+                            "type": "string",
+                            "description": "The email address of the sender."
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "The subject line for the email."
+                        },
+                        "htmlBody": {
+                            "type": "string",
+                            "description": "The HTML source code for the body of the email."
+                        },
+                        "cc": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "One or more email addresses to receive a carbon copy (CC) of the email."
+                        },
+                        "bcc": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "The email address or addresses for blind carbon copy (BCC) recipients. These recipients get a copy of the email, but their email addresses are not visible to the primary recipients in the 'To' and 'CC' fields."
+                        },
+                        "replyTo": {
+                            "type": "string",
+                            "description": "The email address that should receive replies for the message."
+                        }
+                    },
+                    "description": "An object that contains the email's content and the corresponding recipient information.",
+                    "required": [
+                        "from",
+                        "htmlBody",
+                        "subject",
+                        "to"
+                    ]
+                },
+                "customProperties": {
+                    "type": "object",
+                    "properties": {},
+                    "description": "An object containing custom key-value pairs for email personalization. This data can be used to dynamically insert content into the email."
+                }
+            },
+            "required": [
+                "message"
+            ]
+        }
+    },
+    {
+        "name": "update_campaign",
+        "description": "Updates an existing campaign identified by its ID. Provide optional parameters like name, description, date components, or theme to modify the corresponding campaign fields. The function returns the updated campaign details or `None` if the campaign is not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "campaign_id": {
+                    "type": "integer",
+                    "description": "The unique identifier for the campaign, specified as an integer."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the campaign. This parameter is an optional string."
+                },
+                "slug": {
+                    "type": "string",
+                    "description": "An optional string that represents the slug of the campaign."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The optional string description for the campaign."
+                },
+                "start_year": {
+                    "type": "integer",
+                    "description": "The start year for the campaign. This parameter is an optional integer."
+                },
+                "start_month": {
+                    "type": "integer",
+                    "description": "An integer representing the start month of the campaign."
+                },
+                "start_day": {
+                    "type": "integer",
+                    "description": "The day component of the campaign's start date. This parameter is an optional integer."
+                },
+                "end_year": {
+                    "type": "integer",
+                    "description": "The optional end year for the campaign, provided as an integer."
+                },
+                "end_month": {
+                    "type": "integer",
+                    "description": "Designates the campaign's end month. This optional integer parameter indicates the final month of the campaign's duration."
+                },
+                "end_day": {
+                    "type": "integer",
+                    "description": "The integer representing the day of the month for the campaign's end date. This parameter is optional."
+                },
+                "theme": {
+                    "type": "string",
+                    "description": "The optional string that specifies the theme of the campaign."
+                },
+                "resource": {
+                    "type": "string",
+                    "description": "Represents the campaign's resource as an optional string."
+                },
+                "color_label": {
+                    "type": "string",
+                    "description": "Specifies the color label for the campaign. This parameter is an optional string."
+                }
+            },
+            "required": [
+                "campaign_id"
+            ]
+        }
+    },
+    {
+        "name": "update_form",
+        "description": "Updates an existing marketing form.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "formId": {
+                    "type": "string",
+                    "description": "The ID of the form to update."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Specifies the new name for the form."
+                },
+                "submitText": {
+                    "type": "string",
+                    "description": "Specifies the new text to display on the form's submit button."
+                },
+                "fieldGroups": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "groupType": {
+                                "type": "string",
+                                "description": "The type of the field group."
+                            },
+                            "richTextType": {
+                                "type": "string",
+                                "description": "The type of rich text included. The default value is text."
+                            },
+                            "richText": {
+                                "type": "string",
+                                "description": "A block of rich text or an image. Those can be used to add extra information for the customers filling in the form. If the field group includes fields, the rich text will be displayed before the fields."
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "fieldType": {
+                                            "type": "string",
+                                            "description": "The type of the field. Can be one of: email, phone, mobile_phone, single_line_text, multi_line_text, number, single_checkbox, multiple_checkboxes, dropdown, radio, datepicker, file, payment_link_radio"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "The name of the field."
+                                        },
+                                        "label": {
+                                            "type": "string",
+                                            "description": "The label of the field."
+                                        },
+                                        "required": {
+                                            "type": "boolean",
+                                            "description": "Whether the field is required."
+                                        },
+                                        "placeholder": {
+                                            "type": "string",
+                                            "description": "The placeholder text of the field."
+                                        },
+                                        "defaultValue": {
+                                            "type": "string",
+                                            "description": "The default value of the field."
+                                        },
+                                        "options": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "description": "The options of the field."
+                                        },
+                                        "hidden": {
+                                            "type": "boolean",
+                                            "description": "Whether the field is hidden."
+                                        }
+                                    },
+                                    "required": [
+                                        "fieldType",
+                                        "label",
+                                        "name",
+                                        "required"
+                                    ]
+                                },
+                                "description": "The fields of the field group."
+                            }
+                        },
+                        "required": [
+                            "fields",
+                            "groupType",
+                            "richText",
+                            "richTextType"
+                        ]
+                    },
+                    "description": "A set of field groups that will replace the form's existing field groups."
+                },
+                "legalConsentOptions": {
+                    "type": "object",
+                    "properties": {
+                        "explicitConsentToProcess": {
+                            "type": "object",
+                            "properties": {
+                                "communicationsCheckboxes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "subscriptionTypeId": {
+                                                "type": "integer",
+                                                "description": "The subscription type ID"
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "description": "The main label for the form field"
+                                            },
+                                            "required": {
+                                                "type": "boolean",
+                                                "description": "Whether this checkbox is required"
+                                            }
+                                        },
+                                        "required": [
+                                            "label",
+                                            "required",
+                                            "subscriptionTypeId"
+                                        ]
+                                    },
+                                    "description": "A list of objects, where each object defines a communication consent option to be displayed as a checkbox."
+                                },
+                                "communicationConsentText": {
+                                    "type": "string",
+                                    "description": "The text displayed to a user to obtain their explicit consent for receiving communications."
+                                },
+                                "consentToProcessCheckboxLabel": {
+                                    "type": "string",
+                                    "description": "The text label for the checkbox that users select to provide consent."
+                                },
+                                "consentToProcessFooterText": {
+                                    "type": "string",
+                                    "description": "The text for the footer of the explicit consent to process section."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Specifies the type of consent."
+                                },
+                                "privacyText": {
+                                    "type": "string",
+                                    "description": "The legal text displayed to a user to obtain their explicit consent for data processing."
+                                },
+                                "consentToProcessText": {
+                                    "type": "string",
+                                    "description": "Specifies the text displayed to a user to obtain their explicit consent for data processing."
+                                }
+                            },
+                            "description": "Specifies the options for requesting explicit user consent to process their data.",
+                            "required": [
+                                "communicationConsentText",
+                                "communicationsCheckboxes",
+                                "consentToProcessCheckboxLabel",
+                                "consentToProcessFooterText",
+                                "consentToProcessText",
+                                "privacyText",
+                                "type"
+                            ]
+                        },
+                        "implicitConsentToProcess": {
+                            "type": "object",
+                            "properties": {
+                                "communicationsCheckboxes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "subscriptionTypeId": {
+                                                "type": "integer",
+                                                "description": "The subscription type ID"
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "description": "The main label for the form field"
+                                            },
+                                            "required": {
+                                                "type": "boolean",
+                                                "description": "Whether this checkbox is required"
+                                            }
+                                        },
+                                        "required": [
+                                            "label",
+                                            "required",
+                                            "subscriptionTypeId"
+                                        ]
+                                    },
+                                    "description": "A list of communication options that a user can select to provide implicit consent for processing their data."
+                                },
+                                "communicationConsentText": {
+                                    "type": "string",
+                                    "description": "Specifies the text displayed to a user to obtain their consent for receiving communications."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Specifies the type of implicit consent being granted."
+                                },
+                                "privacyText": {
+                                    "type": "string",
+                                    "description": "The privacy-related text displayed to a user, which serves as notice for implicit consent to process their data."
+                                },
+                                "consentToProcessText": {
+                                    "type": "string",
+                                    "description": "The text that informs a user they are implicitly consenting to have their data processed."
+                                }
+                            },
+                            "description": "A set of options for configuring implicit consent to process user data.",
+                            "required": [
+                                "communicationConsentText",
+                                "communicationsCheckboxes",
+                                "consentToProcessText",
+                                "privacyText",
+                                "type"
+                            ]
+                        },
+                        "legitimateInterest": {
+                            "type": "object",
+                            "properties": {
+                                "lawfulBasis": {
+                                    "type": "string",
+                                    "description": "Specifies the lawful basis for processing data with user consent."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Specifies the type of legitimate interest."
+                                },
+                                "privacyText": {
+                                    "type": "string",
+                                    "description": "The text that explains the legitimate interest legal basis for processing user data."
+                                }
+                            },
+                            "description": "Specifies the configuration for the legitimate interest consent options.",
+                            "required": [
+                                "lawfulBasis",
+                                "privacyText",
+                                "type"
+                            ]
+                        }
+                    },
+                    "description": "Specifies the new legal consent options for the form. Defaults to `None` if not provided."
+                }
+            },
+            "required": [
+                "formId"
+            ]
+        }
+    },
+    {
+        "name": "update_form_global_event_subscription",
+        "description": "Updates a webhook subscription. This operation specifically activates or deactivates the subscription.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "subscriptionId": {
+                    "type": "integer",
+                    "description": "The integer ID of the subscription definition."
+                },
+                "active": {
+                    "type": "boolean",
+                    "description": "A boolean value indicating whether the subscription definition is active."
+                }
+            },
+            "required": [
+                "active",
+                "subscriptionId"
+            ]
+        }
+    },
+    {
+        "name": "update_marketing_email",
+        "description": "Updates an existing marketing email identified by its unique ID. This includes modifying attributes such as its name, subject, HTML body, transactional status, or various promotional and logistical details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email_id": {
+                    "type": "string",
+                    "description": "A required string representing the unique identifier of the marketing email to update."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Specifies the internal name for the email. This is an optional string parameter."
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "The subject line for the marketing email. This is an optional string parameter."
+                },
+                "htmlBody": {
+                    "type": "string",
+                    "description": "The HTML content for the body of the email."
+                },
+                "isTransactional": {
+                    "type": "boolean",
+                    "description": "A boolean flag indicating whether the email is a transactional email."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "The status of the email, for example 'scheduled' or 'sent'."
+                },
+                "discount_code": {
+                    "type": "string",
+                    "description": "A string representing the discount code for inclusion in promotional emails."
+                },
+                "expiration": {
+                    "type": "string",
+                    "description": "The expiration date for time-limited offers. This is an optional string parameter."
+                },
+                "launch_date": {
+                    "type": "string",
+                    "description": "Specifies the optional launch date, as a string, for product announcements."
+                },
+                "sale_end_date": {
+                    "type": "string",
+                    "description": "An optional string representing the end date for sales promotions."
+                },
+                "reward_points": {
+                    "type": "integer",
+                    "description": "The integer number of reward points for loyalty program emails."
+                },
+                "access_code": {
+                    "type": "string",
+                    "description": "A string providing an access code for VIP or exclusive offers."
+                }
+            },
+            "required": [
+                "email_id"
+            ]
+        }
+    },
+    {
+        "name": "update_marketing_event",
+        "description": "Updates the details of an existing marketing event.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "externalEventId": {
+                    "type": "string",
+                    "description": "A unique identifier for the marketing event, assigned by the external system where the event was originally created."
+                },
+                "externalAccountId": {
+                    "type": "string",
+                    "description": "The unique identifier for the account in which the event was created."
+                },
+                "event_name": {
+                    "type": "string",
+                    "description": "The name for the marketing event."
+                },
+                "event_type": {
+                    "type": "string",
+                    "description": "Specifies the type of the marketing event."
+                },
+                "start_date_time": {
+                    "type": "string",
+                    "description": "Specifies the start date and time for the marketing event."
+                },
+                "end_date_time": {
+                    "type": "string",
+                    "description": "The date and time when the marketing event is scheduled to end."
+                },
+                "event_organizer": {
+                    "type": "string",
+                    "description": "Identifies the organizer of the marketing event."
+                },
+                "event_description": {
+                    "type": "string",
+                    "description": "A description of the marketing event."
+                },
+                "event_url": {
+                    "type": "string",
+                    "description": "A URL that provides more information about the marketing event."
+                },
+                "custom_properties": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "sourceId": {
+                                "type": "string",
+                                "description": "Source identifier."
+                            },
+                            "selectedByUser": {
+                                "type": "boolean",
+                                "description": "Whether the property was selected by the user."
+                            },
+                            "sourceLabel": {
+                                "type": "string",
+                                "description": "Label of the source."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "Source of the property."
+                            },
+                            "updatedByUserId": {
+                                "type": "integer",
+                                "description": "ID of the user who last updated the property."
+                            },
+                            "persistenceTimestamp": {
+                                "type": "integer",
+                                "description": "Timestamp for persistence."
+                            },
+                            "sourceMetadata": {
+                                "type": "string",
+                                "description": "Source metadata encoded as a base64 string."
+                            },
+                            "dataSensitivity": {
+                                "type": "string",
+                                "description": "Data sensitivity level."
+                            },
+                            "unit": {
+                                "type": "string",
+                                "description": "Unit of measurement."
+                            },
+                            "requestId": {
+                                "type": "string",
+                                "description": "Request identifier."
+                            },
+                            "isEncrypted": {
+                                "type": "boolean",
+                                "description": "Whether the value is encrypted."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Property name."
+                            },
+                            "useTimestampAsPersistenceTimestamp": {
+                                "type": "boolean",
+                                "description": "Whether to use timestamp as persistence timestamp."
+                            },
+                            "value": {
+                                "type": "string",
+                                "description": "Property value."
+                            },
+                            "selectedByUserTimestamp": {
+                                "type": "integer",
+                                "description": "Timestamp when selected by user."
+                            },
+                            "timestamp": {
+                                "type": "integer",
+                                "description": "Property timestamp."
+                            },
+                            "isLargeValue": {
+                                "type": "boolean",
+                                "description": "Whether the value is large."
+                            }
+                        },
+                        "required": [
+                            "dataSensitivity",
+                            "isEncrypted",
+                            "isLargeValue",
+                            "name",
+                            "persistenceTimestamp",
+                            "requestId",
+                            "selectedByUser",
+                            "selectedByUserTimestamp",
+                            "source",
+                            "sourceId",
+                            "sourceLabel",
+                            "sourceMetadata",
+                            "timestamp",
+                            "unit",
+                            "updatedByUserId",
+                            "useTimestampAsPersistenceTimestamp",
+                            "value"
+                        ]
+                    },
+                    "description": "A set of custom properties to associate with the marketing event. Each property must be a dictionary that adheres to a predefined structure."
+                }
+            },
+            "required": [
+                "externalAccountId",
+                "externalEventId"
+            ]
+        }
+    },
+    {
+        "name": "update_template_by_id",
+        "description": "Updates an existing template. This function performs a partial update, modifying only the fields provided in the request while leaving any omitted fields unchanged.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "template_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the template to update."
+                },
+                "category_id": {
+                    "type": "integer",
+                    "description": "A numeric ID representing the template's category. Valid values are `0` (Unmapped), `1` (Landing Pages), `2` (Email), `3` (Blog Post), and `4` (Site Page)."
+                },
+                "folder": {
+                    "type": "string",
+                    "description": "The destination folder for the template."
+                },
+                "template_type": {
+                    "type": "integer",
+                    "description": "A numeric code that specifies the type of template. For example, use `2` for an Email, `4` for a Page, or `11` for an Error template."
+                },
+                "source": {
+                    "type": "string",
+                    "description": "The raw source code that constitutes the template."
+                },
+                "path": {
+                    "type": "string",
+                    "description": "A path specifying the storage location of the template."
+                },
+                "created": {
+                    "type": "string",
+                    "description": "The creation timestamp, represented as the number of milliseconds that have elapsed since the Unix epoch."
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "description": "A timestamp representing the deletion time, measured in milliseconds since the Unix epoch."
+                },
+                "is_available_for_new_content": {
+                    "type": "boolean",
+                    "description": "A boolean that determines if the template is available for creating new content."
+                },
+                "archived": {
+                    "type": "boolean",
+                    "description": "Indicates if the template is archived."
+                },
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "source": {
+                                "type": "string",
+                                "description": "The source code of this version."
+                            },
+                            "version_id": {
+                                "type": "string",
+                                "description": "The version identifier."
+                            }
+                        },
+                        "required": [
+                            "source",
+                            "version_id"
+                        ]
+                    },
+                    "description": "A list of objects, where each object defines a single template version."
+                }
+            },
+            "required": [
+                "template_id"
+            ]
+        }
+    }
+]

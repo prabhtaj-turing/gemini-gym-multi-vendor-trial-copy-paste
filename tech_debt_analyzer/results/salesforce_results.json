@@ -1,0 +1,701 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:59.057687Z",
+  "results": {
+    "salesforce/Event.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their optional nature and types. The `Returns` section correctly specifies the return type as `Dict[str, Any]` and lists the expected keys.  The `Raises` section mentions the `ValidationError`, which is accurate.  All default parameter values are mentioned."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The code uses a Pydantic model (`EventInputModel`) to validate the functional input parameters (`Subject`, `StartDateTime`, `EndDateTime`, `Description`, `Location`, `IsAllDayEvent`, `OwnerId`, `WhoId`, `WhatId`).  The `try...except` block handles `ValidationError` exceptions raised by Pydantic, providing specific error messages if validation fails.  This is a proper and effective use of Pydantic for input validation.  The `Name` parameter is also handled correctly, although it's not part of the Pydantic model, as it's an optional parameter that doesn't require specific type validation beyond being a string (which is the default type in Python)."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The code uses Pydantic's `EventInputModel` for input validation. This handles type checking for all functional parameters (`Subject`, `StartDateTime`, `EndDateTime`, `Description`, `Location`, `IsAllDayEvent`, `OwnerId`, `WhoId`, `WhatId`).  However, it lacks value validation (e.g., checking for valid date/time formats in `StartDateTime` and `EndDateTime`, length restrictions on string fields, or specific constraints on IDs).  Null/empty checks are implicitly handled by Pydantic's optional type annotations (`Optional[str]`, `Optional[bool]`).  There are no special constraints validated (e.g., checking if OwnerId, WhoId, WhatId exist in the database). Error handling is good; Pydantic's `ValidationError` provides detailed error messages.  While type validation is comprehensive, the absence of value validation prevents a \"Comprehensive\" rating.  The `Name` parameter is also validated implicitly by the `EventInputModel` if it's included in the `event_attributes` dictionary."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str] or Optional[bool]).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a new event entry in the global `DB` dictionary.  All functional input parameters (`Name`, `Subject`, `StartDateTime`, `EndDateTime`, `Description`, `Location`, `IsAllDayEvent`, `OwnerId`, `WhoId`, `WhatId`) are used to populate the `new_event` dictionary.  The `try...except` block correctly handles `ValidationError` from Pydantic.  The docstring accurately describes the function's behavior, input parameters, return type, and exceptions. There are no placeholders or TODO comments. The function's logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating calendar events and deals with fields like Name, Subject, StartDateTime, etc., none of which are email addresses or phone numbers.  No improvements are needed in this regard because the feature is absent."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a concise description of the function's purpose.  It correctly documents the `event_id` argument with its type and description. The return value is documented, including the structure of the error dictionary.  Types are specified for both the parameter and the return value. The docstring accurately reflects the function's behavior in terms of successful deletion and handling of the \"Event not found\" scenario.  However, it could be improved by explicitly mentioning that the function uses a global `DB` (although this is acceptable given the context).  While not strictly an error, the docstring's description of an \"empty dict on success\" could be slightly more precise by specifying `{}` instead of \"empty dict\".  Finally, there's no mention of any potential exceptions that might be raised (though none are explicitly raised in the provided code).  Adding a \"Raises\" section, even if it's empty or notes that no exceptions are expected, would improve clarity and completeness."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `event_id` exists in the `DB[\"Event\"]` dictionary before attempting deletion. This acts as basic input validation, ensuring the `event_id` is at least present in the data structure.  While a Pydantic model could be used to add more sophisticated validation (e.g., checking the `event_id` format or type), the existing check is sufficient for the function's purpose.  Adding a Pydantic model would be overkill for this simple validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `event_id` by implicitly treating it as a string within the `in` operator. However, it lacks value validation.  There's no check to ensure that `event_id` is a valid event ID according to any defined format or constraints within the `DB[\"Event\"]` structure.  No explicit null or empty string checks are performed. While it implicitly handles an empty string (it won't be found in the dictionary), it doesn't explicitly check for it or raise a more specific error message in that case.  The function does not raise exceptions for invalid inputs; it simply returns an error message in the dictionary.  Therefore, while type validation is partially present, value and null checks are missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design.  The single parameter `event_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes an event from the global `DB` dictionary if it exists and returns an empty dictionary to indicate success. If the event is not found, it returns an error dictionary as documented.  The `event_id` parameter is correctly used.  The docstring accurately reflects the function's behavior and return types. There are no placeholders, TODOs, or exceptions to handle (as the function's logic inherently handles the \"event not found\" scenario)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its sole purpose is to delete an event from a database (represented by `DB`) based on an event ID.  Therefore, the criteria of phone number normalization and email validation are irrelevant and not applicable to this function."
+          }
+        },
+        "describeLayout": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose and arguments.  The return type is specified, and the structure of the dictionary is described. However, the docstring is overly simplistic.  It states that the function returns `\"Event layout description\"` as the value for the \"layout\" key, but the actual implementation returns a dictionary with a single key-value pair: `{\"layout\": \"Event layout description\"}`. While functionally correct, the docstring should reflect this more accurately.  The docstring also lacks information about potential exceptions (Raises section).  A more robust docstring would provide a more detailed description of the \"Event layout description\" and explain what kind of information it contains.  Finally, while the return type is specified, a more descriptive explanation of what constitutes a \"layout description\" would improve clarity."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `describeLayout` takes one functional input parameter, `event_id`, which is expected to be a string.  However, there is no input validation performed on this parameter.  No type checking or other validation is implemented.  Using a Pydantic model would significantly improve the robustness of this function by ensuring that `event_id` is indeed a string and potentially adding further constraints (e.g., minimum length, specific format) if needed."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function `describeLayout` has only one functional input parameter, `event_id`.  No validation is performed on this parameter.  There are no type checks, value checks, null/empty checks, or any other form of validation.  Therefore, the input validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters and the return type are properly type-annotated.  The `event_id` parameter is annotated as `str`, and the return type is correctly specified as `Dict[str, str]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function returns a hardcoded string instead of retrieving and processing information based on the provided `event_id`.  The `event_id` parameter is not used, making the function's logic incomplete.  While the docstring correctly describes the return type, the actual implementation does not dynamically generate a layout description based on the event ID.  The function lacks any interaction with a database (even the global `DB` dictionary), which would be expected for a function that aims to \"describe the layout of an event\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `describeLayout` does not handle any phone numbers or email addresses.  Its purpose is to describe an event layout based on an event ID, and it does not take or process any contact information. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "describeSObjects": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and attempts to describe the function's purpose and return value.  The return type is correctly specified as `Dict[str, str]`. However, the description of the returned dictionary is incomplete.  The docstring states the dictionary will have a key \"object\" with a string value describing the event object. While the implementation matches this, a more comprehensive description of what constitutes a useful \"Event object description\" would improve clarity.  For example, it could mention what kind of information this description contains (e.g., event type, timestamp, relevant data).  The docstring lacks sections for arguments (there are none), raises (there are none), and could benefit from a more precise description of the function's overall purpose within the context of an MCP server.  The current description (\"Describes the object (Event)\") is too vague.  A more informative description would explain *how* this description is used by the server."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `describeSObjects` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `describeSObjects` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has no parameters, so the question of parameter type annotations is moot.  However, the return type is clearly annotated as `Dict[str, str]`, fulfilling the requirement.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly returns a dictionary with the specified structure as described in the docstring.  There are no unused functional parameters, no exceptions to handle, no placeholders, and the logic is complete and functional given the use of the global `DB` (which is expected). The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `describeSObjects` does not handle any phone numbers or email addresses.  It simply returns a dictionary describing an \"Event object\". Therefore, the criteria of phone number normalization and email validation are not applicable.  No improvements are needed as the function doesn't attempt to perform these tasks."
+          }
+        },
+        "getDeleted": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to several issues.  While a description is present, it's vague (\"Retrieves deleted events\").  The description of the return value is misleading. The docstring states that the return is  `Dict[str, List[Dict[str, Any]]]: List of deleted events with structure: - deleted (list): List of deleted event objects`, implying a dictionary with a key \"deleted\" containing a list of dictionaries. However, the function *always* returns `{\"deleted\": []}`, an empty list within the dictionary. This is a significant inconsistency.  The docstring doesn't reflect the actual, consistently empty return.  There's no mention of potential exceptions (even if none are currently implemented, it's good practice to note this).  The docstring lacks information on what constitutes a \"deleted event object\" within the list.  The overall clarity and precision are insufficient for effective use."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `getDeleted` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `getDeleted()` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getDeleted` has no parameters, so the question of parameter type annotations does not apply.  The return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function's docstring promises to return a dictionary with a \"deleted\" key containing a list of deleted event objects.  The current implementation returns an empty list within this structure. While the return type and structure are correct, the function lacks the actual logic to retrieve deleted events from the global `DB`.  The core functionality of retrieving and returning deleted events is missing.  Therefore, it is only partially complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getDeleted()` does not handle any phone numbers or email addresses.  It simply returns an empty dictionary. Therefore, the criteria of phone number normalization and email validation are not applicable.  To assess normalization and validation, a function that actually processes phone numbers and email addresses would need to be provided."
+          }
+        },
+        "getUpdated": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to several critical flaws.  While a docstring is present, the description of the return value is misleading and inconsistent with the actual implementation. The docstring states that the function returns \"List of updated events with structure: - updated (list): List of updated event objects\".  This implies a list of dictionaries, where each dictionary represents an event. However, the function actually returns a dictionary with a single key \"updated\" whose value is an empty list. This is a significant inconsistency.  The docstring lacks information on what constitutes an \"updated event\" and how the data is obtained (e.g., from the global DB?).  There's no mention of potential exceptions that the function might raise (e.g., database errors).  The description is too vague to be helpful; it doesn't explain the function's purpose within the context of an MCP server.  Finally, while the return type is specified, the description of the dictionary structure is inaccurate and incomplete."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `getUpdated` does not have any functional input parameters.  Therefore, input validation (using Pydantic or any other method) is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `getUpdated()` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Good",
+            "notes": "The function `getUpdated` has no parameters, so the question of parameter type annotations doesn't apply.  However, it does have a return type annotation: `-> Dict[str, List[Dict[str, Any]]]`, which is correctly specified.  There is no use of `**kwargs`. Because there are no parameters to annotate, and the return type is correctly annotated, and there are no `**kwargs`, the rating is \"Good\" rather than \"Excellent\"."
+          },
+          "implementation_status": {
+            "status": "Stub",
+            "notes": "The function returns a dictionary with an empty list, indicating a placeholder implementation.  The docstring suggests it should retrieve and return updated events, but the function body lacks the logic to do so.  There's no interaction with the global `DB` to fetch any data.  The core functionality is missing."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getUpdated()` does not handle any phone numbers or email addresses.  It simply returns an empty dictionary. Therefore, there is no normalization or validation to assess.  The criteria for phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "query": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and parameters.  It correctly mentions the `criteria` argument and its optional nature, along with example key-value pairs. The `Returns` section accurately describes the top-level structure of the returned dictionary. The `Raises` section correctly identifies the `ValidationError`.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`QueryCriteriaModel`) to validate the `criteria` parameter.  The `try...except` block attempts to instantiate the model with the input `criteria`. If validation fails, a `ValidationError` is raised, which is correctly re-raised to be handled by the caller.  This demonstrates proper use of Pydantic for input validation.  No other input validation is needed because the `criteria` parameter is the only functional parameter requiring validation and it is fully handled by Pydantic."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `criteria` parameter using Pydantic's `QueryCriteriaModel`.  This checks if `criteria` is a dictionary and validates the types of its keys (\"Subject\", \"IsAllDayEvent\", \"StartDateTime\", etc.).  However, it lacks value validation. For example, it doesn't check if \"StartDateTime\" and \"EndDateTime\" are valid date/time strings, or if \"Subject\" is not an empty string.  It also doesn't explicitly check for `criteria` being an empty dictionary, although the Pydantic model might implicitly handle this depending on its definition.  While type validation is present and robust, the absence of value validation prevents a \"Comprehensive\" rating.  The `criteria` parameter is the only functional input parameter, so the assessment is based solely on its validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `query` has excellent parameter design and type annotations.  The single parameter `criteria` is correctly annotated as `Optional[Dict[str, Any]]`. The return type `Dict[str, List[Dict[str, Any]]]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the querying logic based on the provided criteria, using the global `DB` dictionary.  The input parameter `criteria` is fully utilized.  Exception handling for `ValidationError` is correctly implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type. However, the implementation assumes that the `DB` dictionary always contains an \"Event\" key.  If this key is missing, the function will silently return an empty list, which might not be the desired behavior.  More robust error handling for the case where \"Event\" is missing from `DB` would improve the function."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `query` does not handle phone numbers or email addresses as input.  Its purpose is to query events based on criteria such as subject, start time, and owner ID.  Therefore, the criteria for evaluating phone number normalization and email validation are not applicable to this function.  The function does perform input validation for the *types* of data it *does* accept using Pydantic, but this is unrelated to phone number or email handling."
+          }
+        },
+        "retrieve": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  The Args and Returns sections are present and correctly identify the `event_id` parameter type and the return type. The description of the error return structure is also present.  However, the docstring lacks a \"Raises\" section, even though the function implicitly raises an error (though not a formal exception).  The docstring should explicitly mention that the function will return an error dictionary in the case that the event is not found.  While the docstring states that the function returns an error dict with a structure containing an \"error\" key, it doesn't explicitly state the type of the \"error\" value (which is a string).  The documentation of the dictionary structure could be improved by explicitly stating the type of the `error` value as `str`.  The docstring's description of the return value is slightly misleading because it implies that *only* an error dictionary is returned if the event is not found.  It should be clearer that the function returns either the event object or the error dictionary.  The overall completeness is acceptable, but improvements in clarity and explicitness would make it better."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `retrieve` has only one functional input parameter, `event_id`, which is validated implicitly through the `in` operator within the conditional statement.  While this checks if the `event_id` exists as a key within the `DB[\"Event\"]` dictionary, it doesn't perform explicit type checking (e.g., ensuring `event_id` is a string).  A Pydantic model could enhance this by providing more robust type validation and potentially other constraints (e.g., minimum length, allowed characters) if needed. However, the existing validation is sufficient for the basic functionality.  Adding a Pydantic model would be an improvement but is not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `event_id` by declaring it as a string (`event_id: str`). However, it lacks value validation.  It does not check if `event_id` is an empty string or contains only whitespace.  It also doesn't check if the `event_id` actually exists within the `DB[\"Event\"]` dictionary before attempting to access it, although the conditional check `if \"Event\" in DB and event_id in DB[\"Event\"]:` does implicitly handle the case where the key is not present in the dictionary.  More robust validation would explicitly check for empty or invalid `event_id` values before accessing the dictionary.  No exceptions are raised for invalid inputs; instead, a generic \"Event not found\" message is returned.  While this is better than a crash, more specific error messages could improve debugging."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `retrieve` has excellent parameter design and type annotations.  The single parameter `event_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`, accurately reflecting that it returns either an event dictionary or an error dictionary.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves an event from the global `DB` dictionary using the provided `event_id`.  It returns the event details as expected if found, and an error dictionary as specified in the docstring if the event is not found.  All functional input parameters are used. The docstring accurately reflects the function's behavior and return types. There are no placeholders, TODOs, or exceptions to handle (as the access to the dictionary is assumed to be safe).  The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `retrieve` does not handle any phone numbers or email addresses.  Its sole purpose is to retrieve an event from a database (represented by `DB`) based on an event ID.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "search": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  The description is clear enough. The `Args` and `Returns` sections are present and correctly identify the type of `search_term` and the return value. The `Raises` section correctly mentions the `TypeError`.  Type hints are used effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `isinstance` check to validate that `search_term` is a string.  While this is functional, it doesn't offer the rich validation capabilities of a Pydantic model (e.g., string length constraints, regex patterns, etc.).  However, given the simplicity of the input and the validation already present, a Pydantic model would be an unnecessary addition.  The existing validation is sufficient for this specific function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `search_term` parameter, checking if it's a string using `isinstance`.  It also includes a check for an empty string (`if not search_term:`), handling the case where no search term is provided.  This is good because it prevents unexpected behavior with empty inputs. However, it lacks value validation.  While it correctly handles empty strings, there's no validation for the content of the string itself (e.g., length restrictions, disallowed characters, or specific format requirements).  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  The single parameter `search_term` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements a search functionality based on the provided search term.  It handles empty search terms by returning all events. The search is case-insensitive and correctly iterates through the event dictionary within the global DB.  The function correctly raises a TypeError if the input is not a string. The docstring accurately reflects the function's behavior and return type. All functional input parameters are used. There are no placeholders, TODOs, or pass statements."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `search` does not handle phone numbers or email addresses as input.  It only accepts a generic `search_term` string and searches for that term within a database of events.  Therefore, there is no phone number normalization or email validation to assess."
+          }
+        },
+        "undelete": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  The Args and Returns sections are present and correctly identify the type of the `event_id` parameter and the return value. The description of the return value is also adequate, specifying the structure of the error dictionary.  However, the docstring states that the function restores a deleted event, but this is a placeholder and no actual deletion tracking is implemented. This is a significant inconsistency.  The docstring should accurately reflect the function's limited functionality; it currently misrepresents what the function actually does.  No exceptions are raised, so the absence of a Raises section is not a problem in this case.  While the documentation of the dictionary structure in the return is sufficient,  it could be improved by explicitly stating that the `event_id` is a string.  Overall, the docstring is functional but needs improvement to accurately reflect the current implementation."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `undelete` has only one functional input parameter, `event_id`, which is validated implicitly through its usage within the `DB` dictionary lookup.  While a Pydantic model isn't used, the code implicitly checks if `event_id` exists as a key within `DB[\"Event\"]`.  This serves as sufficient validation for this specific context.  Using a Pydantic model would add unnecessary complexity for this simple check.  The type is also implicitly checked by the dictionary lookup."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `event_id` by declaring it as a string. However, it lacks value validation.  It doesn't check if `event_id` is a valid key within the `DB[\"Event\"]` dictionary (e.g., checking for empty strings or strings with invalid characters). While it implicitly checks for the existence of the event ID within the DB, this is not explicit value validation.  No explicit null or empty checks are performed.  There is no explicit error handling for invalid input beyond returning a generic \"Event not found\" message which could be improved to indicate invalid input format.  Therefore, while type validation is present, crucial value and null/empty checks are missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `undelete` has excellent parameter design.  All parameters are properly type-annotated (`event_id: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the undelete functionality as described in its docstring.  It uses the provided `event_id` parameter to check for the event in the global `DB` and returns the event object if found, or an error dictionary if not.  The return type matches the docstring. There are no placeholders, TODOs, or exceptions to handle (as the function's logic inherently handles the \"not found\" scenario).  The logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `undelete` does not handle any phone numbers or email addresses.  Its input is an `event_id` string, and its purpose is to retrieve an event from a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are irrelevant to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in updating an existing event within the system, relevant for an MCP server context.  All arguments are documented with their types and descriptions, including default values. The `Returns` section correctly specifies the return type and describes both success and error scenarios. The `Raises` section accurately lists potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `EventUpdateKwargsModel` (assuming this model is defined elsewhere) to validate a subset of the input parameters collected in the `update_properties` dictionary.  However, the `event_id` parameter is validated separately using a simple `isinstance` check. While this handles the `event_id` type correctly, a more consistent approach would be to include `event_id` within the Pydantic model for unified validation.  This would improve the code's readability and maintainability.  Currently, Pydantic is only partially used for input validation; a more comprehensive approach would integrate all input validation within the Pydantic model."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional where appropriate for optional parameters.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly updates an event in the global `DB` if it exists, and it handles the `event_id` type validation and Pydantic validation for other parameters.  The docstring accurately reflects the function's behavior and return types.  However, the `Name` parameter is declared but not used in the Pydantic validation.  While the core logic correctly updates the event, the Pydantic validation is not fully comprehensive as it doesn't include `Name`.  Adding `Name` to the `EventUpdateKwargsModel` and the `update_properties` dictionary would make the implementation fully complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on updating event details from a dictionary-like structure, and its input parameters do not include fields for phone numbers or email addresses.  To assess normalization and validation, these data types would need to be included as parameters within the function's definition."
+          }
+        },
+        "upsert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior as creating or updating an event, and it correctly lists all parameters with their types and descriptions. The default values (Optional) are also correctly indicated.  The `Returns` section accurately describes the structure of the returned dictionary, including the types of its keys and values.  However, it could be improved by explicitly stating that the `Id` field in the returned dictionary is *always* present, unlike the other optional fields.  The docstring does not mention any exceptions that the function might raise, which is an omission.  While the docstring correctly describes the function's conditional logic (using `Id` to determine whether to create or update), it doesn't explicitly state that it internally calls `create` or `update` functions.  This detail, while not strictly necessary, would enhance clarity and traceability.  Finally, the extensive listing of optional fields in both the Args and Returns sections could be slightly streamlined for better readability; perhaps grouping them or using a more concise description."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The `upsert` function lacks any input validation.  While type hints are present (e.g., `Optional[str]`, `Optional[bool]`), these are only for static analysis and do not perform runtime validation.  There's no checking for data constraints (e.g., string length, date format validity for `StartDateTime` and `EndDateTime`), or ensuring that `Id` is a valid format if provided.  Using Pydantic models would significantly improve the robustness of this function by adding runtime validation of the input parameters.  The function would benefit from a Pydantic model defining the structure and constraints of the event data, ensuring data integrity before passing it to the `create` or `update` functions."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a check for the existence of the `Id` parameter in the `DB` before deciding whether to call `update` or `create`. This is a form of value validation for `Id` in the context of an update operation. However, there's no other validation present for any of the other functional parameters.  No type checking, range checking, format validation, or null/empty checks are performed on any of the input parameters (`Name`, `Subject`, `StartDateTime`, `EndDateTime`, `Description`, `Location`, `IsAllDayEvent`, `OwnerId`, `WhoId`, `WhatId`).  The function lacks comprehensive validation for its functional inputs.  While the `Id` check is present, it's insufficient to warrant a higher rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str] or Optional[bool]). The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements an upsert operation using the global `DB` dictionary.  It uses the `Id` parameter to determine whether to call the `update` or `create` function. All functional input parameters are used in either the `update` or `create` calls.  The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `upsert` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with event data, including fields like Name, Subject, StartDateTime, etc., but none of these are email or phone number fields.  No assessment of normalization or validation is needed."
+          }
+        }
+      }
+    },
+    "salesforce/Query.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the SOQL-like query processing, including the URL decoding step. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values.  The documentation of the `Dict[str, Any]` return type is adequate, clearly specifying the `results` and `error` keys."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance(q, str)`) to validate the input parameter `q`.  While a Pydantic model could be used, the existing type check is sufficient for this simple input validation need.  Adding a Pydantic model would add unnecessary complexity for this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function `get` performs type validation on the `q` parameter, ensuring it's a string using `isinstance`.  It also includes several checks for the presence and correct casing of keywords (\"SELECT\", \"FROM\", \"WHERE\", \"ORDER BY\", \"LIMIT\", \"OFFSET\") within the query string.  These keyword checks act as a form of value validation, ensuring the query adheres to a basic structure.  The function also attempts to parse and validate the `LIMIT` and `OFFSET` clauses by converting them to integers.  However, there's no explicit validation to ensure these values are non-negative.  Furthermore, while the function parses the `WHERE` clause, the validation of individual conditions within the `WHERE` clause is limited to '=', '>', and '<' operators.  More sophisticated conditions supported by the `parse_conditions` helper function (mentioned in the docstring) are not validated in the main function.  The function also does not explicitly check for empty strings in the `q` parameter, though the keyword checks indirectly address this to some extent.  Therefore, while significant validation is present, some gaps remain, leading to a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get` has excellent parameter design.  The single parameter `q` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements the SOQL-like query functionality as described in the docstring.  The `q` parameter is fully utilized.  The function correctly handles `SELECT`, `FROM`, `WHERE`, `ORDER BY`, `OFFSET`, and `LIMIT` clauses, including the interaction between `OFFSET` and `LIMIT`.  Exception handling for invalid queries (missing `SELECT` or `FROM`) is implemented.  The WHERE clause parsing correctly stops before other clauses.  However, the `WHERE` clause condition parsing is limited to '=', '>', and '<' operators, while the docstring mentions support for 'IN', 'LIKE', and 'CONTAINS' through a helper function (`parse_conditions`), which is not used.  This is a gap in the implementation.  The sorting behavior in `ORDER BY` is correctly implemented, including the handling of missing sort fields.  The function returns a dictionary with 'results' and 'error' keys as documented.  There are no placeholders or TODO comments.  The implementation mostly matches the docstring, except for the limited `WHERE` clause operator support."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` is a SOQL-like query processor.  It does not handle or process phone numbers or email addresses as input.  Its input is a query string, and its output is the result of that query against an in-memory database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "parse_conditions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: parsing conditions from a WHERE clause for an MCP server.  The Args and Returns sections are well-structured, accurately reflecting the parameter types and the structure of the returned list of tuples.  Type hints are correctly used and documented. The examples provided in the Args section are helpful."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `parse_conditions` takes a single functional input parameter `conditions` which is a list of strings.  No input validation is performed on this parameter.  There's no check to ensure that the input is a list, that the list contains strings, or that the strings are in the expected format.  Using a Pydantic model would significantly improve the robustness of this function by providing type checking and validation of the structure and content of the input `conditions` list.  For example, a Pydantic model could ensure each string in the list conforms to a specific regex pattern representing the supported condition formats."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by accepting a `List[str]` as input.  However, it lacks comprehensive value validation. While it checks for the presence of '=', 'IN', 'LIKE', or 'CONTAINS' to determine the condition type, it doesn't validate the format of the field names or values themselves.  For instance, it doesn't check if the field names are valid column names in the database (which would require accessing the global `DB`), nor does it sanitize the values to prevent SQL injection vulnerabilities (though this is mitigated somewhat by the stripping of quotes).  There are no explicit checks for empty input lists or empty strings within individual condition strings.  The `strip()` method handles leading/trailing whitespace, but doesn't prevent malformed input strings.  Error handling is also minimal; invalid input formats will likely lead to exceptions during string splitting, but these are not explicitly caught and handled with informative error messages.  In short, while the function attempts some basic parsing based on keywords, crucial validation steps are missing to ensure data integrity and security."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function's parameter `conditions` is correctly type-annotated as `List[str]`.  The return type is also clearly specified as `List[Tuple[str, str, str | List[str]]]`.  No `**kwargs` are used.  All type annotations are complete and accurate, reflecting the expected input and output types."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly parses the four specified condition types ('=', 'IN', 'LIKE', 'CONTAINS') and returns a list of tuples as documented.  However, the `LIKE` condition's implementation removes the '%' wildcards from the value, which is not standard SQL behavior and might lead to incorrect results.  The function should retain the '%' characters in the value for the 'LIKE' condition to match the expected SQL behavior.  Additionally, the function lacks error handling for malformed input strings (e.g., missing values, incorrect syntax).  Robust error handling would improve the function's reliability."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `parse_conditions` does not handle phone numbers or email addresses.  Its purpose is to parse strings representing database WHERE clause conditions, extracting field names, operators, and values.  There is no input or processing related to phone number normalization or email validation.  Therefore, the categories of \"Excellent,\" \"Good,\" or \"Poor\" are not applicable."
+          }
+        }
+      }
+    },
+    "salesforce/Task.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including their types and whether they are optional, and it correctly lists the required `Priority` and `Status` parameters. The `Returns` section correctly specifies the return type and lists the fields included in the returned dictionary.  The `Raises` section mentions the `ValidationError`, although the actual exception raised in the code is a `ValueError`. This is a minor inconsistency."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation by checking if `Priority` and `Status` are provided.  While it doesn't use Pydantic, it does have a `ValueError` check for the required fields.  Adding Pydantic would provide more robust validation (type checking, constraints, etc.), but the current manual check is sufficient for the minimal validation performed.  The optional parameters are not validated, but this is acceptable given their optional nature.  Pydantic would be beneficial for more comprehensive validation, particularly for type checking and adding constraints to optional fields if needed in the future."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs basic null checks for the required `Priority` and `Status` parameters, raising a `ValueError` if either is missing.  However, it lacks any type or value validation for these or any of the other parameters.  No checks are performed to ensure that strings conform to expected formats (e.g., date formats for `ActivityDate` and `DueDate`, or specific ID formats for `OwnerId`, `WhoId`, and `WhatId`).  While `IsReminderSet` is a boolean, there's no validation to ensure it's actually a boolean value.  Therefore, validation is only partially implemented, focusing solely on the presence of required fields.  The optional parameters receive no validation whatsoever."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[bool]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new task.  All functional input parameters (Priority, Status, Id, Name, Subject, Description, ActivityDate, DueDate, OwnerId, WhoId, WhatId, IsReminderSet, ReminderDateTime) are used appropriately. The required `ValueError` exception is raised if `Priority` or `Status` are missing.  The function's logic is complete and functional, correctly storing the new task in the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and the handling of optional parameters. There are no placeholders, TODO comments, or pass statements."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create` does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating task objects with various attributes, none of which are email addresses or phone numbers."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a concise description of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section correctly specifies the return type as a dictionary and details the structure of the dictionary in both success and error scenarios.  All types are specified (`str` and `Dict[str, Any]`). The docstring accurately reflects the function's behavior.  However, it could be improved by explicitly mentioning that the function deletes a task from a global `DB` (although this is acceptable given the context).  There is no `Raises` section, although this function doesn't explicitly raise exceptions; it only returns an error dictionary.  Adding a `Raises` section would improve clarity and completeness, even if it's empty or states \"This function does not raise exceptions\".  The documentation of the error dictionary is clear and helpful.  The docstring is complete enough for someone to use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the `task_id` exists in the `DB[\"Task\"]` dictionary before attempting deletion. This acts as basic input validation, ensuring that the `task_id` is at least present within the database structure.  While a Pydantic model could be used to add more robust validation (e.g., checking the `task_id` format or data type), the existing check is sufficient for the function's purpose.  Using Pydantic would add unnecessary complexity for this simple validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `task_id` by declaring it as a string (`task_id: str`). However, it lacks value validation.  It does not check for empty strings or other invalid characters that might be present in a `task_id`.  While it implicitly checks if the `task_id` exists within the `DB[\"Task\"]` dictionary, this is more of a functional check than a dedicated input validation step.  A more robust solution would explicitly check for empty strings and potentially enforce a specific format or length constraint on `task_id` before attempting to access the `DB`.  Therefore, only type validation is present, making the validation partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design and type annotations.  The single parameter `task_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a task from the global `DB` dictionary if it exists and returns an empty dictionary as specified in the docstring.  If the task is not found, it correctly returns an error dictionary with the specified structure.  All functional input parameters (`task_id`) are used. There are no placeholders, TODOs, or exceptions to handle (the docstring only specifies a return value for the \"not found\" case, which is correctly implemented). The implementation perfectly matches the docstring's description of behavior and return types."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its purpose is to delete a task from a database (represented by `DB`) based on a task ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "describeLayout": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  It correctly identifies the return type as a dictionary. However, the description of the returned dictionary is overly simplistic. The docstring states that the dictionary will contain a \"layout\" key with a string value, but it doesn't explain what kind of layout information is provided (e.g., what does the string describe?).  The description lacks detail and doesn't fully convey the usefulness of the returned information to an MCP server.  While the return type is specified,  the documentation of the dictionary's structure is insufficient.  There's no mention of potential exceptions that the function might raise.  The docstring could be improved by providing a more comprehensive explanation of the \"layout\" description and including a \"Raises\" section if applicable.  The current docstring is functional but could be significantly enhanced for clarity and completeness."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `describeLayout` does not take any input parameters.  Therefore, input validation (using Pydantic or any other method) is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `describeLayout` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `describeLayout` has no parameters, so the question of parameter type annotations is moot.  However, the return type is clearly annotated as `Dict[str, Any]`, fulfilling the requirement.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements its docstring by returning a dictionary with a \"layout\" key and a string value describing the task layout.  There are no functional input parameters, so there are none to check for proper usage.  There are no exceptions documented or expected, no placeholders, and the logic is complete and functional as designed. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `describeLayout` does not handle phone numbers or email addresses.  It simply returns a dictionary describing a task layout. Therefore, the criteria of phone number normalization and email validation are not applicable.  No assessment of normalization or validation is possible."
+          }
+        },
+        "describeSObjects": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  It correctly identifies the return type as a dictionary. However, the description of the returned dictionary is insufficient.  The docstring states that the dictionary will contain a key \"object\" with a \"Task object description\" as its value.  While this is technically accurate based on the implementation, it lacks detail. A more helpful docstring would explain what kind of description is provided (e.g.,  field names, data types, etc.) for the Task object.  The docstring also omits any mention of potential exceptions that the function might raise.  While the function currently doesn't explicitly raise any exceptions, a more robust docstring would at least state that it raises no exceptions or note any potential future exceptions.  Finally, the docstring doesn't explicitly state that the function returns a single key-value pair, which could be inferred but isn't clearly stated.  The lack of detail in the return value description and the absence of a \"Raises\" section prevent this docstring from being rated higher."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `describeSObjects` does not have any input parameters.  Therefore, input validation (using Pydantic or any other method) is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `describeSObjects` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `describeSObjects` has no parameters, so the question of parameter type annotations is moot.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly returns a dictionary with the structure specified in the docstring.  There are no functional input parameters to check for usage. The function's logic is complete and functional given the context of using a global `DB` (which is expected and not a point of concern).  There are no placeholders, TODOs, or exceptions to handle. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `describeSObjects` does not handle any phone numbers or email addresses.  Its purpose is to return a dictionary describing a Task object, and it does not take any user input. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "getDeleted": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  It correctly states that the function retrieves deleted tasks. The `Returns` section correctly identifies the return type as `Dict[str, Any]`. However, it inaccurately describes the structure of the dictionary. The docstring states that the dictionary will contain a key \"deleted\" with a *list* of deleted task objects as its value.  **This is inconsistent with the implementation**, which returns an empty list within the dictionary.  The docstring should reflect this, or the implementation should be updated to match the docstring's description (returning a list of objects, even if empty).  The docstring lacks information on what a \"deleted task object\" actually contains, making it incomplete.  No exceptions are mentioned, and there are no parameters to document.  While the type hinting is present, the description of the dictionary's contents is insufficient."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `getDeleted` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `getDeleted()` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getDeleted` has no parameters, so the question of parameter type annotations does not apply.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function returns an empty list as promised by the docstring. However, it doesn't actually retrieve deleted tasks from any data source.  The function lacks the implementation to fetch deleted tasks from the global `DB` dictionary (or any other source).  The core logic of retrieving and returning deleted tasks is missing.  While the docstring and return type are consistent with the current (empty) implementation, the function is not fulfilling its intended purpose."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getDeleted()` does not handle any phone numbers or email addresses.  Its purpose is to retrieve deleted tasks and it returns an empty dictionary. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "getUpdated": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to several issues.  While a description is present, it's vague (\"Retrieves updated tasks\").  The description of the return value is misleading. The docstring states that the return value is a dictionary with a key \"updated\" which holds a *list* of updated task objects.  **However, the function actually returns a dictionary with an empty list assigned to the \"updated\" key.** This is a critical inconsistency.  The docstring doesn't specify the structure of the \"task objects\" within the list, leaving the user in the dark about the data they'll receive.  There's no mention of potential exceptions (e.g., database errors if this were connected to a real database).  The lack of detail regarding the nature of \"updated tasks\" and the absence of error handling documentation significantly reduces the docstring's usefulness.  Finally, while the return type is specified as `Dict[str, Any]`,  `Any` is too broad and doesn't provide helpful information about the structure of the dictionary's values."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `getUpdated` does not take any functional input parameters.  Therefore, input validation (using Pydantic or any other method) is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `getUpdated()` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getUpdated` has no parameters, so the question of parameter type annotations does not apply.  The return type is clearly specified as `Dict[str, Any]`. There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function returns an empty list as promised by the docstring. However, it doesn't actually retrieve any updated tasks from the global `DB`.  The core functionality of retrieving and returning updated tasks is missing.  The implementation is a placeholder that fulfills the return type but not the function's purpose."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getUpdated()` does not handle any phone number or email address inputs.  It simply returns an empty dictionary. Therefore, there is no normalization or validation to assess.  To receive a different rating, the function would need to be modified to accept and process phone numbers and/or email addresses."
+          }
+        },
+        "query": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core logic of querying tasks based on provided criteria. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values, including nested dictionary structures. The example provided for the `criteria` argument and the return value is helpful."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`TaskCriteriaModel`) to validate the `criteria` parameter.  The `try...except` block handles `ValidationError` exceptions raised by the model, ensuring that only dictionaries conforming to the model's structure and types are accepted.  This is a proper and effective use of Pydantic for input validation.  The `isinstance` check adds an extra layer of validation ensuring that `criteria` is a dictionary before attempting Pydantic validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `criteria` parameter, ensuring it's a dictionary if provided.  It also uses `TaskCriteriaModel` (presumably a Pydantic model or similar) to perform more comprehensive value validation, checking that the keys and types within the dictionary conform to a predefined schema. This addresses type and value validation for the `criteria` parameter. However, it lacks explicit null/empty checks for individual keys within the `criteria` dictionary. While the `TaskCriteriaModel` might handle some of these implicitly (depending on its definition), explicit checks would improve clarity and robustness.  For instance, an empty string for \"Subject\" might be valid according to the schema but semantically undesirable.  Therefore, the validation is good but not comprehensive due to the absence of explicit null/empty checks within the dictionary values."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `query` has excellent parameter design and type annotations.  The single parameter `criteria` is correctly type-annotated as `Optional[Dict[str, Any]]`. The return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the querying functionality as described in its docstring.  It handles the case of an empty database, iterates through the tasks in the DB, applies the criteria (if provided), and returns the results in the specified format.  All functional input parameters (`criteria`) are properly used.  The documented exceptions (`TypeError`, `ValidationError`) are correctly raised. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  The logic is complete and functional within the context of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `query` function does not handle phone numbers or email addresses as input.  Its purpose is to query a database of tasks based on a criteria dictionary.  The criteria dictionary can contain fields like \"Subject\", \"Priority\", \"Status\", and \"ActivityDate\", but there's no provision for phone numbers or email addresses within the task data or the query parameters. Therefore, the assessment of phone number normalization and email validation is not applicable."
+          }
+        },
+        "retrieve": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  The Args and Returns sections are present and correctly identify the `task_id` argument type and the return type. The description of the return value is also mostly accurate in that it mentions the potential for an error dictionary. However, the docstring's description of the error dictionary is incomplete.  It only specifies an `error` key with a string value;  it does not mention that this is the *only* key in the dictionary in the error case.  This is a minor omission, but it could lead to confusion.  The docstring does not mention the possibility of exceptions, which is an omission.  While the function doesn't explicitly *raise* exceptions, it could be improved by noting that it implicitly handles the case where the task is not found, returning an error dictionary instead.  The docstring is adequate but could be improved by being more precise about the structure of the error dictionary and by explicitly mentioning the implicit error handling."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `retrieve` has only one functional input parameter, `task_id`, which is type hinted as a string.  While there's no explicit input validation beyond the type hint,  the function implicitly validates the `task_id` by checking if it exists as a key within the nested `DB[\"Task\"]` dictionary.  This implicit check suffices for this function's purpose.  Using a Pydantic model would add unnecessary complexity for this simple validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `task_id` by declaring it as a string (`task_id: str`). However, it lacks value validation.  It does not check for empty strings or other invalid characters that might be present in a `task_id`. While it implicitly checks if the `task_id` exists as a key within `DB[\"Task\"]`, this is more of a lookup than explicit value validation.  No explicit checks are made for malformed or unexpected `task_id` values.  The function handles the case where the `task_id` is not found by returning an error dictionary, but this is not strictly input validation.  Therefore, only type validation is present, making the validation partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `retrieve` has excellent parameter design and type annotations.  The single parameter `task_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`, correctly representing the potential return values (a dictionary representing the task or an error dictionary).  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a task from the global `DB` dictionary using the provided `task_id`.  It returns the task object if found and a dictionary containing an \"error\" message if the task is not found, exactly as documented.  All functional input parameters are used. There are no placeholders, TODOs, or exceptions to handle (as the access to the dictionary is assumed to be safe). The docstring accurately reflects the function's behavior and return types."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `retrieve` does not handle any phone numbers or email addresses.  Its purpose is to retrieve a task from a database based on a task ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "search": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly identifies the function's role in searching tasks based on a given term and mentions the `TypeError` exception. The `Args` and `Returns` sections are present and mostly accurate.  The type hinting for the return value is present but not entirely precise.  The docstring states that the return is `Dict[str, List[Dict[str, Any]]]`, implying a dictionary with a single key \"results\", which is correct. However, it would be more helpful to explicitly state that the key is \"results\" and describe the structure of the nested dictionaries within the list.  The description of the return value could be improved by explicitly mentioning that an empty list is returned if no tasks match the search term or if the `DB[\"Task\"]` dictionary is empty or missing.  The docstring also doesn't explicitly state that the search is case-insensitive, which is a crucial detail of the implementation.  While the docstring mentions that the search term is used to search task fields, it doesn't specify *which* fields are searched.  The implementation searches all fields, converting values to strings.  This detail should be added for clarity.  Finally, the docstring should mention that an empty search term returns all tasks.  In summary, while functional, the docstring lacks precision and crucial details about the implementation's behavior and the structure of the returned data."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `isinstance` check to validate that `search_term` is a string.  While this is sufficient for this specific case, using a Pydantic model would not significantly improve the validation.  The current validation is clear, concise, and effective for the single input parameter that requires validation.  A Pydantic model would add unnecessary complexity for this simple type check."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `search_term` parameter, checking if it's a string using `isinstance`.  It also includes a check for an empty string (`not search_term`), treating it as a special case to return all tasks. This addresses type validation and null/empty checks for the single functional input parameter.  However, there's no value validation (e.g., length restrictions, allowed characters) on the `search_term`.  While the existing checks are good, more robust validation could improve security and prevent potential issues (e.g., excessively long search terms causing performance problems or injection vulnerabilities if the search term is used in a database query without proper sanitization \u2013 though this is not directly part of the validation itself).  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  The single parameter `search_term` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  No `**kwargs` are used.  The type annotation for the return value accurately reflects the complex dictionary structure."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements a search functionality based on the provided search term.  It handles empty search terms by returning all tasks. The input parameter `search_term` is used correctly. The `TypeError` exception is properly raised if `search_term` is not a string.  The function's logic is complete and functional, given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type. There are no placeholders or TODO comments.  The function returns a dictionary with a \"results\" key containing a list of matching tasks, as specified in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `search` does not handle phone numbers or email addresses as input.  It only accepts a generic `search_term` string and searches for that term within a database (`DB`).  Therefore, there is no phone number normalization or email validation to assess.  The function's purpose is a general string search, not data sanitization or validation of specific data types like phone numbers or emails."
+          }
+        },
+        "undelete": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose.  It correctly identifies the `task_id` argument and its type. The description of the return value is also present, specifying the potential return of a task object or an error dictionary.  The structure of the error dictionary is correctly detailed."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `undelete` has only one functional input parameter, `task_id`, which is type hinted as a string.  While there's no explicit input validation beyond the type hint,  a Pydantic model is not strictly needed here. The existing implicit type checking provided by Python is sufficient for this simple case.  The core logic already handles the case where the `task_id` is not found in the `DB`.  Adding a Pydantic model would add unnecessary complexity for this specific function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `task_id` by declaring it as a string (`task_id: str`). However, it lacks value validation.  It does not check for empty strings or whether the `task_id` actually exists in the expected format within the `DB[\"Task\"]` dictionary.  While it implicitly checks for the existence of the `task_id` within the dictionary, this is not explicit value validation.  No explicit error handling beyond returning a generic \"Task not found\" message is present.  Therefore, while type validation is present, crucial value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `undelete` has excellent parameter design and type annotations.  The single parameter `task_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`, correctly representing the potential for either a task object or an error dictionary.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the undelete functionality as described in its docstring.  It uses the provided `task_id` parameter to check for the task's existence in the global `DB` and returns the task object if found, or an error dictionary if not.  The return type matches the docstring's specification. There are no placeholders, unused functional parameters, or exceptions to handle (as the function's logic doesn't inherently raise any).  The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `undelete` does not handle any phone numbers or email addresses.  Its input is a `task_id` string, and its purpose is to retrieve a task from a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are irrelevant to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments and their types, including default values. The description of the return value is also good, correctly specifying the dictionary structure in both success and error cases.  All parameters are documented with types."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the functional parameters.  While the `task_id` is implicitly checked for existence in the `DB`, there's no explicit validation of its format or type.  Similarly, no validation is performed on other parameters like `Name`, `Subject`, `Priority`, `Status`, `Description`, `ActivityDate`, `OwnerId`, `WhoId`, `WhatId`, `IsReminderSet`, or `ReminderDateTime`.  These parameters could benefit from Pydantic models to enforce data types, constraints (e.g., string lengths, date formats), and optional/required fields.  Adding Pydantic would significantly improve the robustness and reliability of the function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking implicitly through type hinting (e.g., `task_id: str`), but lacks explicit value validation for most functional parameters.  `task_id` is checked for existence in the `DB`, which serves as a value check of sorts, ensuring it refers to an existing task. However, there's no validation of the format or content of `task_id` itself beyond it being a string.  No other functional parameters undergo explicit value or format validation (e.g., checking for valid date formats in `ActivityDate` or `ReminderDateTime`, or checking allowed values for `Priority` or `Status`).  While `None` checks are implicitly handled by the `if` statements, this is not explicit validation.  There are no explicit checks for empty strings.  No exceptions are raised for invalid inputs; instead, a generic \"Task not found\" error is returned if the `task_id` is invalid.  Therefore, validation is partial, covering only the existence of `task_id` in the database, but missing comprehensive checks for other functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], or Optional[bool]). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a task in the global `DB` dictionary if the task exists.  All functional input parameters are used to update the corresponding fields in the task object.  The function handles the case where the task is not found by returning an error dictionary as documented. The docstring accurately reflects the function's behavior and return types.  There are no placeholders, TODOs, or exceptions to handle. The `SystemModstamp` is correctly updated."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with updating task information, and none of its parameters are designed to accept or process phone numbers or email addresses."
+          }
+        },
+        "upsert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior as creating or updating a task, and it correctly lists all parameters with their types and descriptions. The `Args` section is comprehensive, and the `Returns` section correctly specifies the return type as `Dict[str, Any]` and lists the potential keys.  The documentation of the return dictionary is detailed, outlining the possible fields and their types."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The `upsert` function lacks any input validation.  While it uses type hints (e.g., `Optional[str]`, `Optional[bool]`), these are only for static analysis and do not perform runtime validation.  There's no checking for data format, length restrictions, or other constraints on the input parameters.  Using Pydantic models would significantly improve the robustness of this function by adding runtime validation of the input data.  For example, a Pydantic model could enforce string length limits, specific data formats for dates, or ensure that certain fields are not null when others are present."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's incomplete.  `Id` is checked for existence in the `DB` before calling either `update` or `create`, which serves as a partial check for its validity. However, there's no explicit type checking for `Id` or any other parameter.  No value validation (e.g., length restrictions, format checks for dates) is performed on any parameter.  There's no explicit handling of empty strings or other edge cases beyond the `Id` check.  No exceptions are raised for invalid inputs.  Therefore, while the `Id` check provides some validation, the overall validation is insufficient to be considered \"Good\" or \"Comprehensive\".  The functional parameters `Name`, `Subject`, `Priority`, `Status`, `Description`, `ActivityDate`, `OwnerId`, `WhoId`, `WhatId`, `IsReminderSet`, and `ReminderDateTime` lack any explicit validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str] or Optional[bool]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses the `Id` parameter to determine whether to call `create` or `update`.  All functional parameters are used in either the `create` or `update` calls. However, the function lacks error handling.  The `create` and `update` functions (not shown) might raise exceptions, and this `upsert` function doesn't handle them.  The docstring mentions creating or updating a task, and the function attempts to do this, but the lack of error handling makes it less robust than ideal.  Adding `try...except` blocks around the calls to `create` and `update` would improve the function's completeness and robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `upsert` function does not handle phone numbers or email addresses as input.  Therefore, there is no normalization or validation to assess. The function deals with task management data, including IDs, names, dates, and statuses, but lacks any fields designed for phone numbers or emails.  To rate it on phone number and email handling, the function would need to include such fields in its input parameters."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "salesforce": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations.  The `SimulationEngine` folder contains all the essential components (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`). The `tests` folder has multiple test files following the `test_` naming convention. The main API folder contains the core API logic files (`Task.py`, `Event.py`, `Query.py`)."
+      }
+    }
+  }
+}

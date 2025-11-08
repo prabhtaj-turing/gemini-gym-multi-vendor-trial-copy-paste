@@ -1,0 +1,600 @@
+[
+    {
+        "name": "get_place_autocomplete_predictions",
+        "description": "Returns simulated autocomplete predictions for a given input query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "request_data": {
+                    "type": "object",
+                    "properties": {
+                        "input": {
+                            "type": "string",
+                            "description": "The text string entered by the user to generate place autocomplete predictions."
+                        },
+                        "inputOffset": {
+                            "type": "integer",
+                            "description": "A character offset that indicates the starting point within the input string from which to generate predictions."
+                        },
+                        "languageCode": {
+                            "type": "string",
+                            "description": "The preferred language for the returned prediction results."
+                        },
+                        "regionCode": {
+                            "type": "string",
+                            "description": "A Unicode region code used to bias the autocomplete predictions toward a specific country or region."
+                        },
+                        "sessionToken": {
+                            "type": "string",
+                            "description": "A token used to group autocomplete requests into a single session for billing purposes."
+                        },
+                        "includeQueryPredictions": {
+                            "type": "boolean",
+                            "description": "Indicates whether to include a prediction that matches the user's entire query in the list of autocomplete suggestions."
+                        },
+                        "includePureServiceAreaBusinesses": {
+                            "type": "boolean",
+                            "description": "A boolean that determines whether to include businesses that exclusively serve a specific area."
+                        },
+                        "includedPrimaryTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Restricts the returned predictions to a specified list of place types."
+                        },
+                        "includedRegionCodes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "An array of Unicode CLDR region codes used to restrict results to one or more specific regions."
+                        },
+                        "origin": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "The geographic location of the user, specified by `latitude` and `longitude` coordinates. Both values must be floating-point numbers."
+                        },
+                        "locationRestriction": {
+                            "type": "object",
+                            "properties": {
+                                "circle": {
+                                    "type": "object",
+                                    "properties": {
+                                        "radius": {
+                                            "type": "number",
+                                            "description": "The radius of the circular restriction, specified in meters."
+                                        }
+                                    },
+                                    "description": "",
+                                    "required": [
+                                        "radius"
+                                    ]
+                                }
+                            },
+                            "description": "A circular area that restricts predictions, ensuring only results within its boundary are returned.",
+                            "required": [
+                                "circle"
+                            ]
+                        }
+                    },
+                    "description": "Specifies the input parameters for the place autocomplete prediction request.",
+                    "required": [
+                        "input"
+                    ]
+                }
+            },
+            "required": [
+                "request_data"
+            ]
+        }
+    },
+    {
+        "name": "get_place_details",
+        "description": "Retrieves detailed information about a place. The `name` parameter must be the place's resource name, formatted as `places/{place_id}`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The required resource name of the place. It must be formatted as `places/{place_id}`."
+                },
+                "languageCode": {
+                    "type": "string",
+                    "description": "Specifies the preferred language for retrieving localized content, when available."
+                },
+                "sessionToken": {
+                    "type": "string",
+                    "description": "An autocomplete session token used for billing. This token must be base64-safe and contain a maximum of 36 ASCII characters."
+                },
+                "regionCode": {
+                    "type": "string",
+                    "description": "A Unicode CLDR region code used to influence localized place details."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "get_place_photo_media",
+        "description": "Retrieves photo media using a resource name. The resource name must be formatted as 'places/{place_id}/photos/{photo_reference}/media'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The required resource name of a photo. It must be formatted as `places/{place_id}/photos/{photo_reference}/media`."
+                },
+                "maxWidthPx": {
+                    "type": "integer",
+                    "description": "Specifies the maximum desired photo width. This value must be an integer within the range of 1 to 4800."
+                },
+                "maxHeightPx": {
+                    "type": "integer",
+                    "description": "Specifies the maximum desired height for the photo. This parameter accepts values ranging from 1 to 4800 pixels."
+                },
+                "skipHttpRedirect": {
+                    "type": "boolean",
+                    "description": "If True, skips HTTP redirects and returns JSON data. This parameter defaults to False."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "search_nearby_places",
+        "description": "Searches for places using filters for primary types, included or excluded secondary types, a specific language code for the display name, and a geographical location defined by a center point and radius.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "request": {
+                    "type": "object",
+                    "properties": {
+                        "includedPrimaryTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Filters the search results to return only places that have at least one of the specified primary types. A primary type is a predefined category for a place, such as `restaurant` or `atm`, as defined in the Google Maps Platform documentation."
+                        },
+                        "excludedPrimaryTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of primary types to exclude from the search results. Any place that has a primary type matching one of the types in this list will not be returned. Refer to the Google Maps Platform documentation for a complete list of supported [place types](https://developers.google.com/maps/documentation/places/web-service/place-types)."
+                        },
+                        "includedTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "An array of place types used to filter the search results. The search returns only places that have at least one of the specified types, which can be either a primary or secondary type. Refer to the list of supported place types for valid values."
+                        },
+                        "excludedTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of place types to exclude from the search results. Any place that has a matching primary or secondary type will be omitted from the response. Refer to the official Place Types documentation for a list of supported values."
+                        },
+                        "languageCode": {
+                            "type": "string",
+                            "description": "The preferred language for the `displayName` of a place. If specified, search results are filtered to only include places that have a display name in this language."
+                        },
+                        "locationRestriction": {
+                            "type": "object",
+                            "properties": {
+                                "circle": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "A circular boundary that restricts the search to a specific geographic area."
+                                },
+                                "center": {
+                                    "type": "object",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude coordinate of the center point."
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude coordinate of the center point."
+                                        }
+                                    },
+                                    "description": "The geographic coordinate for the center of the circular restriction.",
+                                    "required": [
+                                        "latitude",
+                                        "longitude"
+                                    ]
+                                },
+                                "radius": {
+                                    "type": "number",
+                                    "description": "The radius of the circular search area, specified in meters."
+                                }
+                            },
+                            "description": "A restriction that constrains the search to a circular area.",
+                            "required": [
+                                "center",
+                                "radius"
+                            ]
+                        },
+                        "maxResultCount": {
+                            "type": "integer",
+                            "description": "Specifies the maximum number of places to return. This value defaults to 20 if it is not specified."
+                        },
+                        "regionCode": {
+                            "type": "string",
+                            "description": "A Unicode code that identifies the country or region from which the request originates."
+                        },
+                        "rankPreference": {
+                            "type": "string",
+                            "description": "Specifies how the search results should be ranked. The value must be one of the following strings: `DISTANCE`, `POPULARITY`, or `RANK_PREFERENCE_UNSPECIFIED`."
+                        },
+                        "routingParameters": {
+                            "type": "object",
+                            "properties": {
+                                "routingPreference": {
+                                    "type": "string",
+                                    "description": "Specifies the preference for computing routing summaries, which balances traffic conditions against latency. Acceptable values are: `\"TRAFFIC_UNAWARE\"` to ignore traffic for the lowest latency, `\"TRAFFIC_AWARE\"` to consider traffic with optimizations, and `\"TRAFFIC_AWARE_OPTIMAL\"` to fully consider traffic, which may result in higher latency. If unspecified, it defaults to `\"TRAFFIC_UNAWARE\"`."
+                                },
+                                "routeModifiers": {
+                                    "type": "object",
+                                    "properties": {
+                                        "avoidFerries": {
+                                            "type": "boolean",
+                                            "description": "Specifies whether the calculated route should avoid using ferries whenever a reasonable alternative is available."
+                                        },
+                                        "avoidTolls": {
+                                            "type": "boolean",
+                                            "description": "Specifies whether to avoid toll roads whenever possible when generating the route."
+                                        },
+                                        "avoidIndoor": {
+                                            "type": "boolean",
+                                            "description": "Specifies whether the route should avoid indoor navigation whenever possible."
+                                        },
+                                        "avoidHighways": {
+                                            "type": "boolean",
+                                            "description": "Indicates that the calculated route should avoid highways when possible."
+                                        }
+                                    },
+                                    "description": "Specifies conditions to avoid when calculating a route."
+                                },
+                                "origin": {
+                                    "type": "object",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude coordinate in degrees, which must be a value between -90.0 and +90.0, inclusive."
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude coordinate in degrees, with a valid range from -180.0 to +180.0."
+                                        }
+                                    },
+                                    "description": "Specifies an origin that overrides the starting point of the polyline.",
+                                    "required": [
+                                        "latitude",
+                                        "longitude"
+                                    ]
+                                },
+                                "travelMode": {
+                                    "type": "string",
+                                    "description": "Specifies the mode of travel, which can be `DRIVE`, `BICYCLE`, `WALK`, or `TWO_WHEELER`. If unspecified, the mode defaults to `DRIVE`. Note that `BICYCLE` and `WALK` are not supported with `search_along_route_parameters`, and `TWO_WHEELER` is only available in certain countries."
+                                }
+                            },
+                            "description": "A set of parameters that defines the configuration for routing calculations."
+                        }
+                    },
+                    "description": "A dictionary containing the search parameters, structured with a specific set of expected keys."
+                }
+            },
+            "required": [
+                "request"
+            ]
+        }
+    },
+    {
+        "name": "search_places_by_text",
+        "description": "Performs a text-based search for places using a request structured according to the `GoogleMapsPlacesV1SearchTextRequest` schema. The search can be refined using optional filters such as `strictTypeFiltering`, `priceLevels`, `locationBias`, `openNow`, `minRating`, `includePureServiceAreaBusinesses`, `locationRestriction`, `languageCode`, `pageSize`, `regionCode`, and `textQuery`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "request": {
+                    "type": "object",
+                    "properties": {
+                        "textQuery": {
+                            "type": "string",
+                            "description": "A required text query to use for the search."
+                        },
+                        "pageSize": {
+                            "type": "integer",
+                            "description": "The maximum number of search results to return."
+                        },
+                        "maxResultCount": {
+                            "type": "integer",
+                            "description": "Specifies the maximum number of results to return, serving as an alternative to the `pageSize` parameter."
+                        },
+                        "strictTypeFiltering": {
+                            "type": "boolean",
+                            "description": "When set to `true`, this restricts the search to only include places whose `primaryType` is an exact match for the `includedType`. Defaults to `false`."
+                        },
+                        "includedType": {
+                            "type": "string",
+                            "description": "A list of place types used to filter results, which is only applied when `strictTypeFiltering` is set to `true`. When used, the search returns only places that have at least one of the specified primary or secondary types. The values must be from the list of supported place types."
+                        },
+                        "priceLevels": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Filters search results by the specified price levels. This parameter is constrained to the following allowed values: `PRICE_LEVEL_UNSPECIFIED`, `PRICE_LEVEL_FREE`, `PRICE_LEVEL_INEXPENSIVE`, `PRICE_LEVEL_MODERATE`, `PRICE_LEVEL_EXPENSIVE`, and `PRICE_LEVEL_VERY_EXPENSIVE`."
+                        },
+                        "locationBias": {
+                            "type": "object",
+                            "properties": {
+                                "circle": {
+                                    "type": "object",
+                                    "properties": {
+                                        "center": {
+                                            "type": "object",
+                                            "properties": {
+                                                "latitude": {
+                                                    "type": "number",
+                                                    "description": "The latitude of the center point for the circular location bias."
+                                                },
+                                                "longitude": {
+                                                    "type": "number",
+                                                    "description": "The longitude coordinate of the circle's center point."
+                                                }
+                                            },
+                                            "description": "A required property that defines the center point of the circle.",
+                                            "required": [
+                                                "latitude",
+                                                "longitude"
+                                            ]
+                                        },
+                                        "radius": {
+                                            "type": "number",
+                                            "description": "The required radius of the circular search area, specified in meters. Search results are restricted to places located within this circle."
+                                        }
+                                    },
+                                    "description": "A circular geographic area defined by a center point and a radius.",
+                                    "required": [
+                                        "center",
+                                        "radius"
+                                    ]
+                                },
+                                "rectangle": {
+                                    "type": "object",
+                                    "properties": {
+                                        "viewport": {
+                                            "type": "object",
+                                            "properties": {
+                                                "low": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "latitude": {
+                                                            "type": "number",
+                                                            "description": "The latitude of the southwest corner of the rectangle."
+                                                        },
+                                                        "longitude": {
+                                                            "type": "number",
+                                                            "description": "The longitude coordinate for the southwest corner of the rectangular viewport."
+                                                        }
+                                                    },
+                                                    "description": "A required point that defines the southwest corner of the rectangular viewport.",
+                                                    "required": [
+                                                        "latitude",
+                                                        "longitude"
+                                                    ]
+                                                },
+                                                "high": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "latitude": {
+                                                            "type": "number",
+                                                            "description": "The latitude of the northeast corner of the rectangular viewport."
+                                                        },
+                                                        "longitude": {
+                                                            "type": "number",
+                                                            "description": "A longitude coordinate that defines the northeast corner of the rectangular viewport."
+                                                        }
+                                                    },
+                                                    "description": "Required. The northeast corner of the rectangular viewport, specified as a coordinate point.",
+                                                    "required": [
+                                                        "latitude",
+                                                        "longitude"
+                                                    ]
+                                                }
+                                            },
+                                            "description": "Required. The rectangular bounding box that defines an area used to bias search results.",
+                                            "required": [
+                                                "high",
+                                                "low"
+                                            ]
+                                        }
+                                    },
+                                    "description": "A rectangular geographic area that indicates a preferred region for search results.",
+                                    "required": [
+                                        "viewport"
+                                    ]
+                                }
+                            },
+                            "description": "A geographic bias that influences the ordering of search results. The value must be one of the supported geographic bias configurations."
+                        },
+                        "openNow": {
+                            "type": "boolean",
+                            "description": "A boolean that, when set to `true`, filters the results to include only places that are currently open. This property defaults to `false`."
+                        },
+                        "minRating": {
+                            "type": "number",
+                            "description": "Restricts search results to only include places with a rating that is greater than or equal to this value."
+                        },
+                        "pageToken": {
+                            "type": "string",
+                            "description": "A token that specifies the next page of results to return. This value is obtained from a previous search response and is used to retrieve the subsequent set of results."
+                        },
+                        "includePureServiceAreaBusinesses": {
+                            "type": "boolean",
+                            "description": "Determines whether to include places that are pure service area businesses. If set to `false`, these businesses are excluded from the search results. This property defaults to `true`."
+                        },
+                        "locationRestriction": {
+                            "type": "object",
+                            "properties": {
+                                "circle": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "description": "A circular area that restricts the search results to a specific geographic region."
+                                },
+                                "center": {
+                                    "type": "object",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude coordinate of the center point."
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude coordinate for the center of the location restriction."
+                                        }
+                                    },
+                                    "description": "The center of the circular area to which results are restricted.",
+                                    "required": [
+                                        "latitude",
+                                        "longitude"
+                                    ]
+                                },
+                                "radius": {
+                                    "type": "number",
+                                    "description": "The radius of the circle, measured in meters."
+                                }
+                            },
+                            "description": "Restricts the search to a defined circular area.",
+                            "required": [
+                                "center",
+                                "radius"
+                            ]
+                        },
+                        "languageCode": {
+                            "type": "string",
+                            "description": "Specifies the preferred language for the `displayName`. If a language is provided, the search returns only places that have a display name available in that language."
+                        },
+                        "regionCode": {
+                            "type": "string",
+                            "description": "The Unicode country or region code that identifies the origin of the request, formatted as a two-letter CLDR identifier."
+                        },
+                        "searchAlongRouteParameters": {
+                            "type": "object",
+                            "properties": {
+                                "polyline": {
+                                    "type": "object",
+                                    "properties": {
+                                        "encodedPolyline": {
+                                            "type": "string",
+                                            "description": "An encoded polyline string representing the route, formatted according to the Google Polyline Algorithm."
+                                        }
+                                    },
+                                    "description": "A required polyline that specifies the route to search along.",
+                                    "required": [
+                                        "encodedPolyline"
+                                    ]
+                                }
+                            },
+                            "description": "A precalculated polyline route used to bias search results toward places located along a specific path. This provides a linear preference for results, as opposed to searching within a general area.",
+                            "required": [
+                                "polyline"
+                            ]
+                        },
+                        "evOptions": {
+                            "type": "object",
+                            "properties": {
+                                "connectorTypes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Specifies a list of preferred EV connector types for filtering search results. Places that do not have at least one of the specified connectors are excluded. Valid values include `EV_CONNECTOR_TYPE_J1772`, `EV_CONNECTOR_TYPE_TYPE_2`, `EV_CONNECTOR_TYPE_CHADEMO`, `EV_CONNECTOR_TYPE_CCS_COMBO_1`, `EV_CONNECTOR_TYPE_CCS_COMBO_2`, `EV_CONNECTOR_TYPE_TESLA`, `EV_CONNECTOR_TYPE_NACS`, and others."
+                                },
+                                "minimumChargingRateKw": {
+                                    "type": "number",
+                                    "description": "The minimum charging rate in kilowatts. This parameter filters search results to only include places with a charging rate equal to or greater than the specified value."
+                                }
+                            },
+                            "description": "Specifies the electric vehicle (EV) filtering options to apply to the search."
+                        },
+                        "routingParameters": {
+                            "type": "object",
+                            "properties": {
+                                "routingPreference": {
+                                    "type": "string",
+                                    "description": "Specifies how routing summaries are computed, which influences the trade-off between latency and traffic awareness. It accepts one of four values: `TRAFFIC_UNAWARE` for the lowest latency by ignoring traffic, `TRAFFIC_AWARE` for a balance that considers traffic with optimizations, or `TRAFFIC_AWARE_OPTIMAL` to fully consider all traffic conditions at the cost of the highest latency. If unspecified, it defaults to `ROUTING_PREFERENCE_UNSPECIFIED`, which behaves like `TRAFFIC_UNAWARE`."
+                                },
+                                "routeModifiers": {
+                                    "type": "object",
+                                    "properties": {
+                                        "avoidFerries": {
+                                            "type": "boolean",
+                                            "description": "Specifies a preference for the route to avoid ferries when a reasonable alternative exists."
+                                        },
+                                        "avoidTolls": {
+                                            "type": "boolean",
+                                            "description": "Specifies a preference for the calculated route to avoid toll roads where possible."
+                                        },
+                                        "avoidIndoor": {
+                                            "type": "boolean",
+                                            "description": "Specifies a preference to avoid routes that include indoor navigation. The routing service will attempt to find an alternative path if one is available."
+                                        },
+                                        "avoidHighways": {
+                                            "type": "boolean",
+                                            "description": "Specifies whether the route should avoid highways where possible."
+                                        }
+                                    },
+                                    "description": "Specifies conditions to avoid when calculating a route."
+                                },
+                                "origin": {
+                                    "type": "object",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude in degrees, which must be a value within the range of -90.0 to +90.0."
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude coordinate in degrees. This value must be within the range of -180.0 to +180.0."
+                                        }
+                                    },
+                                    "description": "Overrides the default starting point for the route calculation.",
+                                    "required": [
+                                        "latitude",
+                                        "longitude"
+                                    ]
+                                },
+                                "travelMode": {
+                                    "type": "string",
+                                    "description": "Specifies the mode of travel, which defaults to \"DRIVE\" if not provided. Available options include \"DRIVE\" (passenger car), \"BICYCLE\", \"WALK\", and \"TWO_WHEELER\" (motorized two-wheeled vehicles). Note that \"BICYCLE\" and \"WALK\" are not supported with `search_along_route_parameters`, and \"TWO_WHEELER\" is only available in certain countries."
+                                }
+                            },
+                            "description": "Defines the configuration options for routing calculations."
+                        },
+                        "rankPreference": {
+                            "type": "string",
+                            "description": "Specifies how the search results should be ranked. This must be one of the following values: `\"RANK_PREFERENCE_UNSPECIFIED\"`, `\"DISTANCE\"`, or `\"POPULARITY\"`."
+                        }
+                    },
+                    "description": "A dictionary containing the search request parameters, which must include the specific keys outlined below.",
+                    "required": [
+                        "textQuery"
+                    ]
+                }
+            },
+            "required": [
+                "request"
+            ]
+        }
+    }
+]

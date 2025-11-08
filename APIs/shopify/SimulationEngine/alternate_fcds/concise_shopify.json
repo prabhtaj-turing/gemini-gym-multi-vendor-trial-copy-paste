@@ -1,0 +1,2311 @@
+[
+    {
+        "name": "add_address",
+        "description": "Creates a new, non-default address for a customer, requiring `address1`, `city`, `country`, and `zip`, and returns the complete address object.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "customer_id": {
+                    "type": "string",
+                    "description": "The non-empty string ID of the existing customer to add the address to (e.g., `'cust_abc123'`)."
+                },
+                "address": {
+                    "type": "object",
+                    "properties": {
+                        "address1": {
+                            "type": "string",
+                            "description": "The required primary street address line (e.g., '123 Main St')."
+                        },
+                        "city": {
+                            "type": "string",
+                            "description": "The required name of the city, for example: `New York`, `London`."
+                        },
+                        "country": {
+                            "type": "string",
+                            "description": "Required country name or code (e.g., `United States`, `US`)."
+                        },
+                        "zip": {
+                            "type": "string",
+                            "description": "A required postal or ZIP code. For example: `10001`, `M5V 3A8`, or `SW1A 1AA`."
+                        },
+                        "address2": {
+                            "type": "string",
+                            "description": "The secondary address line for an apartment, suite, or floor (e.g., 'Apt 4B', 'Suite 200')."
+                        },
+                        "first_name": {
+                            "type": "string",
+                            "description": "The first name of the recipient."
+                        },
+                        "last_name": {
+                            "type": "string",
+                            "description": "The last name of the recipient."
+                        },
+                        "phone": {
+                            "type": "string",
+                            "description": "The contact's phone number."
+                        },
+                        "province": {
+                            "type": "string",
+                            "description": "The name of the state or province."
+                        },
+                        "company": {
+                            "type": "string",
+                            "description": "The name of the company or organization."
+                        },
+                        "province_code": {
+                            "type": "string",
+                            "description": "A two-letter code for the state or province (e.g., `CA`, `NY`)."
+                        },
+                        "country_code": {
+                            "type": "string",
+                            "description": "The two-letter country code (e.g., `US`, `CA`)."
+                        },
+                        "country_name": {
+                            "type": "string",
+                            "description": "Full name of the country."
+                        },
+                        "latitude": {
+                            "type": "number",
+                            "description": "Geographic latitude coordinate."
+                        },
+                        "longitude": {
+                            "type": "number",
+                            "description": "The geographic longitude coordinate."
+                        }
+                    },
+                    "description": "The address object to create, which must contain all required fields and can include optional ones.",
+                    "required": [
+                        "address1",
+                        "city",
+                        "country",
+                        "zip"
+                    ]
+                }
+            },
+            "required": [
+                "address",
+                "customer_id"
+            ]
+        }
+    },
+    {
+        "name": "cancel_order",
+        "description": "Permanently cancels an order and optionally processes refunds and restocking, specifying refunds with either a simple amount or detailed objects for specific line items.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "Unique identifier for the order to cancel."
+                },
+                "amount": {
+                    "type": "string",
+                    "description": "The refund amount as a decimal string, superseded by the `refund` object."
+                },
+                "currency": {
+                    "type": "string",
+                    "description": "The currency code for the refund, required if an `amount` is specified."
+                },
+                "reason": {
+                    "type": "string",
+                    "description": "Specifies the reason for the cancellation, which must be `customer`, `inventory`, `fraud`, or `other`."
+                },
+                "email": {
+                    "type": "boolean",
+                    "description": "Specifies whether to send a cancellation email to the customer."
+                },
+                "restock": {
+                    "type": "boolean",
+                    "description": "Specifies whether to restock all items, an option that is overridden by individual refund line item settings."
+                },
+                "refund": {
+                    "type": "object",
+                    "properties": {
+                        "note": {
+                            "type": "string",
+                            "description": "A note or description for the refund."
+                        },
+                        "currency": {
+                            "type": "string",
+                            "description": "The currency of the refund, defaulting to the order's currency."
+                        },
+                        "shipping": {
+                            "type": "object",
+                            "properties": {
+                                "amount": {
+                                    "type": "string",
+                                    "description": "The shipping amount to refund."
+                                },
+                                "full_refund": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether to refund the full shipping cost."
+                                }
+                            },
+                            "description": "Details for the shipping refund."
+                        },
+                        "refund_line_items": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "line_item_id": {
+                                        "type": "integer",
+                                        "description": "Original order line item ID"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "description": "Quantity to refund"
+                                    },
+                                    "restock_type": {
+                                        "type": "string",
+                                        "description": "Restocking behavior (\"no_restock\", \"cancel\", \"return\")"
+                                    },
+                                    "location_id": {
+                                        "type": "integer",
+                                        "description": "Restock location ID"
+                                    }
+                                },
+                                "required": [
+                                    "line_item_id",
+                                    "quantity",
+                                    "restock_type"
+                                ]
+                            },
+                            "description": "The line items to refund."
+                        },
+                        "transactions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "parent_id": {
+                                        "type": "string",
+                                        "description": "Original transaction ID to refund"
+                                    },
+                                    "amount": {
+                                        "type": "string",
+                                        "description": "Refund amount"
+                                    },
+                                    "kind": {
+                                        "type": "string",
+                                        "description": "Must be \"refund\""
+                                    },
+                                    "gateway": {
+                                        "type": "string",
+                                        "description": "Payment gateway identifier"
+                                    }
+                                },
+                                "required": [
+                                    "amount",
+                                    "gateway",
+                                    "kind",
+                                    "parent_id"
+                                ]
+                            },
+                            "description": "A list of transactions to be refunded."
+                        }
+                    },
+                    "description": "An object containing detailed information about the refund."
+                }
+            },
+            "required": [
+                "order_id"
+            ]
+        }
+    },
+    {
+        "name": "close_order",
+        "description": "Close an order after all items are fulfilled or refunded.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The ID of the order to close, provided as a path parameter."
+                }
+            },
+            "required": [
+                "order_id"
+            ]
+        }
+    },
+    {
+        "name": "count_orders",
+        "description": "Retrieve the total number of orders, filterable by creation and update dates, financial, fulfillment, and overall order statuses.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "created_at_max": {
+                    "type": "string",
+                    "description": "Maximum creation date (ISO 8601 format) for counting orders, including those created on or before it; defaults to `None`."
+                },
+                "created_at_min": {
+                    "type": "string",
+                    "description": "The minimum creation date (ISO 8601 format) for orders. Defaults to `None`."
+                },
+                "financial_status": {
+                    "type": "string",
+                    "description": "Filters by financial status; accepted values include 'pending', 'authorized', 'paid', 'partially_paid', 'refunded', 'voided', 'partially_refunded', 'any', 'unpaid', defaulting to 'any'."
+                },
+                "fulfillment_status": {
+                    "type": "string",
+                    "description": "Filters by fulfillment status; common values are 'shipped', 'partial', 'unshipped', 'any', and 'fulfilled', defaulting to 'any'."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Filters by order status; valid values are `'open'`, `'closed'`, or `'any'`, defaulting to `'open'`."
+                },
+                "updated_at_max": {
+                    "type": "string",
+                    "description": "Maximum update date (ISO 8601 format) for counting orders. Defaults to None."
+                },
+                "updated_at_min": {
+                    "type": "string",
+                    "description": "The minimum last updated date for counting orders, specified in ISO 8601 format; defaults to `None`."
+                }
+            }
+        }
+    },
+    {
+        "name": "create_an_order_transaction",
+        "description": "Creates a new transaction (e.g., 'sale', 'capture', 'authorization') for an order, validating the request against the order's history to prevent over-payments and invalid state changes, while automatically updating the order's financial status and any applicable gift card balances.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The ID of the order for the new transaction."
+                },
+                "transaction": {
+                    "type": "object",
+                    "properties": {
+                        "amount": {
+                            "type": "string",
+                            "description": "The required amount of the transaction."
+                        },
+                        "kind": {
+                            "type": "string",
+                            "description": "The required transaction type: `authorization`, `capture`, `sale`, `void`, or `refund`."
+                        },
+                        "gateway": {
+                            "type": "string",
+                            "description": "The payment gateway used for the transaction, such as `'manual'`. Optional for `capture` or `void` transactions if a `parent_id` is provided."
+                        },
+                        "parent_id": {
+                            "type": "string",
+                            "description": "The ID of an existing transaction to explicitly void or capture."
+                        },
+                        "currency": {
+                            "type": "string",
+                            "description": "The currency of the transaction in ISO 4217 format; defaults to the order's currency if not provided."
+                        },
+                        "test": {
+                            "type": "boolean",
+                            "description": "Indicates if this is a test transaction, defaulting to `false`."
+                        },
+                        "authorization": {
+                            "type": "string",
+                            "description": "An optional authorization code from an external gateway, used when the `kind` is `sale` or `authorization`."
+                        },
+                        "target_payment_method_id": {
+                            "type": "string",
+                            "description": "The optional ID of the target payment method for a cross-payment method refund."
+                        }
+                    },
+                    "description": "A dictionary for the transaction object, with fields and values as defined by the Shopify Transaction API.",
+                    "required": [
+                        "amount",
+                        "kind"
+                    ]
+                }
+            },
+            "required": [
+                "order_id",
+                "transaction"
+            ]
+        }
+    },
+    {
+        "name": "create_draft_order",
+        "description": "Creates a new draft order with line items (specified by `variant_id` or as a custom item) and customer data (for a new or existing customer), automatically calculating all subtotals, discounts, taxes, and the final price.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "draft_order": {
+                    "type": "object",
+                    "properties": {
+                        "line_items": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "variant_id": {
+                                        "type": "string",
+                                        "description": "The unique identifier of an existing product variant.\n        When provided, product details are automatically retrieved from the database."
+                                    },
+                                    "product_id": {
+                                        "type": "string",
+                                        "description": "The unique identifier of the parent product.\n        Used in conjunction with custom line items."
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "description": "The number of units for this line item. Must be a positive integer."
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "description": "The display name for custom line items.\n        Required when variant_id is not provided."
+                                    },
+                                    "price": {
+                                        "type": "string",
+                                        "description": "The unit price for custom line items as a decimal string.\n        Required when variant_id is not provided."
+                                    },
+                                    "sku": {
+                                        "type": "string",
+                                        "description": "The stock keeping unit identifier for inventory tracking."
+                                    },
+                                    "grams": {
+                                        "type": "integer",
+                                        "description": "The weight of the line item in grams for shipping calculations."
+                                    },
+                                    "requires_shipping": {
+                                        "type": "boolean",
+                                        "description": "Whether this item needs physical shipping.\n        Defaults to True for most items."
+                                    },
+                                    "taxable": {
+                                        "type": "boolean",
+                                        "description": "Whether this item is subject to tax calculations.\n        Defaults to True for most items."
+                                    },
+                                    "applied_discount": {
+                                        "type": "object",
+                                        "properties": {
+                                            "title": {
+                                                "type": "string",
+                                                "description": "A descriptive name for the discount."
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "description": "Additional details about the discount."
+                                            },
+                                            "value": {
+                                                "type": "string",
+                                                "description": "The discount amount as a decimal string."
+                                            },
+                                            "value_type": {
+                                                "type": "string",
+                                                "description": "Either \"fixed_amount\" for dollar amounts or \"percentage\"\n            for percentage-based discounts."
+                                            }
+                                        },
+                                        "description": "A discount specific to this line item.\n        When provided, must include both value and value_type fields:",
+                                        "required": [
+                                            "value",
+                                            "value_type"
+                                        ]
+                                    },
+                                    "custom_attributes": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {}
+                                        },
+                                        "description": "Additional metadata for the\n        line item as key-value pairs. Each dictionary must contain both 'key' and 'value' fields."
+                                    }
+                                },
+                                "required": [
+                                    "quantity"
+                                ]
+                            },
+                            "description": "A list of line items, where each item requires either a `variant_id` for an existing product or both a `title` and `price` for a custom item."
+                        },
+                        "customer": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "The unique identifier of an existing customer whose data will be used."
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "The email address for a new customer record."
+                                },
+                                "first_name": {
+                                    "type": "string",
+                                    "description": "The new customer's first name."
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "description": "The last name of the new customer."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The customer's contact phone number."
+                                },
+                                "tags": {
+                                    "type": "string",
+                                    "description": "A comma-separated string of tags for categorizing the customer."
+                                }
+                            },
+                            "description": "The customer for the draft order, provided as either an existing customer ID or an object containing new customer data."
+                        },
+                        "shipping_address": {
+                            "type": "object",
+                            "properties": {
+                                "first_name": {
+                                    "type": "string",
+                                    "description": "The recipient's first name."
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "description": "The recipient's last name."
+                                },
+                                "address1": {
+                                    "type": "string",
+                                    "description": "Street address, line 1."
+                                },
+                                "address2": {
+                                    "type": "string",
+                                    "description": "An additional address line for an apartment or suite number."
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "description": "The city of the shipping address."
+                                },
+                                "province": {
+                                    "type": "string",
+                                    "description": "The name of the state or province."
+                                },
+                                "country": {
+                                    "type": "string",
+                                    "description": "The full name of the country."
+                                },
+                                "zip": {
+                                    "type": "string",
+                                    "description": "The postal or ZIP code."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The contact phone number for delivery."
+                                },
+                                "company": {
+                                    "type": "string",
+                                    "description": "The optional name of the company."
+                                },
+                                "province_code": {
+                                    "type": "string",
+                                    "description": "The two-letter code for the state or province."
+                                },
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "The two-letter ISO country code for the shipping address."
+                                }
+                            },
+                            "description": "The shipping address for the draft order."
+                        },
+                        "billing_address": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "The billing address for payment processing, which has the same structure as `shipping_address`."
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "The email address for the draft order, used when a `customer` is not provided or when the provided `customer` lacks an email."
+                        },
+                        "note": {
+                            "type": "string",
+                            "description": "An internal note about the draft order for reference."
+                        },
+                        "tags": {
+                            "type": "string",
+                            "description": "A comma-separated string of tags for categorizing and organizing the draft order."
+                        },
+                        "shipping_line": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "The title of the shipping method (e.g., \"Standard Shipping\")."
+                                },
+                                "price": {
+                                    "type": "string",
+                                    "description": "A decimal string representing the shipping cost."
+                                }
+                            },
+                            "description": "Details of the shipping method and cost.",
+                            "required": [
+                                "price",
+                                "title"
+                            ]
+                        },
+                        "applied_discount": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "A descriptive title for the discount."
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "description": "Details about the discount promotion."
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "The value of the discount as a decimal string."
+                                },
+                                "value_type": {
+                                    "type": "string",
+                                    "description": "The discount's value type, which is either `fixed_amount` for dollar discounts or `percentage` for percentage-based discounts."
+                                }
+                            },
+                            "description": "An order-level discount applied to the entire draft order.",
+                            "required": [
+                                "value",
+                                "value_type"
+                            ]
+                        }
+                    },
+                    "description": "A dictionary representing the complete draft order to be created."
+                }
+            },
+            "required": [
+                "draft_order"
+            ]
+        }
+    },
+    {
+        "name": "create_exchange",
+        "description": "Creates and immediately completes an exchange for fulfilled items in an existing order, automatically handling eligibility validation, price differences, and inventory adjustments.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "Identifier of the order for the exchange."
+                },
+                "return_line_items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "fulfillment_line_item_id": {
+                                "type": "string",
+                                "description": "ID of the original order line item to exchange."
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "description": "Quantity to return (must be positive)."
+                            },
+                            "exchange_reason": {
+                                "type": "string",
+                                "description": "Reason for exchanging this item."
+                            },
+                            "exchange_reason_note": {
+                                "type": "string",
+                                "description": "Additional notes about the exchange."
+                            }
+                        },
+                        "required": [
+                            "fulfillment_line_item_id",
+                            "quantity"
+                        ]
+                    },
+                    "description": "An array of objects representing the items to be returned."
+                },
+                "new_line_items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "variant_id": {
+                                "type": "string",
+                                "description": "ID of the product variant to receive."
+                            },
+                            "product_id": {
+                                "type": "string",
+                                "description": "ID of the product to receive."
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "description": "Quantity to receive (must be positive)."
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "Custom title for the item."
+                            },
+                            "price": {
+                                "type": "string",
+                                "description": "Custom price for the item as decimal string."
+                            }
+                        },
+                        "required": [
+                            "product_id",
+                            "quantity",
+                            "variant_id"
+                        ]
+                    },
+                    "description": "An array of new line items to be received in the exchange."
+                },
+                "exchange_reason": {
+                    "type": "string",
+                    "description": "The reason for the exchange."
+                },
+                "exchange_note": {
+                    "type": "string",
+                    "description": "Additional notes to include with the exchange."
+                },
+                "restock_returned_items": {
+                    "type": "boolean",
+                    "description": "Specifies whether to restock the returned items, defaulting to `True`."
+                }
+            },
+            "required": [
+                "new_line_items",
+                "order_id",
+                "return_line_items"
+            ]
+        }
+    },
+    {
+        "name": "create_order",
+        "description": "Creates a complete order with detailed line items, customer and address information, financial processing including gift cards, and inventory management.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "object",
+                    "properties": {
+                        "billing_address": {
+                            "type": "object",
+                            "properties": {
+                                "first_name": {
+                                    "type": "object",
+                                    "description": "The first name of the billing recipient."
+                                },
+                                "last_name": {
+                                    "type": "object",
+                                    "description": "The last name of the billing recipient."
+                                },
+                                "address1": {
+                                    "type": "string",
+                                    "description": "The primary street address line."
+                                },
+                                "address2": {
+                                    "type": "string",
+                                    "description": "A secondary address line for an apartment, suite, etc."
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "description": "The city for the billing address."
+                                },
+                                "province": {
+                                    "type": "string",
+                                    "description": "The name of the state or province."
+                                },
+                                "country": {
+                                    "type": "string",
+                                    "description": "The country name for the billing address."
+                                },
+                                "zip": {
+                                    "type": "string",
+                                    "description": "The postal or ZIP code for the address."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The contact phone number for the billing address."
+                                },
+                                "company": {
+                                    "type": "string",
+                                    "description": "The company name associated with the billing address."
+                                },
+                                "latitude": {
+                                    "type": "number",
+                                    "description": "Geographic latitude."
+                                },
+                                "longitude": {
+                                    "type": "number",
+                                    "description": "The geographic longitude coordinate."
+                                },
+                                "province_code": {
+                                    "type": "string",
+                                    "description": "The two-letter code for the province or state."
+                                },
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "The two-letter ISO country code."
+                                },
+                                "country_name": {
+                                    "type": "string",
+                                    "description": "Full name of the country."
+                                }
+                            },
+                            "description": "An object containing the customer's billing address.",
+                            "required": [
+                                "first_name",
+                                "last_name"
+                            ]
+                        },
+                        "currency": {
+                            "type": "string",
+                            "description": "The three-letter ISO 4217 currency code (e.g., `USD`, `EUR`) for the order, which defaults to the shop's default currency."
+                        },
+                        "customer": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "The unique identifier of an existing customer to link to the order; this ID takes precedence over other customer fields."
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "The customer's email address. A new customer is created if a customer `id` is not provided."
+                                },
+                                "first_name": {
+                                    "type": "string",
+                                    "description": "The first name of the new customer to be created."
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "description": "The customer's last name, used for new customer creation."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The customer's phone number."
+                                },
+                                "tags": {
+                                    "type": "string",
+                                    "description": "A comma-separated string of customer tags."
+                                }
+                            },
+                            "description": "An object containing customer information to be associated with the order."
+                        },
+                        "discount_codes": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "code": {
+                                        "type": "object",
+                                        "description": "Discount code identifier"
+                                    },
+                                    "amount": {
+                                        "type": "object",
+                                        "description": "Discount amount as decimal string"
+                                    },
+                                    "type": {
+                                        "type": "object",
+                                        "description": "Discount type - \"fixed_amount\" is supported"
+                                    }
+                                },
+                                "required": [
+                                    "amount",
+                                    "code",
+                                    "type"
+                                ]
+                            },
+                            "description": "An array of objects, each representing an order-level discount code."
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "The customer's email address for the order, used when a customer object is not provided or lacks an email."
+                        },
+                        "financial_status": {
+                            "type": "string",
+                            "description": "Specifies an override for the order's payment status, which is otherwise automatically derived from transaction amounts. Valid options are `pending`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, and `voided`."
+                        },
+                        "inventory_behaviour": {
+                            "type": "string",
+                            "description": "Specifies the inventory management policy for order fulfillment. Must be one of: `bypass` (default) to skip inventory checks, `decrement_ignoring_policy` to reduce inventory regardless of stock levels, or `decrement_obeying_policy` to reduce inventory only if sufficient stock is available."
+                        },
+                        "line_items": {
+                            "type": "object",
+                            "description": "An array of objects representing line items, each with a specific set of keys.",
+                            "properties": {
+                                "variant_id": {
+                                    "type": "string",
+                                    "description": "The ID of the product variant to order, required if `product_id` is not provided."
+                                },
+                                "product_id": {
+                                    "type": "string",
+                                    "description": "The product's unique identifier, which defaults to its first variant if a `variant_id` is not specified."
+                                },
+                                "quantity": {
+                                    "type": "object",
+                                    "description": "A positive integer representing the number of units to order."
+                                },
+                                "price": {
+                                    "type": "string",
+                                    "description": "The price per unit as a decimal string, which defaults to the variant price if not provided."
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "description": "The display name for the line item, which defaults to the variant or product title if not provided."
+                                },
+                                "total_discount_amount": {
+                                    "type": "string",
+                                    "description": "The total discount for the entire line item, not per unit, formatted as a decimal string (e.g., `\"10.00\"`)."
+                                }
+                            },
+                            "required": [
+                                "quantity"
+                            ]
+                        },
+                        "note": {
+                            "type": "string",
+                            "description": "An internal note or special instructions for the order."
+                        },
+                        "send_fulfillment_receipt": {
+                            "type": "boolean",
+                            "description": "Specifies whether to send a shipping confirmation email, defaulting to `false`."
+                        },
+                        "send_receipt": {
+                            "type": "boolean",
+                            "description": "Specifies whether to send an order confirmation email. Defaults to `False`."
+                        },
+                        "shipping_address": {
+                            "type": "object",
+                            "properties": {
+                                "first_name": {
+                                    "type": "object",
+                                    "description": "The recipient's first name."
+                                },
+                                "last_name": {
+                                    "type": "object",
+                                    "description": "The last name of the shipping recipient."
+                                },
+                                "address1": {
+                                    "type": "string",
+                                    "description": "The primary street address line."
+                                },
+                                "address2": {
+                                    "type": "string",
+                                    "description": "The secondary address line, such as for an apartment, suite, or unit number."
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "description": "The city of the shipping address."
+                                },
+                                "province": {
+                                    "type": "string",
+                                    "description": "The name of the state or province."
+                                },
+                                "country": {
+                                    "type": "string",
+                                    "description": "The name of the country."
+                                },
+                                "zip": {
+                                    "type": "string",
+                                    "description": "The postal or ZIP code."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The phone number for the shipping address."
+                                },
+                                "company": {
+                                    "type": "string",
+                                    "description": "The name of the recipient's company."
+                                },
+                                "latitude": {
+                                    "type": "number",
+                                    "description": "The geographic latitude coordinate."
+                                },
+                                "longitude": {
+                                    "type": "number",
+                                    "description": "The geographic longitude coordinate."
+                                },
+                                "province_code": {
+                                    "type": "string",
+                                    "description": "The two-letter province/state code."
+                                },
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "The country's two-letter ISO 3166-1 alpha-2 code."
+                                },
+                                "country_name": {
+                                    "type": "string",
+                                    "description": "The full name of the country."
+                                }
+                            },
+                            "description": "A dictionary containing the customer's shipping address.",
+                            "required": [
+                                "first_name",
+                                "last_name"
+                            ]
+                        },
+                        "shipping_lines": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "object",
+                                        "description": "Shipping method name (e.g., \"Standard Shipping\", \"Express\")"
+                                    },
+                                    "price": {
+                                        "type": "object",
+                                        "description": "Shipping cost as decimal string"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "description": "Shipping method code"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "description": "Shipping provider identifier"
+                                    }
+                                },
+                                "required": [
+                                    "price",
+                                    "title"
+                                ]
+                            },
+                            "description": "An array of objects, each representing a shipping line."
+                        },
+                        "tags": {
+                            "type": "string",
+                            "description": "A comma-separated string of tags for order categorization and filtering."
+                        },
+                        "tax_lines": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "object",
+                                        "description": "Tax name (e.g., \"State Tax\", \"VAT\")"
+                                    },
+                                    "rate": {
+                                        "type": "object",
+                                        "description": "Tax rate as decimal (e.g., 0.08 for 8%)"
+                                    },
+                                    "price": {
+                                        "type": "object",
+                                        "description": "Tax amount as decimal string"
+                                    }
+                                },
+                                "required": [
+                                    "price",
+                                    "rate",
+                                    "title"
+                                ]
+                            },
+                            "description": "An array of objects, each representing a tax charge."
+                        },
+                        "transactions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "kind": {
+                                        "type": "object",
+                                        "description": "Transaction type - \"sale\", \"authorization\", \"capture\", \"refund\", \"void\""
+                                    },
+                                    "amount": {
+                                        "type": "object",
+                                        "description": "Transaction amount as decimal string"
+                                    },
+                                    "status": {
+                                        "type": "object",
+                                        "description": "Transaction status - \"success\", \"pending\", \"failure\", \"error\""
+                                    },
+                                    "gateway": {
+                                        "type": "object",
+                                        "description": "Payment gateway identifier - \"manual\", \"gift_card\", \"shopify_payments\", etc.\n        Note: For gift card payments, use gateway=\"gift_card\" - system automatically validates\n        and deducts from customer's gift card balance"
+                                    }
+                                },
+                                "required": [
+                                    "amount",
+                                    "gateway",
+                                    "kind",
+                                    "status"
+                                ]
+                            },
+                            "description": "An array of payment transaction objects."
+                        }
+                    },
+                    "description": "An object containing all the details and configuration required to create the order.",
+                    "required": [
+                        "line_items"
+                    ]
+                }
+            },
+            "required": [
+                "order"
+            ]
+        }
+    },
+    {
+        "name": "create_return",
+        "description": "Initiates a return for one or more fulfilled line items, validating eligibility based on fulfillment status, existing return quantities, and order state.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the order associated with this return."
+                },
+                "return_line_items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "fulfillment_line_item_id": {
+                                "type": "string",
+                                "description": "Line item identifier to return."
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "description": "Quantity to return (must be positive)."
+                            },
+                            "return_reason": {
+                                "type": "string",
+                                "description": "Return reason code. Valid values:\n    \"UNKNOWN\", \"DAMAGED_OR_DEFECTIVE\", \"NOT_AS_DESCRIBED\", \n    \"WRONG_ITEM_SENT\", \"SIZE_TOO_SMALL\", \"SIZE_TOO_LARGE\", \n    \"STYLE_NOT_AS_EXPECTED\", \"COLOR_NOT_AS_EXPECTED\", \n    \"CHANGED_MIND\", \"UNWANTED_GIFT\", \"OTHER\""
+                            },
+                            "return_reason_note": {
+                                "type": "string",
+                                "description": "Additional return details."
+                            }
+                        },
+                        "required": [
+                            "fulfillment_line_item_id",
+                            "quantity"
+                        ]
+                    },
+                    "description": "A list of line items to include in the return."
+                }
+            },
+            "required": [
+                "order_id",
+                "return_line_items"
+            ]
+        }
+    },
+    {
+        "name": "get_address",
+        "description": "Retrieve a specific customer address using the customer ID and address ID, returning complete address details including contact and geographic data.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "customer_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the customer who owns the address, must be a non-empty string (e.g., '207119551', 'cust_abc123')."
+                },
+                "address_id": {
+                    "type": "string",
+                    "description": "A non-empty string that uniquely identifies the address to retrieve, such as `addr_12345` or `987654321`."
+                }
+            },
+            "required": [
+                "address_id",
+                "customer_id"
+            ]
+        }
+    },
+    {
+        "name": "get_customer_by_id",
+        "description": "Retrieve a single customer by their unique identifier, returning comprehensive customer data, with optional field selection to optimize the response payload.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "customer_id": {
+                    "type": "string",
+                    "description": "A non-empty string representing the unique identifier for the customer in the system (e.g., '207119551', 'cust_abc123', '1073339462')."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of specific customer fields to include in the response, such as `['id', 'email']` or `['default_address', 'addresses']` (supporting nested access), where each field name must be a valid customer attribute; defaults to all available fields if `None`."
+                }
+            },
+            "required": [
+                "customer_id"
+            ]
+        }
+    },
+    {
+        "name": "get_customer_orders",
+        "description": "Retrieve all orders for a specific customer, offering filtering by status (defaulting to open), creation date ranges, and financial status, and supporting customizable field selection for comprehensive order details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "customer_id": {
+                    "type": "string",
+                    "description": "A non-empty string serving as the unique identifier for the customer whose orders are retrieved, which must be a valid system customer ID (e.g., '207119551', 'cust_abc123', '1073339462')."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Filters orders by their lifecycle status; valid values are `'open'` (active), `'closed'` (completed), `'cancelled'` (cancelled), and `'any'` (all orders), defaulting to `'open'`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of orders to return per response, constrained to 1-250 for performance optimization, with a default of 50."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings specifying order fields (e.g., `['id', 'order_number', 'total_price']`) to include in each response object, reducing payload size; defaults to all available fields if `None`."
+                },
+                "created_at_min": {
+                    "type": "string",
+                    "description": "Filters orders created after this date, specified in ISO 8601 format with timezone information (e.g., '2024-01-01T00:00:00Z', '2024-01-01T00:00:00+00:00', '2023-12-01T00:00:00-05:00'); defaults to None for no lower date limit."
+                },
+                "created_at_max": {
+                    "type": "string",
+                    "description": "Filter orders created before this date, formatted as an ISO 8601 string with timezone (e.g., `'2024-12-31T23:59:59Z'`); defaults to `None` for no upper limit."
+                },
+                "financial_status": {
+                    "type": "string",
+                    "description": "Filters orders by their payment and financial processing status; valid values include 'pending' (awaiting payment), 'paid' (fully paid), 'partially_paid' (partial payment received), 'refunded' (payment returned), and 'voided' (payment cancelled); defaults to `None` for no filtering."
+                },
+                "since_id": {
+                    "type": "string",
+                    "description": "A string order ID for offset-based pagination, returning only orders with IDs greater than this value (e.g., `'order_123456'`); defaults to `None` to start from the beginning."
+                }
+            },
+            "required": [
+                "customer_id"
+            ]
+        }
+    },
+    {
+        "name": "get_draft_order_by_id",
+        "description": "Retrieves a specific draft order by its unique identifier, optionally filtering for specified fields to reduce response size, otherwise returns the complete order.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "draft_order_id": {
+                    "type": "string",
+                    "description": "A non-empty string unique identifier for an existing draft order, such as 'D101', '12345', or 'draft_abc123'."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings specifying fields to include in the response, optimizing payload size; if `None` (default), all available fields are returned. Examples: `['id', 'status', 'total_price']`, `['customer', 'line_items']`."
+                }
+            },
+            "required": [
+                "draft_order_id"
+            ]
+        }
+    },
+    {
+        "name": "get_order_by_id",
+        "description": "Retrieve an order by ID, returning all fields unless specific fields are named.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The ID of the order to retrieve, provided as a path parameter."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of order field names to retrieve; if omitted or empty, all fields are returned."
+                }
+            },
+            "required": [
+                "order_id"
+            ]
+        }
+    },
+    {
+        "name": "get_product_by_id",
+        "description": "Retrieves a product by its unique ID, optionally limiting returned data by specifying a comma-separated list of fields.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "integer",
+                    "description": "The integer ID of the product to retrieve, specified as a path parameter."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "An optional list of fields to retrieve for the product, sent as a comma-separated string to the API. Defaults to `None`."
+                }
+            },
+            "required": [
+                "product_id"
+            ]
+        }
+    },
+    {
+        "name": "list_addresses",
+        "description": "Retrieves a paginated list of a specific customer's detailed addresses, ordered lexicographically by ID, and navigable via offset-based `since_id`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "customer_id": {
+                    "type": "string",
+                    "description": "A unique, non-empty string representing a valid customer ID (e.g., '207119551', 'cust_abc123') for retrieving their addresses."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of address records to return per response, as an integer between 1 (small batch) and 250 (maximum bulk retrieval) that controls pagination batch size. Defaults to 50."
+                },
+                "since_id": {
+                    "type": "integer",
+                    "description": "An integer pagination offset identifier; returns addresses with string IDs lexicographically greater than `str(since_id)` for consistent pagination, defaulting to `0` to start from the beginning."
+                }
+            },
+            "required": [
+                "customer_id"
+            ]
+        }
+    },
+    {
+        "name": "list_customers",
+        "description": "Retrieve a list of customers, filterable by creation/update date ranges, specific IDs, and selectable fields, with offset-based pagination.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "created_at_max": {
+                    "type": "string",
+                    "description": "Filters customers created before the specified date, which must be in ISO 8601 format with timezone (e.g., '2014-04-25T16:15:47-04:00', '2023-12-31T23:59:59Z', '2024-01-01T00:00:00+00:00'); defaults to no upper date limit."
+                },
+                "created_at_min": {
+                    "type": "string",
+                    "description": "Filter customers created after this date, formatted as an ISO 8601 string with timezone (e.g., '2023-01-01T00:00:00Z'); defaults to None for no lower date limit."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of specific customer fields, such as `['id', 'email', 'first_name']`, to include in each response object to reduce payload size; defaults to `None` to return all available fields."
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of specific customer IDs to retrieve; if provided, only customers matching these IDs are returned. Defaults to `None` for no ID filtering."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of customers to return per response, ranging from 1 to 250 (default: 50)."
+                },
+                "since_id": {
+                    "type": "integer",
+                    "description": "A non-negative integer customer ID for offset-based pagination, returning customers with IDs greater than this value. Defaults to `None` to start from the beginning; example: `207119551`."
+                },
+                "updated_at_max": {
+                    "type": "string",
+                    "description": "Filters customers last updated before this date, specified in ISO 8601 format with timezone (e.g., `'2014-04-25T16:15:47-04:00'`, `'2023-12-31T23:59:59Z'`); defaults to no upper limit."
+                },
+                "updated_at_min": {
+                    "type": "string",
+                    "description": "Filters customers last updated after this date, provided in ISO 8601 format with timezone (e.g., `2014-04-25T16:15:47-04:00`, `2023-01-01T00:00:00Z`); defaults to None for no lower limit."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_draft_orders",
+        "description": "Retrieve a list of draft orders, filtered by date ranges, IDs, or status, with support for pagination and field selection, sorted by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings (e.g., `['id', 'status']`) specifying which draft order fields to return for optimized payload size; defaults to returning all available fields if not provided."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Sets the maximum number of draft orders to return per response, with a valid range of 1 to 250 inclusive and a default of 50."
+                },
+                "since_id": {
+                    "type": "integer",
+                    "description": "An optional integer ID for offset-based pagination, returning draft orders with IDs greater than this value (e.g., `1001` to continue from 1001); defaults to `None` to start from the beginning."
+                },
+                "updated_at_min": {
+                    "type": "string",
+                    "description": "Include draft orders last updated at or after this timestamp, provided in ISO 8601 format with timezone (e.g., '2023-01-01T00:00:00Z', '2024-01-01T00:00:00-05:00'); defaults to no minimum date filter."
+                },
+                "updated_at_max": {
+                    "type": "string",
+                    "description": "A timestamp to include draft orders last updated at or before, which must be in ISO 8601 format with timezone information (e.g., `'2023-12-31T23:59:59Z'`, `'2024-01-01T23:59:59-05:00'`); defaults to `None` for no maximum date filter."
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of specific draft order IDs to retrieve (e.g., `['D101', 'D102']`); only draft orders with these IDs are returned, or `None` for no filtering."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Filter draft orders by status, accepting `'open'` (ready for editing), `'invoice_sent'`, or `'completed'` (finalized orders); defaults to `None` (all statuses)."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_orders",
+        "description": "Retrieve a paginated list of orders matching specified criteria, with pagination links provided in the response header.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "attribution_app_id": {
+                    "type": "string",
+                    "description": "Filters orders by the ID of the attributing app; set to 'current' for orders from the app currently consuming the API."
+                },
+                "created_at_max": {
+                    "type": "string",
+                    "description": "Filters orders created at or before the specified date, provided in ISO 8601 format (e.g., '2014-04-25T16:15:47-04:00')."
+                },
+                "created_at_min": {
+                    "type": "string",
+                    "description": "An optional date to show orders created at or after, formatted as ISO 8601 (e.g., '2014-04-25T16:15:47-04:00')."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "An optional list of field names to retrieve for each order, sent as a comma-separated string to the API."
+                },
+                "financial_status": {
+                    "type": "string",
+                    "description": "The financial status to filter orders by. Common values are 'pending', 'authorized', 'paid', 'partially_paid', 'refunded', 'voided', 'partially_refunded', 'any', 'unpaid'; defaults to 'any'."
+                },
+                "fulfillment_status": {
+                    "type": "string",
+                    "description": "Filters orders by fulfillment status. Common values include: `shipped`, `partial`, `unshipped`, `any`, `fulfilled`; defaults to `any`."
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "An optional list of order IDs to retrieve, sent as a comma-separated string to the API."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of results to show per page, ranging from 1 to 250, with a default of 50."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Filter orders by name (e.g., '#1001')."
+                },
+                "processed_at_max": {
+                    "type": "string",
+                    "description": "Filter orders imported or processed at or before this date (ISO 8601 format)."
+                },
+                "processed_at_min": {
+                    "type": "string",
+                    "description": "An optional date (ISO 8601 format) to filter orders imported or processed at or after."
+                },
+                "since_id": {
+                    "type": "integer",
+                    "description": "Shows orders after the specified non-negative integer order ID. (Cursor-based pagination via Link headers is generally preferred)."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Filters orders by status; defaults to 'open'. Valid values are 'open', 'closed', 'cancelled', and 'any'."
+                },
+                "updated_at_max": {
+                    "type": "string",
+                    "description": "Filter orders last updated at or before this date, in ISO 8601 format."
+                },
+                "updated_at_min": {
+                    "type": "string",
+                    "description": "Specifies the minimum update date (ISO 8601 format) for orders."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_products",
+        "description": "Retrieves a list of products with extensive filtering by collection, date ranges, product types, and selected fields, supporting `since_id` based pagination and multi-currency pricing.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "collection_id": {
+                    "type": "string",
+                    "description": "A product collection ID for manual (explicit product lists) or smart (rule-based by attributes like type, vendor, tags) collections. Example: 'coll_1001'."
+                },
+                "created_at_max": {
+                    "type": "string",
+                    "description": "Return products created before a specified date, formatted as ISO 8601 (e.g., `'2014-04-25T16:15:47-04:00'`)."
+                },
+                "created_at_min": {
+                    "type": "string",
+                    "description": "Filters products created after a specified date, formatted as ISO 8601 (e.g., `'2014-04-25T16:15:47-04:00'`)."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of product field names to retrieve; if `None` or empty, all available fields are returned, including: `admin_graphql_api_id`, `body_html`, `created_at`, `handle`, `id`, `image`, `images`, `options`, `product_type`, `published_at`, `published_scope`, `status`, `tags`, `template_suffix`, `title`, `updated_at`, `variants`, `vendor` (e.g., `['id', 'title', 'product_type']`)."
+                },
+                "handle": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of human-friendly unique product handle strings, used in URLs and themes, for retrieval."
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of product IDs for retrieving specific products."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of results to retrieve per page, defaulting to 50 with a maximum of 250."
+                },
+                "presentment_currencies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of ISO 4217 currency codes (USD, EUR, GBP, CAD, AUD, JPY) for presentment prices, which adds a `presentment_prices` array with currency-specific pricing to each variant; for example, `['USD', 'EUR', 'CAD']`."
+                },
+                "product_type": {
+                    "type": "string",
+                    "description": "Filters products by type using case-insensitive matching."
+                },
+                "published_at_max": {
+                    "type": "string",
+                    "description": "A date (ISO 8601 format) to filter products published before it, e.g., `'2014-04-25T16:15:47-04:00'`."
+                },
+                "published_at_min": {
+                    "type": "string",
+                    "description": "A date in ISO 8601 format (e.g., `2014-04-25T16:15:47-04:00`) to return products published after."
+                },
+                "since_id": {
+                    "type": "string",
+                    "description": "The ID to return products after, essential for consistent cursor-based pagination where products are sorted by ID."
+                }
+            }
+        }
+    },
+    {
+        "name": "modify_pending_order_address",
+        "description": "Updates the shipping address for an unfulfilled order, preserving existing payment and line item details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the order to modify."
+                },
+                "shipping_address": {
+                    "type": "object",
+                    "properties": {
+                        "address1": {
+                            "type": "string",
+                            "description": "The primary street address line."
+                        },
+                        "address2": {
+                            "type": "string",
+                            "description": "The apartment, suite, or other secondary address information."
+                        },
+                        "city": {
+                            "type": "string",
+                            "description": "The city of the shipping address."
+                        },
+                        "province": {
+                            "type": "string",
+                            "description": "The name of the province or state."
+                        },
+                        "province_code": {
+                            "type": "string",
+                            "description": "The province or state code."
+                        },
+                        "country": {
+                            "type": "string",
+                            "description": "The name of the country."
+                        },
+                        "country_code": {
+                            "type": "string",
+                            "description": "The country code."
+                        },
+                        "zip": {
+                            "type": "string",
+                            "description": "The postal or ZIP code."
+                        },
+                        "phone": {
+                            "type": "string",
+                            "description": "The phone number associated with the shipping address."
+                        },
+                        "first_name": {
+                            "type": "string",
+                            "description": "The first name of the recipient."
+                        },
+                        "last_name": {
+                            "type": "string",
+                            "description": "Recipient's last name."
+                        },
+                        "company": {
+                            "type": "string",
+                            "description": "The company name."
+                        }
+                    },
+                    "description": "An object representing the updated shipping address.",
+                    "required": [
+                        "address1",
+                        "city",
+                        "country",
+                        "country_code",
+                        "first_name",
+                        "last_name",
+                        "province",
+                        "province_code",
+                        "zip"
+                    ]
+                }
+            },
+            "required": [
+                "order_id",
+                "shipping_address"
+            ]
+        }
+    },
+    {
+        "name": "modify_pending_order_items",
+        "description": "Modifies the line items, shipping charges, tax lines, discount codes, and order notes on an open, unfulfilled order, without changing address or payment details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the order to modify."
+                },
+                "line_items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Line item ID to update."
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "description": "New quantity."
+                            },
+                            "price": {
+                                "type": "string",
+                                "description": "New price."
+                            },
+                            "properties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Property name."
+                                        },
+                                        "value": {
+                                            "type": "string",
+                                            "description": "Property value."
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "value"
+                                    ]
+                                },
+                                "description": "List of item properties, each with:"
+                            }
+                        },
+                        "required": [
+                            "id"
+                        ]
+                    },
+                    "description": "An array of line item updates."
+                },
+                "shipping_lines": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "Shipping method name."
+                            },
+                            "price": {
+                                "type": "string",
+                                "description": "Shipping cost as decimal string."
+                            },
+                            "code": {
+                                "type": "string",
+                                "description": "Shipping method code."
+                            }
+                        },
+                        "required": [
+                            "price",
+                            "title"
+                        ]
+                    },
+                    "description": "A complete list of shipping charge objects."
+                },
+                "tax_lines": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "Tax name."
+                            },
+                            "price": {
+                                "type": "string",
+                                "description": "Tax amount as decimal string."
+                            },
+                            "rate": {
+                                "type": "number",
+                                "description": "Tax rate."
+                            }
+                        },
+                        "required": [
+                            "price",
+                            "rate",
+                            "title"
+                        ]
+                    },
+                    "description": "A complete list of tax charge objects."
+                },
+                "discount_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "Discount code."
+                            },
+                            "amount": {
+                                "type": "string",
+                                "description": "Discount amount as decimal string."
+                            },
+                            "type": {
+                                "type": "string",
+                                "description": "Discount type (\"fixed_amount\", \"percentage\")."
+                            }
+                        },
+                        "required": [
+                            "amount",
+                            "code",
+                            "type"
+                        ]
+                    },
+                    "description": "An array of discount codes."
+                },
+                "note": {
+                    "type": "string",
+                    "description": "A note for the order."
+                },
+                "tags": {
+                    "type": "string",
+                    "description": "Tags for the order."
+                }
+            },
+            "required": [
+                "order_id"
+            ]
+        }
+    },
+    {
+        "name": "modify_pending_order_payment",
+        "description": "Modifies payment transactions on an open, unfulfilled order while preserving address and line item details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the order to modify."
+                },
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Transaction ID."
+                            },
+                            "amount": {
+                                "type": "string",
+                                "description": "Transaction amount as decimal string."
+                            },
+                            "kind": {
+                                "type": "string",
+                                "description": "Transaction type (\"sale\", \"capture\", \"authorization\", \"void\", \"refund\")."
+                            },
+                            "gateway": {
+                                "type": "string",
+                                "description": "Payment gateway identifier."
+                            },
+                            "status": {
+                                "type": "string",
+                                "description": "Transaction status (\"success\", \"pending\", \"failure\")."
+                            },
+                            "currency": {
+                                "type": "string",
+                                "description": "Three-letter currency code."
+                            },
+                            "original_payment_method_id": {
+                                "type": "string",
+                                "description": "Original payment method ID."
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "Status message."
+                            },
+                            "authorization": {
+                                "type": "string",
+                                "description": "Authorization code."
+                            },
+                            "parent_id": {
+                                "type": "string",
+                                "description": "Parent transaction identifier."
+                            },
+                            "test": {
+                                "type": "boolean",
+                                "description": "Whether this is a test transaction."
+                            },
+                            "device_id": {
+                                "type": "string",
+                                "description": "Device ID."
+                            },
+                            "source_name": {
+                                "type": "string",
+                                "description": "Source name."
+                            },
+                            "receipt": {
+                                "type": "object",
+                                "properties": {},
+                                "description": "Receipt information."
+                            },
+                            "currency_exchange_adjustment": {
+                                "type": "object",
+                                "properties": {},
+                                "description": "Currency exchange adjustment."
+                            }
+                        },
+                        "required": [
+                            "amount",
+                            "currency",
+                            "gateway",
+                            "id",
+                            "kind",
+                            "status"
+                        ]
+                    },
+                    "description": "A list of transaction updates."
+                }
+            },
+            "required": [
+                "order_id",
+                "transactions"
+            ]
+        }
+    },
+    {
+        "name": "reopen_order",
+        "description": "Reopen a closed order by its ID and return its updated details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "The ID of the closed order to re-open, provided as a path parameter."
+                }
+            },
+            "required": [
+                "order_id"
+            ]
+        }
+    },
+    {
+        "name": "search_customers",
+        "description": "Search for customers using Shopify's query language, supporting filtering by attributes, cursor-based pagination, selective field retrieval, and result sorting.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "A search query string using Shopify query syntax that supports field-specific searches, comparison operators, logical combinations, and wildcards; see examples such as `email:value`, `orders_count:>5`, `tag:VIP AND created_at:>date`, or `phone:+1*`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of customer results to retrieve, ranging from 1 to 250, with a default of 50."
+                },
+                "page_info": {
+                    "type": "string",
+                    "description": "A pagination token for cursor-based navigation; use the `next_page_token` from a previous response to retrieve the next page of results. Defaults to `None` for the first page."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of strings specifying customer fields to include in the response, supporting dot notation for nested access (e.g., `['id', 'email', 'default_address.city']`). Defaults to all fields."
+                },
+                "order": {
+                    "type": "string",
+                    "description": "Specifies sort order as 'field_name DIRECTION', where `field_name` is a valid sortable customer field and `DIRECTION` is 'ASC' or 'DESC' (e.g., 'updated_at DESC'); defaults to customer ID ascending."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "search_products",
+        "description": "Provides advanced product search with support for text, tag, price, and inventory filtering, and multiple sorting options.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "A text search query that performs case-insensitive partial matching against product title, body_html, tags, vendor, and product_type."
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of tags that products must contain, matched case-insensitively with AND logic."
+                },
+                "product_type": {
+                    "type": "string",
+                    "description": "Filters products by type using a case-insensitive exact match."
+                },
+                "vendor": {
+                    "type": "string",
+                    "description": "Filters products by vendor name using a case-insensitive exact match."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Filter products by status; valid values are `active`, `archived`, or `draft`."
+                },
+                "published_scope": {
+                    "type": "string",
+                    "description": "Filters products by published scope; valid values are \"web\" or \"global\"."
+                },
+                "price_min": {
+                    "type": "string",
+                    "description": "Minimum price filter for all product variants, formatted as a decimal string (e.g., \"10.00\")."
+                },
+                "price_max": {
+                    "type": "string",
+                    "description": "A maximum price filter that searches across all product variants, formatted as a decimal string (e.g., `\"100.00\"`)."
+                },
+                "inventory_quantity_min": {
+                    "type": "integer",
+                    "description": "Minimum total inventory quantity across all variants; must be a non-negative integer."
+                },
+                "inventory_quantity_max": {
+                    "type": "integer",
+                    "description": "Maximum total inventory quantity across all variants."
+                },
+                "created_at_min": {
+                    "type": "string",
+                    "description": "Filters products created after this date, formatted as an ISO 8601 timestamp (e.g., \"2023-01-01T00:00:00Z\")."
+                },
+                "created_at_max": {
+                    "type": "string",
+                    "description": "Filter products created before this date, formatted as an ISO 8601 timestamp (e.g., \"2023-12-31T23:59:59Z\")."
+                },
+                "updated_at_min": {
+                    "type": "string",
+                    "description": "Filters products updated after this date, formatted as an ISO 8601 timestamp (e.g., \"2023-01-01T00:00:00Z\")."
+                },
+                "updated_at_max": {
+                    "type": "string",
+                    "description": "Filters products updated before the specified ISO 8601 timestamp (e.g., \"2023-12-31T23:59:59Z\")."
+                },
+                "variant_query": {
+                    "type": "string",
+                    "description": "A text search query for case-insensitive partial matching against variant titles, SKUs, and option values to find specific product variations."
+                },
+                "variant_sku": {
+                    "type": "string",
+                    "description": "Filter products by variant SKU using case-insensitive partial matching."
+                },
+                "variant_title": {
+                    "type": "string",
+                    "description": "Filters products by matching variant titles using case-insensitive partial matching."
+                },
+                "variant_option1": {
+                    "type": "string",
+                    "description": "Filters products by case-insensitive partial matching of their variants' `option1` value, commonly used for attributes like size, color, or material."
+                },
+                "variant_option2": {
+                    "type": "string",
+                    "description": "Filters products by case-insensitive partial matching of variants' option2 value, common for secondary attributes."
+                },
+                "variant_option3": {
+                    "type": "string",
+                    "description": "Filters products by case-insensitive partial matching of variant option3 values, commonly used for tertiary attributes."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of product fields to include in the response; if omitted, all fields are returned. Valid fields include `id`, `title`, `body_html`, `vendor`, `product_type`, `handle`, `status`, `tags`, `variants`, `options`, `images`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of products to return; range: 1-250, default: 50."
+                },
+                "sort_by": {
+                    "type": "string",
+                    "description": "Field to sort results by: `title` (product title), `created_at` (creation date), `updated_at` (last update date), `price` (lowest variant price), `inventory_quantity` (total inventory), `vendor` (vendor name), or `product_type`. Defaults to `id` (product ID)."
+                },
+                "sort_order": {
+                    "type": "string",
+                    "description": "Sort direction; valid values are `asc` or `desc`. Defaults to `asc`."
+                }
+            }
+        }
+    },
+    {
+        "name": "update_address",
+        "description": "Updates an existing customer address with the provided fields and returns the complete updated address. The `id`, `customer_id`, and `default` fields cannot be modified.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "customer_id": {
+                    "type": "string",
+                    "description": "A unique, non-empty string representing the identifier of an existing customer. Examples: `207119551`, `cust_abc123`."
+                },
+                "address_id": {
+                    "type": "string",
+                    "description": "The unique, non-empty string identifier for an existing address to update. Examples: `addr_12345`, `987654321`."
+                },
+                "address": {
+                    "type": "object",
+                    "properties": {
+                        "address1": {
+                            "type": "string",
+                            "description": "The primary street address line (e.g., '456 New Road')."
+                        },
+                        "address2": {
+                            "type": "string",
+                            "description": "The secondary address line, such as an apartment or suite number."
+                        },
+                        "city": {
+                            "type": "string",
+                            "description": "The name of the city."
+                        },
+                        "province": {
+                            "type": "string",
+                            "description": "Name of the state or province (e.g., `California`, `Ontario`)."
+                        },
+                        "country": {
+                            "type": "string",
+                            "description": "The country name (e.g., 'United States') or code (e.g., 'US')."
+                        },
+                        "zip": {
+                            "type": "string",
+                            "description": "The postal or ZIP code, such as `90210` or `M5V 3A8`."
+                        },
+                        "phone": {
+                            "type": "string",
+                            "description": "The contact's phone number (e.g., `555-000-1111`, `+1-416-555-0123`)."
+                        },
+                        "first_name": {
+                            "type": "string",
+                            "description": "The recipient's first name."
+                        },
+                        "last_name": {
+                            "type": "string",
+                            "description": "The last name of the recipient."
+                        },
+                        "company": {
+                            "type": "string",
+                            "description": "The name of the company."
+                        },
+                        "province_code": {
+                            "type": "string",
+                            "description": "The two-letter province or state code (e.g., `CA`, `NY`)."
+                        },
+                        "country_code": {
+                            "type": "string",
+                            "description": "The two-letter country code (e.g., 'US', 'CA')."
+                        },
+                        "country_name": {
+                            "type": "string",
+                            "description": "The full name of the country."
+                        },
+                        "latitude": {
+                            "type": "number",
+                            "description": "The geographic latitude coordinate."
+                        },
+                        "longitude": {
+                            "type": "number",
+                            "description": "The geographic longitude coordinate."
+                        }
+                    },
+                    "description": "A dictionary of fields to update, excluding the protected `id`, `customer_id`, and `default` fields.",
+                    "required": [
+                        "address1",
+                        "city",
+                        "country",
+                        "zip"
+                    ]
+                }
+            },
+            "required": [
+                "address",
+                "address_id",
+                "customer_id"
+            ]
+        }
+    },
+    {
+        "name": "update_draft_order",
+        "description": "Updates non-read-only fields of an existing draft order, such as line items, customer information, and addresses.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "draft_order_id": {
+                    "type": "string",
+                    "description": "The identifier of the draft order to update."
+                },
+                "draft_order": {
+                    "type": "object",
+                    "properties": {
+                        "customer_id": {
+                            "type": "string",
+                            "description": "The ID of the customer associated with the draft order."
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "The customer's email address."
+                        },
+                        "note": {
+                            "type": "string",
+                            "description": "An optional note to attach to the draft order."
+                        },
+                        "tags": {
+                            "type": "string",
+                            "description": "A comma-separated list of tags for filtering and searching."
+                        },
+                        "tax_exempt": {
+                            "type": "boolean",
+                            "description": "Whether the draft order is exempt from taxes."
+                        },
+                        "shipping_address": {
+                            "type": "object",
+                            "properties": {
+                                "first_name": {
+                                    "type": "string",
+                                    "description": "The recipient's first name."
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "description": "The last name of the recipient."
+                                },
+                                "address1": {
+                                    "type": "string",
+                                    "description": "The first line of the street address."
+                                },
+                                "address2": {
+                                    "type": "string",
+                                    "description": "The second line of the street address."
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "description": "The city of the shipping address."
+                                },
+                                "province": {
+                                    "type": "string",
+                                    "description": "The province or state."
+                                },
+                                "country": {
+                                    "type": "string",
+                                    "description": "The name of the country."
+                                },
+                                "zip": {
+                                    "type": "string",
+                                    "description": "The postal or ZIP code."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The phone number for the shipping address."
+                                },
+                                "company": {
+                                    "type": "string",
+                                    "description": "The name of the company for the shipping address."
+                                },
+                                "province_code": {
+                                    "type": "string",
+                                    "description": "The province or state code."
+                                },
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "The ISO country code."
+                                },
+                                "country_name": {
+                                    "type": "string",
+                                    "description": "The full name of the country."
+                                },
+                                "latitude": {
+                                    "type": "number",
+                                    "description": "Latitude of the shipping address."
+                                },
+                                "longitude": {
+                                    "type": "number",
+                                    "description": "The longitude of the shipping address."
+                                }
+                            },
+                            "description": "An object that represents the shipping address."
+                        },
+                        "billing_address": {
+                            "type": "object",
+                            "properties": {},
+                            "description": "An object for the billing address with the same keys as `shipping_address`."
+                        },
+                        "line_items": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "product_id": {
+                                        "type": "string",
+                                        "description": "Parent product ID (required)"
+                                    },
+                                    "variant_id": {
+                                        "type": "string",
+                                        "description": "Product variant ID (required)"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "description": "Product or item title"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "description": "Item quantity"
+                                    },
+                                    "price": {
+                                        "type": "string",
+                                        "description": "Unit price as string"
+                                    },
+                                    "applied_discount": {
+                                        "type": "object",
+                                        "properties": {},
+                                        "description": "Line item discount dict with string values"
+                                    }
+                                },
+                                "required": [
+                                    "price",
+                                    "product_id",
+                                    "quantity",
+                                    "title",
+                                    "variant_id"
+                                ]
+                            },
+                            "description": "An array of objects, each representing a product line item."
+                        },
+                        "shipping_line": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "The name of the shipping method."
+                                },
+                                "price": {
+                                    "type": "string",
+                                    "description": "The shipping cost as a string."
+                                }
+                            },
+                            "description": "An object specifying the shipping method.",
+                            "required": [
+                                "price",
+                                "title"
+                            ]
+                        },
+                        "customer": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Unique identifier for the customer."
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "The email address of the customer."
+                                },
+                                "first_name": {
+                                    "type": "string",
+                                    "description": "The customer's first name."
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "description": "The customer's last name."
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "The customer's phone number."
+                                },
+                                "tags": {
+                                    "type": "string",
+                                    "description": "Tags associated with the customer."
+                                }
+                            },
+                            "description": "A dictionary containing the customer's information, provided as an alternative to `customer_id`."
+                        },
+                        "applied_discount": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "The title of the discount."
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "description": "Description of the discount."
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "The value of the applied discount."
+                                },
+                                "value_type": {
+                                    "type": "string",
+                                    "description": "The type of discount, which can be either `fixed_amount` or `percentage`."
+                                },
+                                "amount": {
+                                    "type": "string",
+                                    "description": "The amount of the applied discount."
+                                }
+                            },
+                            "description": "An object representing the discount applied to the entire order.",
+                            "required": [
+                                "value",
+                                "value_type"
+                            ]
+                        }
+                    },
+                    "description": "An object containing the draft order properties to update."
+                }
+            },
+            "required": [
+                "draft_order",
+                "draft_order_id"
+            ]
+        }
+    }
+]

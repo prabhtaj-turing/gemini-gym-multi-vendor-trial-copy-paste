@@ -1,0 +1,317 @@
+[
+  {
+    "name": "create_reminder",
+    "description": "Creates a new reminder, which cannot be in the past.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "A short description of the reminder."
+        },
+        "description": {
+          "type": "string",
+          "description": "An additional description for the reminder."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "The scheduled date in `YYYY-MM-DD` format, which cannot be in the past."
+        },
+        "time_of_day": {
+          "type": "string",
+          "description": "The scheduled time in `hh:mm:ss` format."
+        },
+        "am_pm_or_unknown": {
+          "type": "string",
+          "description": "Must be one of \"AM\", \"PM\", or \"UNKNOWN\"."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "The end date for a recurring reminder in `YYYY-MM-DD` format, which must be on or after the `start_date`."
+        },
+        "repeat_every_n": {
+          "type": "integer",
+          "description": "Number of repeat intervals, defaulting to 0."
+        },
+        "repeat_interval_unit": {
+          "type": "string",
+          "description": "The unit for the repeat interval: `MINUTE`, `HOUR`, `DAY`, `WEEK`, `MONTH`, or `YEAR`."
+        },
+        "days_of_week": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of days for recurring reminders, with valid values being `SUNDAY`, `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, and `SATURDAY`."
+        },
+        "weeks_of_month": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specifies the weeks of the month for recurrence, chosen from: `FIRST`, `SECOND`, `THIRD`, `FOURTH`, and `LAST`."
+        },
+        "days_of_month": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specifies the days of the month for a recurring reminder, with valid values of `DAY_1` through `DAY_31`, or `LAST` for the final day of the month."
+        },
+        "occurrence_count": {
+          "type": "integer",
+          "description": "The number of times the reminder should recur."
+        }
+      }
+    }
+  },
+  {
+    "name": "get_reminders",
+    "description": "Search for reminders using specified criteria and filters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A string to search for reminders."
+        },
+        "from_date": {
+          "type": "string",
+          "description": "The start date for the filter in `YYYY-MM-DD` format."
+        },
+        "from_time_of_day": {
+          "type": "string",
+          "description": "The start time of the filter range in `hh:mm:ss` format."
+        },
+        "to_date": {
+          "type": "string",
+          "description": "The end date for the filter, formatted as `YYYY-MM-DD`."
+        },
+        "to_time_of_day": {
+          "type": "string",
+          "description": "The end time of the search, formatted as `hh:mm:ss`."
+        },
+        "include_completed": {
+          "type": "boolean",
+          "description": "Specifies whether to include completed reminders."
+        },
+        "is_recurring": {
+          "type": "boolean",
+          "description": "Retrieves recurring reminders only."
+        },
+        "include_deleted": {
+          "type": "boolean",
+          "description": "Specifies whether to include deleted reminders."
+        }
+      }
+    }
+  },
+  {
+    "name": "modify_reminder",
+    "description": "Finds and modifies reminders, requiring at least one of `reminder_ids` or `retrieval_query`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reminder_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of reminder IDs to modify."
+        },
+        "retrieval_query": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "A search query based on keywords."
+            },
+            "from_date": {
+              "type": "string",
+              "description": "The start date for the search query, formatted as `YYYY-MM-DD`."
+            },
+            "to_date": {
+              "type": "string",
+              "description": "End date for the query in `YYYY-MM-DD` format."
+            },
+            "from_time_of_day": {
+              "type": "string",
+              "description": "The start time for the search range, formatted as `hh:mm:ss`."
+            },
+            "to_time_of_day": {
+              "type": "string",
+              "description": "The end time for the search query, formatted as `hh:mm:ss`."
+            },
+            "include_completed": {
+              "type": "boolean",
+              "description": "Whether to include completed reminders in the search."
+            },
+            "is_recurring": {
+              "type": "boolean",
+              "description": "A filter to retrieve recurring reminders only."
+            }
+          },
+          "description": "A query to find reminders using criteria like `query` (keywords), date/time ranges (`from_date`/`to_date` as YYYY-MM-DD, `from_time_of_day`/`to_time_of_day` as hh:mm:ss), `include_completed`, or `is_recurring`.",
+          "required": [
+            "from_date",
+            "from_time_of_day",
+            "include_completed",
+            "is_recurring",
+            "query",
+            "to_date",
+            "to_time_of_day"
+          ]
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Whether to mark the reminder(s) as completed."
+        },
+        "deleted": {
+          "type": "boolean",
+          "description": "Marks reminders as deleted."
+        },
+        "is_bulk_mutation": {
+          "type": "boolean",
+          "description": "Indicates whether the operation targets multiple reminders."
+        },
+        "title": {
+          "type": "string",
+          "description": "The new title for the specified reminder(s)."
+        },
+        "description": {
+          "type": "string",
+          "description": "New description for the reminder."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "The new start date for the reminder, formatted as `YYYY-MM-DD`."
+        },
+        "time_of_day": {
+          "type": "string",
+          "description": "New time of day in `hh:mm:ss` format."
+        },
+        "am_pm_or_unknown": {
+          "type": "string",
+          "description": "Specifies the time of day as `AM`, `PM`, or `UNKNOWN`."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "New end date for recurring reminders in `YYYY-MM-DD` format."
+        },
+        "repeat_every_n": {
+          "type": "integer",
+          "description": "The numerical value of the repetition interval."
+        },
+        "repeat_interval_unit": {
+          "type": "string",
+          "description": "The new time unit for the recurrence interval."
+        },
+        "days_of_week": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of new days of the week for recurrence."
+        },
+        "weeks_of_month": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of strings defining the new weeks of the month for recurrence."
+        },
+        "days_of_month": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of the new days of the month for recurrence."
+        },
+        "occurrence_count": {
+          "type": "integer",
+          "description": "The new number of occurrences."
+        }
+      }
+    }
+  },
+  {
+    "name": "show_matching_reminders",
+    "description": "Searches for reminders by ID, including deleted items, or by a query that excludes deleted items by default.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reminder_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of specific reminder IDs to show, including deleted reminders."
+        },
+        "retrieval_query": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "A query string for searching by keyword."
+            },
+            "from_date": {
+              "type": "string",
+              "description": "The start date for the query, formatted as `YYYY-MM-DD`."
+            },
+            "to_date": {
+              "type": "string",
+              "description": "End date for the query in `YYYY-MM-DD` format."
+            },
+            "from_time_of_day": {
+              "type": "string",
+              "description": "The start time of day, formatted as `hh:mm:ss`."
+            },
+            "to_time_of_day": {
+              "type": "string",
+              "description": "An end time for the search, formatted as `hh:mm:ss`."
+            },
+            "include_completed": {
+              "type": "boolean",
+              "description": "Whether to include completed reminders in the search results."
+            },
+            "is_recurring": {
+              "type": "boolean",
+              "description": "Filters for recurring reminders only."
+            },
+            "include_deleted": {
+              "type": "boolean",
+              "description": "Specifies whether to include deleted reminders in the results, which are excluded by default."
+            }
+          },
+          "description": "A dictionary of search criteria to find reminders, including keys for `query`, date/time ranges (e.g., `from_date: \"YYYY-MM-DD\"`), and boolean flags like `include_completed`, `is_recurring`, and `include_deleted`.",
+          "required": [
+            "from_date",
+            "from_time_of_day",
+            "include_completed",
+            "include_deleted",
+            "is_recurring",
+            "query",
+            "to_date",
+            "to_time_of_day"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "undo",
+    "description": "Revert reminder operations using their corresponding operation IDs.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "undo_operation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of operation IDs to undo."
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,392 @@
+[
+  {
+    "name": "book_reservation",
+    "description": "Books a reservation for one or more flights using the provided passenger information and payment methods.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The unique identifier for the user making the reservation (e.g., `\"sara_doe_496\"`)."
+        },
+        "origin": {
+          "type": "string",
+          "description": "The origin airport's three-letter code (e.g., \"JFK\")."
+        },
+        "destination": {
+          "type": "string",
+          "description": "The destination airport's three-letter code (e.g., \"LAX\")."
+        },
+        "flight_type": {
+          "type": "string",
+          "description": "Specifies the type of flight. The value must be either `\"one_way\"` or `\"round_trip\"`."
+        },
+        "cabin": {
+          "type": "string",
+          "description": "The cabin class for the reservation, which must be one of \"basic_economy\", \"economy\", or \"business\"."
+        },
+        "flights": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "flight_number": {
+                "type": "string",
+                "description": "The unique identifier for the flight (e.g., \"HAT001\")."
+              },
+              "date": {
+                "type": "string",
+                "description": "The flight date in \"YYYY-MM-DD\" format (e.g., \"2024-05-15\")."
+              }
+            },
+            "required": [
+              "date",
+              "flight_number"
+            ]
+          },
+          "description": "A list of flight dictionaries, where each dictionary must contain the `flight_number` and the flight `date` in \"YYYY-MM-DD\" format."
+        },
+        "passengers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "first_name": {
+                "type": "string",
+                "description": "The passenger's first name (e.g., \"John\")."
+              },
+              "last_name": {
+                "type": "string",
+                "description": "The passenger's last name (e.g., \"Doe\")."
+              },
+              "dob": {
+                "type": "string",
+                "description": "The passenger's date of birth in \"YYYY-MM-DD\" format (e.g., \"1990-01-01\")."
+              }
+            },
+            "required": [
+              "dob",
+              "first_name",
+              "last_name"
+            ]
+          },
+          "description": "A list of passenger dictionaries. Each dictionary must contain the `first_name` (str), `last_name` (str), and `dob` (date of birth) formatted as a \"YYYY-MM-DD\" string."
+        },
+        "payment_methods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "payment_id": {
+                "type": "string",
+                "description": "The ID of the payment method to use (e.g., \"credit_card_4421486\")."
+              },
+              "amount": {
+                "type": "number",
+                "description": "The amount to be charged for this payment (e.g., 250.0)."
+              }
+            },
+            "required": [
+              "amount",
+              "payment_id"
+            ]
+          },
+          "description": "A list of payment method dictionaries. Each dictionary must contain a `payment_id` (e.g., \"credit_card_4421486\") and the `amount` to be charged (e.g., 250.0)."
+        },
+        "total_baggages": {
+          "type": "integer",
+          "description": "The total number of baggage items. This must be a non-negative integer (e.g., `2`)."
+        },
+        "nonfree_baggages": {
+          "type": "integer",
+          "description": "The number of baggage items that require payment. This must be a non-negative integer (e.g., `1`)."
+        },
+        "insurance": {
+          "type": "string",
+          "description": "Specifies whether to include insurance for the reservation. The value must be either \"yes\" or \"no\"."
+        }
+      },
+      "required": [
+        "cabin",
+        "destination",
+        "flight_type",
+        "flights",
+        "insurance",
+        "nonfree_baggages",
+        "origin",
+        "passengers",
+        "payment_methods",
+        "total_baggages",
+        "user_id"
+      ]
+    }
+  },
+  {
+    "name": "calculate",
+    "description": "Calculates a mathematical expression provided as a string. The expression can contain numbers, parentheses, and the operators `+`, `-`, `*`, `/`. The result is returned as a string rounded to two decimal places.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "A string representing the mathematical expression to be evaluated. It must only contain numbers, operators (`+`, `-`, `*`, `/`), parentheses, decimal points, and spaces."
+        }
+      },
+      "required": [
+        "expression"
+      ]
+    }
+  },
+  {
+    "name": "cancel_reservation",
+    "description": "Cancels an entire reservation identified by its ID, updating its status to 'cancelled'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reservation_id": {
+          "type": "string",
+          "description": "The unique identifier of the reservation to cancel."
+        }
+      },
+      "required": [
+        "reservation_id"
+      ]
+    }
+  },
+  {
+    "name": "get_reservation_details",
+    "description": "Gets the details for a specific reservation identified by its unique reservation ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reservation_id": {
+          "type": "string",
+          "description": "The unique identifier for a reservation, such as `8JX2WO`."
+        }
+      },
+      "required": [
+        "reservation_id"
+      ]
+    }
+  },
+  {
+    "name": "get_user_details",
+    "description": "Retrieves a comprehensive profile for a user, including their personal details, payment methods, and all associated reservations.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The unique identifier for the user, such as `sara_doe_496`."
+        }
+      },
+      "required": [
+        "user_id"
+      ]
+    }
+  },
+  {
+    "name": "list_all_airports",
+    "description": "Lists all airports with available flights and their corresponding cities. Returns a dictionary mapping each airport's IATA code to its city name.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "search_direct_flight",
+    "description": "Searches for direct flights between an origin and destination airport, using their three-letter codes, for a specific date formatted as 'YYYY-MM-DD'.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "The origin airport, specified as a three-letter code (e.g., 'JFK')."
+        },
+        "destination": {
+          "type": "string",
+          "description": "The destination airport's three-letter code, such as 'LAX'."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the flight, which must be provided in 'YYYY-MM-DD' format."
+        }
+      },
+      "required": [
+        "date",
+        "destination",
+        "origin"
+      ]
+    }
+  },
+  {
+    "name": "search_onestop_flight",
+    "description": "Searches for one-stop flights between two cities on a specified date. Each returned flight combination consists of a pair of two connecting flights that form a single journey.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "The origin city's three-letter airport code, such as 'JFK'."
+        },
+        "destination": {
+          "type": "string",
+          "description": "The destination city airport, provided as a three-letter code (e.g., 'LAX')."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the flight, which must be a string formatted as `YYYY-MM-DD`."
+        }
+      },
+      "required": [
+        "date",
+        "destination",
+        "origin"
+      ]
+    }
+  },
+  {
+    "name": "send_certificate",
+    "description": "Sends a certificate of a specified amount to a user identified by their ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The unique identifier for the user who will receive the certificate. This must be a non-empty string."
+        },
+        "amount": {
+          "type": "integer",
+          "description": "The value of the certificate, which must be a positive integer."
+        }
+      },
+      "required": [
+        "amount",
+        "user_id"
+      ]
+    }
+  },
+  {
+    "name": "think",
+    "description": "Records a thought to a log, which can be used for reasoning. This action does not obtain new information or change any external data.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "thought": {
+          "type": "string",
+          "description": "The internal thought, reflection, or plan to be recorded. This is used to document a line of thinking without performing an action or retrieving new information."
+        }
+      },
+      "required": [
+        "thought"
+      ]
+    }
+  },
+  {
+    "name": "transfer_to_human_agents",
+    "description": "Transfers the user to a human agent, providing the agent with a summary of the user's issue for context.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "A non-empty string summarizing the user's issue to provide context for the human agent."
+        }
+      },
+      "required": [
+        "summary"
+      ]
+    }
+  },
+  {
+    "name": "update_reservation_baggages",
+    "description": "Updates the total and non-free baggage counts for a specified reservation, using a provided payment method for any associated costs.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reservation_id": {
+          "type": "string",
+          "description": "The unique identifier of the reservation to be updated."
+        },
+        "total_baggages": {
+          "type": "integer",
+          "description": "The new total number of baggage items. This must be a non-negative integer."
+        },
+        "nonfree_baggages": {
+          "type": "integer",
+          "description": "The updated count of baggage items that require payment. This value must be a non-negative integer."
+        },
+        "payment_id": {
+          "type": "string",
+          "description": "The ID of the payment method to charge for any additional non-free baggage. Certificates cannot be used for this transaction."
+        }
+      },
+      "required": [
+        "nonfree_baggages",
+        "payment_id",
+        "reservation_id",
+        "total_baggages"
+      ]
+    }
+  },
+  {
+    "name": "update_reservation_flights",
+    "description": "Updates an existing reservation with a new list of flights and a new cabin class, using a specified payment ID to handle any price differences.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reservation_id": {
+          "type": "string",
+          "description": "A unique identifier specifying the reservation to update."
+        },
+        "cabin": {
+          "type": "string",
+          "description": "The new cabin class for the reservation's flights. This must be a non-empty string representing a valid cabin type, such as 'economy' or 'first'."
+        },
+        "flights": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {}
+          },
+          "description": "A list of dictionaries that specifies the new flights for the reservation. Each dictionary must contain the `flight_number` and the flight `date`."
+        },
+        "payment_id": {
+          "type": "string",
+          "description": "The identifier for the payment method used to cover any price differences from the flight update. This cannot be a payment method of type 'certificate'."
+        }
+      },
+      "required": [
+        "cabin",
+        "flights",
+        "payment_id",
+        "reservation_id"
+      ]
+    }
+  },
+  {
+    "name": "update_reservation_passengers",
+    "description": "Updates the passenger information for a reservation by replacing the entire passenger list. The new list must contain the same number of passengers as the original.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reservation_id": {
+          "type": "string",
+          "description": "The unique identifier for the reservation to be updated."
+        },
+        "passengers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {}
+          },
+          "description": "A list of passenger objects, where each object is a dictionary containing `first_name`, `last_name`, and `dob`. This list must contain the same number of passengers as the original reservation."
+        }
+      },
+      "required": [
+        "passengers",
+        "reservation_id"
+      ]
+    }
+  }
+]

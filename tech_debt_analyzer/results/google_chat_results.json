@@ -1,0 +1,855 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:57.414432Z",
+  "results": {
+    "google_chat/Media.py": {
+      "functions": {
+        "download": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: downloading media using a resource name.  The `Args` section correctly documents the `resourceName` parameter with its type and a helpful description, including a reference to `ReadRequest.resource_name`. The return type is correctly specified as `None`.  However, the docstring could be improved by adding a `Raises` section to document any potential exceptions that the function might raise (e.g., `FileNotFoundError`, network errors).  The current docstring is sufficient for a basic understanding of the function, but adding information about potential exceptions would make it more robust and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `download` takes one functional input parameter, `resourceName`, which is a string.  There is no input validation present for this parameter.  Neither Pydantic models nor any other form of input validation (e.g., type checking, length checks, regex validation) is used to ensure the validity of the `resourceName` before it's used.  Adding Pydantic validation or other checks would significantly improve the robustness of the function."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function `download` has only one functional input parameter, `resourceName`.  No validation whatsoever is performed on this parameter. There are no type checks, value checks, null/empty checks, or special constraint checks.  No exceptions are raised if `resourceName` is invalid.  Therefore, the input validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `download` has one parameter, `resourceName`, which is correctly type-annotated as `str`.  The return type is also correctly annotated as `None`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Stub",
+            "notes": "The function only prints a log message indicating that it's downloading media.  There is no actual download implementation.  The core functionality of downloading media based on the `resourceName` is missing.  The function does not interact with the global `DB` in any way to retrieve or process the media data.  This is a placeholder implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `download` function does not handle phone numbers or email addresses as input.  Its sole input is `resourceName`, a string representing a media resource name.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function is well-defined for its intended purpose, but that purpose does not involve the processing of contact information."
+          }
+        },
+        "upload": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the `parent` and `attachment_request` arguments and their types. The description of the return value is also adequate, listing the potential keys and their types.  However, there are several areas for improvement:"
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation for the functional parameters `parent` and `attachment_request`.  While `attachment_request` is treated as a dictionary, there's no check to ensure it contains the expected keys (\"filename\", \"contentName\", \"contentType\"). The `parent` parameter is also not validated for its format (\"spaces/{space}\"). Using Pydantic models would significantly improve the robustness of this function by enforcing data types and constraints on these inputs.  For example, a Pydantic model could ensure `parent` is a string matching the expected format and that `attachment_request` contains the necessary fields with appropriate types."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `parent` (it's implicitly assumed to be a string due to f-string formatting, but there's no explicit check) and uses `attachment_request` as a dictionary. However, it lacks crucial value validation.  `parent` should be checked to ensure it conforms to the expected \"spaces/{space}\" format.  The `attachment_request` dictionary should be validated to ensure it contains the required \"filename\" key and that its value is a non-empty string.  There are no checks for `attachment_request` being None or empty.  No error handling is implemented for invalid inputs.  While the function uses the dictionary's `get()` method to provide default values for `contentName` and `contentType`, this is not a substitute for validating the presence and type of these keys if they are provided.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`parent: str`, `attachment_request: dict`) and the return type (`Dict[str, Any]`) are properly type-annotated.  The function does not use `**kwargs`.  Complex types like `dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uploads an attachment to the simulated database (`DB`).  The `parent` parameter is used to construct the resource name, and the `attachment_request` parameter is used to populate the `attachment` dictionary. The function's logic is complete and functional within the constraints of using the global `DB` dictionary.  However, the `filename` key from the `attachment_request` dictionary is not used.  The docstring mentions `filename` as a required key, but the implementation uses `contentName` and `contentType` instead.  This is a minor inconsistency between the docstring and the implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `upload` function does not handle any phone number or email address inputs.  Its purpose is to upload attachments to a chat space, taking a file name and other metadata as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_chat/Members.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose, arguments, return values, and exceptions.  Default values for optional parameters are correctly specified and explained.  The description of the `memberships` dictionary within the return value is detailed, including nested structures and types. The `Args` and `Returns` sections are comprehensive.  The `Raises` section accurately lists the exceptions. Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (parent, pageSize, pageToken, filter, showGroups, showInvited, useAdminAccess).  Type checking and range checks are performed where appropriate.  While Pydantic could provide a more structured and potentially more concise way to achieve the same validation, the existing manual approach is comprehensive and effective.  The use of Pydantic would not significantly improve the code in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`parent`, `pageSize`, `pageToken`, `filter`, `showGroups`, `showInvited`, `useAdminAccess`) are checked for correct data types.  `parent` is validated for format and emptiness. `pageSize` is checked for being within the range of 1 to 1000.  The `filter` parameter is validated for its interaction with `useAdminAccess` to ensure a specific condition is met when admin access is enabled.  Appropriate exceptions (`TypeError`, `InvalidParentFormatError`, `InvalidPageSizeError`, `AdminAccessFilterError`) are raised with informative error messages for invalid inputs.  All functional parameters are validated before being used in the core logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the specification of complex types like Dict and List.  The function's return type is clearly specified as Dict[str, Any]. No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using all functional input parameters (`parent`, `pageSize`, `pageToken`, `filter`, `showGroups`, `useAdminAccess`).  The exception handling for `TypeError`, `InvalidParentFormatError`, `InvalidPageSizeError`, and `AdminAccessFilterError` is implemented correctly.  The core logic of filtering and paginating memberships from the global `DB` works as expected."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on managing and filtering membership lists within a space, using resource names and other identifiers specific to that system.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including their types and default values (`useAdminAccess`). The description of the return value is detailed, outlining the structure of the dictionary and possible values for its keys.  The documentation of nested dictionaries within the return value (`member` and `groupMember`) is also thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str` and `Optional[bool]`) for its input parameters, `name` and `useAdminAccess`.  While this provides basic type checking, it doesn't perform comprehensive validation of the `name` parameter's format (e.g., ensuring it matches the specified pattern \"spaces/{space}/members/{member}\").  However, the function includes a manual check to handle the specific case of app memberships and admin access.  Pydantic could provide a more structured and robust way to validate the `name` parameter's format, but the existing validation is sufficient for the current implementation.  Adding Pydantic would be an improvement, but the current approach isn't strictly missing validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for the `name` parameter by declaring it as `str`.  It also implicitly performs a null check for `name` because an empty dictionary is returned if `name` is not found in the database.  However, it lacks crucial value validation for `name`. The function's docstring specifies a format for `name`, but this format is not enforced.  The code only checks if `name` ends with \"/members/app\" in the context of `useAdminAccess`, but this is a partial check and doesn't cover the full format specification.  The `useAdminAccess` parameter has type validation (Optional[bool]) but no value validation.  No explicit error handling is implemented for invalid input formats in `name`.  Therefore, while some validation is present, significant gaps exist, particularly regarding the format validation of the `name` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name` and `useAdminAccess`) are properly type-annotated with their expected types (str and Optional[bool], respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Optional[bool]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves membership details from the global `DB` based on the provided `name`.  It handles the case where the membership is not found, returning an empty dictionary as documented. The `useAdminAccess` parameter is correctly used to prevent returning app membership details when admin access is used, as specified in the docstring.  The function's logic aligns with its docstring, accurately returning a dictionary with the specified keys and data types.  All functional parameters are used. There are no placeholders, TODOs, or exceptions to handle."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  The `name` parameter is a resource name with a specific format, not a phone number or email.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended input and performs its task as described in the docstring."
+          }
+        },
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for `role`, `state`, and `useAdminAccess` are correctly documented.  The description of the `membership` dictionary and its nested structures (`member`, `groupMember`) is comprehensive, although it could benefit from using a more structured format (e.g., a table) for better readability.  Types are specified for all parameters and the return value. The `Raises` section accurately lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`MembershipInputModel`) to validate the `membership` dictionary, which is a functional input parameter.  The `parent` and `useAdminAccess` parameters also have type checking. While the `parent` parameter has additional format validation, the core validation of the complex `membership` structure is effectively handled by the Pydantic model.  This approach is efficient and robust for validating the nested structure and data types within the `membership` dictionary.  Adding Pydantic validation to the other parameters would be redundant given the existing type checks."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`parent`, `membership`, `useAdminAccess`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of memberships, validating inputs and handling exceptions as documented.  All functional input parameters (`parent`, `membership`, `useAdminAccess`) are used appropriately in the function's logic.  The docstring accurately reflects the function's behavior, including return types and raised exceptions.  There are no placeholders or TODO comments. The core logic is complete and functional within the context of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function focuses on creating memberships within a chat space, using user or group identifiers (`users/{user}`, `groups/{group}`) as input.  There's no input field designed for phone numbers or email addresses; therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable.  The function uses Pydantic for input validation of the membership data structure, but this validation is unrelated to phone number or email address processing."
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including types and nested structures within dictionaries. The default value for `useAdminAccess` is correctly documented.  The description of the return value is also detailed, specifying the structure of the dictionary.  However, there are some areas for improvement:"
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses Pydantic models (`MembershipUpdateMaskModel` and `MembershipPatchModel`) to validate the `updateMask` and `membership` parameters, respectively.  These are the functional parameters requiring validation.  The `name` parameter is validated implicitly through the database lookup and error handling, but adding a Pydantic model for it would improve explicitness and potentially add more robust validation (e.g., checking the format string). The `useAdminAccess` parameter is a boolean and requires no further validation.  Therefore, Pydantic is used effectively for the main input validation needs."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `updateMask`, `membership`, `useAdminAccess`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `name`, `updateMask`, and `membership` parameters in its logic.  Exception handling for `InvalidUpdateMaskError`, `NoUpdatableFieldsError`, and `MembershipNotFoundError` is implemented.  The `useAdminAccess` parameter is also correctly used to prevent modification of app memberships with admin access.  The function correctly updates the membership in the DB and returns the updated membership."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function `patch` deals with updating membership information in what seems to be a database or API, using resource names and structured data. There are no fields in the input or output that resemble phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values for `useAdminAccess`. The description of the return value is detailed, outlining the structure of the dictionary and possible values for nested fields.  Type hints are used consistently for parameters and return values.  The documentation of the dictionary structure is thorough, covering keys, types, and nested structures."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`name: str`, `useAdminAccess: bool`) and a manual check to ensure that `useAdminAccess` is not used with app memberships.  While this validation is present, it's not as robust as Pydantic models would provide.  Pydantic could add more sophisticated validation, such as regex checks on the `name` parameter to ensure it conforms to the specified format (`spaces/{space}/members/{member}`).  However, the existing validation is sufficient for the basic checks performed in this function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `name` parameter by declaring it as a string (`name: str`).  It also performs value validation by checking if the `name` parameter exists in the database and checking for the specific case of attempting to delete an app membership with admin access.  However, it lacks more comprehensive validation of the `name` parameter's format to ensure it strictly adheres to  `spaces/{space}/members/{member}`.  While the docstring provides examples, there's no code enforcing this format.  The `useAdminAccess` parameter is validated as a boolean, but no further value validation is needed as `bool` only accepts True or False.  Therefore, the validation is good but not comprehensive due to the missing format check on the `name` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name` and `useAdminAccess`) are properly type-annotated with their expected types (str and bool, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a membership from the DB.  It handles the case where the membership is not found and the case where admin access is used to delete an app membership (which is disallowed). All functional input parameters (`name` and `useAdminAccess`) are used correctly. The function's return value matches the docstring's description; it returns the deleted membership details or an empty dictionary if the membership is not found or deletion is disallowed.  There are no placeholders, TODOs, or exceptions that are documented but not handled. The logic is complete and functional within the context of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses as input.  Its input is a string representing a resource name in the format `spaces/{space}/members/{member}`. While the `{member}` part *might* contain an email address, the function doesn't treat it as such; it simply uses it as a string identifier for a membership.  There's no phone number handling at all.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "google_chat/Spaces.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "search": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'search': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'search': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'search': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'search': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'search': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'search': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "create": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "setup": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'setup': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'setup': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'setup': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'setup': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'setup': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'setup': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces.py"
+          }
+        },
+        "getSpaceReadState": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          }
+        },
+        "updateSpaceReadState": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'updateSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'updateSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'updateSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'updateSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'updateSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'updateSpaceReadState': File not found: APIs/google_chat/Users/Spaces.py"
+          }
+        }
+      }
+    },
+    "google_chat/SpaceEvents.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is excessively long and overly detailed, particularly regarding the nested structure of the `Returns` section.  While it attempts to comprehensively document the potential structure of the returned dictionary, this level of detail makes it difficult to read and understand.  The sheer volume of nested dictionary keys and types overwhelms the reader.  The description of the function itself is adequate, but the excessive detail in the return value section detracts from its clarity.  There's a significant risk that the docstring will become outdated if the structure of the returned dictionary changes.  A more concise and high-level description of the return value, perhaps with examples of common return structures, would be far more effective.  The lack of a \"Raises\" section is also a significant omission;  any potential exceptions should be documented.  Finally, the docstring's claim of completeness is undermined by the sheer complexity and potential for change in the return value.  The current implementation (`pass`) doesn't return anything, creating a major inconsistency between the docstring and the code."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get` has one functional input parameter, `name`, which is annotated as a string. However, there's no validation performed on this parameter to ensure it conforms to the specified format: `spaces/{space}/spaceEvents/{spaceEvent}`.  No Pydantic model or other validation mechanism (e.g., regular expression check) is used.  Adding a Pydantic model or a regular expression check would significantly improve the robustness of the function by preventing invalid input from causing errors or unexpected behavior."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get` has only one input parameter, `name`, which is not validated at all.  There are no type checks, value checks (to ensure it matches the specified format `spaces/{space}/spaceEvents/{spaceEvent}`), null/empty checks, or any other form of validation. No exceptions are raised for invalid input.  Therefore, no input validation is present."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get` has an excellent parameter design.  All parameters are properly type-annotated (`name: str`). The return type `Dict[str, Any]` is clearly specified, although it could be made more precise if the structure of the dictionary were more strictly defined.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function is only a signature with a `pass` statement.  There is no implementation logic to retrieve a space event resource from the global `DB` dictionary or any other source.  Therefore, it does not meet any of the requirements for a functional implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve a space event resource using a resource name, which is a string with a specific format.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is overly verbose and repetitive, especially in the `Returns` section.  While it attempts to comprehensively document the nested structure of the `spaceEvents` list within the returned dictionary, the level of detail is excessive and makes it difficult to quickly understand the function's output.  The sheer volume of nested dictionary descriptions overwhelms the reader.  The description of the `filter` parameter is unclear; stating it's \"Required\" is contradictory to its `Optional[str]` type annotation.  The docstring also fails to mention any potential exceptions that the function might raise (missing `Raises` section).  The excessive detail in the return value description overshadows the core functionality, making it harder to grasp the function's purpose at a glance.  Finally, the docstring's claim of  `filter` being required is inconsistent with its optional type annotation."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `list` does not employ Pydantic models or any other form of input validation for its functional parameters (`parent`, `pageSize`, `pageToken`, `filter`).  While type hints are present, they only provide static analysis benefits and do not perform runtime validation.  Adding Pydantic models would significantly improve the robustness of the function by ensuring that inputs conform to expected types and constraints before processing.  For example, a Pydantic model could enforce the correct format of the `parent` parameter, check that `pageSize` is a positive integer, and validate the structure of the `filter` string."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function has minimal input validation.  `parent` is the only parameter with any validation implied (type hinting suggests it should be a string), but there's no explicit check for its format (`spaces/{space}`).  No validation is performed on `filter`, `pageSize`, or `pageToken` for type, value, or emptiness.  There are no explicit checks for the format of the `filter` string, nor are there range checks for `pageSize` or null checks for any of the optional parameters.  No exceptions are raised for invalid inputs.  Therefore, the validation is extremely limited."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All parameters (`parent`, `pageSize`, `pageToken`, `filter`) have proper type annotations, including the use of `Optional` where appropriate.  The return type `Dict[str, Any]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for retrieving space events from a mock database (or any database), processing filters, pagination, or constructing the expected dictionary return value.  Therefore, the function is not implemented at all."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone numbers or email addresses as input.  Its parameters are designed for interacting with a Google Chat API, using strings for resource names, filters, and pagination tokens.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_chat/Reactions.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's arguments and their types, including a good attempt at documenting the nested dictionary structures within the `reaction` parameter. The documentation of the `Returns` section also attempts to detail the structure of the returned dictionary.  However, there are several areas for improvement:"
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `parent` and `reaction` parameters.  While it doesn't use Pydantic models, it performs checks on the format of the `parent` string and implicitly checks the structure of the `reaction` dictionary (though not comprehensively).  Pydantic could improve this by providing a more structured and robust way to define and validate the expected format and types of the `reaction` dictionary, including nested fields and constraints.  The current manual validation is somewhat fragile and could be made more robust and maintainable with Pydantic."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`parent: str` and `reaction: dict`) are type-annotated.  The return type `-> Dict[str, Any]` is also clearly specified.  The function does not use `**kwargs`.  While the `dict` types for `reaction` could be made more precise using nested type annotations to reflect the structure described in the docstring, the existing annotations are sufficient to provide a good level of type checking."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a reaction and adds it to the in-memory database (DB).  Both `parent` and `reaction` parameters are used appropriately in the function's logic. The function validates the parent format as documented, and returns an empty dictionary if invalid.  The reaction is constructed using data from the input `reaction` dictionary, and a new name is generated.  The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle (as none are documented). The logic is complete and functional within the context of using the global DB dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating reaction resources within a specific data structure, dealing only with resource names and emoji/user data.  There's no input field that would require phone number or email processing."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and arguments.  It correctly states the default value for `pageSize` and describes the structure of the returned dictionary, including nested structures within the `reactions` list.  The examples for the `filter` parameter are helpful.  Type hints are present and generally accurate."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `pageSize` and `pageToken` parameters.  `pageSize` is checked for being within the acceptable range (0-200), and `pageToken` is checked for being a valid integer that can be converted to an offset.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient to cover the functional input parameters.  The `parent` and `filter` parameters are not explicitly validated, but their validation is implicit in the later processing steps of the function (e.g., checking if the parent exists in the DB, parsing the filter string).  Adding Pydantic would not significantly improve the validation in this case, given the existing checks and the implicit validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for the `pageSize` parameter, checking for type (implicitly through assignment), and value (range).  It also attempts to validate `pageToken` by checking if it can be converted to a non-negative integer, although it lacks robust error handling if the conversion fails (it silently ignores the error).  The `parent` parameter is not explicitly validated for format (\"spaces/{space}/messages/{message}\"), and the `filter` parameter has minimal validation; it attempts to parse a subset of possible filter expressions but doesn't handle all the possibilities described in the docstring (parentheses, complex combinations of AND/OR).  While the `filter` validation is present, it's far from comprehensive.  No explicit null or empty checks are performed on `parent`, `pageToken`, or `filter`, although the default value for `pageSize` effectively handles a null input.  There is no explicit error handling for invalid inputs beyond the silent handling of `pageToken` conversion errors.  Therefore, while some validation is present, it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`parent`, `pageSize`, `pageToken`, `filter`) are properly type-annotated with their expected types (str, Optional[int], Optional[str], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional` are used correctly to indicate optional parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements the described functionality.  It correctly uses the `parent`, `pageSize`, and `filter` parameters in its logic.  The `pageToken` parameter is used for pagination, but its parsing is simplistic and doesn't handle all potential `pageToken` formats robustly (it only handles integer values). The filter implementation is also a simplified version, not fully supporting the complex expressions described in the docstring.  While it attempts to handle AND and OR operators, it lacks the ability to handle parentheses or more complex boolean logic.  The core pagination and filtering mechanisms work, but could be improved for robustness and to fully match the docstring's description of supported filter expressions.  The function correctly handles the `pageSize` parameter's constraints.  There are no placeholders or TODOs. The docstring accurately reflects the return type and structure."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle any phone numbers or email addresses.  Its purpose is to list reactions to messages within a specific context (spaces and messages), using a structured data format.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: deleting a reaction by its resource name.  The Args section correctly documents the `name` parameter with its type and a clear description, including the expected format. The Returns section accurately states the return type and describes the empty dictionary as signifying successful deletion.  Types are specified for both the parameter and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `delete` takes one functional input parameter, `name`, which is intended to be a resource name with a specific format.  However, there's no input validation whatsoever for this parameter.  The code only checks if a reaction with that name exists in the DB, but it doesn't validate the format of the `name` string itself.  Using a Pydantic model would significantly improve the robustness of this function by enforcing the expected format and data type of the `name` parameter.  For example, a Pydantic model could ensure that `name` is a string and matches the expected regex pattern."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `name` parameter by specifying it as a `str` in the function signature.  However, it lacks value validation.  The docstring specifies a format for the `name` parameter (\"spaces/{space}/messages/{message}/reactions/{reaction}\"), but the code doesn't check if the input string conforms to this format.  There's also no check for `None` or empty strings.  Therefore, while type validation is present, crucial value and null/empty checks are missing.  The function does not raise exceptions for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design.  All parameters are properly type-annotated (`name: str`). The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a reaction based on its name.  It iterates through the `DB[\"Reaction\"]` list, finds the matching reaction using the provided `name`, removes it, logs the deletion, and returns an empty dictionary as specified in the docstring.  All functional input parameters are used. There are no placeholders, TODOs, or exceptions to handle (as none are documented). The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its input is a resource name string with a specific format related to deleting a reaction from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_chat/Messages.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/google_chat/Spaces/Messages.py"
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/google_chat/Spaces/Messages.py"
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/google_chat/Spaces/Messages.py"
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/google_chat/Spaces/Messages.py"
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/google_chat/Spaces/Messages.py"
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/google_chat/Spaces/Messages.py"
+          }
+        }
+      }
+    },
+    "google_chat/Attachments.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and arguments.  It correctly describes the `name` parameter and its expected format. The `Returns` section accurately lists the expected keys in the returned dictionary, including their types.  The documentation of the nested `attachmentDataRef` and `driveDataRef` dictionaries is also good."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `name` parameter. It checks the format of the name string using string splitting and conditional statements.  While this achieves input validation, using a Pydantic model would likely improve readability and maintainability. A Pydantic model could enforce the string format more concisely and provide more informative error messages.  However, the existing manual validation is sufficient to prevent the function from crashing due to malformed input."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `name` parameter, which is the only functional input.  It checks for the correct data type (string), validates the format using string splitting and length checks, and implicitly checks for null/empty values by verifying the length of the split string.  However, it doesn't explicitly check for `None` or empty strings.  While the format check is thorough for the expected structure, it doesn't validate the individual components (e.g., ensuring \"AAA\" is a valid space ID or \"123\" is a valid message ID).  No exceptions are raised for invalid inputs; instead, an empty dictionary is returned.  More robust error handling (e.g., raising a custom exception with a descriptive message) would improve the code.  The validation could also be improved by using regular expressions for a more concise and readable format check."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  The single parameter `name` is correctly type-annotated as `str`. The return type is clearly specified as `dict`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves attachment metadata based on the provided resource name. It extracts relevant information from the name, searches the global DB for the corresponding message and attachment, and returns the attachment metadata as a dictionary.  All functional input parameters (`name`) are used. The function handles cases where the parent message or the attachment is not found by returning an empty dictionary, as documented.  The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle (as none are documented). The logic is complete and functional within the constraints of using the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle any phone numbers or email addresses.  Its input is a resource name string with a specific format related to attachments, and its processing focuses solely on parsing this string and querying a database (`DB`) for matching attachment metadata.  Therefore, the criteria of phone number normalization and email validation are irrelevant to this function's purpose."
+          }
+        }
+      }
+    },
+    "google_chat/Threads.py": {
+      "functions": {
+        "getThreadReadState": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving a user's thread read state within the MCP server context. The Args section correctly documents the `name` parameter, including its type and various acceptable formats. The Returns section correctly specifies the dictionary type and lists the expected keys ('name' and 'lastReadTime') with their types.  The docstring also correctly notes that an empty dictionary is returned if no matching state is found."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `getThreadReadState` uses only one functional parameter, `name` (str).  While it doesn't employ Pydantic, it does perform basic type checking implicitly through the function signature (type hint `name: str`).  The function also indirectly validates the format of `name` by its usage within the loop comparing against `state.get(\"name\")`.  While more robust validation (e.g., checking for specific substrings like \"users/\", \"/spaces/\", etc.) could be added, the existing validation is sufficient for the basic functionality.  Using Pydantic would add overhead without significantly improving the validation in this specific case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `name` parameter by declaring it as `str`. However, it lacks value validation.  The docstring specifies format constraints (\"users/{user}/spaces/{space}/threads/{thread}/threadReadState\"), but the code doesn't enforce them. There's no check to ensure the input string conforms to this expected format.  No null or empty checks are performed on the `name` parameter.  Therefore, while type validation is present, crucial value and null/empty checks are missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getThreadReadState` has excellent parameter design and type annotations.  The single parameter `name` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves the thread read state from the global `DB` based on the provided `name`.  It iterates through the `ThreadReadState` list within the `DB`, and returns the matching state if found. If no match is found, it returns an empty dictionary as documented. The `name` parameter is correctly used. The function's logic is complete and functional within the constraints of using the global `DB`. The docstring accurately reflects the function's behavior and return types.  There are no placeholders, TODOs, or exceptions to handle (as none are documented)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getThreadReadState` does not handle phone numbers or email addresses as input.  The input `name` is a string representing a resource name with a specific format related to user identification within a system. While it allows for user identification using email addresses (e.g., `users/user@example.com/...`), it doesn't perform any validation or normalization on the email address itself. The function simply uses the provided string as is for comparison against database entries.  Therefore,  phone number and email address handling is not applicable."
+          }
+        }
+      }
+    },
+    "google_chat/SpaceNotificationSetting.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, and return values.  The description clearly explains how to retrieve a space notification setting. The `Args` section accurately documents the `name` parameter, including its format and constraints.  The `Returns` section correctly specifies the dictionary structure and possible values for the keys.  Types are specified for the parameter and return value using type hints.  The documentation of the dictionary's structure is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get` has one functional input parameter, `name` (str).  No input validation is performed on this parameter.  There's no type checking beyond the type hint, and no checks to ensure the `name` parameter conforms to the specified format (\"users/me/spaces/{space}/spaceNotificationSetting\", etc.).  Using a Pydantic model would significantly improve the robustness of this function by enforcing the expected format and data type of the `name` parameter."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `name` parameter by declaring it as `str`. However, it lacks crucial value validation.  While the docstring specifies the expected format, the code doesn't enforce it.  There's no check to ensure the input string conforms to the \"users/me/spaces/{space}/spaceNotificationSetting\" or similar patterns.  No checks are performed for empty strings or `None` values.  Therefore, the validation is partial, covering only the type but missing essential value and null checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get` has excellent parameter design and type annotations.  The single parameter `name` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a space notification setting from the global `DB` based on the provided `name`.  It iterates through the `DB[\"SpaceNotificationSetting\"]` list, comparing the \"name\" key of each dictionary with the input `name`. If a match is found, the corresponding dictionary is returned. If no match is found, an empty dictionary is returned as documented. The function uses the `name` parameter correctly and there are no placeholders, exceptions to handle, or inconsistencies between the docstring and implementation.  The return type matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  The input `name` is a resource name with a specific format,  which includes user identifiers that *might* resemble email addresses or phone numbers in some cases (e.g., `users/user@example.com/...`), but the function doesn't treat them as such.  No normalization or validation of email addresses or phone numbers is performed. The function simply compares the input string to existing entries in a database.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including types and detailed explanations of the `requestBody` dictionary's structure and acceptable values for `notification_setting` and `mute_setting`. The return value is also well-documented, specifying its type and structure.  The docstring correctly mentions that an empty dictionary is returned if no matching resource is found."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the `name`, `updateMask`, and `requestBody` parameters.  While the code performs some checks within the function (e.g., checking if `name` exists in `DB`), this is not robust input validation.  A Pydantic model could enforce data types, constraints (e.g., allowed values for `notification_setting` and `mute_setting`), and ensure the correct structure of the `requestBody` dictionary.  The current approach is error-prone and could lead to unexpected behavior if invalid input is provided.  Adding Pydantic models would significantly improve the robustness and maintainability of the function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is incomplete."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `updateMask`, `requestBody`) are properly type-annotated with their expected types (str, str, Dict[str, Any] respectively).  The function's return type is also clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates the `SpaceNotificationSetting` in the global `DB` based on the provided `name`, `updateMask`, and `requestBody`.  All functional input parameters (`name`, `updateMask`, `requestBody`) are used appropriately. The function handles the case where no matching resource is found by returning an empty dictionary as documented.  The logic correctly parses the `updateMask` to selectively update fields and avoids overwriting unintended fields. The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle (as none are documented)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `patch` function does not handle any phone numbers or email addresses as input.  Its purpose is to update a space notification setting based on a resource name, update mask, and request body.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended task of updating a database entry based on the provided parameters."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "google_chat": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The `tests` folder contains multiple test files following the `test_*.py` naming convention.  The main API folder has at least one API file (`Media.py`)."
+      }
+    }
+  }
+}

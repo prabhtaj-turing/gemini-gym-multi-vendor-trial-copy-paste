@@ -1,0 +1,1007 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.598956Z",
+  "results": {
+    "hubspot/Templates.py": {
+      "functions": {
+        "get_templates": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and parameters.  It correctly states the function retrieves templates with paging and filtering capabilities, and it accurately lists the arguments and their types, including default values. The description of the returned dictionary structure is detailed and helpful, covering the keys, types, and even nested structures like `versions`.  The types are consistently specified for parameters and return values using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the functional parameters `limit`, `offset`, `deleted_at`, `id`, `is_available_for_new_content`, `label`, and `path`.  While the parameters are given type hints (e.g., `Optional[int]`, `Optional[str]`), these are only for type suggestions and do not enforce validation.  The code performs some filtering based on these parameters, but it doesn't check for invalid input types or values (e.g., negative `limit` or `offset`, non-string `id`, etc.). Using Pydantic models would significantly improve the robustness of this function by adding strong input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking implicitly through the type hints (e.g., `limit: Optional[int]`), but it lacks explicit value validation for several functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (using Optional for optional parameters).  The function's return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs` parameters.  Complex types like `List` and `Dict` are properly specified, including the use of `Optional` where appropriate."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the filtering and paging logic as described in the docstring.  All functional input parameters (`limit`, `offset`, `deleted_at`, `id`, `label`, `path`) are used to filter the results from the `DB`. The function returns a list of dictionaries with the structure specified in the docstring. There are no placeholders, TODOs, or exceptions to handle. The implementation matches the docstring's promises.  The `is_available_for_new_content` parameter is used correctly in the filtering logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_templates` does not handle any phone number or email address inputs.  Its purpose is to retrieve and filter template data from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_template": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including their types and default values, and it clearly explains the structure of the returned dictionary.  The descriptions of `template_type` and `category_id` are particularly helpful by listing valid values.  The docstring correctly states the return type as `Dict[str, Any]`."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for its functional parameters.  While default values are provided for several parameters, there's no checking to ensure the provided values (when not using defaults) adhere to the documented constraints (e.g., `template_type` and `category_id` having specific valid integer values).  Adding Pydantic models would significantly improve the robustness of the function by enforcing type constraints and providing more specific validation rules for these parameters.  For example, a Pydantic model could easily check that `template_type` is one of the expected integers and raise a clear error if an invalid value is provided."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through type hints (e.g., `source: str`, `template_type: Optional[int]`), but lacks explicit type checks.  It also has some value validation for `template_type` and `category_id` by listing allowed values in the docstring, but this is not enforced in the code.  There are no checks for empty strings in `source` or invalid paths in `folder` and `path`.  No explicit null checks are performed, relying on default values.  No error handling is present for invalid inputs.  `source` is the only functional parameter with any validation (implicit type hint).  `template_type` and `category_id` have value validation specified in the docstring but not implemented.  `folder` and `path` have no validation.  Therefore, the validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[int], Optional[bool]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a new template entry in the global `DB` dictionary, using all functional input parameters (`source`, `template_type`, `category_id`, `folder`, `path`, `is_available_for_new_content`).  The `created` parameter is also handled correctly, defaulting to the current time if not provided.  The function generates a unique ID, handles potential ID collisions, and constructs the template dictionary according to the docstring specification. The return value matches the docstring's description.  There are no placeholders, TODOs, or exceptions to handle. The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_template` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with template creation and management, using a `source` string which could potentially contain email addresses or phone numbers within its code, but the function itself doesn't process or validate them.  No specific normalization or validation steps are performed on the `source` input."
+          }
+        },
+        "get_template_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The description of the return value is detailed, including the structure of the dictionary and nested structures like the `versions` list.  Types are specified for all parameters and the return value.  The docstring correctly points out that `deleted_at` is optional."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_template_by_id` takes one functional input parameter, `template_id`, which is annotated as a string. However, there's no validation performed on this parameter.  No checks are done to ensure it's a non-empty string, or that it matches a specific format, or even that a template with that ID exists in the `DB`.  Adding a Pydantic model would significantly improve the robustness of this function by enforcing constraints on the `template_id` input.  For example, a Pydantic model could ensure the `template_id` is not None and is a string of a certain length or format."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function `get_template_by_id` performs minimal input validation.  The only validation implicitly done is a type check because `template_id` is type hinted as a string. However, there are no explicit checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_template_by_id` has excellent parameter design and type annotations.  All parameters (`template_id`) are properly type-annotated with their expected types (str). The return type `Dict[str, Any]` is clearly specified.  No **kwargs parameters are used.  The `template_id` parameter name is clear and descriptive.  The complex type `Dict[str, Any]` is properly specified, although a more precise type hint for the dictionary's contents would improve the code's clarity and maintainability (e.g., using a custom type alias or a more specific dictionary type)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves a template from the global `DB` based on the provided `template_id`.  The returned dictionary structure generally matches the docstring,  however, the `versions` list within the returned dictionary will always be an empty list (`[]`) because the implementation doesn't populate it.  The docstring specifies that `versions` should be a list of dictionaries, each containing `source` and `version_id`, but this is not reflected in the current implementation.  Therefore, the implementation is mostly complete but lacks the functionality to retrieve and populate the template versions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_template_by_id` does not handle any phone number or email address inputs.  Its purpose is to retrieve a template from a database based on a string ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_template_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's behavior of updating a template based on provided parameters, mentioning that only included fields are updated.  All parameters are listed with their types and descriptions, including default values. The `versions` parameter's nested structure is well-documented.  The Returns section correctly specifies the dictionary structure for a successful update and also mentions the error case.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for its functional parameters.  While type hints are present (e.g., `Optional[int]`, `Optional[str]`), these are only for static analysis and do not perform runtime validation.  The code only checks for the existence of the `template_id` in the `DB`.  All other parameters are used directly without any checks for data type, format, or value constraints.  Using Pydantic models would significantly improve the robustness of this function by adding runtime validation for all functional parameters, preventing unexpected errors due to incorrect input data."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking implicitly through type hints (e.g., `template_id: str`, `category_id: Optional[int]`), but it lacks explicit value validation for most functional parameters.  `template_id` is checked for existence in the `DB`, which is a form of value validation, but no other parameters are checked for valid ranges, formats, or allowed values. For example, `category_id` and `template_type` have limited allowed values (as described in the docstring), but these are not enforced.  `versions`, if provided, is not validated for the structure of its inner dictionaries.  There are no explicit checks for empty strings or lists. No exceptions are raised for invalid inputs.  Therefore, while type hints provide some level of validation, significant value and constraint validation is missing.  Only `template_id` receives comprehensive validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All complex types (List, Dict, Optional) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a template in the global `DB` dictionary based on the provided `template_id` and optional parameters.  All functional input parameters are used to conditionally update the corresponding fields in the `DB`. The function correctly handles the case where the template is not found by returning an error message. The docstring accurately describes the function's behavior, input parameters, and return values.  There are no placeholders, TODOs, or exceptions to handle (as documented exceptions are not present). The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_template_by_id` does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with template data, including IDs, categories, source code, paths, timestamps, and version information, none of which are phone numbers or email addresses."
+          }
+        },
+        "delete_template_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose within an MCP server context.  It correctly explains that the function marks a template as deleted and mentions the possibility of restoration. The description of the `deleted_at` parameter and its default value is accurate.  The Args and Returns sections are present and correctly document the types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if `template_id` exists in the `DB`.  While this isn't a comprehensive validation (it doesn't check the type of `template_id` or the format of `deleted_at`), it's sufficient given the context.  Using Pydantic would add overhead for a simple check like this.  The `deleted_at` parameter has implicit validation because it's converted to a string representation of a timestamp; however, more robust validation (e.g., checking for a valid timestamp format) could be added.  Overall, the existing validation is adequate for the function's simplicity, and Pydantic would be overkill."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `template_id` implicitly by treating it as a key in a dictionary.  However, it lacks crucial value validation.  It doesn't check if `template_id` actually exists in the `DB[\"templates\"]` dictionary before attempting to access and modify it. This could lead to a `KeyError`.  There's also no validation on the `deleted_at` parameter; while it handles a missing value, it doesn't check if the provided string represents a valid timestamp (e.g., it could be a non-numeric string).  No explicit type checking is performed for `deleted_at`, relying on implicit type coercion.  Therefore, while some implicit type checking occurs, essential value and existence checks are missing for both parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All parameters (`template_id` and `deleted_at`) are properly type-annotated with their expected types (str and Optional[str], respectively). The return type is clearly specified as None.  The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly marks a template as deleted by adding a \"deleted_at\" timestamp to the template entry in the DB.  The `template_id` parameter is used correctly. The logic for using the provided `deleted_at` timestamp or generating a new one is also correctly implemented. However, the function lacks error handling.  If `template_id` is not found in `DB[\"templates\"]`, the function silently does nothing.  Adding a check and perhaps logging a warning or raising an exception would improve robustness.  The docstring accurately reflects the function's behavior, except for the lack of error handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_template_by_id` does not handle phone numbers or email addresses as input.  Its purpose is to mark a template as deleted in a database, using a template ID and an optional timestamp. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "restore_deleted_template": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's primary task: restoring a deleted template. The Args section correctly documents the `template_id` parameter with its type and description.  The Returns section correctly specifies the dictionary structure, including nested structures within the `versions` list.  It also correctly mentions the alternative return value containing an \"error\" string if the template is not found.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function has only one functional input parameter, `template_id`, which is a string.  The function performs a simple check to see if the `template_id` exists as a key in the `DB[\"templates\"]` dictionary. While this isn't Pydantic, it's sufficient input validation for this specific case.  A Pydantic model wouldn't add significant value here, as the validation logic is straightforward and already implemented.  Using Pydantic would add unnecessary complexity for this simple check."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `template_id` by declaring it as a string. However, it lacks value validation.  It does not check if `template_id` is an empty string or contains only whitespace.  It also does not check if a template with the given ID actually exists *before* attempting to access it in the DB. While it returns an error if the template isn't found, this is error handling, not preventative validation.  Therefore, the validation is only partially complete.  The only validation present is a type check.  Value checks (empty string, whitespace, existence in DB) are missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `restore_deleted_template` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`template_id: str`). The return type `Dict[str, Any]` is clearly specified, although a more precise type hinting for the dictionary's contents would improve it further (e.g., using `TypedDict`).  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly restores a deleted template by setting the `deleted_at` field to `None`.  It uses the `template_id` input parameter to locate and update the template in the `DB`. The function correctly handles the case where the template is not found by returning an error message. The return types and behavior match the docstring.  There are no placeholders, TODOs, or exceptions to handle (as documented exceptions are handled implicitly by the conditional check). The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `restore_deleted_template` does not handle any phone number or email address inputs.  Its input is a `template_id` (string), and its purpose is to retrieve and restore a template from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "hubspot/Forms.py": {
+      "functions": {
+        "get_forms": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and arguments.  It correctly lists all parameters with their types and default values. The `Returns` section attempts to comprehensively describe the structure of the returned dictionary, including nested structures.  However, the level of detail in the `Returns` section is excessive and could be improved by using a more concise and structured format (e.g., using a table or a more hierarchical description).  The docstring *does not* mention that the function may return an empty `results` list if the `after` parameter is specified and no matching form is found. This is a significant omission as it represents a possible non-error behavior that a user needs to be aware of.  The docstring also fails to mention the `total` key in the return dictionary, which is present in the implementation.  While the docstring describes the nested structure of the `results` list, it lacks precision in some areas (e.g., the types of `richTextType` and `richText` within `fieldGroups` are not fully specified).  Finally, the docstring omits any mention of exceptions that the function might raise (e.g., `ValueError` if `after` ID is invalid).  The overall structure is good, but the lack of completeness and precision in describing the return value and potential exceptions lowers the quality."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for its functional parameters.  All parameters are declared as `Optional`, but no checks are performed to ensure that the provided values (when present) conform to the expected types or constraints (e.g., `limit` being a positive integer, date strings being in a specific format).  The code performs some implicit type checking by attempting to use the parameters in date/time operations, but this is error-prone and doesn't provide robust validation.  Adding Pydantic models would significantly improve the robustness and clarity of the input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (using Optional[str] and Optional[int] where appropriate).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types like List and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of marketing forms based on various filter parameters, including pagination. All functional input parameters (`after`, `limit`, `name`, `id`, `created_at`, `created_at__gt`, `created_at__gte`, `created_at__lt`, `created_at__lte`, `updated_at`, `updated_at__gt`, `updated_at__gte`, `updated_at__lt`, `updated_at__lte`) are used appropriately in the filtering and pagination logic.  The function handles the case where the `after` ID is not found gracefully by returning an empty results list.  The docstring accurately reflects the function's behavior and return type.  There are no placeholders, TODO comments, or incomplete sections. The exception handling, while implicit (returning an empty list instead of raising an error when `after` is not found), is consistent with the docstring's lack of explicit exception declarations.  The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_forms` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve and filter marketing forms from a database based on various criteria (IDs, dates, names), none of which involve email or phone number processing.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_form": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types, including nested structures within the `fieldGroups` and `legalConsentOptions` dictionaries. The default value for `legalConsentOptions` is correctly noted.  The `Returns` section accurately describes the structure of the returned dictionary, including the added `createdAt` and `updatedAt` fields which are not explicitly mentioned in the function parameters but are part of the returned object.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_form` does not utilize Pydantic models or any other form of input validation for its functional parameters (`name`, `submitText`, `fieldGroups`, `legalConsentOptions`).  While type hints are present, they only provide runtime type checking and do not perform robust validation (e.g., checking string lengths, ensuring nested dictionaries conform to expected structure, validating field types within `fieldGroups`, etc.).  Using Pydantic models would significantly improve the robustness of the input validation by providing data type checking, constraint enforcement, and more informative error messages."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `name` and `submitText` by specifying them as `str` in the function signature.  However, there's no validation for their content (empty strings, etc.).  `fieldGroups` is validated as a `List[Dict[str, Any]]`, but the contents of the dictionaries within the list are not validated for correctness or completeness (e.g., required keys, valid field types, etc.). Similarly, `legalConsentOptions` is validated as `Optional[Dict[str, Any]]`, but its internal structure and values are not checked.  No explicit null or empty checks are performed on any of the functional parameters.  There is no value validation (e.g., checking for valid field types in `fieldGroups`). No error handling is present for invalid inputs.  Therefore, while some basic type checking is done, comprehensive validation is missing for the nested dictionary structures and their contents."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `submitText`, `fieldGroups`, `legalConsentOptions`) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  Complex types like `List`, `Dict`, and `Optional` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a new form entry in the global `DB` dictionary, using all functional input parameters (`name`, `submitText`, `fieldGroups`, `legalConsentOptions`).  The generated form includes an ID, timestamps, and mirrors the structure specified in the docstring.  There are no placeholders, exceptions to handle, or inconsistencies between the docstring and implementation. The logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Poor",
+            "notes": "The provided function `create_form` does not perform any normalization or validation of phone numbers or email addresses.  While it accepts them as potential inputs within the `fieldGroups` structure, it simply passes them through without any processing.  To achieve even a \"Good\" rating, the function would need to:"
+          }
+        },
+        "get_form": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's behavior of retrieving a form by ID. The Args and Returns sections are well-structured, and types are specified for all parameters and return values.  The nested structure of the dictionary return value is thoroughly documented, including optional fields and their default values (where applicable).  The Raises section correctly identifies the ValueError exception."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_form` has only one functional input parameter, `formId`, which is type hinted as a string.  The function performs input validation by checking if `formId` exists as a key in the `DB[\"forms\"]` dictionary. This is sufficient validation for this parameter.  Using a Pydantic model would add unnecessary complexity in this case.  The existing check effectively validates that the input is a string (implicitly) and that it represents a valid form ID within the application's data."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `formId` parameter by declaring it as a string (`formId: str`).  It also performs a value check by verifying if the `formId` exists as a key within the `DB[\"forms\"]` dictionary.  This prevents accessing a non-existent form and raises a `ValueError` with a clear message if the form ID is not found. However, it lacks checks for empty strings or other potential invalid string formats for `formId`.  While a missing form ID is handled,  a completely empty or whitespace-only `formId` would still cause an error further down the line when attempting to use it as a dictionary key.  More robust validation of the `formId` string itself would improve the function's security."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_form` has excellent parameter design.  All parameters are properly type-annotated (specifically, the `formId` parameter is annotated as `str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the return dictionary are also properly specified using type hints (List, Dict, Optional)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a form from the global `DB` dictionary using the provided `formId`.  It raises a `ValueError` as documented if the form is not found. The return value matches the docstring's specification, including the structure of nested dictionaries and lists. All functional input parameters are used. There are no placeholders, TODO comments, or incomplete logic.  The docstring accurately reflects the function's behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_form` does not handle any phone number or email address inputs.  Its purpose is to retrieve a marketing form from a database (presumably represented by `DB[\"forms\"]`) based on its ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles the retrieval and error cases related to form IDs."
+          }
+        },
+        "update_form": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types, including detailed explanations of the nested dictionary structures within `fieldGroups` and `legalConsentOptions`.  Default values for optional parameters are correctly stated. The `Returns` section adequately describes the structure of the returned dictionary, mirroring the input parameters' structure.  The docstring correctly mentions that the function updates the `updatedAt` field.  Type hints are used consistently throughout."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the functional parameters `name`, `submitText`, `fieldGroups`, and `legalConsentOptions`.  While the `formId` is checked for existence in the `DB`, the other parameters are simply assigned to the `form` dictionary if they are not `None`.  This leaves the function vulnerable to unexpected input types and formats, potentially leading to errors or inconsistencies in the data stored in the `DB`.  Using Pydantic models would significantly improve the robustness and reliability of this function by enforcing data types and structure."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a check on the `formId` parameter to ensure it exists in the `DB[\"forms\"]` dictionary, which is a form of value validation and prevents accessing non-existent forms.  This is good error handling with a clear error message. However, there's no further validation on the `formId`'s format or type beyond checking its presence in the DB.  No validation is performed on the structure or content of `fieldGroups` and `legalConsentOptions`, despite their complex nested structure and the potential for various data type errors or inconsistencies within those nested dictionaries and lists.  While the function checks for `None` values before using these parameters, it doesn't verify the internal structure or data types of the nested objects.  Therefore, the validation is partial, focusing only on the existence of `formId` in the DB and handling `None` values for other parameters, but lacking deeper validation of the complex data structures."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List[Dict[str, Any]] where appropriate.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a form in the global `DB` dictionary based on the provided `formId` and optional parameters (`name`, `submitText`, `fieldGroups`, `legalConsentOptions`).  All functional input parameters are used. The `ValueError` exception is correctly raised if the form ID is not found. The function updates the `updatedAt` timestamp and returns the updated form dictionary, matching the docstring's description of the return value.  There are no placeholders, TODO comments, or incomplete logic. The implementation fully aligns with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_form` function does not directly handle phone number or email inputs.  It receives these as *potential* values within nested dictionaries representing form fields (`fieldGroups` -> `fields` -> `defaultValue`).  The function itself doesn't process or validate these values; it simply updates the form data structure with whatever values are passed in.  Therefore, any normalization or validation of phone numbers and email addresses would need to be implemented separately, likely before calling `update_form`.  The function's role is purely data storage and update, not data sanitization."
+          }
+        },
+        "delete_form": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring states that the function archives a form and returns `None`.  **However, the function actually returns a dictionary containing an error message if the form is not found, or implicitly returns `None` if the form is found and deleted.** This is a critical inconsistency.  The docstring is misleading regarding the return value.  While it correctly documents the `formId` argument, it fails to account for the actual return behavior of the function.  The docstring should be updated to reflect the possibility of an error dictionary being returned, specifying its structure (e.g., `{\"error\": str}`).  Additionally, while the function implicitly returns `None` on successful deletion, this should be explicitly stated in the docstring for clarity.  The lack of a \"Raises\" section is also a shortcoming, although no explicit exceptions are raised.  The function's behavior is not fully and accurately represented in the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the provided `formId` exists as a key in the `DB[\"forms\"]` dictionary.  This serves as basic input validation, ensuring that the `formId` is at least present in the database before attempting deletion. While a Pydantic model could be used, it's not strictly necessary for this simple check.  The existing validation is sufficient for the function's purpose.  A Pydantic model would add overhead without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by specifying `formId: str` in the function signature.  It also implicitly performs a value check by verifying if `formId` exists as a key in the `DB[\"forms\"]` dictionary. However, it lacks explicit checks for empty strings or `None` values for `formId`.  If `formId` is an empty string or `None`, the code will attempt to access `DB[\"forms\"][\"\"]` or `DB[\"forms\"][None]`, which might lead to unexpected behavior or errors depending on the implementation of the `DB` dictionary.  Therefore, explicit null/empty checks are missing for comprehensive validation.  The error handling is present but only for the case where the form ID is not found in the database.  More robust error handling might be beneficial for other invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Good",
+            "notes": "The function has a properly type-annotated parameter `formId: str`.  The return type is annotated as `-> None`, which is technically correct but misleading. The function sometimes returns `None` and sometimes returns a dictionary.  A more accurate return type would be `Union[None, Dict[str, str]]`.  There is no use of `**kwargs`.  The parameter name `formId` is clear and descriptive.  The missing precision in the return type annotation prevents an \"Excellent\" rating."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function's return type is documented as `None`, but it returns a dictionary containing an error message when the form ID is not found.  This is a mismatch between the docstring and the actual implementation.  The function correctly deletes the form if it exists, but the error handling is inconsistent with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_form` does not handle phone numbers or email addresses.  Its sole purpose is to delete a form from a database given a form ID.  Therefore, the criteria of phone number normalization and email validation are irrelevant and not applicable to this function."
+          }
+        }
+      }
+    },
+    "hubspot/MarketingEvents.py": {
+      "functions": {
+        "get_events": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's role in retrieving marketing events and accurately lists the parameters with their types and default values. The `Returns` section correctly identifies the return type as `Dict[str, Any]` and attempts to describe the nested structure of the `results` list.  However, the documentation of the nested dictionaries within `results` and `customProperties` is excessively verbose and could be improved for readability.  The level of detail provided for each field within these nested dictionaries makes the docstring somewhat cumbersome.  While all fields are listed, a more concise approach might improve clarity.  For instance, instead of listing each field in `customProperties` individually, a summary description could be given, such as \"A list of custom properties, each containing key-value pairs with various metadata.\"  The docstring does not mention any exceptions that might be raised, which is an omission.  Finally, while the docstring describes the structure of the returned dictionary, it does not explicitly state that the function returns a dictionary with a single key, \"results\".  This is technically accurate based on the implementation, but adding this detail would enhance clarity."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_events` does not employ Pydantic models or any other form of input validation for its functional parameters (`occurredAfter`, `occurredBefore`, `limit`, `after`).  While the types are hinted using type annotations, there's no mechanism to enforce these types or perform any validation on the values (e.g., ensuring `limit` is a positive integer if provided, or checking the format of timestamps).  Adding Pydantic models would significantly improve the robustness of this function by ensuring that the input data conforms to the expected structure and constraints before processing."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_events` performs no input validation on any of its functional parameters (`occurredAfter`, `occurredBefore`, `limit`, `after`).  There are no type checks, value checks, null/empty checks, or any other form of validation present.  The function directly uses the parameters without any verification of their validity or appropriateness."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`occurredAfter`, `occurredBefore`, `limit`, `after`) are properly type-annotated with their expected types (Optional[str] or Optional[int]). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves all values from the `DB[\"marketing_events\"]` dictionary and returns them as a list within a dictionary under the 'results' key.  The docstring accurately describes the function's behavior and the structure of the returned data. All functional parameters (`occurredAfter`, `occurredBefore`, `limit`, `after`) are defined in the function signature, but are not used in the function's logic; however, this is acceptable as per the instructions, since they are likely for MCP context and logging. There are no placeholders, exceptions, or other implementation gaps.  The function's logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_events` does not handle any phone number or email address inputs.  Its parameters and return values deal exclusively with timestamps, limits, cursors, and data related to marketing events. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments and their types. The description of the `custom_properties` argument, including its nested structure, is particularly thorough.  The `Returns` section correctly identifies the return type as `Dict[str, Any]` and attempts to detail the structure of the returned dictionary. However, it **overpromises** on the returned data. The docstring states that the return will include fields like `registrants`, `attendees`, `noShows`, etc.,  but the function implementation only returns the input parameters plus `externalAccountId` and does *not* compute or include any of these values. This is a significant inconsistency.  The docstring also lacks a \"Raises\" section, despite the function's error handling returning a dictionary with an \"error\" key.  While the docstring mentions optional parameters and their default values, it could benefit from explicitly stating that `None` is the default for optional parameters instead of just using `Optional[]` in the type hints.  Despite these shortcomings, the docstring is comprehensive enough to give a developer a good understanding of the function's intended use and parameters.  The missing \"Raises\" section and the inconsistency in the return values are the primary reasons for not rating it higher."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using `if not` checks for `externalEventId` and `externalAccountId`.  While not as comprehensive or elegant as Pydantic, it addresses the most critical requirements for these fields.  The other parameters are optional, and no specific validation is needed for their types or values within the function's logic.  Using Pydantic would add overhead without significantly improving the validation strategy in this specific case.  The existing checks are sufficient given the context."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All complex types (List, Dict, Optional) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly creates a marketing event and stores it in the global `DB`.  All functional input parameters are used. The docstring accurately reflects the function's behavior and return type. However, the function lacks error handling beyond checking for missing `externalEventId` and `externalAccountId`.  The docstring mentions that the return dictionary should include fields like `registrants`, `attendees`, `eventCompleted`, `noShows`, `cancellations`, `createdAt`, and `updatedAt`, which are not included in the implemented return value.  Adding these fields would require additional logic to populate them with appropriate data (likely from the mock database or other sources).  The `id` and `objectId` fields are also missing from the returned dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_event` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating marketing events based on other input parameters.  To rate it as Good or Excellent, phone number and/or email fields would need to be added to the function's parameters, along with the corresponding normalization and validation logic."
+          }
+        },
+        "get_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section is detailed, correctly specifying the dictionary structure and the types of its keys.  The nested structure of `customProperties` is also well-documented.  The docstring correctly points out that the `noShows` field only has a value when the event is over."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic `if not` checks to ensure that `externalEventId` and `externalAccountId` are not empty strings.  While this is basic validation, it's sufficient for this function's needs.  Using Pydantic models would add unnecessary complexity for this simple validation.  The validation covers all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs null/empty checks on both `externalEventId` and `externalAccountId`.  These checks are sufficient to prevent common errors like missing or empty IDs. However, it lacks type validation (checking if they are actually strings) and value validation (checking for valid formats or lengths if any are specified in the requirements).  While the function implicitly validates the existence of the `externalEventId` within the `DB`, this is not an explicit validation step on the input itself.  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`externalEventId` and `externalAccountId`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a marketing event from the global `DB` dictionary using the provided `externalEventId` and `externalAccountId`.  Both functional input parameters are used to check for the event's existence and to ensure that the event belongs to the specified account. The function returns the event data as a dictionary if found, and an empty dictionary if not found.  The docstring accurately describes the function's behavior, input parameters, and return type.  There are no placeholders, TODOs, or exceptions to handle (as per the problem description). The error handling for missing IDs is also implemented correctly."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_event` does not handle any phone number or email address inputs.  Its inputs are `externalEventId` and `externalAccountId`, which are treated as strings and are not subjected to any normalization or validation beyond checking for emptiness.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "delete_event": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring states that the function returns `None`, but the implementation shows that it can return a dictionary containing an error message. This is a critical inconsistency.  The docstring does not mention this alternative return type and its conditions.  While the docstring adequately describes the arguments, its failure to accurately reflect the function's return behavior significantly reduces its quality.  The lack of a \"Raises\" section is also a deficiency, as the function implicitly raises exceptions (though it handles them internally).  The docstring should explicitly state that it returns `None` on successful deletion and a dictionary with an \"error\" key on failure, detailing the possible error messages."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic `if not` checks to ensure that `externalEventId` and `externalAccountId` are not empty strings.  While this is basic validation, it's sufficient for this function's needs.  Using Pydantic would add unnecessary complexity for this simple validation.  The validation covers all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs null/empty checks for `externalEventId` and `externalAccountId`.  This addresses point 3 (Null/Empty Checks). However, it lacks type validation (point 1) to ensure that both inputs are strings, and it doesn't perform value validation (point 2) to check if the IDs are in a valid format or length, or if they actually exist in the external system (beyond the check within the `DB`).  There's also no explicit error handling beyond returning a simple dictionary (point 5). While the function checks for the existence of the event ID in the DB, it doesn't handle cases where the `DB[\"marketing_events\"]` dictionary itself might be missing or improperly structured.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`externalEventId` and `externalAccountId`) are properly type-annotated as strings.  The return type is annotated as `None`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly deletes a marketing event from the `DB` if it exists and the `externalAccountId` matches.  However, it does not handle the case where the event ID exists but the account ID does not match; it silently does nothing in that scenario.  A more robust implementation might return an error or log a warning in such a case.  Additionally, the function returns a dictionary with an error message when input parameters are missing, which is inconsistent with the docstring stating that it returns `None`.  The docstring should be updated to reflect this behavior or the function should consistently return `None` in all cases, perhaps raising an exception for invalid input."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_event` does not handle any phone numbers or email addresses.  Its inputs are `externalEventId` and `externalAccountId`, which are treated as strings without any normalization or validation beyond checking for emptiness.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types, including the nested structure of `custom_properties`. The `Returns` section correctly specifies the return type as `Dict[str, Any]` and details the structure of the returned dictionary, including nested dictionaries within `customProperties`.  Default values for optional parameters are clearly stated.  The docstring also correctly notes that `externalEventId` and `externalAccountId` are required."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation by checking if `externalEventId` and `externalAccountId` are provided.  While this is a rudimentary form of validation, it's sufficient given the context.  The other optional parameters don't require strict type or format validation as they are either strings or lists of dictionaries, and the function handles them gracefully. Using Pydantic would add unnecessary complexity for this level of validation.  The existing checks ensure the critical parameters are present; more sophisticated validation isn't needed for the optional parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs null checks for `externalEventId` and `externalAccountId`, which are crucial for identifying the event to update.  However, it lacks any type validation or value validation for these parameters, or any of the other optional parameters.  While it checks for the existence of `externalEventId` in the `DB`, this is more of a lookup check than a validation of the input itself.  No validation is performed on the structure or content of `custom_properties`, despite its complexity.  The function also doesn't check for data type or format validity of date/time strings (`start_date_time`, `end_date_time`).  Error handling is minimal, only returning a simple error message for missing required IDs.  More robust error handling and input validation are needed to ensure data integrity and application stability."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types (List, Dict, Optional) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a marketing event in the global `DB` dictionary if the `externalEventId` and `externalAccountId` match an existing entry.  All functional input parameters are used to update the corresponding fields in the `DB` entry. The function handles the case where the event does not exist or the IDs don't match by returning an empty dictionary or an error message, respectively.  There are no placeholders, TODOs, or exceptions to handle. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_event` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with updating marketing event data, which includes fields like names, dates, descriptions, and URLs, but none of these are phone numbers or email addresses."
+          }
+        },
+        "cancel_event": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to significant inconsistencies between its description of the return value and the actual function behavior."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses simple `if not` checks to ensure that `externalEventId` and `externalAccountId` are not empty strings.  This is basic input validation, sufficient for this function's needs. While Pydantic could be used, it would add unnecessary complexity for this simple validation task.  The current approach is clear, concise, and effective."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs null/empty checks on both `externalEventId` and `externalAccountId`.  These checks are sufficient to prevent common errors caused by missing input. However, it lacks more comprehensive validation.  For instance, there's no check to ensure that `externalEventId` and `externalAccountId` conform to any specific format or length restrictions that might be defined in the external system.  While the function correctly handles the case where the event ID is not found, it doesn't explicitly validate the data *type* of the inputs beyond checking for emptiness.  More robust validation would involve checking that the IDs are strings and potentially checking their format (e.g., using regular expressions if a specific pattern is expected).  The function also doesn't handle potential exceptions that might arise from interacting with the `DB` (though this is outside the scope of input validation itself)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`externalEventId` and `externalAccountId`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the cancellation of a marketing event by updating the `eventStatus` in the global `DB`.  Both `externalEventId` and `externalAccountId` are used to identify and update the correct event. The function returns the updated event details as specified in the docstring if the event is found and successfully cancelled. However, it returns an empty dictionary `{}` if the event is not found, which is not explicitly mentioned in the docstring.  The docstring implies that an error message should be returned if the event is not found, similar to the error messages returned if the input parameters are missing.  Therefore, a more informative return value (e.g.,  `{\"error\": \"Event not found\"}` ) would improve the function's completeness and consistency with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `cancel_event` function does not handle any phone number or email address inputs.  Its parameters and functionality are solely focused on managing marketing event data using `externalEventId` and `externalAccountId` strings.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_or_update_attendee": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to significant inconsistencies between its description of the return value and the actual function behavior.  The docstring states the function returns a dictionary with numerous keys (registrants, eventOrganizer, eventUrl, etc.),  representing comprehensive event details.  However, the function's implementation shows it only returns a small subset of this information *under specific conditions*.  In some cases, it returns an error dictionary, and in others, it returns an empty dictionary.  The most it returns is a dictionary with keys \"attendeeId\", \"email\", \"eventId\", and \"externalAccountId\".  This discrepancy is a major flaw."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using `if not all([externalEventId, externalAccountId, email, joinedAt, leftAt]):` to check for missing parameters and  `if externalEventId not in DB[\"marketing_events\"]` to check if the event exists.  While this is functional, it doesn't perform robust type checking or data validation (e.g., checking if `joinedAt` and `leftAt` are valid datetime strings).  Pydantic models could improve this by providing more comprehensive validation and type hinting, making the code more robust and readable.  However, the existing validation is sufficient to prevent the most basic errors."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (externalEventId, externalAccountId, email, joinedAt, leftAt) are properly type-annotated with their expected types (str). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly creates or updates an attendee in the `DB`.  All functional input parameters (`externalEventId`, `externalAccountId`, `email`, `joinedAt`, `leftAt`) are used. The function handles the case where the event is not found or the `externalAccountId` doesn't match.  However, the return type in the docstring is `Dict[str, Any]`, which is overly broad.  The function returns either an attendee dictionary or an error dictionary, but the structure of the attendee dictionary doesn't fully match the extensive structure described in the docstring. The docstring promises a much richer dictionary containing event details (registrants, eventOrganizer, eventUrl, etc.) that are not included in the returned dictionary.  The implementation only returns a subset of the information described.  Adding the missing event details would make it fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_or_update_attendee` does not handle phone numbers at all.  It only deals with email addresses, and while it doesn't explicitly validate them using a regular expression or validation library, it implicitly relies on the input being a string.  There's no attempt to check the email's format for validity beyond ensuring it's a non-empty string.  Therefore, a rating of \"Not Applicable\" for phone number handling and \"Poor\" for email handling is appropriate.  The function lacks robust email validation; a simple check for the \"@\" symbol would be a minimal improvement.  A proper email validation regex or library call would be significantly better."
+          }
+        },
+        "get_attendees": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose and usage.  It accurately describes the function's arguments, including default values for `limit`. The `Returns` section correctly specifies the dictionary structure, including nested structures within the `customProperties` list.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic input validation:  a check for `externalEventId` being non-empty and a check to see if it exists as a key in the `DB[\"marketing_events\"]` dictionary.  The `limit` parameter has a default value and an implicit type check (it's used in a slicing operation which will raise a TypeError if it's not an integer). The `after` parameter is optional. While Pydantic could be used, the existing validation is sufficient for this function's simplicity and the nature of the inputs.  Adding Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `externalEventId` parameter.  It checks that it's not an empty string and that it exists as a key in the `DB[\"marketing_events\"]` dictionary.  The `limit` parameter has a value check ensuring it doesn't exceed an implicit maximum (though this maximum isn't explicitly stated in the code, it's implied by the comment). However, there's no explicit validation for the data type of `limit` beyond the default type hint.  The `after` parameter has no validation at all.  While the `externalEventId` validation is robust, the lack of validation for `limit`'s type and the absence of any validation for `after` prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`externalEventId`, `limit`, `after`) are properly type-annotated with their expected types (str, int, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves attendees based on the `externalEventId` and applies the `limit` parameter for pagination.  The `after` parameter, however, is not used in the function's logic, representing a minor gap in implementation.  The function handles the cases where `externalEventId` is missing or the event is not found in the `DB`. The docstring accurately reflects the function's behavior and return type.  The implementation is mostly complete and functional, but the unused `after` parameter prevents it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_attendees` function does not handle any phone number or email address inputs.  Its purpose is to retrieve attendee information for a marketing event given an external event ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete_attendee": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring states that the function returns `None`, which is inconsistent with the function's actual behavior.  The function can return a dictionary containing an error message or, in the case of a successful deletion, the deleted attendee data (or None if the attendee wasn't found). This discrepancy is a major flaw.  The docstring does not reflect the possibility of these dictionary returns.  While it correctly lists the arguments and their types, the lack of information about the potential dictionary return values significantly impacts its usefulness.  The docstring also fails to mention the potential for errors, which are handled within the function's logic.  A \"Raises\" section should be added to document these potential errors (e.g., \"Event not found\", \"Attendee not found\", \"Invalid external account ID\").  The docstring's description is adequate but could be slightly improved by explicitly mentioning the potential for failure and the different return scenarios."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic `if not` checks to validate that `externalEventId`, `attendeeId`, and `externalAccountId` are not empty strings.  While this is functional input validation, it doesn't utilize Pydantic.  However, given the simplicity of the required validation (non-empty strings),  Pydantic would be overkill and add unnecessary complexity.  The existing validation is sufficient for this function's needs."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs null/empty checks for `externalEventId`, `attendeeId`, and `externalAccountId`.  These checks are crucial for preventing errors caused by missing data.  However, it lacks type validation.  While the function expects strings, there's no explicit check to ensure that the inputs are actually strings.  The function also performs value validation by checking if the `externalEventId` and `attendeeId` exist within the `DB`. This is a form of domain-specific constraint validation.  Therefore, while the function has good checks for null/empty values and some value validation, the absence of type validation prevents it from being rated as \"Comprehensive\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`externalEventId`, `attendeeId`, `externalAccountId`) are properly type-annotated with their expected type `str`. The function's return type is annotated as `None`, although the function sometimes returns dictionaries.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements the intended functionality.  However, the return type is inconsistent with the docstring. The docstring states that the function returns `None`, but it actually returns either `None`, a dictionary containing an error message, or a boolean value (the result of `attendees.pop()`).  The function should consistently return `None` to align with the docstring, and handle the deletion more gracefully.  For example, it could return `True` for successful deletion and `False` otherwise, or raise an exception for specific error conditions.  The current return of `deleted` (which is sometimes `None`) is confusing."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_attendee` does not handle any phone number or email address inputs.  Its parameters are all string identifiers (`externalEventId`, `attendeeId`, `externalAccountId`), and it performs no input validation or normalization beyond checking for the presence of these identifiers. Therefore, the categories of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "hubspot/SingleSend.py": {
+      "functions": {
+        "sendSingleEmail": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types, including the nested structures within the `message` dictionary. The description of the `Returns` section is also detailed and largely accurate, correctly specifying the dictionary structure and the conditional presence of certain keys based on success or failure. Default values for optional parameters are mentioned.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `template_id` and `message` parameters, as well as nested validation within the `message` dictionary for its constituent parts (`to`, `cc`, `bcc`, `from`, `replyTo`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all functional input parameters.  The use of Pydantic is not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`template_id`, `message`, `customProperties`, `contactProperties`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types such as `List`, `Dict`, `Optional`, and `Union` are all correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `template_id` and `message` parameters.  It performs input validation for recipients and the sender, and simulates sending an email by storing a log entry in the global `DB`. The docstring accurately reflects the function's behavior and return type.  However, the `customProperties` and `contactProperties` parameters, while used, could benefit from more robust handling.  Currently, contact properties are only merged for the first recipient in the 'to' list.  The function assumes a successful send, lacking error handling for potential issues during the actual sending process (though this is a simulation).  The logic for merging `customProperties` and `contactProperties` could be improved for clarity and to handle potential conflicts."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function demonstrates good email validation. It thoroughly checks that all email addresses provided in the `to`, `cc`, `bcc`, `from`, and `replyTo` fields are present, are strings, and are within properly formatted dictionaries.  This is a robust approach to email validation within the context of the function's purpose.  However, it lacks any form of phone number handling. The function doesn't receive or process any phone number data, so there's no normalization or validation performed on phone numbers.  Therefore, while the email validation is excellent, the lack of any phone number processing prevents an \"Excellent\" rating.  The function is \"Good\" because of the strong email validation but incomplete functionality regarding phone numbers."
+          }
+        }
+      }
+    },
+    "hubspot/TransactionalEmails.py": {
+      "functions": {
+        "sendSingleEmail": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose and usage.  It accurately describes the function's arguments, including the optional `customProperties` and its default value (implicitly as `None`). The `Args` section clearly explains the structure of the `message` dictionary, including optional fields. The `Returns` section correctly specifies the return type and structure, including the `email_id` field which is only present in the success case.  Types are specified for all parameters and return values.  The docstring accurately reflects the function's behavior in terms of successful and unsuccessful email sending."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `message` dictionary.  It checks if the dictionary is a dictionary, and if it contains the required keys (\"to\", \"from\", \"subject\", \"htmlBody\").  While this validation is present, using Pydantic models would improve the code's readability and maintainability.  Pydantic would allow for more concise and expressive validation, including type checking and more complex validation rules, if needed.  The `customProperties` parameter is optional and has no specific validation requirements, so the current approach is sufficient for this parameter."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `message` parameter, ensuring it's a dictionary and checking for the presence of required keys (\"to\", \"from\", \"subject\", \"htmlBody\").  This is good. However, it lacks value validation.  Crucially, it doesn't validate the email addresses in \"to\" and \"from\" (or cc/bcc if present), nor does it check the format or content of the \"subject\" and \"htmlBody\" fields.  These are all critical for preventing email injection vulnerabilities and ensuring deliverability.  The `customProperties` parameter is not validated at all.  While the function handles invalid `message` types gracefully, more robust validation of the email content itself is needed.  Therefore, the validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`message` and `customProperties`) are properly type-annotated with their expected types (Dict[str, Any] and Optional[Dict[str, Any]] respectively).  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the sending of a single transactional email using the global `DB` dictionary as a mock database.  All functional input parameters (`message` and `customProperties`) are used appropriately. The function handles the cases where the input `message` is not a dictionary or is missing required keys.  The logic for simulating email sending and storing the email information in the `DB` is complete and functional. The docstring accurately reflects the function's behavior, including the return type and the conditions for success and failure. There are no placeholders, TODO comments, or exceptions that need handling (as the function simulates the email sending process)."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The provided function does not handle phone numbers at all.  Therefore, there is no phone number normalization."
+          }
+        }
+      }
+    },
+    "hubspot/FormGlobalEvents.py": {
+      "functions": {
+        "get_subscription_definitions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose: retrieving global form event subscription definitions.  It correctly identifies the return type as a list of dictionaries. The nested structure of the dictionary is also well-documented, specifying the keys (`id`, `endpoint`, `subscriptionDetails`, `active`) and their respective types.  The `subscriptionDetails` dictionary is further broken down, showing its keys and types."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_subscription_definitions` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_subscription_definitions` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_subscription_definitions` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves all subscription definitions from the global `DB[\"subscription_definitions\"]` as documented in its docstring.  The return type matches the docstring's specification. There are no unused functional parameters, placeholders, or exceptions to handle. The implementation directly reflects the function's purpose."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_subscription_definitions` does not handle any phone number or email address inputs.  It retrieves data from a database (presumably `DB[\"subscription_definitions\"]`) and returns it.  Therefore, there is no phone number normalization or email validation to assess.  The function's purpose is solely data retrieval, not data processing or validation of this type."
+          }
+        },
+        "create_subscription": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's role in creating webhook subscriptions. The Args and Returns sections are well-structured and include type hints.  The nested structure of the `subscriptionDetails` dictionary within both Args and Returns is correctly documented."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_subscription` lacks any input validation for its functional parameters `endpoint` and `subscriptionDetails`.  Neither Pydantic models nor alternative validation methods (type checking, manual checks, etc.) are used.  While `endpoint` is declared as a string, there's no check to ensure it's a valid URL or meets other format requirements. Similarly, `subscriptionDetails` is a dictionary with no validation on the keys or types of values it contains.  Using Pydantic models would significantly improve the robustness of this function by enforcing data types, constraints, and potentially custom validation rules for both parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `endpoint` (checking it's a string) and implicitly for `subscriptionDetails` (expecting a dictionary). However, it lacks crucial value validation.  There's no check for empty strings in `endpoint`, nor are there checks on the contents of `subscriptionDetails`.  Specifically, `contact_id`, `subscription_id`, `opt_in_date` should be validated for non-empty strings, and `subscribed` should be checked to ensure it's a boolean.  No error handling is present for invalid inputs.  While type validation is partially present, the absence of value validation and error handling makes the validation incomplete."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`endpoint` and `subscriptionDetails`) are properly type-annotated.  The `subscriptionDetails` parameter correctly uses `Dict[str, Any]` to represent the nested dictionary structure. The return type `Dict[str, Any]` is also clearly specified.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a new subscription entry in the global `DB` dictionary, using both the `endpoint` and `subscriptionDetails` input parameters.  A new UUID is generated for the subscription ID, and the returned dictionary matches the docstring's description of the return value.  There are no placeholders, exceptions to handle, or unused functional parameters. The logic is complete and functional within the constraints of using the global `DB`.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_subscription` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on creating a subscription entry in a database using a UUID, an endpoint string, and a dictionary of subscription details.  No input processing related to phone numbers or emails is present."
+          }
+        },
+        "get_subscriptions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose: retrieving webhook subscriptions.  The Returns section correctly identifies the return type as a list of dictionaries.  It also attempts to detail the structure of the nested dictionaries, including types for the keys."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_subscriptions` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_subscriptions` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_subscriptions` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves all values from the `DB[\"subscriptions\"]` dictionary and returns them as a list of dictionaries.  The returned data structure matches the docstring's description of the expected return type and content. There are no unused functional parameters, placeholders, or exceptions to handle. The implementation directly reflects the docstring's description of the function's behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_subscriptions` does not handle any phone number or email address inputs.  It retrieves data from a database (presumably named `DB`) and returns it as a list of dictionaries.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete_subscription": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: deleting a webhook subscription.  The Args, Returns, and Raises sections are all present and accurately reflect the function's parameters, return value (None), and the ValueError exception.  Types are specified for the parameter. The docstring correctly states that the function returns `None`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple type conversion and a check to ensure the `subscriptionId` exists in the `DB[\"subscriptions\"]` dictionary.  While not using Pydantic, this provides sufficient input validation for the single functional parameter.  Adding a Pydantic model would be unnecessary overhead for this simple validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation by casting `subscriptionId` to an integer.  It also performs value validation by checking if the `subscriptionId` exists as a key in the `DB[\"subscriptions\"]` dictionary.  However, it lacks explicit checks for `None` or other invalid integer values (e.g., negative numbers, extremely large numbers if there's a practical limit). While the `int()` cast will raise a `ValueError` for non-integer strings, it doesn't handle the case where `subscriptionId` is `None`.  More robust handling of potential exceptions during the cast and checks for valid ranges of `subscriptionId` would improve the validation.  The error message is clear and informative."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  The `subscriptionId` parameter is properly type-annotated as `int`. The return type is clearly specified as `None`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a subscription from the global `DB[\"subscriptions\"]` dictionary given a valid `subscriptionId`.  It handles the `ValueError` exception as documented if the subscription ID is not found. The `subscriptionId` parameter is correctly used. The docstring accurately reflects the function's behavior, including the return type and exception handling.  There are no placeholders or incomplete logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_subscription` does not handle any phone numbers or email addresses.  Its input and output are solely related to integer subscription IDs. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_subscription": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in updating webhook subscriptions. The Args and Returns sections are well-structured, including types.  The nested structure of the `subscriptionDetails` dictionary within the Returns section is clearly documented.  The docstring correctly mentions that the function raises a ValueError if the subscription ID is not found."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It explicitly checks if the `subscriptionId` exists in the `DB[\"subscriptions\"]` dictionary and raises a `ValueError` if not found.  It also implicitly performs type checking by attempting to convert `subscriptionId` to an integer. While using a Pydantic model could provide a more structured and potentially more comprehensive approach to input validation (e.g., allowing for more complex validation rules or automatic type coercion), the existing validation is sufficient for the given function's purpose.  The `active` parameter is a boolean and is not explicitly validated, but the function's logic does not require additional validation for this parameter."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on `subscriptionId` by casting it to an integer.  It also performs value validation by checking if the `subscriptionId` exists as a key in the `DB[\"subscriptions\"]` dictionary, raising a `ValueError` if not found. This is a crucial check. However, it lacks explicit null/empty checks for `subscriptionId` before the type conversion and the lookup in the DB. While the type conversion to `int` will implicitly handle some cases (e.g., `None` will raise a `TypeError`), an explicit check would improve robustness and clarity.  The `active` parameter is a boolean and is used directly without further validation, which is acceptable given its type.  Therefore, the validation is good but not comprehensive due to the missing explicit null/empty check for `subscriptionId`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`subscriptionId` and `active`) are properly type-annotated with their expected types (`int` and `bool` respectively). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within the return dictionary are not fully specified (using `Any`), but the prompt does not penalize this aspect of type hinting."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates the active status of a subscription in the global `DB`.  Both functional input parameters (`subscriptionId` and `active`) are used. The `ValueError` exception is correctly raised if the subscription ID is not found.  The function's logic is complete, and the return value matches the docstring's description. There are no placeholders or TODO comments.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_subscription` does not handle any phone number or email address inputs.  Its inputs are an integer `subscriptionId` and a boolean `active`. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its given inputs and raises a `ValueError` if the subscription ID is not found."
+          }
+        }
+      }
+    },
+    "hubspot/Campaigns.py": {
+      "functions": {
+        "get_campaigns": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a basic description of the function's purpose. It correctly lists all parameters with their types and provides descriptions.  The default values (all `Optional`) are implicitly indicated by the `Optional` type hint, though explicitly stating \"Defaults to None\" would improve clarity.  The `Returns` section correctly identifies the return type as `Dict[str, Any]`, but its description is significantly incomplete and misleading.  The docstring describes a comprehensive dictionary structure with many keys and nested structures (including a `results` list with detailed campaign information),  **but the implementation only returns a very limited subset of this promised structure.**  The actual implementation only includes \"results\", \"total\", \"limit\", and \"offset\", and the \"results\" list only contains the basic campaign information (id, name, type).  There is no mention of exceptions in the docstring, despite the potential for errors (e.g., issues accessing the global `DB`). The docstring overpromises the functionality and the structure of the returned dictionary.  While the parameter documentation is thorough, the discrepancy between the documented return value and the actual return value is a significant flaw.  Improving the docstring to accurately reflect the limited functionality and the actual return structure would significantly enhance its quality."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for its functional parameters.  While type hints are present (e.g., `Optional[int]`, `Optional[str]`), these are only hints and do not enforce validation at runtime.  The code performs no checks to ensure that the input values are of the correct type or within acceptable ranges.  Adding Pydantic models would significantly improve the robustness of the function by providing runtime validation of the input parameters.  For example, a Pydantic model could ensure that `limit` and `offset` are non-negative integers, and that date strings conform to a specific format."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs basic type-checking implicitly through the use of type hints (e.g., `Optional[int]`, `Optional[str]`). However, it lacks explicit value validation for any of the functional parameters.  `limit` and `offset` could benefit from checks to ensure they are non-negative.  String parameters accepting dates (`created_at`, `updated_at`, etc.) should be validated against a date format.  There are no checks for empty strings or other edge cases.  The only validation performed is implicitly through type hints and the basic filtering checks (e.g., `if id:`), which only check for the presence of a value, not its validity.  Functional parameters validated are `limit`, `offset`, `id`, `name`, and `type` (only for presence, not value).  Missing validation includes range checks for `limit` and `offset`, format checks for date strings, and checks for empty strings where appropriate.  No explicit error handling is present."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (using Optional[int] and Optional[str] where appropriate).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional`, `int`, `str`, and `Dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function only uses `id`, `name`, and `type` parameters for filtering.  The numerous other parameters related to date filtering (`created_at`, `created_at__gt`, etc.),  `name__contains`, `name__icontains`, `name__ne`, `id__ne`, and `type__ne` are not used.  The filtering logic is also very basic (equality checks only), not implementing the `__gt`, `__gte`, `__lt`, `__lte`, `__contains`, `__icontains`, and `__ne` functionalities described in the docstring.  While the function produces a dictionary with the requested keys, the implementation is incomplete regarding the promised filtering capabilities."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_campaigns` does not handle any phone number or email address inputs.  Its parameters and functionality are solely focused on filtering and paginating a list of marketing campaigns based on various criteria (IDs, names, types, dates, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_campaign": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and parameters.  It correctly lists all parameters with their types and includes a description for each. The `Returns` section accurately reflects the structure of the returned dictionary, listing all keys and their types.  However, there are several areas for improvement:"
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation.  While type hints are present, they are not enforced.  No checks are performed to ensure data integrity or reasonableness of input values (e.g., ensuring `start_year` is not in the future, or that month and day values are within valid ranges).  Using Pydantic models would significantly improve the robustness of the function by providing automatic type checking and data validation, preventing unexpected errors and improving code reliability."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for the `name` parameter by declaring it as `str`. However, it lacks comprehensive value validation for any of the functional parameters.  There are no checks for the validity of date values (start_year, start_month, start_day, end_year, end_month, end_day),  no checks for empty strings in `name` or other string parameters, and no checks for the reasonableness of the values (e.g., ensuring month is between 1 and 12).  While the `slug` is generated if it's not provided, this doesn't constitute validation of a user-provided `slug`.  The function also doesn't raise exceptions for invalid inputs.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional where appropriate.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly creates a campaign and stores it in the global `DB`.  The docstring accurately reflects the function's behavior and return type.  All functional input parameters are used. However, the `created_at` field in the `new_campaign` dictionary is assigned the same value as the `campaign_id`. While not strictly incorrect, it might be more appropriate to use a timestamp for `created_at` to reflect the actual creation time.  This is a minor detail and doesn't significantly impact functionality."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_campaign` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on creating campaign entries with various descriptive attributes, none of which relate to contact information."
+          }
+        },
+        "get_campaign": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent description of the function's purpose.  The Args section correctly documents the `campaign_id` parameter with its type. The Returns section correctly specifies the return type as `Optional[Dict[str, Any]]`. Importantly, it lists all the keys that *might* be present in the returned dictionary, along with their types.  This is helpful, though it could be improved."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_campaign` takes one functional input parameter, `campaign_id`, which is annotated as an integer. However, there's no validation performed on this parameter to ensure it's a valid integer or that it exists as a key in the `DB[\"campaigns\"]` dictionary.  No type checking or other validation methods are used. Using a Pydantic model would significantly improve the robustness of this function by ensuring that `campaign_id` is a valid integer before attempting to access the database.  A simple Pydantic model could be created to enforce this."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function only performs type hinting (`campaign_id: int`).  There is no actual runtime validation of the `campaign_id` parameter.  It lacks checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_campaign` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`campaign_id: int`). The return type `Optional[Dict[str, Any]]` is clearly specified.  No `**kwargs` are used.  The single parameter name is clear and descriptive.  The complex type `Optional[Dict[str, Any]]` is correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a campaign from the global `DB[\"campaigns\"]` dictionary using the provided `campaign_id`.  The function's logic is complete and directly implements the functionality described in its docstring. The return type matches the docstring's specification.  All functional input parameters are used. There are no placeholders, TODO comments, or exceptions to handle."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_campaign` does not handle any phone number or email address inputs.  It retrieves campaign data from a database based on an integer ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_campaign": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the arguments and their types. The description of the return value is also present and mostly accurate; however, it states that the function returns a dictionary *containing* certain keys if the campaign exists, implying that it might return a different structure or even `None` under other circumstances.  This is misleading because the function *always* returns either a dictionary or `None`.  The docstring should be more precise and explicitly state that the function returns `None` if the campaign does not exist, and a dictionary with the specified keys otherwise.  The docstring also fails to mention that the function modifies the `DB` in place. While not strictly an error given the context, it's an important side effect that should be documented.  No exceptions are raised, so the \"Raises\" section is correctly omitted.  The types are correctly specified for all parameters and return values. The documentation of the dictionary in the return value is good, listing all keys and their types.  Overall, the docstring is functional but could be improved by clarifying the return value behavior and mentioning the in-place modification of the `DB`."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods.  While type hints are present in the function signature, these are only for static analysis and do not perform runtime validation.  The function relies solely on the implicit type coercion of Python, which can lead to unexpected behavior and errors if invalid data is passed.  Using a Pydantic model would significantly improve the robustness of the function by explicitly defining the expected data types and constraints, and raising clear exceptions upon encountering invalid input.  For example, a Pydantic model could enforce that `start_month` and `end_month` are within the range 1-12, and that `start_day` and `end_day` are within the range 1-31 (with appropriate adjustments for different months)."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking implicitly through type hints (e.g., `campaign_id: int`), but lacks explicit value validation for several functional parameters.  `campaign_id` is checked for existence in the DB, which is a form of value validation, but no other value checks are performed.  For instance, there's no validation to ensure `start_month` and `start_day` are within valid calendar ranges (1-12 and 1-31 respectively), or that `start_year` is not in the future.  Similar value checks are missing for `end_year`, `end_month`, and `end_day`.  No explicit null or empty checks are performed beyond the implicit checks from the `if x is not None` statements which only handle the case where a parameter is explicitly set to `None`.  String parameters like `name`, `slug`, `description`, `theme`, `resource`, and `color_label` are not checked for empty strings or other invalid formats.  There is no error handling for invalid inputs; the function silently proceeds with potentially invalid data.  In summary, only the existence of `campaign_id` in the DB is explicitly validated.  The rest of the functional parameters have minimal to no validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional where appropriate.  The return type is also clearly specified as Optional[Dict[str, Any]]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a campaign in the global `DB` dictionary based on the provided `campaign_id` and optional parameters.  All functional input parameters are used; the function correctly handles cases where a campaign does not exist or where only some parameters are provided for update. The docstring accurately reflects the function's behavior and return type.  There are no placeholders, TODOs, or exceptions to handle. The logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_campaign` does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function only deals with campaign data (name, description, dates, etc.), none of which are email addresses or phone numbers."
+          }
+        },
+        "archive_campaign": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: archiving a campaign and preventing it from appearing in campaign listings.  The Args and Returns sections are correctly formatted and informative, specifying types.  The description of the return value accurately reflects the function's behavior.  The docstring accurately reflects the function's implementation.  No exceptions are raised, so no \"Raises\" section is needed.  There are no default parameter values to document.  While the internal workings (using the global `DB`) are not explicitly detailed, this is acceptable given the context of the codebase.  The docstring is complete enough for someone to understand how to use the function.  There are no inconsistencies between the docstring and the implementation."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a basic type hint (`campaign_id: int`) and implicitly checks if the provided `campaign_id` exists as a key within the `DB[\"campaigns\"]` dictionary.  While this isn't as robust as a Pydantic model (which could add more sophisticated validation, such as range checks or allowing for None values), it does perform basic type checking and existence validation.  A Pydantic model would offer more structure and flexibility for validation, but the current approach is sufficient for the simple validation needs of this function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `campaign_id` by declaring it as an `int`. However, it lacks value validation.  It does not check if the `campaign_id` actually exists within the `DB[\"campaigns\"]` dictionary *before* attempting to access and modify it.  While it implicitly checks for existence in the `if campaign_id in DB[\"campaigns\"]:` statement, this is not robust value validation.  A missing `campaign_id` results in a silent `False` return, which might not be desirable behavior.  More explicit error handling or a check for the existence and correct type of the campaign entry within the dictionary would improve the validation.  No null or empty checks are performed."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `archive_campaign` has excellent parameter design.  The single parameter `campaign_id` is correctly type-annotated as `int`. The return type is also clearly specified as `bool`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly archives a campaign by setting the `is_archived` flag to `True` in the global `DB[\"campaigns\"]` dictionary if the campaign exists.  The function uses the `campaign_id` parameter correctly. The return value accurately reflects whether the archiving was successful.  The docstring accurately describes the function's behavior and return type. There are no placeholders, exceptions to handle, or other implementation gaps."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `archive_campaign` does not handle any phone numbers or email addresses.  Its input and output are solely integers and booleans related to campaign archiving. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "hubspot/MarketingEmails.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The description of the return value is also good, specifying the dictionary structure and the meaning of its keys.  All parameters are documented with types. The docstring correctly states that the `name` parameter is required."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The code performs manual input validation for the `name` parameter, checking if it's a non-empty string.  Other parameters are not explicitly validated, but their types are specified in the function signature (type hinting).  While this provides some level of basic type checking, it doesn't offer the comprehensive validation capabilities of a Pydantic model.  Adding a Pydantic model would improve the robustness of input validation by allowing for more sophisticated checks (e.g., string length, regular expressions, data type constraints for optional parameters).  However, the existing manual check and type hints are sufficient to meet a basic level of validation for this specific function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation and null/empty checks for the `name` parameter.  However, it lacks validation for other functional parameters such as `subject`, `htmlBody`, `status`, `discount_code`, `expiration`, `launch_date`, `sale_end_date`, `access_code`. While these parameters are optional,  no checks are performed to ensure data integrity if provided. For example,  `expiration`, `launch_date`, and `sale_end_date` might need date format validation.  `reward_points`, if provided, should be validated as a non-negative integer.  No specific error handling beyond a simple message is implemented for invalid input.  The validation is therefore only partial, covering only the required `name` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[bool], Optional[int]).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a marketing email entry in the global `DB` dictionary.  All functional input parameters are used to populate the new email entry.  The function handles the case where the `name` parameter is invalid. The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create` does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on creating marketing emails based on other input parameters like name, subject, HTML body, and various optional fields.  No phone number or email fields are present in the function's arguments or processing."
+          }
+        },
+        "getById": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent description of the function's purpose.  The Args section correctly documents the `email_id` parameter with its type and description. The Returns section correctly specifies the return type `Optional[Dict[str, Any]]`.  Importantly, it also details the structure of the dictionary that is returned, listing all the keys and their corresponding types. This is crucial for understanding the response."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `getById` has one functional input parameter, `email_id`, which is annotated as a string. However, there's no validation performed on this parameter to ensure it's in the expected format or that it exists in the `DB`.  No type checking or other validation methods are used.  Using a Pydantic model would significantly improve the robustness of this function by ensuring that `email_id` is a string and potentially adding constraints such as minimum length or allowed characters."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function only takes one functional input parameter, `email_id`.  While it's checked for existence (implicitly, via `.get()` which returns `None` if the key is missing), there's no explicit type validation (e.g., checking if it's actually a string) or value validation (e.g., checking for a specific format or length).  No error handling is present for invalid input types.  Therefore, the validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getById` has excellent parameter design and type annotations.  All parameters (`email_id`) are properly type-annotated with their expected types (str). The return type `Optional[Dict[str, Any]]` is clearly specified.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a marketing email from the global `DB` dictionary using the provided `email_id`.  The return value matches the docstring's description: it returns a dictionary containing the email data if found, and `None` otherwise.  All functional input parameters are used. There are no exceptions documented that need handling, no placeholders, and the logic is complete and functional given the use of the global `DB`. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getById` does not handle phone numbers or email addresses as inputs.  Its input is an `email_id` which is treated as a string key for a database lookup.  Therefore, no normalization or validation of phone numbers or email addresses is needed or performed.  The function's purpose is solely to retrieve data from a database using a given ID."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values (though it could be slightly improved by explicitly stating that all arguments except `email_id` are optional). The description of the return value is also clear and accurate.  Types are specified for all parameters and the return value.  The documentation of the dictionary return value is adequate, specifying the keys \"success\" and \"message\" and their types."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for its functional parameters.  While it checks for the existence of the `email_id` in the `DB`, it doesn't perform any validation on the data types or content of other parameters. For example, `reward_points` is an optional integer, but there's no check to ensure that if provided, it's actually an integer. Similarly, there's no validation on string lengths, formats (e.g., for dates), or other constraints that might be appropriate for the different fields. Using Pydantic models would significantly improve the robustness of this function by enforcing data types and adding the ability to specify more complex validation rules."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a check on the `email_id` parameter to ensure it exists in the `DB[\"marketing_emails\"]` dictionary. This is a value check specific to the application's data model.  However, no other functional input parameters undergo type or value validation.  While `None` checks are implicitly handled by the `if` statements, these don't constitute robust validation. For example, there's no check to ensure that `reward_points` is a non-negative integer if provided, or that date strings conform to a specific format.  String parameters like `name`, `subject`, `htmlBody`, etc., are not checked for length, content restrictions, or potential injection vulnerabilities.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[bool], Optional[int]).  The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates a marketing email in the global `DB` dictionary if the `email_id` exists.  All functional input parameters are used to conditionally update the corresponding fields in the `DB`. The function handles the case where the `email_id` is not found, returning an appropriate error message.  The docstring accurately reflects the function's behavior and return type. There are no placeholders, TODOs, or exceptions to handle. The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle any phone number or email address inputs.  Its purpose is to update existing marketing emails in a database, using an `email_id` as a unique identifier.  The `email_id` itself is not treated as an email address requiring validation; it's simply used as a key for database lookup.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  The Args and Returns sections are well-structured, specifying types and providing descriptions.  The dictionary structure in the Returns section is adequately documented, listing the keys (`success`, `message`) and their types.  The docstring accurately reflects the function's behavior; it correctly describes the success and failure scenarios and their corresponding return values.  However, it could be improved by including a `Raises` section, as the function implicitly raises exceptions (likely `KeyError`) if there are issues accessing the `DB`.  While the current docstring is functional, adding a `Raises` section would enhance its completeness and robustness."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the provided `email_id` exists in the `DB[\"marketing_emails\"]` dictionary before attempting deletion.  This serves as basic input validation, ensuring the `email_id` refers to an existing email. While a Pydantic model could be used, it's not strictly necessary for this simple validation task.  The existing check is sufficient and avoids the overhead of a Pydantic model."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a type check on `email_id` by defining it as a string. However, it lacks value validation.  It checks if the `email_id` exists in the `DB[\"marketing_emails\"]` dictionary, but this is more of an existence check within the application's context rather than a validation of the `email_id` itself as a string.  There's no check for empty strings or strings containing invalid characters.  No exceptions are raised for invalid inputs.  Therefore, while a type check is present, crucial value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete` has excellent parameter design and type annotations.  The single parameter `email_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a marketing email from the global `DB` dictionary.  The `email_id` parameter is used correctly to check for the email's existence and then delete it. The function returns a dictionary with \"success\" and \"message\" keys as specified in the docstring, accurately reflecting the outcome of the deletion operation. There are no placeholders, exceptions to handle (as the `if` statement gracefully handles the case where the email doesn't exist), and the logic is complete and functional within the constraints of using the global `DB`.  The docstring accurately describes the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses as input.  Its sole input is an `email_id` which is treated as a string key within a dictionary (`DB[\"marketing_emails\"]`).  There is no normalization or validation of email addresses performed; the function simply checks if the key exists and deletes it if it does.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "clone": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The description of the return value is also good, specifying the dictionary structure and the meaning of its keys.  The types are correctly specified for parameters and return values.  The docstring correctly states that the function returns a dictionary with \"email_id\", \"success\", and \"message\" keys."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation by checking if the provided `email_id` exists in the `DB[\"marketing_emails\"]` dictionary.  While this isn't using Pydantic, it does provide a check for the existence of the email before attempting to clone it.  Adding Pydantic models wouldn't significantly improve this simple validation, as the check is already sufficient for the functionality.  The `name` parameter is not explicitly validated, but as it's used as a string value in the DB, a simple type check is sufficient.  Therefore, while not using Pydantic, the existing input validation is adequate for this function's needs."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `email_id` and `name` by specifying them as `str` in the function signature.  However, it lacks value validation.  It checks if `email_id` exists in the `DB`, which is a form of value validation, but it doesn't check for empty strings or other invalid formats for `email_id` or `name`.  There's also no explicit check for `None` values.  While the `email_id` check implicitly handles the case where `email_id` is not found in the database, it doesn't explicitly handle the case where `email_id` or `name` are empty strings or `None`.  No exceptions are raised for invalid inputs; instead, a success/failure message is returned.  Therefore, the validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`email_id` and `name`) are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly clones a marketing email if it exists in the DB.  Both `email_id` and `name` parameters are used appropriately. The function uses a shallow copy which might not be ideal for complex nested data structures within the original email; a deep copy might be necessary to ensure complete isolation.  The docstring accurately reflects the return type and behavior.  There is no exception handling explicitly implemented (though the `if email_id not in DB[\"marketing_emails\"]:` acts as a basic check), and more robust error handling (e.g., handling potential exceptions during the copy operation) would improve the function's robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `clone` does not handle any phone number or email address inputs.  Its inputs are an `email_id` (which appears to be an internal ID, not a user's email address) and a `name`.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its given inputs and performs its intended task of cloning a marketing email."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "hubspot": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely sound but has some inconsistencies compared to the modern requirements."
+      }
+    }
+  }
+}

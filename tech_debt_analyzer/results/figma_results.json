@@ -1,0 +1,613 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:57.790186Z",
+  "results": {
+    "figma/file_management.py": {
+      "functions": {
+        "get_figma_data": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return values, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Optional[str]`) and performs manual validation checks on the `file_key` and `node_id` parameters.  It checks for empty strings and uses `if not file_key:` to ensure `file_key` is not empty.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling unexpected data types more robustly), the existing manual checks are sufficient for the basic validation needs of this function.  Adding Pydantic would be an improvement in terms of code clarity and robustness, but it's not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `file_key` parameter.  It checks for emptiness (`if not file_key:`), which is a crucial null/empty check.  The validation for `node_id` is also present, checking for an empty string (`if node_id == \"\"`). This addresses null/empty checks and partially addresses value validation (ensuring `node_id` isn't an empty string, a common invalid value). However, there's no explicit type checking for `file_key` and `node_id` beyond what Python's type hinting provides (which is not runtime enforced in this code).  The function relies on the `utils.get_file_by_key` function to handle further validation or error handling related to the existence of the file in the database, which is acceptable given the context.  More robust validation might involve checking the format of the `file_key` (if it has a specific expected format) or performing a more thorough check on the `node_id` to ensure it's a valid Figma node ID (e.g., checking its length or character set).  While the existing checks are valuable, more comprehensive type and value validation would elevate the security posture."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`file_key`, `node_id`) are properly type-annotated with their expected types (str and Optional[str], respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality. It correctly retrieves data from the global `DB`, handles the `file_key` and `node_id` parameters appropriately, and raises the documented exceptions (`NotFoundError`, `InvalidInputError`).  The metadata and global variables are extracted and formatted as specified in the docstring.  The handling of nodes is also largely correct, iterating through the children and filtering for dictionaries. However, the recursive nature of node processing (as implied by the docstring description of a recursive structure for nodes with children) is not implemented. The function only processes the top-level nodes; it doesn't recursively traverse and include child nodes in the `nodes` list.  This is a significant gap in functionality compared to the docstring's description.  Additionally, the `filter_none_values_from_dict` function is assumed to exist and work correctly; without its implementation, a complete evaluation isn't possible."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_figma_data` function does not handle any phone number or email address inputs.  Its purpose is to retrieve and process data from a Figma file, using a file key and an optional node ID as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "download_figma_images": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the `nodes` argument, including the nested dictionary structure, is helpful.  The `Returns` section accurately reflects the tuple structure. The `Raises` section correctly lists the potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`file_key`, `nodes`, `local_path`).  It performs extensive type checking and validation of string content, list structure, and path properties. While Pydantic could provide a more concise and potentially more robust way to express these validation rules, the existing manual approach is comprehensive and covers all aspects of the functional input.  Therefore, Pydantic is not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters: `file_key`, `nodes`, and `local_path`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`file_key`, `nodes`, `local_path`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Tuple[Optional[str], Optional[str]]`.  No `**kwargs` parameters are used.  Complex types like `List`, `Dict`, and `Optional` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the download functionality as described in its docstring.  All functional input parameters (`file_key`, `nodes`, `local_path`) are used.  All documented exceptions (`NotFoundError`, `InvalidInputError`, `DownloadError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` as expected. The function's return type matches the docstring's description.  The error handling is robust, checking for various potential issues during file operations and providing informative error messages."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `download_figma_images` does not handle any phone numbers or email addresses.  Its inputs and outputs are related to Figma file management and image downloads, not communication data. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "set_current_file": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonably clear description of the function's purpose within an MCP server context.  It accurately describes the function's core logic: finding a file by key and updating the `current_file_key` in the DB. The Args, Returns, and Raises sections are present and generally well-structured.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `file_key` parameter. It checks if `file_key` is a string and if it's not empty.  While Pydantic could be used, the current manual validation is sufficient and correctly handles the required checks.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `set_current_file` performs comprehensive validation of its single functional input parameter, `file_key`.  It checks for the correct data type (string) using `isinstance`, checks for an empty string using `if not file_key`, and finally, it validates that the provided `file_key` exists within the database by checking if it's present in the `available_keys` list.  Appropriate `InvalidInputError` exceptions with informative messages are raised for all validation failures.  All aspects of type, value (emptiness and existence in the DB), and error handling are thoroughly addressed."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `set_current_file` has excellent parameter design.  The single parameter `file_key` is properly type-annotated as `str`. The return type is clearly specified as `bool`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates the input `file_key`, checks for its existence in the `DB[\"files\"]` list, updates `DB[\"current_file_key\"]` if found, and raises the appropriate `InvalidInputError` exceptions for invalid input or non-existent files.  All functional input parameters are used. The return type matches the docstring. There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `set_current_file` does not handle phone numbers or email addresses.  Its input is a file key (string), which is validated for being a non-empty string and for existence in a database.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "figma/node_editing.py": {
+      "functions": {
+        "move_node": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The types are correctly specified for parameters and the return value.  The description of the function's purpose is helpful in the context of an MCP server."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `node_id`, `x`, and `y` parameters.  Type checking and value checks (empty string for `node_id`) are performed. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual approach is sufficient and covers all functional input parameters.  Using Pydantic wouldn't add significant value here given the simplicity of the validation requirements."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its three functional input parameters (`node_id`, `x`, and `y`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id`, `x`, `y`) are properly type-annotated with their expected types (str, float, float respectively). The function's return type is clearly specified as `str`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the movement of a Figma node based on its ID and new coordinates.  All functional input parameters (`node_id`, `x`, `y`) are used.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The docstring accurately reflects the function's behavior and return type. The logic for searching the nested dictionary representing the Figma file structure is complete and robust, handling various potential data structures and malformed entries.  The function correctly handles cases where the node is locked or within a restricted group.  The update to the `absoluteBoundingBox` is also correctly implemented, handling the case where the key might be missing."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `move_node` does not handle any phone numbers or email addresses.  Its inputs are a node ID (string), and x and y coordinates (numbers). Therefore, the criteria for phone number normalization and email validation are not applicable. The function focuses solely on Figma node manipulation and includes robust input validation for its specific parameters (node ID and coordinates)."
+          }
+        },
+        "resize_node": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of potential discrepancies between requested and final dimensions is helpful.  Types are correctly specified for parameters and return values. The documentation of the dictionary return value is good, clearly outlining the keys, types, and potential differences between requested and actual dimensions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `width` and `height` parameters.  It checks if these values are non-negative. While Pydantic could be used, the existing validation is sufficient and straightforward for these two parameters.  The `node_id` parameter is validated implicitly within the function's logic (by attempting to find the node).  Using Pydantic wouldn't significantly improve the clarity or robustness of the input validation in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on its functional input parameters, `width` and `height`.  Both are checked for type (implicitly via the type hint and explicitly within the `if` condition) and value (non-negative).  The validation is thorough, raising a `InvalidInputError` with a clear message if either parameter is invalid.  All functional input parameters are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id`, `width`, `height`) are properly type-annotated with their expected types (str, float, float respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality. It correctly handles `width` and `height` input parameters, raises the documented exceptions (`NodeNotFoundError`, `ResizeError`, `InvalidInputError`, `FigmaOperationError`), and its return value matches the docstring.  However, there's a gap in its robustness. The function assumes that `absoluteBoundingBox` will always exist, even if it's empty or partially populated.  While it attempts to handle missing keys ('x', 'y', 'width', 'height'), it defaults to 0.0 for these values, which might not be the correct behavior in all scenarios.  A more robust approach would be to either handle the absence of `absoluteBoundingBox` entirely or to check for the existence of each key within the `absoluteBoundingBox` dictionary before attempting to access it.  Additionally, the function doesn't actually perform any Figma API calls to resize the node; it only modifies the `absoluteBoundingBox` within the local `DB`.  While the problem description states that using the global `DB` is acceptable, the function's name and docstring suggest a Figma interaction, which is missing.  This makes the implementation \"mostly complete\" rather than \"fully implemented\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `resize_node` function does not handle any phone numbers or email addresses.  Its inputs are a node ID (string), width (float), and height (float), all related to Figma node resizing.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete_node": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly identifies the function's role in deleting a Figma node using its ID and mentions the expected return value. The `Args` and `Returns` sections are well-formatted and mostly accurate. The `Raises` section correctly lists the exceptions.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `delete_node` uses type hinting (`node_id: str`) for the `node_id` parameter, which is a form of input validation.  While a Pydantic model isn't used, the type hinting, combined with the internal checks within the function (e.g., checking if `node_id` exists in the DB), provides sufficient input validation for this specific function.  A Pydantic model would add some overhead without significantly improving the validation process in this case.  The existing approach is sufficient and clear."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function `delete_node` has only one functional input parameter: `node_id` (a string).  The code performs some validation on `node_id`. It checks if a node with that ID exists within the `DB`.  If the node is not found, a `NodeNotFoundError` is raised. This is a form of value validation, checking for existence within the data store. However, there's no explicit type validation (e.g., checking if `node_id` is actually a string) or checks for empty strings or other invalid string formats.  Therefore, the validation is partial.  The code does a good job of handling the case where the database is empty, but it doesn't explicitly check for an empty or null `node_id` before attempting to use it in database lookups.  More comprehensive input validation would include explicit type checking and empty string checks for the `node_id` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_node` has an excellent parameter design.  It has one parameter, `node_id`, which is correctly type-annotated as `str`. The return type is also clearly specified as `str`.  There is no use of `**kwargs`.  All type annotations are complete and accurate for the single parameter."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements the deletion logic as described in the docstring.  The `node_id` parameter is correctly used.  All documented exceptions are raised in appropriate scenarios. There are no placeholders or TODO comments.  However, the implementation has a significant flaw: the final `if` block that checks if the node was actually removed from the `parent_node['children']` list only raises a `FigmaOperationError` if the node wasn't removed.  This means that if the node *was* removed, the function will still return \"Node '{node_id}' deleted successfully.\" even if there's a potential internal error that could lead to data inconsistency. This should be improved by adding more robust checks and potentially logging the error for debugging purposes.  The error handling in this section is overly defensive and could be simplified.  The repeated checks for the type and existence of `parent_node['children']` are redundant after the initial checks.  A more concise and efficient approach would improve the code's readability and maintainability."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `delete_node` does not handle any phone numbers or email addresses.  Its purpose is to delete a node from a Figma-like data structure represented in a database (`DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "set_fill_color": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The descriptions are concise and helpful.  Default values are correctly mentioned and explained (alpha's default of 1.0).  All arguments are documented with types and descriptions. The `Returns` section accurately states that an empty dictionary is returned. The `Raises` section lists all potential exceptions. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic models (`models.Color` and `models.FillableNodeType`) for part of the input validation.  `models.Color` validates the `r`, `g`, `b`, and `a` color components, ensuring they are within the range of 0.0 to 1.0. `models.FillableNodeType` validates the `node_type_str`. However, the validation of `node_id` as a string and the type checking of `r`, `g`, and `b` as numbers are done manually, not through Pydantic models.  While the manual checks are present, using Pydantic models for all input validation would improve consistency and potentially reduce code duplication.  A single Pydantic model could encapsulate all the input validation requirements, making the code cleaner and easier to maintain."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`node_id`, `r`, `g`, `b`, `a`) undergo thorough validation.  `node_id` is checked to ensure it's a string.  `r`, `g`, `b`, and `a` are validated for numeric type (int or float) and range (0.0 to 1.0 inclusive).  The validation covers type, value range, and implicitly handles null/empty checks for `a` (by defaulting to 1.0 and including it in the range check).  Appropriate custom exceptions (`ValidationError`, `InvalidColorError`) are raised with informative messages for invalid inputs.  There are no missing validation checks for the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (node_id, r, g, b, a) are properly type-annotated with their expected types (str, float, float, float, Optional[float] respectively).  The return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters.  Complex types like Optional are used correctly."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`node_id`, `r`, `g`, `b`, `a`) are used.  All documented exceptions (`NodeNotFoundError`, `NodeTypeError`, `InvalidColorError`, `ValidationError`) are properly handled and raised under the appropriate conditions. There are no TODO comments, pass statements, or placeholder implementations. The logic for updating the `fills` array in the `node` dictionary within the global `DB` is complete and functional. The function's return type (an empty dictionary) matches the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `set_fill_color` does not handle any phone number or email address inputs.  Its purpose is to set the fill color of a node in a Figma-like system, taking only color components (r, g, b, a) and a node ID as input.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "delete_multiple_nodes": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and generally accurate, providing a clear description of the function's purpose and behavior.  It correctly identifies the function's arguments and return type. The description of the `Returns` section is particularly strong, detailing the structure of the dictionary and the meaning of its keys.  The `Raises` section accurately lists the exceptions.  Type hints are used effectively throughout."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `delete_multiple_nodes` uses manual input validation for the `node_ids` parameter.  It checks if the list is empty and if all elements are non-empty strings. While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is sufficient and covers all aspects of the input.  Therefore, Pydantic is not strictly needed for this specific function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_multiple_nodes` performs comprehensive validation of its single functional input parameter, `node_ids`.  It checks:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_multiple_nodes` has excellent parameter design and type annotations.  The single parameter `node_ids` is correctly type-annotated as `List[str]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of multiple nodes from the simulated Figma database (global `DB`).  All functional input parameters (`node_ids`) are used.  The documented exceptions (`FigmaOperationError`, `InvalidInputError`) are properly raised in appropriate scenarios. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, handling various edge cases such as node not found, locked nodes, document root deletion attempts, and database inconsistencies. The function's return value matches the docstring's description.  The handling of duplicate `node_ids` in the input list is also gracefully managed by using `dict.fromkeys` to maintain the order of unique IDs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `delete_multiple_nodes` does not handle any phone numbers or email addresses.  Its input is a list of node IDs (strings) for a Figma-like system.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on data integrity checks and node deletion within a database representing a Figma-like file structure."
+          }
+        },
+        "set_text_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  The descriptions are concise and helpful.  Default values for `node_id` and `text` are correctly mentioned.  All arguments are documented with types and descriptions. The `Returns` section accurately states that an empty dictionary is returned. The `Raises` section lists all potential exceptions. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `node_id` and `text` parameters.  It checks for `None`, empty strings, and correct types. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Using Pydantic would add unnecessary complexity in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `set_text_content` performs comprehensive validation on its two functional input parameters, `node_id` and `text`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id` and `text`) are properly type-annotated with their expected types (Optional[str]). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`node_id` and `text`) are used appropriately in the input validation and logic to update the text content in the `DB`.  All documented exceptions are handled. There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type (an empty dictionary)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `set_text_content` function does not handle phone numbers or email addresses.  Its purpose is to update the text content of a Figma node given a node ID and the new text.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does a good job validating its own inputs (node_id and text), but this is unrelated to the prompt's specific requirements regarding phone numbers and emails."
+          }
+        },
+        "set_stroke_color": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, parameters, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`node_id`, `red`, `green`, `blue`, `alpha`, `stroke_weight`).  While Pydantic could provide a more concise and potentially type-safer way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  Therefore, Pydantic is not strictly needed, though it might improve the code's readability and maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters (`node_id`, `red`, `green`, `blue`, `alpha`, `stroke_weight`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id`, `red`, `green`, `blue`, `alpha`, `stroke_weight`) are properly type-annotated with their expected types (str, float, Optional[float]). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used.  Complex types like `Optional[float]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`node_id`, `red`, `green`, `blue`, `alpha`, `stroke_weight`) are used appropriately in the logic.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return type and exception handling.  The function's handling of existing strokes and the defaulting of `stroke_weight` are well-considered."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `set_stroke_color` does not handle any phone number or email address inputs.  Its purpose is to manipulate stroke colors and weights within a Figma design, accepting only node IDs and RGBA color values as parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "figma/node_creation.py": {
+      "functions": {
+        "clone_node": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: cloning a Figma node.  The Args, Returns, and Raises sections are well-structured and informative. Default values for optional parameters (`x` and `y`) are correctly mentioned.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`node_id: str`, `x: Optional[float] = None`, `y: Optional[float] = None`) and performs manual checks on the input values. For example, it checks if `node_id` exists in the database and if `x` and `y` are floats if provided.  While Pydantic could provide a more structured and potentially more comprehensive approach to input validation, the existing manual checks are sufficient for this function's needs.  The manual checks cover all functional input parameters.  Adding Pydantic would add complexity without significant benefit given the simplicity of the input validation requirements."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `node_id` by explicitly declaring it as a string in the function signature.  However, it lacks explicit value validation for `node_id` (e.g., checking for a valid Figma node ID format or length).  While it checks for the existence of the node, this is more of a data existence check rather than direct input validation.  The optional `x` and `y` parameters are not validated at all; they are simply used as provided.  No checks are performed to ensure they are within any reasonable range or are of the correct type (float).  The function does include error handling and raises exceptions for various scenarios, but this does not substitute for proper input validation.  Therefore, the validation is partial, covering only the type of `node_id` but missing crucial checks for `node_id`, `x`, and `y`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id`, `x`, `y`) are properly type-annotated with their expected types (str, Optional[float], Optional[float] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Optional[float]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: it searches for a node, clones it, updates its position based on optional x and y coordinates, and adds it to its parent's children list.  The exception handling for `NodeNotFoundError`, `CloneError`, and `FigmaOperationError` is present and seems appropriate. The docstring accurately reflects the return values."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `clone_node` does not handle any phone number or email address inputs.  Its purpose is to clone nodes within a Figma-like data structure.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_rectangle": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the parameters and their types (including default values), thoroughly details the return value (including the structure of the dictionary), and lists all possible exceptions.  The descriptions are concise and easy to understand. The documentation of the dictionary's structure in the Returns section is particularly helpful.  There are no inconsistencies between the docstring and the function's implementation.  The docstring is complete enough for someone to use the function effectively without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `x`, `y`, `width`, and `height` parameters, checking their numeric type and ensuring `width` and `height` are positive.  While Pydantic could be used to achieve the same validation more concisely, the existing manual checks are sufficient and cover all the functional input parameters.  The `name` and `parent_id` parameters have optional validation within the function's logic, handling cases where `parent_id` is provided but invalid.  Using Pydantic for input validation would not significantly improve the code in this case, given the existing validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `x`, `y`, `width`, and `height` parameters.  Type validation ensures they are numbers (int or float), and value validation checks that `width` and `height` are positive.  The `parent_id` parameter has a partial check: it verifies that if provided, it's a non-empty string and attempts to find a corresponding node in the DB.  However, it lacks a type check for `parent_id` (although the type hint suggests it should be a string). The `name` parameter is not validated at all; it's simply used as is if provided, or a default is used.  Appropriate exceptions (`InvalidInputError`, `ParentNotFoundError`) are raised with informative messages for invalid inputs.  While most functional inputs are validated, the missing validation for the `name` parameter and the lack of a type check for `parent_id` prevent a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`x`, `y`, `width`, `height`, `name`, `parent_id`) are properly type-annotated with their expected types (float, float, float, float, Optional[str], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles input validation for `x`, `y`, `width`, and `height`, raising `InvalidInputError` as documented.  It correctly determines the parent node, handling both cases where `parent_id` is provided and where it's not (defaulting to the current page).  The creation of the rectangle node using the Pydantic model is well-implemented, and the addition to the DB is correct. The return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_rectangle` does not handle any phone number or email address inputs.  Its purpose is to create a rectangle in a Figma-like system, dealing only with geometric coordinates and identifiers. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_frame": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a clear description of the function's purpose and usage within an MCP server context.  It accurately documents the arguments, including their types, default values, and constraints. The `Args` section is particularly thorough, explaining the structure and expected values for dictionary parameters like `fill_color` and `stroke_color`.  The `Returns` section adequately describes the structure of the returned dictionary, although it could benefit from explicitly mentioning the `id` key as a guaranteed return value.  The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The `create_frame` function uses manual input validation for its functional parameters.  It performs type checking and range checks (e.g., ensuring `width` and `height` are positive numbers). While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all the functional input parameters.  The use of Pydantic wouldn't significantly improve the validation in this specific case, given the relatively simple data types and validation rules."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but there are minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and Dict for dictionary parameters.  The function's return type is clearly specified as Dict[str, Any]. No **kwargs parameters are used.  Complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using most input parameters to create a frame node and update the mock database (global `DB`).  The exception handling for validation errors and Figma operation errors appears comprehensive.  However, there's a minor gap: the function doesn't explicitly handle the case where `parent_id` is invalid (though the `find_node_in_tree` function and subsequent check for parent node type indirectly address this).  The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODOs.  All functional parameters are used. The only potential improvement is to add a more explicit check for `parent_id` validity before calling `find_node_in_tree` to potentially provide a more informative error message."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_frame` function does not handle phone numbers or email addresses.  Its inputs and outputs relate solely to Figma frame creation parameters (coordinates, dimensions, colors, layout properties, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_text": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and generally provides a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's behavior and includes details about default values. The documentation of the `font_color` dictionary is thorough, specifying the expected keys and their types.  The `Returns` section correctly lists the keys in the returned dictionary, although the actual implementation returns a slightly simplified version (missing `absoluteBoundingBox`, `constraints`, `style`, `strokes`, `strokeWeight`, `strokeAlign`, `effects`, and `children`).  This is a minor inconsistency.  The docstring also correctly mentions that if `name` is not provided, the `text` content will be used."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`x`, `y`, `text`, `font_size`, `font_weight`, `font_color`, `name`, `parent_id`).  While Pydantic could be used to structure and validate the input, the existing manual checks are comprehensive and cover all aspects of the input data.  Using Pydantic would add complexity without significant benefit in this case.  The validation is thorough, handling type checking, range constraints, and structural validation of the `font_color` dictionary."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`x`, `y`, `text`, `font_size`, `font_weight`, `font_color`, `name`, `parent_id`) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most input parameters and raising the documented exceptions.  The logic for determining the parent node and constructing the new text node is well-implemented.  However, the `absoluteBoundingBox` dimensions are placeholders (`placeholder_width` and `placeholder_height`).  A more robust implementation would calculate these dimensions based on the text content and font size, potentially using a library to accurately determine the rendered text size.  Additionally, the function's docstring mentions that the `fills` property in the returned dictionary will be a list of paint objects, but it only returns a single paint object.  While the current implementation is functional, these minor inaccuracies prevent it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_text` function does not handle phone numbers or email addresses as input.  Its parameters are designed for creating text elements in a Figma-like environment, dealing with coordinates, text content, font styles, and parent nodes.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "figma/document_context.py": {
+      "functions": {
+        "get_styles": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: retrieving styles from a Figma document.  It accurately describes the function's role within an MCP server context. The description of the returned list of dictionaries is quite thorough, detailing the structure and potential keys within each dictionary, including optional fields and nested structures like `paints` and `fontName`.  The `Raises` section correctly lists the exceptions.  Type hints are used effectively in the docstring and align with the function's signature (`-> List[Dict[str, Any]]`)."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_styles` does not have any functional input parameters.  All data it operates on is retrieved from the global `DB` object.  Therefore, input validation using Pydantic models or any other method is not needed or applicable.  The function's internal checks are for data integrity and error handling of data retrieved from the `DB`, not for validating inputs."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation, primarily focusing on type checking and null/empty checks for data retrieved from the global `DB`.  It checks if `current_file_key` is not None,  `files_list_data` is a list (or handles it as an empty list if not), and that `current_file` is a dictionary.  It also validates the types of `global_vars` and `styles_container` as dictionaries.  The code further checks the types of `style_type`, `style_name`, and `style_key` within the loop.  However, it lacks value validation (e.g., checking the format or range of specific values within the dictionaries) and doesn't explicitly check for the existence of keys in the nested dictionaries before accessing them (although it gracefully handles missing keys by using `.get()`).  There is no validation of the `style_id` which is used as a key in the `styles_container` dictionary.  The function also raises appropriate exceptions with informative messages when data is malformed or missing.  Therefore, while type and null checks are comprehensive for the main data structures, more robust value validation is needed for a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_styles` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality of retrieving styles from a Figma document represented in the global `DB`.  It correctly handles various error conditions, such as a missing document, malformed data, and missing style data, raising the appropriate exceptions. The docstring accurately reflects the structure of the returned data.  However, the handling of `style_data` within the loop could be improved.  The code currently skips entries where `style_type`, `style_name`, or `style_key` are not strings.  A more robust approach might involve logging a warning or raising a more specific exception to indicate the issue with the malformed style data rather than silently skipping it.  Additionally, the logic for handling different `styleType` values beyond 'FILL' and 'TEXT' could be more comprehensive, as the docstring suggests other types might exist and have specific properties.  Finally, there's no explicit error handling for issues encountered during the `FigmaStyle` object creation or `model_dump` call. While these are less likely to fail given the preceding checks, adding error handling would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code snippet is a function designed to retrieve style information from a Figma document.  It does not handle or process any phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on data retrieval and structuring from a specific application's data format (Figma's internal structure)."
+          }
+        },
+        "get_local_components": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: retrieving local components from a Figma document.  It accurately describes the function's role within the context of an MCP server by explaining how it retrieves component data. The description of the returned dictionary is quite thorough, specifying all keys and their types (including optional ones).  The `Raises` section correctly lists the potential exceptions.  Type hints are used effectively throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_local_components` does not take any functional input parameters.  All data it operates on is retrieved from the global `DB` object.  Therefore, input validation is not applicable."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_local_components` has no explicit functional input parameters.  All data it uses is retrieved from the global `DB` object. The code performs extensive validation on the data retrieved from `DB`, checking for the existence of keys (`current_file_key`, `files`), the presence of expected nested objects (`current_file`, `figma_document_root`), and the type of `figma_document_root`.  It also includes robust error handling with informative error messages using custom exceptions for various failure scenarios.  Therefore, while there are no input parameters in the traditional sense, the data it relies on is thoroughly validated."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_local_components` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and implements the core logic of retrieving local components from a Figma document represented in the global `DB`.  It handles several potential error conditions and returns a list of dictionaries as documented. However, the implementation relies on two helper functions, `_build_node_map_recursive` and `_collect_components_recursive`, which are not provided.  Without seeing the implementation of these recursive functions, it's impossible to definitively assess whether they correctly build the node map and collect components as intended.  The potential for errors within these helper functions could lead to incomplete or incorrect results.  The error handling is robust, catching various exceptions and raising custom `FigmaOperationError` as specified. The docstring accurately reflects the intended functionality and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code snippet is a function designed to retrieve local components from a Figma document.  It does not handle or process any phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on data retrieval and processing related to Figma's internal data structures."
+          }
+        }
+      }
+    },
+    "figma/layout_operations.py": {
+      "functions": {
+        "set_layout_mode": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately reflects the function's behavior, and thoroughly documents all parameters, return values, and potential exceptions.  The descriptions are concise and easy to understand. The optional parameter `layout_wrap` and its default value (implicitly `None`) are correctly documented, including the conditional logic of its applicability based on `layout_mode`.  The `Args` and `Raises` sections are particularly strong, covering all scenarios.  The docstring correctly states that an empty dictionary is returned.  There are no inconsistencies between the docstring and the implementation.  The use of `LayoutModeEnum` and `LayoutWrapEnum` is appropriately mentioned, guiding users to the relevant enumerations for valid input values."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic models (`LayoutModeEnum` and `LayoutWrapEnum`) to validate the `layout_mode` and `layout_wrap` parameters.  This is good practice for ensuring these parameters are within the expected set of values. However, the validation of `node_id` is done manually with `isinstance` checks and string length checks instead of using a Pydantic model.  A Pydantic model could be used to consolidate the validation of `node_id` (including its type and non-emptiness) into a more concise and potentially more robust validation step.  While the existing manual checks are functional, a Pydantic model would offer better structure and maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters (`node_id`, `layout_mode`, `layout_wrap`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id`, `layout_mode`, `layout_wrap`) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`node_id`, `layout_mode`, `layout_wrap`) are used appropriately in the logic.  All documented exceptions are handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, correctly updating the `node` dictionary within the global `DB`. The docstring accurately reflects the function's behavior, including return type and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `set_layout_mode` does not handle any phone numbers or email addresses.  Its purpose is to manage the layout mode of Figma nodes, taking only node IDs and layout parameters as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "figma/node_reading.py": {
+      "functions": {
+        "scan_nodes_by_types": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types (`node_id` as string, `types` as a list of strings), and thoroughly details the structure of the returned dictionary, including the types of each key.  The `Raises` section accurately lists all potential exceptions and provides informative descriptions.  The docstring also correctly reflects the function's behavior, including the handling of empty inputs and the validation of node types.  There are no inconsistencies between the docstring and the implementation. The examples provided for unrecognized types and container types enhance usability. The only minor improvement might be to explicitly state that the function performs a recursive search, although this is implied."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `node_id` and `types` parameters.  It checks the types of these parameters and their contents (e.g., empty strings, empty lists, valid node types).  While Pydantic could be used to structure this validation more concisely and potentially offer more advanced validation features (like regular expressions for node IDs), the existing manual validation is comprehensive for the given inputs.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `node_id` and `types`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`node_id` and `types`) are properly type-annotated with their expected types (str and List[str], respectively).  The return type is also clearly specified as `List[Dict[str, Any]]`. The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and implements the core logic of scanning for child nodes of specific types within a Figma node.  All functional input parameters (`node_id` and `types`) are used correctly.  The exception handling is comprehensive, covering the documented exceptions. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `scan_nodes_by_types` does not handle any phone number or email address inputs.  Its purpose is to scan a Figma node's descendants for nodes of specific types.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses solely on Figma node data processing and input validation related to node IDs and types."
+          }
+        },
+        "get_selection": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: retrieving information about selected nodes in Figma.  It accurately describes the function's return value as a list of dictionaries, detailing the keys and types within each dictionary. The `Raises` section correctly lists the exceptions that the function might throw.  The description of the return value is particularly well-done, clearly explaining the structure of the returned data."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_selection` does not have any functional input parameters.  All data it operates on comes from the global `DB` dictionary and the `utils` module.  Therefore, Pydantic models are not needed for input validation, and the existing type checking and manual validation within the function are sufficient."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_selection()` does not have any explicit input parameters.  Its data comes from the global `DB` dictionary.  However, the code comprehensively validates the data retrieved from `DB`, checking for the correct types (dict, list, str) and for the presence of expected keys and values at multiple levels.  It also performs null/empty checks on key data structures and raises informative `FigmaOperationError` and `NoSelectionError` exceptions when validation fails.  All data paths from the `DB` are checked for type and content validity before being used.  Therefore, the validation is considered comprehensive given the indirect nature of its input."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_selection` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring. It retrieves selected node IDs from the global `DB`, validates the data from the Figma file, searches for nodes based on their IDs, extracts necessary information (ID, name, type, parentId), handles exceptions as documented (`NoSelectionError`, `FigmaOperationError`), and returns a list of dictionaries conforming to the specified structure.  All functional logic is present and complete. There are no placeholders, TODOs, or pass statements. The docstring accurately reflects the function's behavior and return type.  There are no unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone numbers or email addresses.  Its purpose is to retrieve information about selected nodes within a Figma document.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_node_info": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and the structure of the returned dictionary.  It correctly documents the `nodeId` argument and the overall `Dict[str, Any]` return type.  The `Raises` section accurately lists the exceptions.  The description of the nested dictionary structures within the return value is quite detailed, which is helpful.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_node_info` has only one functional input parameter: `nodeId`.  Input validation for `nodeId` is performed using a simple `if` statement that checks if `nodeId` is a non-empty string. This is sufficient validation for this parameter, and using a Pydantic model would be unnecessary overhead.  Pydantic is used extensively within the function for validating the structure of the Figma node data retrieved from the database, but not for validating the input `nodeId`."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_node_info` performs comprehensive validation on its single functional input parameter, `nodeId`.  It checks for both the type (using `isinstance`) and the value (checking for emptiness using `not nodeId`).  An appropriate exception (`InvalidInputError`) is raised with a clear message if the input is invalid.  All aspects of type, value, and error handling are addressed for this parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_node_info` has excellent parameter design.  It has one parameter, `nodeId`, which is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling the `nodeId` input parameter and raising the documented exceptions (`InvalidInputError`, `FigmaOperationError`, `NodeNotFoundError`).  The logic for recursively processing child nodes and handling various data structures within the Figma data (like optional fields and different formats for `fills` and `strokes`) is implemented.  The docstring accurately reflects the return type and the structure of the returned dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  Its purpose is to retrieve and format data about nodes from a Figma file.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "figma/annotation_operations.py": {
+      "functions": {
+        "get_annotations": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for parameters are correctly stated. The types are specified for all parameters and the return value.  The documentation of the dictionary structure in the return value is comprehensive, detailing all keys, types, and nested structures (including the optional 'category' and 'properties' fields)."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation using `isinstance` checks for the `nodeId` and `includeCategories` parameters.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling more complex data types or custom validation rules), the existing manual checks adequately ensure that the inputs are of the correct type.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_annotations` performs comprehensive validation on its two functional input parameters: `nodeId` and `includeCategories`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`nodeId` and `includeCategories`) are properly type-annotated with their expected types (`Optional[str]` and `Optional[bool]`, respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of annotations based on the provided `nodeId` and `includeCategories` parameters.  Both parameters are used appropriately in the function's logic. All documented exceptions (`NodeNotFoundError`, `PluginError`, `ValidationError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, correctly processing annotations and including category details when requested. The docstring accurately reflects the function's behavior, return type, and exception handling.  The internal helper function `utils._collect_annotations_recursively` is assumed to be correctly implemented elsewhere in the codebase."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_annotations` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve and process annotations from a document, using a node ID and a flag to include category details.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "set_annotation": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately reflects the function's behavior, and thoroughly documents all parameters, return values, and exceptions.  Default values for optional parameters are correctly specified and explained.  The documentation of the `properties` parameter, including its nested structure, is particularly good. The `Returns` section accurately describes the structure of the dictionary returned, including optional keys.  The `Raises` section lists all potential exceptions with informative descriptions. There are no inconsistencies between the docstring and the implementation.  The docstring is complete enough for a developer to understand and use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`nodeId`, `labelMarkdown`, `annotationId`, `categoryId`, `properties`).  It checks types and constraints such as non-empty strings and the structure of the `properties` list. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all functional input parameters.  Therefore, Pydantic is not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for most functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`nodeId`, `labelMarkdown`, `annotationId`, `categoryId`, `properties`) are properly type-annotated with their expected types using type hints.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All complex types (List, Dict, Optional) are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation and update of annotations as described in its docstring.  All functional input parameters (`nodeId`, `labelMarkdown`, `annotationId`, `categoryId`, `properties`) are used appropriately in the function's logic.  All documented exceptions are handled. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, correctly handling both creation and update scenarios. The returned dictionary matches the structure and content specified in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `set_annotation` function does not handle phone numbers or email addresses as input.  Its purpose is to manage annotations within a Figma-like system, dealing with node IDs, Markdown labels, categories, and custom properties.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function's input validation is focused on the data types and structure relevant to its specific task, not on the format of contact information."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "figma": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`).  The `tests` folder is well-populated with numerous test files."
+      }
+    }
+  }
+}

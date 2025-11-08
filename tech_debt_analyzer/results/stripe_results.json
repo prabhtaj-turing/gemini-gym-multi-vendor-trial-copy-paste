@@ -1,0 +1,573 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.818406Z",
+  "results": {
+    "stripe/customer.py": {
+      "functions": {
+        "create_customer": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including the optional `email` parameter and its default value (implicitly as `None`). The `Returns` section correctly specifies the type and describes the structure of the returned dictionary, including details about each key and its type.  The `Raises` section accurately lists the `InvalidRequestError` exception. Types are specified for all parameters and return values. The documentation of the dictionary structure in the Returns section is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`Customer`) to validate the `name` and `email` parameters. However, it performs an additional check for an empty `name` string before passing the data to the Pydantic model.  While this redundant check doesn't hurt, it suggests a potential lack of complete trust in the Pydantic model's validation capabilities.  A more streamlined approach would rely solely on the Pydantic model's validation, removing the manual `if not name or not name.strip():` check.  The Pydantic model handles the validation of the `email` field (assuming it's correctly defined within the `Customer` model to enforce email format).  Therefore, the validation is partially reliant on Pydantic, but not fully consistent in its approach."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation.  The `name` parameter is checked for emptiness and whitespace. The email parameter is not explicitly checked for format validity (e.g., using a regular expression to ensure it's a valid email address), although the `ValidationError` caught within the `try...except` block handles validation errors from the `Customer` class, which presumably performs email validation internally.  This indirect validation is sufficient to rate this as \"Good\" rather than \"Comprehensive\".  All functional input parameters (`name` and `email`) are checked before use, although the email check is indirect.  The error handling is also good, providing informative error messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name` and `email`) are properly type-annotated with their expected types (`str` and `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a customer in the simulated database (`DB`).  It handles both cases where an email is provided and where it is not.  Input validation is performed, raising `InvalidRequestError` for empty names and handling `ValidationError` exceptions from the `Customer` object's validation. The function uses both `name` and `email` parameters correctly.  The returned dictionary matches the docstring's description of the return type and contents.  There are no placeholders or TODOs. The exception handling is comprehensive and informative.  The logic is complete and functional within the constraints of using the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function currently handles email validation indirectly through the `ValidationError` exception raised by the `Customer` class (presumably a Pydantic model).  This is a good approach as it leverages a dedicated validation library. However, the code doesn't explicitly show the validation rules within the `Customer` model, so we can't definitively assess the robustness of email validation.  It's assumed that the `Customer` model includes appropriate email validation (e.g., using Pydantic's `EmailStr` type)."
+          }
+        },
+        "list_customers": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's parameters, including their types and default values (although the default value of `limit` is not explicitly stated as 10 in the docstring, it's clear from the description and implementation).  The `Returns` section is detailed, correctly outlining the structure of the dictionary, including nested dictionaries and lists. The `Raises` section correctly identifies the `InvalidRequestError`.  Types are consistently specified for parameters and return values.  The documentation of the dictionary structure is comprehensive."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `limit` and `email` parameters.  `limit` is checked to ensure it's an integer within the range [1, 100]. `email` is validated using a `validate_email` function (the implementation of which is not shown, but assumed to perform validation).  While Pydantic could be used, the existing manual validation is sufficient and covers all functional input parameters.  Using Pydantic wouldn't add significant value in this case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`limit` and `email`) are properly type-annotated with their expected types (`Optional[int]` and `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used.  Complex types like `List`, `Dict`, and `Optional` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `limit` and `email` parameters to filter and paginate the customer list.  Exception handling for invalid `limit` values is implemented. The email validation, however,  is incomplete as it uses a `validate_email` function without showing its implementation.  It's assumed that this function returns a tuple where the second element is the validated email, but this is an assumption based on how it's used.  If `validate_email` throws an exception other than what's caught, it could lead to unexpected behavior.  The docstring accurately reflects the function's return value.  The sorting by creation date is a nice addition not explicitly mentioned in the docstring but doesn't detract from functionality."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function correctly validates email addresses using a `validate_email` function (which is assumed to exist and perform proper validation, as its implementation is not provided).  This fulfills criterion 2."
+          }
+        }
+      }
+    },
+    "stripe/product.py": {
+      "functions": {
+        "create_product": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values for `description`. The `Returns` section correctly specifies the return type and lists the expected keys in the dictionary, although it could benefit from explicitly stating the types of each key (e.g., `id: str`, `created: int`). The `Raises` section correctly identifies potential exceptions.  Type hints are used effectively throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual type and emptiness checks for the `name` and `description` parameters.  While this provides some input validation, it doesn't leverage Pydantic models.  Pydantic could improve this by providing a more concise and potentially more comprehensive validation mechanism, including handling of more complex validation rules (e.g., length restrictions, regular expressions) in a declarative manner.  The current manual checks are sufficient for the basic validation needs of this function, but Pydantic would offer better maintainability and extensibility for more complex validation requirements."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name` and `description`) are properly type-annotated with their expected types (str and Optional[str], respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses both `name` and `description` parameters.  Exception handling for `InvalidRequestError` is implemented correctly for both missing and invalid input types. The function's logic is mostly complete, creating a product and storing it in the global `DB`. However, the docstring mentions that the returned dictionary will include fields like `id`, `object`, `active`, `created`, `updated`, `livemode`, and `metadata`, but the `new_product.model_dump()` only returns the `name` and `description`.  The actual returned dictionary lacks these additional fields promised in the docstring.  Therefore, the return value doesn't fully match the docstring's description.  Adding these fields to the returned dictionary would make the implementation fully compliant with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_product` does not handle any phone number or email address inputs.  It only deals with product names and descriptions, both of which are strings. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles string input validation for its intended purpose."
+          }
+        },
+        "list_products": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the `limit` parameter and its constraints is accurate.  The documentation of the dictionary structure in the return value is thorough, including nested structures and optional fields.  Types are consistently specified for parameters and return values using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `list_products` has only one functional input parameter, `limit`.  While it doesn't use a Pydantic model for validation, it performs manual type checking and range validation using `isinstance` and a conditional statement. This is sufficient for validating the `limit` parameter.  Using a Pydantic model would add extra complexity without significant benefit in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `list_products` has one functional input parameter: `limit`.  The code performs comprehensive validation on this parameter.  It checks for the correct data type (integer) using `isinstance` and then checks if the value falls within the acceptable range (1 to 100) using a conditional statement.  An `InvalidRequestError` is raised with a clear message if the validation fails.  All possible scenarios for invalid input (wrong type, out of range) are handled.  The default value is also correctly handled."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_products` has excellent parameter design and type annotations.  The single parameter `limit` is correctly type-annotated as `Optional[int]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the function's docstrings and type hints are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly fetches products from the global `DB`, applies the specified limit (or default), handles pagination, and returns a dictionary matching the docstring's specification.  All functional input parameters (`limit`) are used.  The function includes comprehensive exception handling for `KeyError`, `TypeError`, and other exceptions, raising `InvalidRequestError` and `ApiError` as documented.  There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_products` does not handle any phone number or email address inputs.  Its purpose is to fetch and format product data from a database (presumably Stripe), and it doesn't include any fields or logic related to phone numbers or emails. Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "stripe/price.py": {
+      "functions": {
+        "create_price": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the `Returns` section is particularly thorough, detailing the structure of the dictionary and the meaning of each key.  Default values are correctly mentioned.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the `Returns` section is excellent."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`Price`) to validate the `product`, `unit_amount`, and `currency` parameters.  The `try...except` block catches `ValidationError` exceptions raised by Pydantic, providing detailed error messages to the user.  While there's a preliminary check for `unit_amount` being None, this is redundant as Pydantic's model already handles this validation (and more comprehensively).  The Pydantic model handles type checking, constraint validation (e.g., non-negative `unit_amount`), and potentially custom validation rules defined within the `Price` model (not shown in the provided code).  Therefore, the input validation is effectively handled by Pydantic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters: `product`, `currency`, and `unit_amount`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`product`, `currency`, `unit_amount`) are properly type-annotated with their expected types (str, str, Optional[int] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a Stripe price, validating inputs using Pydantic and handling exceptions as documented.  All functional input parameters (`product`, `currency`, `unit_amount`) are used. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, return type, and exception handling.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_price` does not handle phone numbers or email addresses.  Its inputs are a product ID, currency, and a unit amount.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable.  The function focuses on price creation within a system (possibly Stripe, given the naming conventions), and its input validation is centered around the data types and constraints relevant to that task."
+          }
+        },
+        "list_prices": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's arguments, including default values, and their types. The `Returns` section is quite comprehensive, detailing the structure of the dictionary, including nested dictionaries and lists.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `product` and `limit` parameters.  Type checking is performed using `isinstance`, and range checks and format checks are done using `if` statements. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all functional input parameters.  The use of Pydantic would not significantly improve the validation in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `product` and `limit`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`product` and `limit`) are properly type-annotated with their expected types (Optional[str] and Optional[int], respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types within the type annotations (Optional, Dict, List) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly fetches and filters prices from the global `DB` based on the `product` and `limit` parameters.  All functional input parameters (`product` and `limit`) are used.  All documented exceptions (`TypeError`, `InvalidRequestError`, `ResourceNotFoundError`) are properly implemented. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional given the global `DB`. The docstring accurately describes the function's parameters, return value, and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_prices` does not handle any phone number or email address inputs.  Its inputs are a product ID (string) and a limit (integer), neither of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on fetching and filtering price data from a database (represented by `DB`)."
+          }
+        }
+      }
+    },
+    "stripe/payment.py": {
+      "functions": {
+        "create_payment_link": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written. It clearly explains the function's purpose, accurately describes the arguments and their types, meticulously details the structure of the dictionary return value including nested structures, and lists all possible exceptions.  The descriptions are precise and helpful.  There is perfect alignment between the docstring's description of the return value and the actual structure of the dictionary returned by the function. The docstring also correctly notes that `metadata` is optional and handles the optional `redirect` key within the `after_completion` dictionary based on the `type` key.  All aspects of the function's behavior are accurately reflected in the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `price` and `quantity` parameters.  It checks the type and value of each parameter and raises `InvalidRequestError` if they are invalid. While Pydantic models could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Using Pydantic would not significantly improve the code in this specific case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its two functional input parameters, `price` and `quantity`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`price` and `quantity`) are properly type-annotated with their expected types (str and int, respectively).  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All type annotations are complete and accurate, including the use of `Dict`, `List`, and `Optional` where appropriate."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a payment link, including input validation, fetching price data from the mock database (DB), constructing the payment link object according to the specified schema, storing it in the DB, and returning the created object.  All functional input parameters (`price` and `quantity`) are used.  All documented exceptions (`InvalidRequestError` and `ResourceNotFoundError`) are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  The logic is complete and functional within the context of the global DB."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_payment_link` does not handle any phone number or email address inputs.  Its inputs are a price ID (string) and a quantity (integer). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on creating a payment link within a simulated Stripe-like system, using provided price and quantity data.  No aspects of phone number or email processing are present in the code."
+          }
+        },
+        "list_payment_intents": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for `customer` and `limit` are correctly documented.  The `Args` and `Returns` sections are comprehensive, including detailed descriptions of the nested dictionary structures. The `Raises` section accurately lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `customer` and `limit` parameters.  It checks the type and value range of `limit` and the type and existence of `customer` in the `DB`. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `customer` and `limit`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`customer` and `limit`) are properly type-annotated with their expected types (`Optional[str]` and `Optional[int]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  Both `customer` and `limit` parameters are used appropriately in the filtering and limiting of payment intents retrieved from the global `DB`.  All documented exceptions (`InvalidRequestError` and `ResourceNotFoundError`) are properly handled. There are no placeholders, TODO comments, or pass statements. The logic for retrieving, filtering, sorting, limiting, and formatting the payment intents is complete and functional. The returned dictionary structure and content precisely match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_payment_intents` does not handle any phone number or email address inputs.  Its parameters are `customer` (a customer ID string) and `limit` (an integer).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and filtering payment intents from a database, based on customer ID and a limit on the number of results."
+          }
+        }
+      }
+    },
+    "stripe/invoice.py": {
+      "functions": {
+        "create_invoice": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and their types, including the optional `days_until_due` parameter and its default value (implicitly None). The `Returns` section is comprehensive, detailing the structure of the returned dictionary, including nested dictionaries and lists, with types specified for each key.  The `Raises` section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `Invoice` model (presumably defined elsewhere) to validate the structure and defaults of the invoice data *after* it has performed its own manual validation of the `customer` and `days_until_due` parameters.  While Pydantic is used, it's not used to validate the *input* parameters directly. The manual checks for the type and validity of `customer` and `days_until_due` are performed before the Pydantic model is used.  Using a Pydantic model to define the input parameters themselves would improve the code by centralizing validation and reducing redundancy.  The current approach is partially using Pydantic, but it could be more effectively utilized for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `customer` and `days_until_due`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`customer` and `days_until_due`) are properly type-annotated with their expected types (str and Optional[int], respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly uses both `customer` and `days_until_due` parameters in its logic.  All documented exceptions are implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  However, the function's logic relies on a Pydantic `Invoice` model (not shown in the provided code).  The completeness of the function depends entirely on the functionality and default values within this `Invoice` model.  If the `Invoice` model doesn't properly handle the creation of a Stripe invoice with all the necessary fields (as described in the docstring), then the function would be incomplete.  The assumption is that the `Invoice` model handles the creation of the `lines` and other fields not explicitly set in `invoice_creation_data`.  Without seeing the `Invoice` model, it's impossible to definitively say the function is fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_invoice` does not handle any phone number or email address inputs.  Its inputs are a customer ID (string) and an optional number of days (integer). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on invoice creation within a system, using a customer ID as its primary identifier."
+          }
+        },
+        "create_invoice_item": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  The description is clear, and the Args, Returns, and Raises sections are comprehensive.  Types are specified for all parameters and the return value.  The documentation of the dictionary return value is particularly thorough, detailing all keys, types, and nested structures."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `customer`, `price`, and `invoice` parameters.  It checks that each is a non-empty string. While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., enforcing string length limits or using more sophisticated validation rules), the existing manual checks adequately address the basic validation needs for these parameters in this specific function.  The use of Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the simple validation requirements."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`customer`, `price`, and `invoice`).  Each parameter is checked to ensure it is a non-empty string using `isinstance` and `.strip()`.  Furthermore, the function validates that the IDs refer to existing objects in the mock database (`DB`) and that the price associated with the invoice item is active.  Appropriate exceptions (`InvalidRequestError` and `ResourceNotFoundError`) are raised with informative error messages for invalid inputs.  All validation checks are performed before the parameters are used in subsequent operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`customer`, `price`, `invoice`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new invoice item in the simulated database (`DB`).  All functional input parameters (`customer`, `price`, `invoice`) are used to retrieve and validate data, and to construct the new invoice item.  All documented exceptions (`InvalidRequestError`, `ResourceNotFoundError`, `ApiError`) are handled appropriately. There are no TODOs, placeholders, or `pass` statements. The function's logic is complete and functional within the context of the global `DB`. The docstring accurately reflects the function's behavior, including the structure of the returned dictionary and the exceptions it might raise.  The recalculation of invoice totals after creating the item demonstrates good design by ensuring data consistency."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_invoice_item` does not handle any phone numbers or email addresses.  Its inputs are strings representing IDs (customer ID, price ID, invoice ID), which are treated as opaque identifiers and not subjected to any normalization or validation beyond checking for non-empty strings.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "finalize_invoice": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values.  The documentation of the dictionary structure in the Returns section is particularly thorough, including nested structures and optional fields."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `invoice` parameter. It checks if the input is a non-empty string.  While Pydantic could be used, the current validation is sufficient for this simple case.  Using Pydantic would add overhead without significant benefit given the straightforward nature of the input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `finalize_invoice` performs comprehensive validation of its single functional input parameter, `invoice`.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `finalize_invoice` has excellent parameter design.  The single parameter `invoice` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly uses the `invoice` parameter to fetch and update the invoice in the global `DB`.  Exception handling for `InvalidRequestError` and `ResourceNotFoundError` is implemented correctly. The docstring accurately reflects the function's behavior and return type.  However, the `amount_due` field is added to the invoice object without a clear justification in the docstring or comments. While functionally it mirrors `total`,  it's an extra field not explicitly mentioned in the docstring's description of the returned dictionary.  Adding a comment explaining the purpose of `amount_due` would improve clarity."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `finalize_invoice` function does not handle any phone number or email address inputs.  Its input is an invoice ID (string), and its purpose is to finalize an invoice within a system (likely Stripe, based on the docstrings).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "stripe/balance.py": {
+      "functions": {
+        "retrieve_balance": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: retrieving the Stripe balance.  It accurately describes the structure of the returned dictionary, including nested dictionaries and lists, specifying types for keys and values. The types are mostly complete, using `Dict[str, Any]` where the exact structure is complex or variable.  However, there's a significant inconsistency: the docstring states the function retrieves the balance from Stripe, but the implementation uses a global `DB` variable (`balance_model = _get_objects(DB, \"balance\")`). This discrepancy needs to be addressed.  The docstring should reflect that the balance is retrieved from the internal `DB` rather than directly from Stripe.  Additionally, while the docstring details the structure of the returned dictionary comprehensively, it doesn't mention any potential exceptions that `_get_objects` might raise (e.g., `KeyError` if \"balance\" is not found in `DB`).  Adding a \"Raises\" section would improve completeness."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `retrieve_balance` does not take any functional input parameters.  Therefore, the question of input validation using Pydantic or other methods is not applicable.  The function only interacts with the global `DB` object."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `retrieve_balance` has no functional input parameters.  Therefore, no input parameter validation is needed, and the absence of validation is not a deficiency."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `retrieve_balance` has no parameters, so the question of parameter type annotations and clarity doesn't apply.  The return type is clearly specified as `Dict[str, Any]`, which, while broad, is appropriate given the complex nested structure of the Stripe balance data.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function does not retrieve the balance from Stripe as the docstring suggests. Instead, it retrieves a balance model from a global `DB` dictionary using a helper function `_get_objects`.  The docstring describes a complex dictionary structure for the balance, but the function provides no guarantee that `balance_model` will match this structure.  There's no error handling for cases where the \"balance\" key might be missing from the `DB` or if `_get_objects` returns an unexpected result. The implementation is therefore incomplete and doesn't match the docstring's description of retrieving a Stripe balance."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `retrieve_balance` function does not handle any phone number or email address inputs.  It retrieves balance information from a database (presumably Stripe) and returns it as a dictionary.  Therefore, the criteria of phone number normalization and email validation are not applicable.  There's nothing to evaluate in terms of input handling for these data types."
+          }
+        }
+      }
+    },
+    "stripe/refund.py": {
+      "functions": {
+        "create_refund": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's core logic and includes default values for optional parameters. The description of the `Returns` section is quite comprehensive, detailing the structure of the dictionary.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `payment_intent` and `amount` parameters.  It checks for empty strings, correct types, and positive values.  While Pydantic could be used to structure and validate these inputs, the existing manual checks are sufficient and cover all functional input parameters.  The use of Pydantic wouldn't add significant value in this specific case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`payment_intent`, `amount`, `reason`) are properly type-annotated with their expected types (str, Optional[int], Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a refund based on the provided `payment_intent`, `amount`, and `reason`.  All functional input parameters (`payment_intent`, `amount`, `reason`) are used appropriately in the function's logic.  The documented exceptions (`InvalidRequestError` and `ResourceNotFoundError`) are properly raised under the specified conditions. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and the details of the returned dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_refund` function does not handle any phone number or email address inputs.  Its inputs are a payment intent ID (string), an optional amount (integer), and an optional reason (string).  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "stripe/subscription.py": {
+      "functions": {
+        "list_subscriptions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose and usage.  It accurately describes the function's filtering capabilities and the structure of the returned dictionary.  All parameters, including their default values, are documented, and the types are specified. The `Returns` section is detailed, correctly outlining the nested structure of the dictionary and its keys. The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for the `customer`, `price`, `status`, and `limit` parameters using `isinstance` checks, range checks, and value checks against a `VALID_SUBSCRIPTION_STATUSES` set.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and correctly handle the validation requirements for the functional parameters.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All four functional input parameters (`customer`, `price`, `status`, and `limit`) are validated.  `limit` is checked for type (integer) and value (range 1-100). `customer` and `price` are checked for type (string) and format (starting with 'cus_' and 'price_', respectively). `status` is checked against a list of valid values (`VALID_SUBSCRIPTION_STATUSES`).  Each validation includes appropriate error handling with clear error messages raised via `InvalidRequestError`.  All checks are performed before the parameters are used in filtering the subscriptions."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (customer, price, status, limit) are properly type-annotated with their expected types (Optional[str] or Optional[int]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of listing subscriptions, filtering them based on customer ID, price ID, and status, and paginating the results.  It also correctly handles the `limit` parameter for pagination.  The exception handling for invalid input parameters (`InvalidRequestError`) is implemented.  The docstring accurately reflects the function's behavior and return type. However, the `VALID_SUBSCRIPTION_STATUSES` is not defined within the provided code snippet, making the code incomplete.  Additionally, the code uses a hardcoded `current_limit` of 10, which is then overridden by the `limit` parameter if provided. While functional, this is not ideal and could be simplified.  Finally, the function assumes that the 'items' field within each subscription dictionary always contains a list under the 'data' key and a 'price' dictionary within each item.  Error handling for missing keys or incorrect data types in these nested structures is absent."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_subscriptions` does not handle any phone number or email address inputs.  Its parameters are designed for filtering Stripe subscriptions based on customer ID, price ID, status, and a limit on the number of results.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "cancel_subscription": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's arguments and the `subscription` parameter's type. The `Returns` section is detailed, correctly specifying the dictionary's structure and the types of its keys.  The `Raises` section correctly lists the exceptions.  Type hints are used effectively throughout the docstring.  The documentation of the dictionary in the return value is quite thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance(subscription, str)`) and manual validation (`utils.subscription_status_is_cancelable(current_status)`) to validate the `subscription` input.  While Pydantic could be used to structure this validation more elegantly, the existing checks are sufficient to ensure the input is valid before proceeding.  No Pydantic models are used, but the existing validation is adequate."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `subscription` parameter, ensuring it's a string.  It also performs value validation by checking if a subscription with the given ID exists in the database (`subscription_obj`) and if its status allows cancellation (`utils.subscription_status_is_cancelable`).  Error handling is present with `InvalidRequestError` and `ResourceNotFoundError` for various failure scenarios, providing informative error messages.  However, while it checks for the existence of the subscription, it doesn't explicitly validate the format of the subscription ID itself (e.g., length restrictions, allowed characters).  Therefore, the validation is good but not fully comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `cancel_subscription` has excellent parameter design and type annotations.  The single parameter `subscription` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `subscription` parameter to retrieve and update the subscription object in the global `DB`.  Exception handling for `InvalidRequestError` and `ResourceNotFoundError` is implemented. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `cancel_subscription` function does not handle any phone number or email address inputs.  Its sole input is a subscription ID (string), which is used to retrieve and update a subscription object from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_subscription": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core functionality of updating a Stripe subscription, including the handling of subscription items (adding, updating, deleting). The description of `proration_behavior` options is clear.  All arguments are documented with types and descriptions, and default values are correctly specified.  The `Returns` section is exceptionally detailed, meticulously outlining the structure of the returned dictionary, including nested dictionaries and their respective keys and types.  This level of detail is highly beneficial. The `Raises` section correctly lists the potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`UpdateSubscriptionItem`) to validate the `items` parameter, which is good.  However, other parameters (`subscription` and `proration_behavior`) are validated using manual checks. While these manual checks are present, using Pydantic models for all inputs would provide a more consistent and potentially more robust validation approach, offering features like automatic type checking and error reporting.  The manual checks are sufficient, but Pydantic would improve the code's structure and maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters: `subscription`, `proration_behavior`, and `items`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`subscription`, `proration_behavior`, `items`) are properly type-annotated with their expected types, including the use of `Optional` and `List[Dict[str, Any]]` where appropriate.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update_subscription functionality as described in its docstring.  All functional input parameters (`subscription`, `proration_behavior`, `items`) are used appropriately in the logic.  All documented exceptions (`InvalidRequestError`, `ResourceNotFoundError`, `ValidationError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, given the use of the global `DB` dictionary. The return dictionary structure and content precisely match the docstring's specification."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_subscription` function does not handle any phone number or email address inputs.  Its purpose is to update Stripe subscriptions based on provided subscription IDs, item details (prices, quantities), and proration behavior.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses on data validation and manipulation related to subscription management, not user contact information."
+          }
+        }
+      }
+    },
+    "stripe/coupon.py": {
+      "functions": {
+        "list_coupons": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the `limit` parameter and its constraints is accurate.  The documentation of the nested dictionary structures within the return value (`data` field) is comprehensive and helpful.  Types are consistently specified for parameters and return values using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `limit` parameter. It checks if `limit` is an integer and if it's within the allowed range (1-100).  While Pydantic could be used, the current manual validation is sufficient and clear.  There are no other functional input parameters to validate."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `list_coupons` has one functional input parameter: `limit`.  The code performs comprehensive validation on this parameter.  It checks if `limit` is an integer using `isinstance` and then checks if it falls within the valid range of 1 to 100 (inclusive).  Appropriate `InvalidRequestError` exceptions are raised with clear error messages for both type and value validation failures.  All possible scenarios for the `limit` parameter (including `None`) are handled correctly."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_coupons` has excellent parameter design and type annotations.  The single parameter `limit` is correctly type-annotated as `Optional[int]`. The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used.  All type annotations are complete and accurate, reflecting the expected types of the parameter and return value."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the specified functionality.  It validates the `limit` parameter as documented, raising `InvalidRequestError` for invalid inputs.  The function retrieves data from the global `DB`, processes it according to the specified logic (including sorting and slicing based on the `limit`), and constructs the response dictionary as described in the docstring. The return type and structure precisely match the docstring.  There are no placeholders, TODOs, or unused functional parameters.  All exception handling is correctly implemented. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_coupons` does not handle any phone number or email address inputs.  Its purpose is to retrieve and format coupon data from a database, and it does not include any parameters or logic related to phone numbers or email addresses. Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_coupon": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values are correctly documented. The `Args` and `Returns` sections are comprehensive, including type information and descriptions.  The documentation of the dictionary structure in the `Returns` section is particularly helpful, listing key names, types, and providing context for optional fields.  The `Raises` section accurately lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all functional input parameters.  While Pydantic could provide a more concise and potentially more robust way to perform these checks, the existing validation is comprehensive and covers all the necessary aspects.  The manual approach is sufficient in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`name`, `amount_off`, `currency`, `duration`, `percent_off`, `duration_in_months`) undergo both type and value validation.  Type validation ensures each parameter is of the expected data type (str, int, float). Value validation checks for valid ranges (e.g., `percent_off` between 0 and 100, `amount_off` being positive, `duration_in_months` being positive if `duration` is \"repeating\"),  empty strings (`name`), and allowed values (`duration`).  Appropriate exceptions (`InvalidRequestError` and `ValidationError`) are raised with informative error messages for invalid inputs.  All validation checks are performed before the parameters are used to create the coupon object."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `amount_off`, `currency`, `duration`, `percent_off`, `duration_in_months`) are properly type-annotated with their expected types (str, int, Optional[str], Optional[str], Optional[float], Optional[int] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a Stripe coupon based on the provided parameters.  All functional input parameters (`name`, `amount_off`, `currency`, `duration`, `percent_off`, `duration_in_months`) are used appropriately in the function's logic.  All documented exceptions (`InvalidRequestError`, `ValidationError`) are handled correctly. There are no TODO comments, pass statements, or placeholder implementations. The functional logic is complete and correctly interacts with the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_coupon` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on creating coupon objects based on provided parameters like name, discount amount, currency, and duration.  No email or phone number fields are present in the function's input or output."
+          }
+        }
+      }
+    },
+    "stripe/dispute.py": {
+      "functions": {
+        "update_dispute": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a clear explanation of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `DisputeEvidence` model (presumably defined elsewhere) to validate the `evidence` parameter. This is a good use of Pydantic for structured data validation. However, the `dispute` and `submit` parameters are validated using basic type checks (`isinstance`), not a Pydantic model.  While the type checks are sufficient for these simple parameters, using a Pydantic model would provide a more consistent and potentially more expressive validation approach (e.g., allowing for more complex constraints on the dispute ID).  Therefore, the use of Pydantic is partial."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`dispute`, `evidence`, `submit`) are properly type-annotated with their expected types (str, Optional[Dict[str, Any]], Optional[bool] respectively).  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update_dispute functionality as described in its docstring.  All functional input parameters (`dispute`, `evidence`, `submit`) are used appropriately in the function's logic.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_dispute` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on updating dispute information and evidence, which does not involve these data types."
+          }
+        },
+        "list_disputes": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's filtering capabilities using `charge` and `payment_intent` and the pagination with `limit`. Default values are correctly specified.  The `Args` and `Returns` sections are comprehensive, detailing parameter types and the structure of the dictionary returned, including nested dictionaries within the `data` list.  The `Raises` section correctly mentions the `ValidationError`. Types are consistently specified using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `charge`, `payment_intent`, and `limit` parameters.  It checks the types and constraints of these parameters using `isinstance` and comparison operators. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters: `charge`, `payment_intent`, and `limit`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`charge`, `payment_intent`, `limit`) are properly type-annotated with their expected types (`Optional[str]`, `Optional[str]`, `int` respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the described functionality.  All functional input parameters (`charge`, `payment_intent`, and `limit`) are used to filter and paginate the results from the `all_disputes_in_db`.  The documented `ValidationError` exception is raised appropriately for invalid input. There are no TODOs, placeholders, or `pass` statements. The logic correctly retrieves, filters, paginates, and formats the dispute data according to the docstring's specifications. The returned dictionary structure and the contents precisely match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_disputes` function does not handle any phone number or email address inputs.  Its parameters are `charge` and `payment_intent`, both intended to be strings representing IDs, not phone numbers or emails.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly validates the `limit` parameter and the types of `charge` and `payment_intent` parameters, but this is unrelated to the specified task of phone number and email processing."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "stripe": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations.  The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The tests folder is well-organized with multiple test files. The main API folder contains the API logic files."
+      }
+    }
+  }
+}

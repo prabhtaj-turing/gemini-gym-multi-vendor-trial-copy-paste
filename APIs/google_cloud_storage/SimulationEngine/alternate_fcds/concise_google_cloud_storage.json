@@ -1,0 +1,385 @@
+[
+  {
+    "name": "create_bucket",
+    "description": "Creates a new bucket.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "A valid API project identifier."
+        },
+        "predefinedAcl": {
+          "type": "string",
+          "description": "Apply a predefined set of access controls to this bucket, chosen from `authenticatedRead`, `private`, `projectPrivate`, `publicRead`, or `publicReadWrite`."
+        },
+        "predefined_default_object_acl": {
+          "type": "string",
+          "description": "Applies a predefined set of default object access controls to the bucket, selected from: `authenticatedRead`, `bucketOwnerFullControl`, `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`."
+        },
+        "projection": {
+          "type": "string",
+          "description": "Specifies the properties to return: `full` includes all properties, while `noAcl` omits `owner`, `acl`, and `defaultObjectAcl`."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for this request."
+        },
+        "enableObjectRetention": {
+          "type": "boolean",
+          "description": "Enables object retention on the bucket."
+        }
+      },
+      "required": [
+        "project"
+      ]
+    }
+  },
+  {
+    "name": "delete_bucket",
+    "description": "Deletes an empty bucket permanently (unless soft delete is enabled), verifying metageneration match conditions and confirming the bucket is empty.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to delete."
+        },
+        "if_metageneration_match": {
+          "type": "string",
+          "description": "Deletes only if the bucket's metageneration matches this value."
+        },
+        "if_metageneration_not_match": {
+          "type": "string",
+          "description": "Deletes the bucket only if its metageneration does not match this value."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "get_bucket_details",
+    "description": "Returns metadata for the specified bucket, supporting conditional fetches based on metageneration and retrieval of soft-deleted buckets if specified.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to retrieve metadata for."
+        },
+        "generation": {
+          "type": "string",
+          "description": "Specifies the bucket version to fetch; required if `soft_deleted` is True."
+        },
+        "soft_deleted": {
+          "type": "boolean",
+          "description": "If `True`, retrieves the soft-deleted version of the bucket."
+        },
+        "if_metageneration_match": {
+          "type": "string",
+          "description": "Returns metadata only if the bucket's metageneration matches this value."
+        },
+        "if_metageneration_not_match": {
+          "type": "string",
+          "description": "Returns metadata only if the bucket's metageneration does not match this value."
+        },
+        "projection": {
+          "type": "string",
+          "description": "Specifies which properties to return: `full` includes all properties, while `noAcl` (default) excludes owner, acl, and defaultObjectAcl."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "get_bucket_iam_policy",
+    "description": "Returns an IAM policy for the bucket.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket whose IAM policy is being requested."
+        },
+        "options_requested_policy_version": {
+          "type": "integer",
+          "description": "The desired IAM policy format version to return; must be an integer >= 1 if specified."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for this request, required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "get_bucket_storage_layout",
+    "description": "Returns the storage layout configuration for the specified bucket, requiring `storage.objects.list` permission; if a prefix is specified, it restricts access validation under that prefix.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to retrieve storage layout for."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "An optional prefix for permission checks, useful when caller access is restricted to a specific path within the bucket."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "list_buckets",
+    "description": "Retrieves a list of buckets for a specified project.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "A valid API project identifier."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "The maximum number of buckets to return, defaulting to 1000."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "A token indicating the starting point for the next page of results."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Filters buckets whose names begin with this prefix."
+        },
+        "soft_deleted": {
+          "type": "boolean",
+          "description": "If True, only returns soft-deleted buckets."
+        },
+        "projection": {
+          "type": "string",
+          "description": "Specifies the properties to return for each bucket: \"full\" includes all, and \"noAcl\" (default) excludes ACL-related properties."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for the request."
+        }
+      },
+      "required": [
+        "project"
+      ]
+    }
+  },
+  {
+    "name": "lock_bucket_retention_policy",
+    "description": "Lock a bucket's retention policy, preventing future changes, only if its current metageneration matches the specified value.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket on which to lock the retention policy."
+        },
+        "if_metageneration_match": {
+          "type": "string",
+          "description": "The metageneration value the bucket must match for the lock to apply."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project billed for the request, required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket",
+        "if_metageneration_match"
+      ]
+    }
+  },
+  {
+    "name": "patch_bucket_attributes",
+    "description": "Patches a bucket; changes are immediately readable after the write, but configuration changes may take time to propagate, and the operation may be conditional on metageneration match.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to update."
+        },
+        "if_metageneration_match": {
+          "type": "string",
+          "description": "Conditions the patch on the bucket's current metageneration matching the provided value."
+        },
+        "if_metageneration_not_match": {
+          "type": "string",
+          "description": "Conditionally applies the patch if the bucket's current metageneration does not match this value."
+        },
+        "predefinedAcl": {
+          "type": "string",
+          "description": "Applies a predefined set of access controls to the bucket, one of: `authenticatedRead`, `private`, `projectPrivate`, `publicRead`, or `publicReadWrite`."
+        },
+        "predefined_default_object_acl": {
+          "type": "string",
+          "description": "Applies a predefined set of default object access controls to the bucket, one of: \"authenticatedRead\", \"bucketOwnerFullControl\", \"bucketOwnerRead\", \"private\", \"projectPrivate\", or \"publicRead\"."
+        },
+        "projection": {
+          "type": "string",
+          "description": "Specifies which properties to return in the response: \"full\" includes all properties, while \"noAcl\" omits owner, acl, and defaultObjectAcl."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for this request; required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "relocate_bucket",
+    "description": "Initiates a long-running Relocate Bucket operation on the specified bucket.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to be relocated."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "restore_bucket",
+    "description": "Restore a soft-deleted bucket if it exists, is soft-deleted, and its generation matches the provided value.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to restore."
+        },
+        "generation": {
+          "type": "string",
+          "description": "The bucket's generation, used for verification."
+        },
+        "projection": {
+          "type": "string",
+          "description": "Specifies the set of properties to return, one of `'full'` (default) or `'noAcl'`."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for the request, required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket",
+        "generation"
+      ]
+    }
+  },
+  {
+    "name": "set_bucket_iam_policy",
+    "description": "Updates an IAM policy for the specified bucket.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket whose IAM policy is being updated."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to bill for this request, required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  },
+  {
+    "name": "stop_notification_channel",
+    "description": "Stops watching resources through the specified notification channel.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "test_bucket_permissions",
+    "description": "Test a set of permissions on the given bucket to see which, if any, are held by the caller.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket for testing permissions."
+        },
+        "permissions": {
+          "type": "string",
+          "description": "A single permission string to test, chosen from the supported `storage.buckets.*`, `storage.objects.*`, or `storage.managedFolders.*` permissions."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for this request; required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket",
+        "permissions"
+      ]
+    }
+  },
+  {
+    "name": "update_bucket_attributes",
+    "description": "Updates a bucket, with immediate readability for most changes, but potential propagation delays for configuration updates.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "description": "Name of the bucket to update."
+        },
+        "if_metageneration_match": {
+          "type": "string",
+          "description": "Makes the update conditional on whether the bucket's current metageneration matches this value."
+        },
+        "if_metageneration_not_match": {
+          "type": "string",
+          "description": "Applies the patch only if the bucket's current metageneration does not match this value."
+        },
+        "predefinedAcl": {
+          "type": "string",
+          "description": "A predefined set of access controls to apply to the bucket, chosen from `authenticatedRead`, `private`, `projectPrivate`, `publicRead`, or `publicReadWrite`."
+        },
+        "predefined_default_object_acl": {
+          "type": "string",
+          "description": "Applies a predefined set of default object access controls to the bucket, one of: `authenticatedRead`, `bucketOwnerFullControl`, `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`."
+        },
+        "projection": {
+          "type": "string",
+          "description": "Specifies properties to return: \"full\" for all, or \"noAcl\" to omit owner, acl, and defaultObjectAcl properties."
+        },
+        "user_project": {
+          "type": "string",
+          "description": "The project to be billed for this request, required for Requester Pays buckets."
+        }
+      },
+      "required": [
+        "bucket"
+      ]
+    }
+  }
+]

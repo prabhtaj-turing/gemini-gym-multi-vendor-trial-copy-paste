@@ -1,0 +1,217 @@
+import pandas as pd
+import numpy as np
+
+# --- Configuration ---
+# Updated file paths to use your new, corrected CSV file.
+ORIGINAL_RESULTS_FILE = '/Users/mujtaba/Gen Agents/google-agents-api-gen/[Internal] Tech Debt Work Tracker - Tech Debt Batch 2.csv'
+NEW_RESULTS_FILE = '/Users/mujtaba/Gen Agents/google-agents-api-gen/tech_debt_report.csv'
+
+# The criteria columns we want to analyze.
+CRITERIA_COLUMNS = [
+    'Project Structure (Complete|Mostly Complete|Incomplete|Poor Structure|Others)',
+    'Docstring Quality (Excellent|Good|Adequate|Poor|Missing|Others)',
+    'Pydantic Usage (Properly Used|Partially Used|Not Needed|Missing Validation|Not Applicable|Others)',
+    'Input Validation (Comprehensive|Good|Partial|Minimal|None|Others)',
+    'Function Parameters (Excellent|Good|Fair|Poor|Others)',
+    'Implementation Status (Fully Implemented|Mostly Complete|Partially Complete|Stub|Not Implemented|Others)'
+]
+
+# --- Quality Score Mapping ---
+# Assigns a numerical score to each quality state for comparison.
+QUALITY_SCORES = {
+    # Project Structure
+    'Complete': 4, 'Mostly Complete': 3, 'Incomplete': 2, 'Poor Structure': 1,
+    # Docstring Quality
+    'Excellent': 5, 'Good': 4, 'Adequate': 3, 'Poor': 2, 'Missing': 1,
+    # Pydantic Usage
+    'Properly Used': 3, 'Partially Used': 2, 'Missing Validation': 1, 'Not Needed': 0, 'Not Applicable': 0,
+    # Input Validation
+    'Comprehensive': 5, 'Good': 4, 'Partial': 3, 'Minimal': 2, 'None': 1,
+    # Function Parameters
+    'Excellent': 4, 'Good': 3, 'Fair': 2, 'Poor': 1,
+    # Implementation Status
+    'Fully Implemented': 5, 'Mostly Complete': 4, 'Partially Complete': 3, 'Stub': 2, 'Not Implemented': 1,
+    # Common/Other values
+    'N/A': 0, 'Others': 0, 'nan': 0, '': 0, 'error': 0
+}
+
+def analyze_and_export_tech_debt():
+    """
+    Main function to load, merge, analyze, and export tech debt status to CSV files.
+    """
+    try:
+        # --- 1. Load Data ---
+        df_original = pd.read_csv(ORIGINAL_RESULTS_FILE)
+        df_new = pd.read_csv(NEW_RESULTS_FILE)
+        print("✅ Successfully loaded both CSV files.")
+    except FileNotFoundError as e:
+        print(f"❌ Error: Could not find a file. Please check the filenames and paths.")
+        print(f"Details: {e}")
+        return
+
+    # --- 2. Prepare Composite Key and Merge ---
+    print("   Preparing composite join key for merging...")
+    
+    # Create the composite key in the new dataframe.
+    df_new['composite_join_key'] = df_new['File Name'].astype(str) + '-' + df_new['API Name'].astype(str) + '.' + df_new['Item Name'].astype(str)
+    
+    # Rename the key column in the original dataframe to match.
+    df_original.rename(columns={'File Name - Func Name': 'composite_join_key'}, inplace=True)
+
+    # --- Start Debugging: Find Mismatched Keys ---
+    original_keys = set(df_original['composite_join_key'])
+    new_keys = set(df_new['composite_join_key'])
+
+    missing_from_new = original_keys - new_keys
+    if missing_from_new:
+        print(f"\n--- DEBUG: {len(missing_from_new)} keys from the original report are MISSING in the new report. ---")
+        print("This is why the merge count is low. Example missing keys:")
+        # Print up to 10 examples
+        for i, key in enumerate(list(missing_from_new)):
+            if i >= 10:
+                break
+            print(f"  - {key}")
+    
+    added_in_new = new_keys - original_keys
+    if added_in_new:
+        print(f"\n--- DEBUG: {len(added_in_new)} keys in the new report were NOT in the original. ---")
+        print("Example new keys:")
+        for i, key in enumerate(list(added_in_new)):
+            if i >= 10:
+                break
+            print(f"  - {key}")
+
+    print("\n")
+    # --- End Debugging ---
+
+    # Merge using the new composite key.
+    merged_df = pd.merge(
+        df_new,
+        df_original,
+        on='composite_join_key',
+        how='inner', # Ensures only common items are analyzed
+        suffixes=('_new', '_orig')
+    )
+    print(f"✅ Successfully merged {len(merged_df)} rows using the composite key.")
+    
+    # --- 3. Compare and Analyze ---
+    comparison_results_cols = {}
+    detailed_report_frames = []
+
+    for column in CRITERIA_COLUMNS:
+        col_new = f'{column}_new'
+        col_orig = f'{column}_orig'
+        
+        merged_df[col_new] = merged_df[col_new].astype(str).fillna('')
+        merged_df[col_orig] = merged_df[col_orig].astype(str).fillna('')
+
+        score_new = merged_df[col_new].apply(lambda x: QUALITY_SCORES.get(x, 0))
+        score_orig = merged_df[col_orig].apply(lambda x: QUALITY_SCORES.get(x, 0))
+
+        ignore_mask_new = merged_df[col_new].str.lower().isin(['nan', 'n/a', '', 'error'])
+        ignore_mask_orig = merged_df[col_orig].str.lower().isin(['nan', 'n/a', ''])
+        final_ignore_mask = ignore_mask_new | ignore_mask_orig
+
+        not_needed_regression_mask = pd.Series([False] * len(merged_df))
+        if 'Pydantic' in column:
+            original_is_not_needed = merged_df[col_orig].str.lower() == 'not needed'
+            new_is_suboptimal = merged_df[col_new].str.lower().isin(['partially used', 'missing validation'])
+            not_needed_regression_mask = original_is_not_needed & new_is_suboptimal
+
+        conditions = [
+            final_ignore_mask,
+            not_needed_regression_mask,
+            (score_new > score_orig),
+            (score_new < score_orig),
+        ]
+        choices = ['Ignored', 'Regressed 🔻', 'Improved ✅', 'Regressed 🔻']
+        
+        criterion_name = column.split(' ')[0]
+        comparison_col_name = f"{criterion_name}_Comparison"
+        merged_df[comparison_col_name] = np.select(conditions, choices, default='Same ➖')
+        comparison_results_cols[criterion_name] = comparison_col_name
+
+        change_mask = merged_df[comparison_col_name].isin(['Improved ✅', 'Regressed 🔻'])
+        temp_df = merged_df[change_mask].copy()
+        
+        if not temp_df.empty:
+            temp_df['Criterion'] = criterion_name
+            temp_df.rename(columns={
+                col_orig: 'Original_State',
+                col_new: 'New_State',
+                comparison_col_name: 'Change_Status'
+            }, inplace=True)
+            # Use the suffixed columns from the merge result
+            detailed_report_frames.append(temp_df[['API Name_new', 'Item Name_new', 'Criterion', 'Original_State', 'New_State', 'Change_Status']])
+
+    # --- 4. Generate Summary Report with Totals and Spacing ---
+    all_summary_rows = []
+    # Use the suffixed column to get unique services
+    services = sorted(merged_df['API Name_new'].unique())
+
+    for i, service in enumerate(services):
+        service_df = merged_df[merged_df['API Name_new'] == service]
+        
+        service_criterion_rows = []
+        for criterion, comparison_col in comparison_results_cols.items():
+            counts = service_df[comparison_col].value_counts()
+            service_criterion_rows.append({
+                'Service': service,
+                'Criterion': criterion,
+                'Improved ✅': counts.get('Improved ✅', 0),
+                'Same ➖': counts.get('Same ➖', 0),
+                'Regressed 🔻': counts.get('Regressed 🔻', 0)
+            })
+        
+        all_summary_rows.extend(service_criterion_rows)
+        
+        temp_summary_df = pd.DataFrame(service_criterion_rows)
+        total_improved = temp_summary_df['Improved ✅'].sum()
+        total_same = temp_summary_df['Same ➖'].sum()
+        total_regressed = temp_summary_df['Regressed 🔻'].sum()
+        
+        total_row = {
+            'Service': service,
+            'Criterion': 'TOTAL',
+            'Improved ✅': total_improved,
+            'Same ➖': total_same,
+            'Regressed 🔻': total_regressed
+        }
+        
+        all_summary_rows.append({}) 
+        all_summary_rows.append(total_row)
+        
+        if i < len(services) - 1:
+            all_summary_rows.append({})
+            all_summary_rows.append({})
+
+    summary_df = pd.DataFrame(all_summary_rows).fillna('')
+
+    # --- 5. Generate Detailed Report ---
+    if detailed_report_frames:
+        detailed_df = pd.concat(detailed_report_frames, ignore_index=True)
+        # Rename columns for cleaner output
+        detailed_df.rename(columns={'API Name_new': 'API Name', 'Item Name_new': 'Item Name'}, inplace=True)
+        detailed_df.sort_values(by=['API Name', 'Item Name', 'Criterion'], inplace=True)
+    else:
+        detailed_df = pd.DataFrame(columns=['API Name', 'Item Name', 'Criterion', 'Original_State', 'New_State', 'Change_Status'])
+
+    # --- 6. Export to CSV ---
+    try:
+        summary_output_file = 'summary_report.csv'
+        detailed_output_file = 'detailed_comparison.csv'
+        
+        summary_df.to_csv(summary_output_file, index=False)
+        print(f"\n✅ Successfully created summary report: '{summary_output_file}'")
+        
+        detailed_df.to_csv(detailed_output_file, index=False)
+        print(f"✅ Successfully created detailed comparison: '{detailed_output_file}'")
+
+        print("\nYou can now upload these CSV files to Google Sheets.")
+
+    except Exception as e:
+        print(f"\n❌ Error: Could not write files to disk. {e}")
+
+
+if __name__ == '__main__':
+    analyze_and_export_tech_debt()

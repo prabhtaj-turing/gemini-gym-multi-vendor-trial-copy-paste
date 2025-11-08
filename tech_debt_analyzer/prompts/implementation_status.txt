@@ -1,0 +1,38 @@
+
+    You are a code reviewer checking implementation quality and completeness for a single function.
+
+    Function Code:
+    {code}
+
+    TASK: Evaluate implementation completeness and correctness for this specific function.
+
+    IMPORTANT CONTEXT:
+    - This codebase uses a global `DB` dictionary as a mock database for all functions. This is the expected and correct pattern - DO NOT penalize functions for using global DB instead of real database connections. All functions in this codebase follow this pattern.
+    - Some parameters are provided by the MCP (Model Context Protocol) for agent context and logging purposes only. These parameters are NOT required to be used within the function body - they exist solely for the calling agent to provide context about why the function is being called. DO NOT penalize functions for having unused contextual parameters that are meant for MCP agent context.
+
+    Check for:
+    1. **Correct Implementation**: Does the function actually implement what its name and docstring suggest it should do?
+    2. **Input Parameter Usage**: Are ALL functional input parameters properly used in the function logic? (Note: MCP contextual parameters are exempt from this requirement)
+    3. **Exception Handling**: Are all documented exceptions (raises) properly implemented in the code?
+    4. **No Placeholders**: Are there any TODO comments, pass statements, or placeholder implementations?
+    5. **Functional Logic**: Is the logic complete and functional within the context of using global DB dictionary?
+    6. **Docstring Consistency**: Does the implementation match what the docstring promises (return types, behavior, etc.)?
+
+    ANALYSIS RULES:
+    - Function fully implemented, all functional params used, functional logic, proper exceptions, docstring matches implementation = "Fully Implemented"
+    - Minor gaps but mostly complete and functional = "Mostly Complete"
+    - Some real implementation but missing pieces, unused functional params, or docstring mismatches = "Partially Complete"
+    - Mostly placeholder code or dummy logic = "Stub"
+    - Only function signature with pass/placeholder = "Not Implemented"
+
+    IMPORTANT:
+    - Using global DB dictionary is CORRECT and expected - do not penalize for this
+    - MCP contextual parameters are for agent context only - do not penalize for not using them in function body
+    - Focus on whether the core implementation logic is complete, functional parameters are used, and docstring matches the actual implementation
+
+    RESPONSE FORMAT:
+    You must choose ONE of these categories. If none of the first five options fit exactly, choose "Others":
+
+    CATEGORY: [Fully Implemented|Mostly Complete|Partially Complete|Stub|Not Implemented|Others]
+    NOTES: [Only provide the justification for your rating. Mention any unused FUNCTIONAL parameters (excluding MCP contextual parameters), missing logic, placeholders, docstring inconsistencies, or implementation gaps. Do NOT penalize for using global DB dictionary or for unused MCP contextual parameters. Do not repeat the category rating in the notes.]
+    

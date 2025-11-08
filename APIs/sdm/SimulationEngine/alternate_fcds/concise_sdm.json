@@ -1,0 +1,96 @@
+[
+  {
+    "name": "execute_command",
+    "description": "Execute a command on a specific enterprise-managed device.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "The unique identifier for the device within the enterprise, e.g., `CAM_001`."
+        },
+        "project_id": {
+          "type": "string",
+          "description": "The unique identifier for the enterprise or project."
+        },
+        "command_request": {
+          "type": "object",
+          "description": "A dictionary containing the `command` name (string) to execute and optional `params` (dictionary) for command-specific arguments.",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "The name of the command to execute, selected from `sdm.devices.commands.generate_camera_event_image` (to retrieve an image from a triggered event), `sdm.devices.commands.generate_rtsp_stream` (to start RTSP stream mode), `sdm.devices.commands.stop_rtsp_stream` (to stop RTSP stream mode), `sdm.devices.commands.generate_image_from_rtsp_stream` (to retrieve an image from an ongoing RTSP stream), `sdm.devices.commands.generate_web_rtc_stream` (to start WebRTC stream mode), `sdm.devices.commands.stop_web_rtc_stream` (to stop WebRTC stream mode), or `sdm.devices.commands.generate_image_from_web_rtc_stream` (to retrieve an image from an ongoing WebRTC stream)."
+            },
+            "params": {
+              "type": "object",
+              "description": "A dictionary of command-specific parameters with string values, such as `event_id` for `generate_camera_event_image` or `rtsp_url` for `generate_image_from_rtsp_stream`; use `None` if the command requires no parameters."
+            }
+          },
+          "required": [
+            "command",
+            "params"
+          ]
+        }
+      },
+      "required": [
+        "command_request",
+        "device_id",
+        "project_id"
+      ]
+    }
+  },
+  {
+    "name": "get_device_info",
+    "description": "Retrieves authorized device information, including traits and parent relations.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "The unique identifier of the device within the enterprise."
+        },
+        "project_id": {
+          "type": "string",
+          "description": "Unique identifier for the enterprise or project."
+        }
+      },
+      "required": [
+        "device_id",
+        "project_id"
+      ]
+    }
+  },
+  {
+    "name": "get_events_list",
+    "description": "Return a list of triggered events, optionally filtered by device ID or event type.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "An optional unique device identifier used to filter events; for example, \"CAM_001\"."
+        },
+        "event_type": {
+          "type": "string",
+          "description": "Optional event type to filter events, accepting values like \"Motion\", \"Person\", \"Sound\", \"Chime\", or fully qualified names such as \"sdm.devices.events.CameraMotion.Motion\"."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_devices",
+    "description": "Retrieves all devices authorized by the user for a given enterprise.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "list_structures",
+    "description": "List all structures authorized by the user for a given enterprise.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+]

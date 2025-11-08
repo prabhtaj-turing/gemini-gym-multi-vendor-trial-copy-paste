@@ -1,0 +1,1629 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.379363Z",
+  "results": {
+    "gmail/Threads.py": {
+      "functions": {
+        "trash": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's role in moving a thread to the trash, including the use of `Messages.trash` for individual messages. Default values for `userId` and `id` are correctly specified and explained.  The Args, Returns, and Raises sections are present and generally well-written. Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`isinstance`) to validate the `userId` and `id` parameters.  While Pydantic could provide more sophisticated validation (e.g., string length constraints, regular expressions for email format), the current type checking is sufficient for the simple requirements of this function.  Using Pydantic would add complexity without significant benefit in this case.  The `_ensure_user` function likely handles additional validation related to the existence of the user in the database."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `userId` and `id` parameters, ensuring they are strings.  This is good. However, it lacks value validation. While it checks if `userId` exists using `_ensure_user`, it doesn't explicitly validate the `id` parameter for existence or format before attempting to access it in the database (`DB[\"users\"][userId][\"threads\"].get(id)`).  An empty string \"\" is accepted as a default value for `id`, which might be acceptable depending on the application logic, but it's not explicitly validated.  Therefore, the validation is good but not comprehensive due to the missing value checks on `id`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `id`) are properly type-annotated as strings.  The return type is clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the trashing of a thread and its messages.  Both `userId` and `id` parameters are used appropriately in the function's logic.  The documented `TypeError` and `ValueError` exceptions are correctly raised. There are no placeholders or TODO comments. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and conditions under which `None` is returned."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `trash` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is used as a user identifier, but it's treated as a string without any specific normalization or validation for email format.  There's no phone number input at all.  Therefore, the criteria for phone number normalization and email validation are not applicable.  The function focuses on thread management within a database, not on communication contact details."
+          }
+        },
+        "untrash": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of untrashing a thread and its messages. Default values for parameters are correctly specified and explained. The Args, Returns, and Raises sections are present and mostly accurate.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation using `isinstance` checks to ensure that `userId` and `id` are strings.  While Pydantic could be used, the current validation is sufficient and arguably simpler for this specific case.  The validation covers all functional input parameters.  Using Pydantic would add overhead without significant benefit given the straightforward nature of the required checks."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `userId` and `id` parameters, ensuring they are strings.  This is good. However, it lacks value validation. While it checks if `userId` exists using `_ensure_user`, it doesn't explicitly validate the `id` parameter beyond checking its type.  There's no check for an empty string `id` which could lead to unexpected behavior.  The function also raises appropriate `TypeError` exceptions for incorrect input types.  Therefore, while type validation is comprehensive for functional parameters, value validation is partially missing, resulting in a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `id`) are properly type-annotated as strings.  The return type is clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of untrashing a thread and its messages by iterating through the `messageIds` and calling `Messages.untrash` for each.  Input validation for `userId` and `id` is present and correctly raises `TypeError` as documented. The function also correctly returns `None` if the thread is not found.  However, it lacks error handling for potential exceptions raised by `Messages.untrash`.  The `_ensure_user` function is called, but its implementation is not shown, so we cannot assess whether it correctly raises the documented `ValueError`.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `untrash` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is used as a user identifier, but it's treated as a string without any specific normalization or validation for email format.  There's no phone number input at all.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on database interaction and thread management."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's role in deleting threads and associated messages permanently. Default values for `userId` and `id` are correctly mentioned and explained. The Args, Returns, and Raises sections are present and generally accurate.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` and `id` parameters.  It checks that they are strings, not empty, and do not contain whitespace. While Pydantic could provide a more concise and potentially more feature-rich way to perform this validation, the existing manual checks adequately cover the validation requirements for the functional parameters.  Using Pydantic here would be an unnecessary addition."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `userId` and `id`.  Type validation is performed using `isinstance` to ensure both are strings. Value validation checks for emptiness, whitespace, and spaces within the strings.  Appropriate `TypeError` and `ValidationError` exceptions are raised with informative messages for invalid inputs.  All checks are performed before the parameters are used in subsequent database operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `id`) are properly type-annotated as strings.  The return type is correctly specified as `None`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the deletion of a thread and its associated messages from the global `DB`.  All functional input parameters (`userId` and `id`) are used.  The exception handling for `TypeError` and `ValidationError` is implemented correctly. However, the `KeyError` exception is not explicitly raised if `DB[\"users\"][userId]` or `DB[\"users\"][userId][\"threads\"]` is missing.  The function should include checks for these cases and raise the `KeyError` accordingly.  Additionally, while the docstring states that the operation is \"immediately and permanently deletes,\" the implementation relies on the `pop` method which might not be atomic.  A more robust approach might be needed for true atomicity in a production environment.  Finally, the `return None` is redundant as the function's signature already specifies `-> None`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is intended to be an email address, but the function only performs basic string validation (checking for emptiness, whitespace, and correct type).  It does not perform any email address syntax validation (e.g., checking for the \"@\" symbol and a valid domain).  There is no normalization or processing of the email beyond these basic checks.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the return type and describes the structure of the dictionary, although it could benefit from explicitly mentioning that `messages` is a list of dictionaries with varying structures depending on the `format` parameter.  The `Raises` section is comprehensive, listing all potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`userId`, `id`, `format`, `metadata_headers`).  It checks types and constraints using `isinstance` checks and explicit comparisons against allowed values. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual approach is comprehensive and covers all functional input parameters.  The use of Pydantic would not significantly improve the validation in this case, given the simplicity of the validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive input validation on all its functional parameters (`userId`, `id`, `format`, and `metadata_headers`).  Type validation is performed for all four using `isinstance`.  `format` undergoes value validation to ensure it's one of the allowed values. `metadata_headers`, if provided, is checked to ensure it's a list and that all its elements are strings.  Appropriate `TypeError` and `InvalidFormatValueError` exceptions are raised with informative error messages for invalid inputs.  All functional parameters are checked before being used in subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `id`, `format`, `metadata_headers`) are properly type-annotated with their expected types.  The return type `Optional[Dict[str, Any]]` is also clearly specified. The function does not use `**kwargs` parameters.  Complex types like `Optional`, `List`, and `Dict` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  The `userId` parameter is used correctly for database lookups, and the `id`, `format`, and `metadata_headers` parameters are all used to control the retrieval and formatting of thread data.  All documented exceptions are handled. There are no TODOs or placeholders."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is used, but it's treated as a string identifier, not an email address that needs validation. There's no processing or normalization of phone numbers anywhere in the code.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on retrieving and formatting thread data from a database, not on input processing of contact information."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's primary role in listing threads.  Default values for all parameters are correctly stated. The Args section is comprehensive, listing all arguments with types and descriptions.  The Returns section correctly specifies the type and structure of the returned dictionary, although the description of `nextPageToken` as \"Currently always None\" should be improved to reflect that it's a placeholder for future functionality. The Raises section correctly lists the potential exceptions. Types are specified for all parameters and return values.  The documentation of the dictionary structure in the Returns section is clear and accurate."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for all functional input parameters.  While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing approach is comprehensive and correctly handles type checking and the `max_results` constraint.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`userId`, `max_results`, `page_token`, `q`, `labelIds`, `include_spam_trash`) undergo type validation.  `max_results` also has value validation to ensure it does not exceed 500.  `labelIds` is checked for being a list of strings if not None.  Error handling is present via `TypeError` and `ValueError` exceptions with informative messages.  While the docstrings mention that some parameters are not fully implemented, the validation for those parameters is still performed to ensure correct input types.  Therefore, all functional input parameters are validated comprehensively."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  Complex types such as `Optional[List[str]]` are correctly used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements its intended functionality.  It correctly retrieves threads, handles the `max_results` parameter, and returns a dictionary in the specified format.  However, the docstring states that the parameters `q`, `labelIds`, `include_spam_trash`, and `page_token` are \"not fully implemented,\" meaning the filtering based on these parameters is not performed.  While this is explicitly stated, it represents a gap in the complete implementation of the function's potential capabilities as described in the docstring.  The function correctly raises the documented exceptions.  There are no placeholders or TODO comments. The functional logic is complete within the constraints of the stated limitations."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle phone numbers or email addresses as input.  Its inputs are parameters related to managing email threads (user ID, query parameters, etc.). The `userId` parameter, while it *could* be an email address, is not treated as such; it's simply checked to be a string and used as an identifier. No email validation or phone number normalization is performed.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "modify": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's behavior of modifying thread labels by using `Messages.modify` on each message. Default values for parameters are correctly mentioned and explained. The Args, Returns, and Raises sections are comprehensive, listing all arguments with types and descriptions, detailing the return value (including the structure of the dictionary), and specifying potential exceptions.  Types are consistently specified for parameters and return values.  The documentation of the dictionary structure in the Returns section is clear."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`userId`, `id`, `addLabelIds`, `removeLabelIds`).  It checks types and the length of lists. While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks cover all the functional input parameters adequately.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (userId, id, addLabelIds, removeLabelIds) are properly type-annotated with their expected types using type hints.  The return type is also clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs`.  Complex types like `List`, `Optional`, and `Dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the modification of thread labels by iterating through message IDs and using the `Messages.modify` function (which is assumed to exist and function correctly).  All functional input parameters (`userId`, `id`, `addLabelIds`, `removeLabelIds`) are used appropriately in the logic.  The documented exceptions (`TypeError`, `ValueError`, `KeyError`) are all properly implemented and raised under the correct conditions. There are no TODOs, pass statements, or placeholder implementations. The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  The logic for converting label IDs to uppercase before modification is a reasonable addition."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `modify` does not handle phone numbers or email addresses as input.  Its inputs are a user ID (which could be an email, but isn't treated as such), a thread ID, and lists of label IDs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function performs input validation for the data types it *does* receive, but this is unrelated to the prompt's specific requirements."
+          }
+        }
+      }
+    },
+    "gmail/Users.py": {
+      "functions": {
+        "getProfile": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getProfile': File not found: APIs/gmail/Users.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getProfile': File not found: APIs/gmail/Users.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getProfile': File not found: APIs/gmail/Users.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getProfile': File not found: APIs/gmail/Users.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getProfile': File not found: APIs/gmail/Users.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'getProfile': File not found: APIs/gmail/Users.py"
+          }
+        },
+        "watch": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'watch': File not found: APIs/gmail/Users.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'watch': File not found: APIs/gmail/Users.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'watch': File not found: APIs/gmail/Users.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'watch': File not found: APIs/gmail/Users.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'watch': File not found: APIs/gmail/Users.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'watch': File not found: APIs/gmail/Users.py"
+          }
+        },
+        "stop": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'stop': File not found: APIs/gmail/Users.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'stop': File not found: APIs/gmail/Users.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'stop': File not found: APIs/gmail/Users.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'stop': File not found: APIs/gmail/Users.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'stop': File not found: APIs/gmail/Users.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'stop': File not found: APIs/gmail/Users.py"
+          }
+        },
+        "exists": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'exists': File not found: APIs/gmail/Users.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'exists': File not found: APIs/gmail/Users.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'exists': File not found: APIs/gmail/Users.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'exists': File not found: APIs/gmail/Users.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'exists': File not found: APIs/gmail/Users.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'exists': File not found: APIs/gmail/Users.py"
+          }
+        },
+        "createUser": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'createUser': File not found: APIs/gmail/Users.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'createUser': File not found: APIs/gmail/Users.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'createUser': File not found: APIs/gmail/Users.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'createUser': File not found: APIs/gmail/Users.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'createUser': File not found: APIs/gmail/Users.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'createUser': File not found: APIs/gmail/Users.py"
+          }
+        }
+      }
+    },
+    "gmail/Labels.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It correctly describes the default values for `userId` and the various fields within the `label` dictionary. The `Args` and `Returns` sections are detailed and helpful, including nested structure descriptions for dictionaries. The `Raises` section accurately lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`LabelInputModel`) to validate the `label` parameter.  This model handles type checking, constraint validation (e.g., enum values for visibility fields), and provides default values. The `userId` parameter also has validation using `isinstance` and string checks for empty strings and whitespace.  While the `userId` validation could be incorporated into a Pydantic model for better consistency, the existing validation is sufficient.  The use of Pydantic for `label` is the primary method of input validation and is effective."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `userId` and `label`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `label`) are properly type-annotated with their expected types (str and Optional[Dict[str, Any]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `userId` and `label` parameters.  It handles the `TypeError` exceptions as documented. The `ValidationError` is also correctly handled and re-raised.  The core logic of creating a label, assigning an ID, and populating the label dictionary is implemented. The docstring accurately reflects the function's behavior and return type. However, the function's interaction with the global `DB` dictionary lacks robustness.  The code includes a check to ensure `DB` exists and has the necessary nested structure before attempting to store the new label.  However, a more robust error handling mechanism (e.g., raising a custom exception if the `DB` structure is incorrect) would improve the function's reliability.  The fallback to `print_log` is insufficient for production-level code.  Additionally, the use of `_ensure_user` and `_next_counter` are assumed to exist elsewhere and their functionality is not verified within this code review."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is treated as a string identifier, and while it performs some validation to ensure it's a non-empty string without spaces, it doesn't interpret it as an email address and performs no email validation.  There's no mechanism for handling phone numbers at all.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of deleting a label permanently. Default values for `userId` and `id` are correctly mentioned and explained. The Args, Returns, and Raises sections are present and mostly accurate.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` and `id` parameters.  It checks that they are strings, that `userId` is not empty or contains whitespace, and that `id` does not contain whitespace.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks cover the necessary validation for the functional parameters.  Using Pydantic would be an improvement in terms of code organization and readability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `userId` and `id`, ensuring they are strings.  It also checks for empty strings and strings containing whitespace in `userId` and `id`.  However, it lacks validation for the *content* of `userId` and `id`. While it prevents whitespace, it doesn't check if `userId` is a valid email address or if `id` conforms to any specific format or range of allowed values.  The `_ensure_user(userId)` function likely performs further validation, but that is outside the scope of this function's input validation.  Therefore, while most inputs are validated, there are gaps in value validation, making \"Good\" the most appropriate rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `id`) are properly type-annotated as strings.  The return type is correctly specified as `None`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the deletion of a label from the user's label list in the global `DB`.  Input validation for `userId` and `id` is performed, raising `TypeError` and `custom_errors.ValidationError` as documented. The `_ensure_user` function (not shown) is assumed to handle additional user validation.  The function uses both `userId` and `id` parameters correctly. However, the validation for `userId` and `id` is overly restrictive;  it prohibits any whitespace, even leading or trailing whitespace which could be easily trimmed.  The docstring accurately reflects the function's behavior and return type.  The only improvement needed is to allow for trimming whitespace in `userId` and `id` instead of rejecting them entirely."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses as input.  The `userId` parameter is intended to be an email address or the string \"me\", but no normalization or validation beyond checking for whitespace and empty strings is performed.  There's no attempt to verify the email address format.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including default values, and their types. The `Returns` section correctly specifies the dictionary structure and the possibility of a `None` return. The `Raises` section mentions the expected exceptions.  Type hints are used consistently throughout."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` and `id` parameters.  It checks that they are strings and that they do not contain whitespace. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is sufficient and covers the necessary checks for these functional parameters.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on both `userId` and `id`, ensuring they are strings.  It also checks for empty strings in `userId` and the presence of whitespace characters in both `userId` and `id`. However, it lacks value validation.  While it prevents empty strings and whitespace, it doesn't check if the `userId` actually exists in the `DB` before attempting to access it (which could lead to a `KeyError`).  Furthermore, there's no validation on the `id` parameter beyond checking for whitespace; it doesn't verify if the `id` is a valid identifier within the context of the user's labels.  The `_ensure_user` function might perform additional checks, but that's outside the scope of this function's input validation.  Therefore, while some input validation is present, crucial value checks are missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `id`) are properly type-annotated as strings.  The return type is clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves a label from the global `DB` based on the provided `userId` and `id`.  Input validation for string types and whitespace is implemented.  Documented exceptions are raised appropriately. The docstring accurately reflects the return type and the structure of the returned dictionary. However, the validation for `userId` and `id` being \"valid\" beyond being non-empty strings is missing, as indicated by the `_ensure_user(userId)` call, which is not defined in the provided code snippet.  This function assumes the existence and functionality of `_ensure_user` without showing its implementation.  Without knowing what constitutes a \"valid\" userId, the validation is incomplete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  The `userId` parameter is intended to be an email address or the string \"me\", but the function only performs basic string validation (checking for empty strings and whitespace).  There is no attempt to normalize a phone number or validate the email address using a more robust method (like regular expressions or a dedicated email validation library).  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in listing labels from a user's mailbox within the context of an MCP server. The default value for `userId` is correctly documented.  The `Args` and `Returns` sections are well-structured, and types are specified using type hints.  The documentation of the nested dictionary structure within the `Returns` section is comprehensive, listing all expected keys and their types. The `Raises` section correctly lists the `TypeError` and `ValidationError`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` parameter.  It checks the type, emptiness, whitespace, and presence of spaces. While Pydantic could provide a more concise and potentially more robust way to perform this validation (e.g., handling different whitespace characters more comprehensively), the existing manual checks are sufficient for the task.  Pydantic is not strictly *needed* here given the simplicity of the validation requirements."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `userId` parameter.  It checks for the correct data type (string) using `isinstance`, and it checks for empty strings and strings containing only whitespace.  However, while it checks for the presence of any whitespace with `\" \" in userId`, it doesn't explicitly check for other invalid characters that might be present in an email address.  A more robust validation might involve a regular expression to ensure the `userId` conforms to a valid email format if that is a requirement.  The validation is sufficient for basic checks but could be improved for more comprehensive email validation.  All functional input parameters are validated."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list` has excellent parameter design.  The `userId` parameter is properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The `userId` parameter name is clear and descriptive.  Complex types like `Dict` and `List` within the return type annotation are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It takes the `userId` parameter, validates it, retrieves label data from the global `DB`, handles the case where a user has no labels, and returns a dictionary containing a list of label resources as specified.  All documented exceptions are handled, and there are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB`.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle phone numbers or email addresses as input.  Its input is a `userId` which is treated as a string identifier, not an email address or phone number.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on retrieving and formatting label data from a database based on a user ID."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values are correctly specified and explained.  The descriptions of the `label` dictionary and the return dictionary are comprehensive, including nested structures and types.  The `Raises` section accurately reflects the exceptions that the function can throw."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`LabelInputModel`) to validate the `label` parameter, which is the only functional parameter requiring complex validation.  The `userId` and `id` parameters have basic type and content checks, but the `label` parameter's structure and the values within its nested dictionaries require the more robust validation provided by the Pydantic model.  Using a Pydantic model for `label` is the appropriate approach here.  Basic type checking is done for `userId` and `id`, which is sufficient given their simple structure.  Adding Pydantic models for these wouldn't significantly improve the code."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`userId`, `id`, and `label`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (userId, id, label) are properly type-annotated with their expected types (str, str, Optional[Dict[str, Any]] respectively).  The function's return type is clearly specified as Dict[str, Any]. No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`userId`, `id`, `label`) are used appropriately in the function's logic.  All documented exceptions (`TypeError`, `ValueError`, `ValidationError`, `NotFoundError`) are properly handled and raised in the relevant scenarios. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, correctly interacting with the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is treated as a user identifier (potentially an email address in a broader system context), but it's not processed or validated as an email address within the function itself. No normalization or validation steps are performed on this parameter beyond checking for emptiness and whitespace.  Therefore, the categories related to phone number and email address handling are not applicable."
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose as an alias for `update`, detailing its behavior as a full replacement of label properties.  Default values for parameters are correctly specified and explained. The `Args` and `Returns` sections are comprehensive, including types and descriptions of dictionaries and their nested structures. The `Raises` section lists potential exceptions.  Type information is complete for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `patch` does not use Pydantic models or any other form of input validation for its functional parameters (`userId`, `id`, `label`).  While the docstrings describe expected types and constraints, there's no code enforcing them.  Adding a Pydantic model would significantly improve the robustness of the function by providing type checking, constraint validation (e.g., checking allowed values for `messageListVisibility`), and automatic error handling.  The current implementation relies solely on the caller to provide correctly formatted data, making it prone to errors."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `userId` and `id`, ensuring they are strings.  It also checks if `id` is an empty string. However, it lacks value validation for `userId` (checking if it represents a valid user in the system) and comprehensive validation of the `label` dictionary.  While the docstring mentions `ValidationError` for `label`, the code itself doesn't show any validation logic within the `patch` function.  The actual validation likely happens within the `update` function it calls, but this analysis is limited to the `patch` function itself.  Therefore, the validation is only partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `id`, `label`) have proper type annotations.  The return type is also clearly specified as `Optional[Dict[str, Any]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function `patch` correctly implements its functionality as an alias for the `update` function.  It directly calls `update` passing all functional parameters (`userId`, `id`, `label`). There are no placeholders, TODOs, or pass statements. The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  All documented exceptions are implicitly handled by the `update` function (assuming `update` handles them correctly; this review only assesses `patch`).  There are no unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `patch` function does not handle phone numbers or email addresses as inputs.  The `userId` parameter is intended to be an email address, but no validation or normalization is performed on it. The function simply passes it along to another function (`update`).  Therefore, the criteria for phone number normalization and email validation are not applicable.  To improve the function, email validation should be added to the `userId` parameter.  The function does not use phone numbers at all."
+          }
+        }
+      }
+    },
+    "gmail/Drafts.py": {
+      "functions": {
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the creation of a draft message, handling of empty drafts, and attachment size limits. Default values for `userId` and `draft` are correctly mentioned.  The `Args` and `Returns` sections are comprehensive, detailing parameter types and nested dictionary structures effectively.  The `Raises` section lists potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`DraftInputPydanticModel`) to validate the `draft` parameter if it's provided.  However, it only validates this optional parameter. The `userId` parameter is validated using a simple `isinstance` check, which is less robust than a Pydantic model.  Using Pydantic for `userId` would provide more comprehensive validation (e.g., checking for allowed characters, length restrictions, etc., depending on the requirements).  Therefore, while Pydantic is used, it's not used for all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `userId` parameter, ensuring it's a string.  It also uses a Pydantic model (`DraftInputPydanticModel`) for validating the `draft` parameter, which presumably handles type and value validation for the nested dictionary structure. However, the code lacks explicit value validation for `userId` (e.g., checking for a valid email format or existence in a database).  While the `_ensure_user` function likely handles existence, the validation isn't directly visible within the `create` function itself.  The size constraints (25MB per attachment, 100MB total) are mentioned in the docstring but are not explicitly validated within the `create` function's input validation section.  Therefore, the validation is partial, relying on external functions and a Pydantic model for some checks, but missing explicit checks within the function for certain constraints."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `draft`) are properly type-annotated with their expected types (str and Optional[Dict[str, Any]], respectively).  The return type is clearly specified as `Dict[str, Any]`. The function does not use **kwargs parameters.  Complex types like `Optional`, `Dict`, and `List` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles the creation of draft messages, including the addition of the 'DRAFT' label, and uses both the `userId` and `draft` parameters appropriately.  The exception handling for `TypeError` and `ValidationError` is implemented.  The logic for handling the message size limits (25MB per attachment and 100MB total) is missing, however,  as is the handling of `ValueError` which is documented but not implemented.  The function also relies on helper functions `_ensure_user` and `_next_counter` which are not provided, making a full assessment of correctness impossible without their implementation.  The docstring accurately reflects the function's behavior, except for the missing size limit enforcement."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does not handle phone numbers at all, so there's no phone number normalization.  Therefore, it cannot be rated Excellent."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's basic functionality, default parameter values, and the types of arguments and return values. The examples for the `q` parameter are helpful.  The documentation of the nested dictionary structures in the return value is thorough, clearly outlining the structure of the `drafts` list and the `message` dictionary within each draft.  The `Raises` section correctly lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for its functional input parameters (`userId`, `max_results`, `q`).  It checks the types of these parameters and also validates that `max_results` is a positive integer. While Pydantic could be used to achieve the same validation, the existing manual approach is sufficient and correctly handles all functional input validation.  The use of Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`userId`, `max_results`, and `q`) are validated.  `userId` and `q` have type validation checks ensuring they are strings. `max_results` has both type validation (integer) and value validation (positive integer).  Appropriate `TypeError` and custom `InvalidMaxResultsValueError` exceptions are raised with informative messages for invalid inputs.  There are no missing validation checks for the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `max_results`, `q`) are properly type-annotated with their expected types (str, int, str respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the return dictionary are also properly specified (List[Dict[str, Any]])."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality.  All functional input parameters (`userId`, `max_results`, `q`) are used.  Documented exceptions (`TypeError`, `InvalidMaxResultsValueError`, `ValueError`) are handled. There are no placeholders or TODO comments. The docstring accurately reflects the return type and the basic functionality."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle phone numbers or email addresses as inputs in a way that requires normalization or validation.  The `userId` parameter is used as an identifier, and while it *could* represent an email address, the function doesn't treat it as such.  No processing is done to extract digits or validate email syntax. The function focuses on querying and filtering drafts based on other criteria.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly mentions the default value for `userId`. The Args section adequately lists parameters with types and descriptions.  The Returns section also describes the return type and structure. The Raises section is present and lists expected exceptions.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `DraftUpdateInputModel` (though not fully shown in the provided code snippet) to validate the `draft` parameter.  However, it performs manual type checking and validation on `userId` and `id` parameters. While the manual checks are sufficient for these specific parameters, using a Pydantic model to encompass all three input parameters (`userId`, `id`, and `draft`) would provide a more consistent and potentially more maintainable approach to input validation.  The current approach mixes manual checks with Pydantic, which is less ideal than a fully Pydantic-based solution."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `userId`, `draft`) have proper type annotations.  The return type is also clearly specified as `Optional[Dict[str, Any]]`. The function does not use `**kwargs`.  Complex types like `Optional`, `Dict`, and `List` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality. It correctly handles input validation for `id` and `userId`, raises appropriate exceptions, and uses the `draft` parameter to update the existing draft.  The logic for updating `labelIds` while preserving 'DRAFT' and removing 'INBOX' is correctly implemented. The function correctly returns `None` if the draft is not found.  However, the function's handling of the `message_update_payload` is somewhat inefficient.  It iterates through a hardcoded list of keys and updates only if the key exists in `message_update_payload`. A more concise approach would be to use `existing_message.update(message_update_payload)`.  This would handle all keys present in `message_update_payload` without explicit iteration.  While this is not a major flaw, it represents a minor gap in optimal implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle phone numbers or email addresses as inputs in a way that requires normalization or validation.  The `userId` parameter is treated as a user identifier, not an email address that needs validation. While it's used to look up user data, there's no email validation performed on it.  The function focuses on updating draft messages, and the email addresses within the message content (sender and recipient) are not explicitly validated or normalized within this function.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of deleting a draft and cleaning up attachments. Default values for `userId` and `id` are correctly specified and explained. The `Args` section adequately documents the parameters, including types and descriptions.  The `Returns` section correctly describes the structure of the returned dictionary, including nested keys and types.  The `Raises` section mentions the `TypeError` and `ValueError` exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the `Returns` section is quite thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`isinstance`) to validate the `userId` and `id` parameters.  While not as feature-rich as Pydantic, this approach is sufficient for the simple type validation required.  Pydantic would add unnecessary complexity for this specific function's needs.  The validation covers all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `userId` and `id`, ensuring they are strings.  This is good. However, it lacks value validation. While it checks for the type, it doesn't verify if the `userId` actually exists in the database (beyond raising a ValueError if it doesn't exist, which is handled in `_ensure_user`).  The `id` parameter also lacks value validation; it doesn't check if the ID is in the correct format or if it refers to an existing draft.  Therefore, while type validation is comprehensive for functional parameters, value validation is missing, resulting in a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `id`) are properly type-annotated as strings.  The return type is clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs`.  Complex types within the return type annotation are also correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a draft given a userId and id.  Both functional parameters (`userId` and `id`) are used.  The documented `TypeError` exceptions for incorrect parameter types are implemented. The function correctly uses the global `DB` to perform the deletion and returns the deleted draft or `None` as documented.  The cleanup of attachments is handled by a separate function call, which is assumed to be correctly implemented elsewhere. The docstring accurately reflects the function's behavior and return type. There are no placeholders or TODOs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is used as a user identifier, which may be an email address, but the function doesn't perform any validation or normalization on it beyond checking that it's a string.  There's no processing of the email address's format or extraction of any parts.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and parameters.  It correctly lists default values for `userId`, `id`, and `format`. The Args section accurately describes the parameters and their types.  The Raises section correctly identifies the potential exceptions.  The type hinting is complete for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for the `userId`, `id`, and `format` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  The use of a custom `InvalidFormatValueError` also demonstrates a good approach to handling specific validation failures.  No Pydantic models are used, but the existing validation is adequate."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`userId`, `id`, and `format`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `id`, `format`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs` parameters.  Complex types like `Dict` and `Optional` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles the different `format` options, validates inputs, and uses the `userId` and `id` parameters effectively.  The `format` parameter is fully utilized, and exception handling for `TypeError` and `InvalidFormatValueError` is implemented correctly.  The logic for retrieving and formatting the draft data from the global `DB` is sound."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers.  It deals with user IDs and email addresses within the context of retrieving email drafts. While it validates the email address format of the `userId` input indirectly by checking if it exists in a database (`_ensure_user` function is implied), it doesn't perform any normalization on it.  The function does not process or validate phone numbers at all. Therefore, the criteria of phone number normalization and email address validation are not applicable.  The email validation is minimal and relies on an external function (`_ensure_user`) whose implementation is unknown.  A more robust solution would involve explicit email validation using regular expressions or a dedicated library within the `get` function itself."
+          }
+        },
+        "send": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core logic: sending drafts either by ID or directly from provided message content. Default values for `userId` and `draft` are correctly specified.  The `Args` and `Returns` sections are detailed, including types and descriptions of dictionaries and nested structures. The `Raises` section lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `DraftInputPydanticModel` (which is assumed to exist, though not shown in the provided code) to validate the `draft` argument when it's present and doesn't contain an `id`.  However,  validation of the `userId` parameter is done manually, with type checking and checks for whitespace.  While the manual checks for `userId` are sufficient, using a Pydantic model for all inputs would provide a more consistent and potentially more concise validation approach.  The conditional validation based on the presence of `draft['id']` also makes the validation logic somewhat complex. A more comprehensive Pydantic model could simplify this.  Therefore, Pydantic is partially used for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `draft`) are properly type-annotated with their expected types (`str` and `Optional[Dict[str, Any]]` respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types like `Optional` and `Dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles sending drafts by ID and sending new messages.  Input validation is performed for `userId` and `draft`. Exception handling for `TypeError` and `ValidationError` is implemented. The logic for checking required fields (`recipient`, `subject`, `body`) when `raw` is not provided is also present.  However, the function lacks implementation for the size limits mentioned in the docstring (25MB per attachment and 100MB total).  The docstring mentions that attachment size limits are enforced, but there's no code to check or enforce these limits.  Therefore, while the core functionality is present, this omission prevents it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `send` does not handle phone numbers.  It deals exclusively with email addresses as user IDs and within the message data.  While it performs validation on email addresses (checking for empty strings and whitespace), it doesn't normalize them in any way.  There's no phone number normalization or validation to assess.  Therefore, the rating is \"Not Applicable\"."
+          }
+        }
+      }
+    },
+    "gmail/History.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's primary role in listing mailbox history.  All parameters, including their default values and types, are documented. The `Args` and `Returns` sections are well-structured. The `Raises` section correctly identifies the `KeyError`.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints for input parameters (`userId: str`, `max_results: int`, etc.) and implicitly validates `max_results` by slicing the `history_data` list.  While this provides some basic input validation, it doesn't handle potential errors like non-integer values for `max_results` or invalid email formats for `userId` as robustly as a Pydantic model would.  However, given the context and the limited scope of the function's logic, the current level of validation might be sufficient.  A Pydantic model could improve the robustness and clarity of input validation, but it's not strictly necessary given the existing type hints and implicit validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `max_results` implicitly through its default value and usage as an index.  However, it lacks explicit type checking for `userId` (although `_ensure_user` might perform some checks, we don't see its implementation).  There's no value validation for `max_results` (e.g., to prevent excessively large values), and no validation for `userId` beyond what `_ensure_user` might do.  `page_token`, `start_history_id`, `label_id`, and `history_types` are explicitly noted as not fully implemented and are not validated, but this is acceptable given the documentation.  The function raises a `KeyError` if `userId` is not found, which is a form of error handling, but more comprehensive input validation is needed.  Therefore, the validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `max_results`, `page_token`, `start_history_id`, `label_id`, `history_types`) are properly type-annotated with their expected types.  The return type `Dict[str, Any]` is clearly specified. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves history data up to `max_results` and handles the `KeyError` exception as documented.  However, the `page_token`, `start_history_id`, `label_id`, and `history_types` parameters are explicitly stated in the docstring as being \"not fully implemented\" and are therefore unused.  While this is acknowledged in the docstring, it represents a gap in the full implementation of the function's intended functionality as described.  The function is mostly complete in its current state, but lacks the filtering and pagination features described in its parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle phone numbers or email addresses as input.  Its input is primarily a `userId` which, while it *could* be an email address in some contexts, the function doesn't treat it as such.  There's no validation or normalization of email addresses or phone numbers performed within the function.  The `userId` is simply used as a key to access data in a database (`DB`).  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "gmail/AutoForwarding.py": {
+      "functions": {
+        "getAutoForwarding": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately describes the arguments and their types (including the default value for `userId`),  specifies the return type as a dictionary and details the structure of that dictionary including the type of each key, and lists the exceptions that the function might raise.  The description of how to use the `userId` parameter is helpful. The docstring is consistent with the function's implementation; there are no discrepancies between what the docstring promises and what the function actually does.  All aspects of the function's behavior are thoroughly documented."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` parameter.  It checks if `userId` is a string and if it's not empty or whitespace-only.  While Pydantic could be used, the existing validation is sufficient and correctly handles the required checks.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `userId` parameter, the only functional input.  Type validation checks if `userId` is a string. Value validation checks if it's empty or contains only whitespace.  While it checks for existence via `_ensure_user`,  it doesn't explicitly validate the format of the userId (e.g., email format) which would be beneficial.  Therefore, the validation is good but not fully comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getAutoForwarding` has excellent parameter design and type annotations.  All parameters (`userId`) have proper type annotations (str). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles the `userId` parameter, validating its type and content as specified in the docstring and raising appropriate exceptions. The function correctly retrieves and returns the auto-forwarding settings from the global `DB`. However, the function lacks error handling for the case where the `userId` exists in the DB, but the `settings` or `autoForwarding` keys are missing.  This could lead to a `KeyError` which is not explicitly handled.  The docstring correctly reflects the return type and expected keys in the dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getAutoForwarding` does not handle phone numbers.  It only deals with user IDs, which are treated as strings representing email addresses. While it performs basic validation on the `userId` string (checking for emptiness and correct type), it doesn't perform any normalization of email addresses beyond checking for empty strings.  There's no email validation using regular expressions or a validation library to ensure the email address is syntactically correct (e.g., contains \"@\" and a valid domain).  Therefore, the categories related to phone number and email processing are not applicable."
+          }
+        },
+        "updateAutoForwarding": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's behavior of updating only the fields present in the input dictionary. Default values are correctly mentioned and explained.  The Args and Returns sections are comprehensive, including types and descriptions.  The Raises section lists all potential exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structures (both input `auto_forwarding_settings` and output) is clear and detailed, specifying keys, types, and valid values where applicable."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`AutoForwardingSettingsModel`) to validate the `auto_forwarding_settings` dictionary.  This handles type checking and value constraints within the model definition (presumably).  Basic type checking and validation for `userId` is also performed using `isinstance` and string checks. While the `_ensure_user` function is not shown, it is implied that it handles user existence validation.  Therefore, all functional input parameters have validation.  The use of Pydantic for `auto_forwarding_settings` is efficient and robust compared to manual checks for all possible field types and values."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on both functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `auto_forwarding_settings`) are properly type-annotated with their expected types (str and Optional[Dict[str, Any]] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses both `userId` and `auto_forwarding_settings` in its logic.  Exception handling for `TypeError` and `ValueError` is implemented.  The docstring accurately reflects the function's behavior and return type. However, the `ValidationError` exception is not explicitly handled within the function. While the Pydantic validation *should* catch these errors,  a more robust implementation would explicitly catch and raise `ValidationError` if the `AutoForwardingSettingsModel` validation fails, providing more informative error messages.  The current implementation relies on Pydantic's exception handling mechanism implicitly.  Adding explicit handling would improve clarity and robustness."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does not handle phone numbers at all, so there's no phone number normalization.  Therefore, it cannot be rated Excellent."
+          }
+        }
+      }
+    },
+    "gmail/Vacation.py": {
+      "functions": {
+        "getVacation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving vacation responder settings. The default value for `userId` is correctly documented.  The `Args` and `Returns` sections are well-structured, specifying types and providing clear descriptions. The `Raises` section correctly identifies the `KeyError` exception.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `getVacation` has only one functional input parameter: `userId`.  While it doesn't use Pydantic, it does perform basic validation by calling `_ensure_user(userId)`.  This suggests that some form of validation (presumably checking if the userId exists in the DB) is happening.  Using Pydantic would add more structure and potentially allow for more sophisticated validation (e.g., checking the format of the userId if it's not 'me'), but the existing validation is sufficient to prevent obvious errors.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function only performs a type check implicitly through type hinting (`userId: str`).  There's no explicit type validation.  Crucially, it lacks value validation.  The `userId` could be an arbitrary string, potentially leading to a `KeyError` if the user doesn't exist in the `DB`.  No checks are performed to ensure the `userId` is a valid email address or conforms to any other expected format.  While the function handles the `KeyError`, it doesn't prevent invalid inputs from reaching the database lookup.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getVacation` has excellent parameter design and type annotations.  All parameters (`userId`) have proper type annotations. The return type (`Dict[str, Any]`) is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves vacation settings from the global `DB` based on the provided `userId`.  The `userId` parameter is used correctly. The function correctly handles the default value of 'me' for `userId`.  However, the function lacks error handling.  While a `KeyError` is documented, it's not explicitly raised if `DB[\"users\"][userId][\"settings\"][\"vacation\"]` doesn't exist.  The code will crash with a `KeyError` if the user or their settings are missing, but this should be explicitly handled within the function to match the docstring.  The docstring mentions \"Other vacation settings as defined in the database,\" implying potential flexibility in the database structure, but the implementation rigidly assumes a specific nested structure.  This could lead to unexpected behavior if the database schema changes."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getVacation` does not handle phone numbers or email addresses as inputs for normalization or validation.  The `userId` parameter is used as an identifier, and while it *could* be an email address, the function doesn't treat it as such.  No validation or normalization is performed on this input; it's simply used as a key to retrieve data from a database.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "updateVacation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of updating vacation settings. Default values for parameters are correctly mentioned and explained.  The Args and Returns sections are well-structured, specifying types and descriptions. The Raises section correctly identifies the `KeyError` exception. Types are specified for all parameters and return values.  The documentation of the dictionary structures, both input and output, is thorough, listing key names, types, and providing context."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation for the `vacation_settings` dictionary.  While it handles the case where `vacation_settings` is `None`, it doesn't check the types or existence of keys within the dictionary if it's provided.  This makes the function vulnerable to unexpected input data types and missing keys, potentially leading to runtime errors or unexpected behavior within the `update` method of the nested dictionary. Using a Pydantic model to define the structure and types of `vacation_settings` would significantly improve the robustness and reliability of the function.  The `userId` parameter is also not validated; it only checks for existence in the database, not the format of the userId itself.  A Pydantic model could enforce a specific string format for `userId` if needed."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `vacation_settings`) are properly type-annotated with their expected types (str and Dict[str, Any], respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly updates the vacation settings based on the provided `vacation_settings` dictionary.  It uses both `userId` and `vacation_settings` appropriately. The function also correctly returns the updated vacation settings.  However, the function lacks error handling for the `KeyError` exception. While the docstring mentions raising a `KeyError` if the user or their settings don't exist, the code doesn't explicitly check for these conditions before attempting to access and modify the nested dictionary within the global `DB`.  A `KeyError` could occur silently if the user or the `vacation` settings key is missing, leading to unexpected behavior or crashes.  Adding explicit checks and raising the `KeyError` with a descriptive message would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `updateVacation` function does not handle phone numbers or email addresses in the way that requires normalization or validation as per the prompt's criteria.  The `userId` is treated as a string identifier, and while it *could* represent an email address, the function doesn't perform any validation or normalization on it.  The function's purpose is to update vacation settings, not to process or validate contact information.  Therefore, the categories of \"Excellent,\" \"Good,\" or \"Poor\" are not applicable."
+          }
+        }
+      }
+    },
+    "gmail/Imap.py": {
+      "functions": {
+        "getImap": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately describes the arguments and their types (including the default value for `userId`), thoroughly details the structure and types within the returned dictionary, and lists all possible exceptions with informative descriptions.  The explanation of the `expungeBehavior` options is particularly helpful. There are no inconsistencies between the docstring and the function's implementation; the docstring accurately reflects the function's behavior and return type.  The docstring is complete enough for a developer to understand and use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` parameter.  It checks if `userId` is a string and if it's not empty or whitespace-only.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling different error types more elegantly), the existing validation is sufficient for the given task.  Using Pydantic would add unnecessary complexity in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `getImap` has one functional input parameter: `userId`.  The validation for `userId` is comprehensive.  It checks for the correct data type (string) using `isinstance`, and it checks for empty or whitespace-only strings using `not userId or not userId.strip()`.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages.  All possible scenarios of invalid input for the `userId` parameter are handled.  The function also performs a domain-specific check (`_ensure_user(userId)`) to verify the user exists in the database, although the specifics of that function are not shown."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getImap` has excellent parameter design and type annotations.  All parameters (`userId`) have proper type annotations (str). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves IMAP settings from the global `DB` dictionary based on the provided `userId`.  Input validation for `userId` is implemented as documented, raising `TypeError` and `ValueError` appropriately. The function's logic is complete given the use of the global `DB`. However, the function relies on an external function `_ensure_user(userId)`.  The implementation of `_ensure_user` is not provided, and its potential failure to raise a `ValueError` if the user does not exist leaves a gap in the exception handling promised in the docstring.  If `_ensure_user` does not raise an exception when a user is not found, then the subsequent access to `DB[\"users\"][userId][\"settings\"][\"imap\"]` would raise a `KeyError`, which is not handled.  Therefore, while mostly complete, the exception handling is not fully robust without knowing the implementation of `_ensure_user`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getImap` does not handle phone numbers at all.  It uses a `userId` which is described as a user's email address. While it performs basic validation to ensure `userId` is a non-empty string, it doesn't perform any email validation beyond that (e.g., checking for a valid \"@\" symbol and a domain).  A more robust email validation would use a regular expression to check for a proper email format.  Since the function doesn't deal with phone numbers, the criteria for phone number normalization are not applicable."
+          }
+        },
+        "updateImap": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate.  It clearly explains the function's purpose, default values, arguments, return value, and exceptions.  Types are specified for all parameters and the return value. The description of the `imap_settings` dictionary is comprehensive, listing all keys and their types.  The docstring correctly states that only fields present in the input dictionary are updated."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`ImapSettingsInputModel`) to validate the `imap_settings` dictionary.  This model handles type checking and value validation for the fields within the dictionary.  The `userId` parameter is also validated using standard type checking and value checks (checking for empty strings). While basic type checking is done for `userId` and `imap_settings`, the Pydantic model provides more robust validation for the nested structure and types within `imap_settings`.  Therefore, Pydantic is used effectively for input validation, although basic type validation is also performed for `userId` and the top-level type of `imap_settings`."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `userId` and `imap_settings`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `imap_settings`) are properly type-annotated with their expected types (str and Optional[Dict[str, Any]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in the docstring.  Both `userId` and `imap_settings` (the functional parameters) are used appropriately.  All documented exceptions (`TypeError`, `ValueError`, `ValidationError`) are handled. There are no placeholders or TODO comments. The logic correctly updates the `DB` and returns the updated settings. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `updateImap` function does not handle phone numbers or email addresses as inputs.  The `userId` parameter is used as an identifier, and while it *could* be an email address, the function doesn't treat it as such.  No normalization or validation specific to email or phone number formats is performed.  The function focuses solely on validating and updating IMAP settings based on a dictionary input.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "gmail/Language.py": {
+      "functions": {
+        "getLanguage": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  It accurately reflects the function's behavior of retrieving language settings from a (mock) database. The default value for `userId` is correctly documented.  The `Args`, `Returns`, and `Raises` sections are present and generally well-written.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` parameter.  It checks if `userId` is a string and if it's not empty or whitespace-only.  While Pydantic could be used, the current manual validation is sufficient and correctly handles the required checks.  Using Pydantic wouldn't significantly improve the code in this specific case, given the simplicity of the validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `userId` parameter, the only functional input.  Type validation ensures it's a string. Value validation checks for emptiness (empty string or whitespace only).  While it doesn't explicitly check for the existence of the user in the database before accessing the `DB[\"users\"][userId][\"settings\"][\"language\"]`  (this is handled by the `_ensure_user` function), the validation is sufficient to prevent common errors like empty or improperly typed inputs.  More robust validation might involve checking the format of the email address if `userId` represents an email, but the current validation is good enough to prevent the most common issues."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getLanguage` has excellent parameter design and type annotations.  All parameters (`userId`) have proper type annotations (str). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly handles the `userId` input parameter, validating its type and content.  It raises the documented `TypeError` and `ValueError` exceptions. The use of the global `DB` is acceptable given the context. However, the function lacks error handling for cases where the `DB[\"users\"][userId][\"settings\"][\"language\"]` key is missing or has an unexpected format.  A `KeyError` or a more specific exception could be raised to handle these situations, improving robustness.  Additionally, the `_ensure_user` function is used but its implementation is not shown, so we cannot assess its completeness or potential for raising exceptions.  If `_ensure_user` does not raise a `ValueError` when the user does not exist, then the function's exception handling would be incomplete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getLanguage` does not handle phone numbers or email addresses as input for normalization or validation.  The `userId` parameter is treated as a string identifier, and while it checks for empty or whitespace-only strings, it doesn't perform any normalization specific to phone numbers or validation specific to email addresses.  The function's purpose is to retrieve language settings based on a user ID, which may or may not be an email address, but no processing is done to treat it as such."
+          }
+        },
+        "updateLanguage": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of updating only the specified fields in the language settings. Default values for `userId` and `language_settings` are correctly documented.  The `Args` and `Returns` sections are well-structured, including type information. The `Raises` section correctly lists the potential exceptions.  Type information is complete for parameters and return values.  The documentation of the `language_settings` dictionary is adequate, specifying the key `displayLanguage` and its type."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` and `language_settings` parameters.  Type checking and value checks (empty string for userId) are performed. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Using Pydantic wouldn't add significant value in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `userId` and `language_settings` parameters, which are the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `language_settings`) are properly type-annotated with their expected types (str and Dict[str, Any], respectively).  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates the user's language settings based on the provided `language_settings` dictionary.  All functional input parameters (`userId` and `language_settings`) are used.  The documented exceptions (`TypeError` and `ValueError`) are properly implemented. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, correctly using the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and handling of edge cases (e.g., `language_settings` being `None`)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `updateLanguage` does not handle phone numbers or email addresses as inputs.  The `userId` parameter is treated as a string identifier, not an email address, and there's no processing or validation related to phone numbers.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on updating language settings associated with a user ID, which is treated as a simple string."
+          }
+        }
+      }
+    },
+    "gmail/Pop.py": {
+      "functions": {
+        "getPop": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving POP settings for a user, including the special 'me' value for the authenticated user. The Args, Returns, and Raises sections are present and generally well-written.  Types are specified for parameters and return values.  The default value for `userId` is correctly documented."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `getPop` has one functional input parameter, `userId`, which is a string.  No input validation is performed on this parameter.  While a default value is provided, there's no check to ensure the `userId` (when not the default 'me') is a valid format or exists in the `DB`.  Using a Pydantic model would significantly improve the robustness of this function by enforcing type and potentially adding constraints on the format of the `userId` (e.g., email validation).  The current implementation lacks any input validation for the functional parameter."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function only performs a type check implicitly by using type hinting (`userId: str`).  There's no explicit type validation.  Crucially, it lacks value validation.  While the `userId` parameter has a default value of \"me\",  it doesn't check if the provided `userId` actually exists in the `DB[\"users\"]` dictionary before attempting to access it. This could lead to a `KeyError` which is handled, but the validation itself is missing.  No null or empty checks are performed.  Therefore, the validation is partial, as only implicit type hinting is present, but crucial value checks are absent."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `getPop` has excellent parameter design and type annotations.  All parameters (`userId`) are properly type-annotated with their expected types (str). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves POP settings from the global `DB` dictionary using the provided `userId`.  The docstring accurately reflects the function's behavior and return type.  However, the function lacks error handling for cases where the `userId` key, the `settings` key, or the `pop` key might be missing from the nested dictionary structure within `DB[\"users\"]`.  While a `KeyError` is documented, the current implementation only checks for the existence of the user using `_ensure_user(userId)`, which might not cover all potential `KeyError` scenarios.  More robust error handling is needed to explicitly check for the existence of the nested keys before accessing them.  Adding checks like `if \"settings\" in DB[\"users\"][userId] and \"pop\" in DB[\"users\"][userId][\"settings\"]:` would improve the robustness of the function."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `getPop` does not handle phone numbers or email addresses in a way that requires normalization or validation.  The `userId` parameter is used as an identifier, which may *resemble* an email address if the user ID scheme uses email addresses, but the function itself doesn't treat it as such.  It simply uses the provided `userId` to retrieve data from a database.  No input sanitization, validation, or normalization of email addresses or phone numbers is performed within the function's logic.  Therefore, the categories of normalization and validation are not applicable."
+          }
+        },
+        "updatePop": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of updating POP settings, specifying that only provided fields are updated. Default values for `userId` and `pop_settings` are correctly documented.  The `Args` and `Returns` sections clearly define parameters and return types, including descriptions and valid values for dictionary keys. The `Raises` section correctly lists potential exceptions (`TypeError` and `ValueError`).  Types are consistently specified using type hints.  The documentation of the dictionary structures within `pop_settings` is adequate, listing keys and valid values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `userId` and `pop_settings` parameters.  Type checking is performed using `isinstance`, and additional checks are done to ensure `userId` is not empty or whitespace-only.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on both functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `pop_settings`) are properly type-annotated with their expected types (str and Dict[str, Any], respectively). The return type is also clearly specified as Dict[str, Any].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update of POP settings based on the provided `pop_settings` dictionary.  All functional input parameters (`userId` and `pop_settings`) are used appropriately.  The documented exceptions (`TypeError` and `ValueError`) are correctly raised. There are no placeholders or TODO comments. The logic is complete and functional, updating the global `DB` correctly. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `updatePop` does not handle phone numbers or email addresses in the way described in the prompt.  The `userId` parameter is treated as a user identifier (potentially an email address), but no normalization or validation beyond basic string checks (empty or whitespace only) is performed.  There's no attempt to extract digits from a phone number or validate the email address using a regular expression or other validation method.  The function focuses solely on updating POP settings based on a dictionary input, not on processing or validating phone numbers or email addresses."
+          }
+        }
+      }
+    },
+    "gmail/SmimeInfo.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's role in retrieving S/MIME certificate configurations. Default values for `userId` and `send_as_email` are correctly documented.  The `Args` and `Returns` sections are present and mostly accurate.  The description of the `Returns` section is slightly vague regarding the structure of the `smimeInfo` list elements, but it's understandable. The `Raises` section correctly identifies the `KeyError`. Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses `_ensure_user(userId)` for validation of the `userId` parameter.  While not using Pydantic, this function presumably checks the existence of the user in the DB. The `send_as_email` parameter has no explicit validation, but it's used as a key in a nested dictionary, so a `KeyError` would be raised if it's not a valid key.  Adding Pydantic models wouldn't significantly improve this validation strategy, as the current approach is sufficient and directly tied to the database structure.  The implicit validation through dictionary access is arguably simpler than introducing Pydantic for these specific use cases."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly by using the type hints (`str` for `userId` and `send_as_email`). However, it lacks explicit value validation for `userId` and `send_as_email`.  While it checks if `send_as_email` exists within the nested `DB` structure, it doesn't validate the format of the email addresses themselves (e.g., using a regular expression).  The `userId` parameter is only checked for existence in the database via `_ensure_user(userId)`, but there's no validation of its format or content before this call.  No explicit null or empty checks are performed on `send_as_email` beyond the implicit check during the dictionary lookup.  Therefore, the validation is partial, as it only implicitly checks types and relies on a database lookup for existence, but lacks explicit value and format validation for both inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId` and `send_as_email`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types (Dict and List) within the return type annotation are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves S/MIME information based on the provided `userId` and `send_as_email`.  It handles the case where `send_as_email` is not found or has no S/MIME info by returning an empty list. The `KeyError` exception is raised if the `userId` is not found, as documented.  The function uses both functional input parameters (`userId` and `send_as_email`) effectively. The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle phone numbers.  It deals exclusively with email addresses as user IDs and `send_as` aliases. While it uses email addresses, it doesn't perform any explicit validation beyond relying on the database to handle potential errors (a `KeyError` is raised if the user ID isn't found).  There's no input sanitization or validation of email address format within the function itself.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving S/MIME certificate configurations. Default values for all parameters are correctly documented. The `Args` and `Returns` sections are well-structured, specifying types and descriptions. The `Raises` section correctly identifies the `KeyError` exception.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses only basic type hints (str) for its input parameters.  There's no explicit input validation beyond that.  While type hints offer some level of runtime type checking, they don't provide comprehensive validation (e.g., checking for empty strings when they're not allowed, or validating the format of email addresses).  Pydantic models could improve this by providing more robust validation, but the current lack of validation isn't necessarily a problem if the `_ensure_user` function (not shown) handles any necessary checks related to `userId`.  The current validation is sufficient if the `_ensure_user` function performs the necessary checks.  The absence of Pydantic doesn't automatically mean validation is missing, as other mechanisms might be in place."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through the type hints (all parameters are strings), but lacks explicit type checks.  `userId` is checked indirectly via `_ensure_user(userId)`, which presumably performs further validation (though the details are not shown).  However, there's no explicit validation for `send_as_email` or `smime_id` beyond checking if `send_as_email` produces a non-empty `send_as_entry`.  No explicit checks are performed to ensure that `send_as_email` and `smime_id` are valid email addresses or IDs according to the database schema.  The function handles the case where `send_as_entry` is not found gracefully, returning `None`.  While the `KeyError` is handled for a missing `userId`, no explicit error handling is shown for invalid formats of `send_as_email` or `smime_id`.  Therefore, validation is partial, covering only the `userId` indirectly and implicitly handling empty `send_as_email`.  Explicit value and format validation for `send_as_email` and `smime_id` are missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `send_as_email`, `smime_id`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Optional[Dict[str, Any]]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves S/MIME info based on the provided `userId`, `send_as_email`, and `smime_id`.  All functional parameters (`userId`, `send_as_email`, `smime_id`) are used appropriately in the logic. The `KeyError` exception is handled implicitly by `_ensure_user(userId)` (assuming this function raises KeyError if the user is not found). The function's logic is complete and functional given the global `DB` dictionary. The docstring accurately describes the function's behavior, parameters, return type, and potential exceptions.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers.  It deals with email addresses, but only as user identifiers and 'send as' aliases.  There is no attempt to normalize email addresses beyond basic string handling (treating them as strings).  No validation of email address syntax is performed. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in inserting S/MIME configuration and mentions the creation of a unique ID. Default values for parameters are correctly documented. The `Args` and `Returns` sections are well-structured, specifying types and descriptions. The `Raises` section correctly identifies a `KeyError`.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation.  While it performs a basic check for the existence of the `userId` using `_ensure_user`, there's no validation for the `send_as_email` parameter or the contents of the `smime` dictionary.  The `send_as_email` should at least be checked for valid email format. The `smime` dictionary, if provided, should be validated to ensure it contains the expected keys and data types (e.g., 'encryptedKey' as a string).  Using a Pydantic model would significantly improve input validation by providing a structured and type-safe way to define and enforce these constraints."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `send_as_email`, `smime`) are properly type-annotated with their expected types (str, str, Optional[Dict[str, Any]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly inserts a new S/MIME info configuration into the global `DB`.  It uses the `userId` and `send_as_email` parameters to locate the correct place in the database and utilizes the `smime` parameter to populate the new entry.  The `id` is generated correctly.  The `_ensure_user` function (not shown) is assumed to handle the `KeyError` exception as documented.  However, the function's docstring mentions that the return dictionary will contain \"Other S/MIME properties as defined in the database,\" but the implementation only explicitly includes the `id` and `encryptedKey`.  If the database schema includes additional properties for S/MIME info, they would need to be added to the `new_smime` dictionary for complete consistency with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `insert` does not handle phone numbers.  It deals with email addresses as user IDs and `send_as` aliases, but it doesn't perform any normalization or validation beyond checking for the existence of a user ID in a database (`_ensure_user` function, which is not shown).  The function assumes the email addresses provided are valid; it doesn't actively validate their format.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's role in updating S/MIME information and correctly lists the arguments and their types, including default values. The description of the `smime` argument is slightly vague regarding \"Other optional S/MIME properties,\" but this is acceptable given the open-ended nature of the data.  The `Returns` section correctly specifies the return type and structure, although it could benefit from being more precise about what \"Other S/MIME properties\" are returned (mirroring the vagueness in the `smime` argument description). The `Raises` section correctly identifies the `KeyError`."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the functional parameters `id`, `send_as_email`, and `smime`. While `userId` is checked for existence in the database via `_ensure_user`, this is not input validation in the sense of verifying data types or constraints.  The `smime` parameter is checked for being a dictionary, but no validation is performed on its contents.  Adding Pydantic models would significantly improve the robustness of the function by enforcing type constraints and potentially schema validation on the `smime` dictionary."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but not comprehensively."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `send_as_email`, `id`, `smime`) are properly type-annotated with their expected types (str, str, str, Optional[Dict[str, Any]] respectively). The function's return type is clearly specified as `Optional[Dict[str, Any]]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements its intended functionality.  It correctly uses the `smime` and `id` parameters to update the S/MIME information within the nested dictionary structure of the global `DB`. The `userId` parameter is also used to access the correct user's data.  However, the `send_as_email` parameter is functionally unused if a `send_as_entry` is found.  The function correctly returns `None` if no matching entry is found, aligning with the docstring. The `KeyError` exception is not explicitly raised in the code, although the `_ensure_user` function (not shown) is presumably responsible for that.  The function's logic is complete given the context of the global `DB` and the helper function `_ensure_user`.  The return type and behavior match the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update` does not handle phone numbers.  It handles email addresses, but only as user identifiers (`userId` and `send_as_email`).  It doesn't perform any validation beyond checking if a user exists in the database (`_ensure_user` function, which is not shown).  There's no attempt to validate the email address format using regular expressions or a validation library.  Therefore, the criteria of phone number normalization and robust email validation are not applicable.  The function focuses on managing S/MIME certificate configurations, not on processing or validating phone numbers or email addresses in a way that requires normalization or validation beyond basic existence checks within a database."
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose and usage.  It correctly identifies the function as an alias for `update` and explains its role in modifying S/MIME certificate configurations. Default values for all parameters are clearly stated and explained. The `Args` and `Returns` sections are well-structured, including type information. The `Raises` section correctly mentions the `KeyError` exception.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `patch` does not perform any input validation on its functional parameters (`userId`, `send_as_email`, `id`, `smime`).  While type hints are present, they are not enforced.  There's no check to ensure `userId` is a valid email address or that `id` and `send_as_email` conform to any specific format. The `smime` dictionary's contents are also not validated.  Using Pydantic models would significantly improve the robustness of this function by providing data validation and type checking.  A Pydantic model could define required fields, data types, and potentially even custom validation rules for each parameter."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function `patch` performs no input validation itself. It directly passes the received parameters to the `update` function.  While `userId`, `send_as_email`, `id`, and `smime` are all functional parameters, none are checked for type, value, or emptiness within the `patch` function.  The only validation implied is within the `update` function (not shown), which may raise a `KeyError` if `userId` is not found in the database. However, this is not explicit validation within the `patch` function itself.  Therefore, the validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `send_as_email`, `id`, `smime`) are properly type-annotated with their expected types (str, str, str, Optional[Dict[str, Any]] respectively).  The return type is also clearly specified as `Optional[Dict[str, Any]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function `patch` correctly implements its functionality as an alias for the `update` function.  It directly calls `update` with all its functional parameters (`userId`, `send_as_email`, `id`, `smime`). There are no unused functional parameters, no placeholders, and the docstring accurately reflects the function's behavior and return type.  The exception handling is not explicitly implemented within `patch` itself, relying on any exceptions raised by the `update` function.  However, this is acceptable given the alias nature of `patch` and the implicit exception handling inherited from `update`. The function's logic is complete and functional assuming the `update` function works correctly."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `patch` does not handle phone numbers.  It handles email addresses as user identifiers, but it doesn't perform any validation beyond accepting a string.  There's no attempt to verify the email address format is correct.  Therefore, normalization and validation of phone numbers are not applicable, and email validation is missing."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's role in deleting S/MIME certificate configurations. Default values for all parameters are correctly mentioned and explained. The Args section adequately documents all arguments with types and descriptions. The Returns section correctly states that the function returns None. The Raises section correctly identifies the KeyError exception.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation. While it performs a type of validation by checking if `send_as_entry` exists before accessing its members, there's no robust validation for the `userId`, `send_as_email`, or `id` parameters.  These parameters could contain unexpected values or formats that could lead to errors or unexpected behavior.  Using Pydantic models would allow for defining data types, constraints (e.g., string length, allowed characters), and default values, leading to more robust input validation.  The current `_ensure_user(userId)` function is not shown, so its validation capabilities are unknown, but it's not sufficient on its own to cover all functional parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through the use of string operations (e.g., `DB[\"users\"][userId][\"settings\"][\"sendAs\"].get(send_as_email)`).  However, it lacks explicit type checking.  Crucially, it also lacks value validation for `userId`, `send_as_email`, and `id`. While it handles the case where `id` is missing by using `.pop(id, None)`, it doesn't check if `userId` or `send_as_email` represent valid email addresses or if they exist within the `DB`.  The function does include a check for the existence of the user via `_ensure_user(userId)`, but the specifics of that function are unknown and therefore its validation capabilities cannot be assessed.  The function also does not raise explicit exceptions for invalid inputs beyond the `KeyError` for a missing `userId`.  Therefore, validation is only partially implemented.  `userId` has some validation (existence check via `_ensure_user`), but `send_as_email` and `id` have no validation beyond implicit type handling from string operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `send_as_email`, `id`) are properly type-annotated with their expected type (str). The function's return type is clearly specified as `None`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly deletes the specified S/MIME certificate configuration from the global `DB`.  The `userId` and `id` parameters are used correctly. However, the `send_as_email` parameter is not strictly necessary for the function's core logic. If `send_as_email` is not provided (empty string), the code still functions by checking if `send_as_entry` exists.  While this doesn't cause an error, it might be considered slightly inefficient as it attempts to access a potentially non-existent key.  The `KeyError` exception is correctly raised if the user ID is not found. The docstring accurately reflects the function's behavior and return type.  The implementation is mostly complete and functional but could be slightly improved by handling the case of a missing `send_as_email` more efficiently."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle phone numbers.  While it uses email addresses as input (`userId` and `send_as_email`), it doesn't perform any validation beyond checking if a user exists in a database (`_ensure_user` function, which is not shown).  There's no email address format validation using regular expressions or any other validation method.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "setDefault": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in setting a default S/MIME certificate for a 'Send as' alias. Default values for all parameters are correctly documented. The `Args` and `Returns` sections are well-structured, including types. The `Raises` section correctly mentions the `KeyError`.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str` for `userId`, `send_as_email`, and `id`) for basic type checking.  While this provides some level of input validation, it's minimal.  More robust validation (e.g., checking for valid email formats in `userId` and `send_as_email`, or length restrictions on `id`) is absent.  Pydantic models could significantly improve input validation by providing a more structured and comprehensive approach, including data type validation, constraints, and custom validation rules. However, the existing type hints coupled with the implicit validation done by accessing the `DB` dictionary (which will raise a KeyError if `userId` is not found) are sufficient for the current implementation.  The function's logic already handles cases where `send_as_email` or `id` are not found within the nested dictionary structure.  Therefore, while Pydantic would enhance the robustness, the current validation is adequate for the function's purpose."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`userId`, `send_as_email`, `id`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Optional[Dict[str, Any]]`.  No **kwargs parameters are used.  Complex types are properly specified using `Optional` and `Dict`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly sets the specified S/MIME certificate as the default for the alias, removing the default status from others.  It uses the `userId` and `id` parameters functionally. However, the `send_as_email` parameter, while used, defaults to an empty string.  The function's logic doesn't explicitly handle the case where `send_as_email` is empty, which might lead to unexpected behavior depending on the structure of the `DB`.  The docstring accurately reflects the function's return type and behavior, except for this potential edge case with an empty `send_as_email`.  Adding a check for an empty `send_as_email` and handling it appropriately (e.g., returning `None` or raising a more specific exception) would improve completeness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `setDefault` does not handle phone numbers or email addresses as inputs.  Its inputs are a user ID (which might be an email, but isn't treated as such), a \"send_as\" email address (which is validated implicitly by its use as a key in a dictionary, but not explicitly validated for email format), and an ID string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on managing S/MIME certificate defaults within a user's settings, not on processing or validating phone numbers or emails directly."
+          }
+        }
+      }
+    },
+    "gmail/SendAs.py": {
+      "functions": {
+        "list": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        },
+        "create": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'update': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        },
+        "patch": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'patch': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        },
+        "verify": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'verify': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'verify': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'verify': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'verify': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'verify': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'verify': File not found: APIs/gmail/Users/Settings/SendAs.py"
+          }
+        }
+      }
+    },
+    "gmail/Messages.py": {
+      "functions": {
+        "trash": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'trash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'trash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'trash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'trash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'trash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'trash': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "untrash": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'untrash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'untrash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'untrash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'untrash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'untrash': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'untrash': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'delete': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "batchDelete": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchDelete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchDelete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchDelete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchDelete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchDelete': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchDelete': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "import_": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'import_': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'import_': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'import_': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'import_': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'import_': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'import_': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "insert": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'insert': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'insert': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'insert': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'insert': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'insert': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'insert': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "get": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "send": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'send': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'send': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'send': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'send': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'send': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'send': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "modify": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'modify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'modify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'modify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'modify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'modify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'modify': File not found: APIs/gmail/Users/Messages.py"
+          }
+        },
+        "batchModify": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchModify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchModify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchModify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchModify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchModify': File not found: APIs/gmail/Users/Messages.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'batchModify': File not found: APIs/gmail/Users/Messages.py"
+          }
+        }
+      }
+    },
+    "gmail/Attachments.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose,  parameters, return value, and exceptions.  Default values are correctly mentioned and explained. The Args, Returns, and Raises sections are comprehensive and well-structured. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `user_id`, `message_id`, and `id` parameters.  It checks that each is a string and that each string is not empty. This achieves the necessary input validation without the need for Pydantic models. While Pydantic could be used, it's not strictly necessary given the straightforward validation requirements and the existing implementation's clarity.  The current approach is sufficient and avoids the overhead of introducing a Pydantic model for this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`user_id`, `message_id`, `id`) undergo comprehensive validation.  Type validation ensures they are strings. Value validation checks that they are not empty strings after stripping whitespace.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for invalid inputs.  There are no missing validation checks for the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`user_id`, `message_id`, `id`) are properly type-annotated as strings.  The return type is clearly specified as `Optional[Dict[str, Any]]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of a message attachment based on the provided `message_id` and `id`.  All functional input parameters (`message_id`, `id`) are used.  The function performs input validation as documented, raising `TypeError` and `ValueError` exceptions appropriately. The logic correctly checks for message existence, attachment reference within the message, and retrieves the attachment from the global collection. The return value matches the docstring's description, returning a dictionary with the specified fields or `None` under the expected conditions.  There are no placeholders or TODOs. The docstring accurately reflects the function's behavior and return type. The `user_id` parameter is used to ensure the user exists in the database before proceeding, which is a valid and necessary check within the context of the function's purpose."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  Its inputs are `user_id`, `message_id`, and `id`, which are all treated as strings. While `user_id` *could* represent an email address, the function doesn't perform any email validation or normalization.  There's no attempt to extract digits from it or check for a valid email format.  Therefore, the criteria for phone number and email address handling are not applicable."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "gmail": {
+      "project_structure": {
+        "status": "Incomplete",
+        "notes": "The project structure is incomplete because the main API folder (`APIs/gmail/`) is missing the crucial `__init__.py` file.  This file is essential for defining the public API functions and making the service functional.  While the `SimulationEngine` and `tests` folders are mostly complete (containing all the core required files), the absence of the `__init__.py` in the main API folder renders the entire API unusable.  The presence of many test files suggests a good testing approach, but without a properly structured main API folder, the project is incomplete.  The JSON files (`m01.json`, `medium_detail_gmail.json`, `concise_gmail.json`) within the `SimulationEngine` folder seem out of place and should be reviewed for proper placement or purpose.  They might represent test data or configuration, which would be better located elsewhere."
+      }
+    }
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.595099Z",
+  "results": {
+    "google_slides/presentations.py": {
+      "functions": {
+        "create_presentation": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  The description is clear enough. The `Args` section correctly documents the `title` parameter. The `Returns` section correctly states the return type and attempts to describe the dictionary structure. However, it inaccurately states that `pageSize`, `slides`, `masters`, `layouts`, `notesMaster`, `locale`, are returned as `None`.  **This is inconsistent with the implementation**, where only `presentationId` and `title` and `revisionId` are included in the returned dictionary.  The `Raises` section correctly identifies the `InvalidInputError`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `create_presentation` only takes one functional input parameter, `title`, which is a string.  Input validation is performed manually using a simple `if` statement to check if the title is empty or contains only whitespace.  While Pydantic could be used to perform this validation, the existing manual check is sufficient and arguably simpler for this specific case.  Therefore, a Pydantic model is not strictly needed for input validation in this function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation and null/empty checks on the `title` parameter, which is the only functional input.  It checks that `title` is not empty or whitespace-only.  While this covers the basic validation needs for a presentation title, more robust validation could be added (e.g., length limits, character restrictions to prevent injection).  No other functional input parameters exist to validate.  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_presentation` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`title: str`). The return type `Dict[str, Any]` is clearly specified.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly creates a presentation with a given title, validates the input, and generates a UUID for the presentation ID and revision ID.  It uses the `title` parameter correctly. The docstring accurately reflects the return type and structure. However, the function's interaction with a persistent storage mechanism (implied by `utils._ensure_presentation_file` and `PresentationModel`) is not fully verifiable without seeing the implementation of those utility functions and the `PresentationModel` class.  The function also lacks error handling beyond the `InvalidInputError`.  While the docstring suggests other potential errors (e.g., issues during file creation in Google Drive), these are not explicitly handled in the code.  The `pageSize`, `slides`, `masters`, `layouts`, `notesMaster`, and `locale` fields in the returned dictionary are all `None`, which is consistent with the docstring, but might be considered a minor gap if a more complete presentation object was expected."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_presentation` does not handle any phone number or email address inputs.  Its sole input is a presentation title (a string), which undergoes basic validation to ensure it's not empty or whitespace.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on creating a Google Slides presentation and managing its metadata."
+          }
+        },
+        "get_presentation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving Google Slides presentation details and the use of the `fields` parameter for selective data retrieval. The Args and Returns sections are well-structured, and types are specified for all parameters and the return value.  The Raises section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `presentationId` and `fields` parameters.  It checks the type and content of `presentationId`, ensuring it's a non-empty string.  For `fields`, it checks if it's a string and then performs additional checks to ensure it's properly formatted (no empty parts after splitting by commas). While Pydantic could be used to structure this validation more concisely and potentially add more sophisticated checks (e.g., regular expressions for field names), the existing manual validation covers the essential requirements.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `presentationId` and `fields`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`presentationId` and `fields`) are properly type-annotated with their expected types (str and Optional[str], respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Optional[str]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves presentation data based on the `presentationId` and applies the optional `fields` parameter as a filter.  All functional input parameters (`presentationId` and `fields`) are used.  All documented exceptions (`NotFoundError`, `InvalidInputError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, correctly using the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling.  The handling of the `fields` parameter, including edge cases like empty strings and malformed inputs, is robust."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  It's a function designed to retrieve and filter data about Google Slides presentations based on a presentation ID and optional field selection.  There are no inputs or processing steps related to phone numbers or email addresses.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "batch_update_presentation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a clear description of the function's purpose and usage within an MCP server context.  It accurately documents the arguments, including types and detailed explanations of complex dictionary structures like `requests` and `writeControl`. The `Returns` section correctly describes the structure of the returned dictionary. The `Raises` section lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic for validating the `writeControl` parameter, converting it into a `models.WriteControlRequest` object.  However, other functional parameters like `presentationId` and `requests` are validated using basic type checking and length checks, not Pydantic models. While this provides some validation, using Pydantic models for `presentationId` (to enforce string format restrictions) and `requests` (to deeply validate the structure and types within the list of dictionaries) would provide more robust and comprehensive input validation.  The current approach is prone to errors if the structure of the `requests` list deviates from the expected format.  A Pydantic model could define the expected structure precisely, improving error handling and clarity."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`presentationId`, `requests`, `writeControl`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types like `List`, `Dict`, `Optional` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of batch presentation updates.  It uses all functional input parameters (`presentationId`, `requests`, `writeControl`).  Exception handling is implemented for `NotFoundError`, `InvalidInputError`, and `ConcurrencyError`. There are no TODOs or placeholders. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `batch_update_presentation` function does not handle phone numbers or email addresses.  Its purpose is to batch update Google Slides presentations, processing requests for creating slides, shapes, inserting/deleting text, and other presentation-related operations.  There is no input field or parameter within the function's signature or request structure that would accept or process phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_page": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and behavior.  It correctly documents the arguments, return type, and exceptions. The type hinting is comprehensive.  However, the documentation of the return value's dictionary structure is excessively verbose and nested, making it difficult to read and potentially overwhelming for users.  The level of detail in describing the nested structure of the `pageElements` dictionary, for example, is excessive for a docstring; a simpler, higher-level description would suffice.  While the docstring mentions `notesProperties`, `slideProperties`, `layoutProperties`, and `masterProperties` as optional, it doesn't clearly indicate under what conditions they would be present (e.g., which type of page they apply to). This lack of clarity could lead to confusion.  The docstring accurately reflects the function's behavior in terms of raising exceptions and handling input validation.  There are no inconsistencies between the docstring and the implementation regarding the exceptions raised or the basic structure of the returned dictionary.  However, the extreme verbosity of the return value description detracts from its usability."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking and value checks (`if not presentationId or not isinstance(presentationId, str):`) to validate the `presentationId` and `pageObjectId` parameters.  While Pydantic could provide more structured validation (e.g., specifying string length constraints or regular expressions), the existing checks are sufficient for the basic requirements.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of both functional input parameters, `presentationId` and `pageObjectId`.  Both are checked for null/empty values and correct data type (string).  The validation is thorough and appropriate error messages (`InvalidInputError`) are raised for invalid inputs.  All functional input parameters are validated before being used in subsequent operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters `presentationId` and `pageObjectId` are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurate."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic to retrieve page details based on the provided `presentationId` and `pageObjectId`.  Both functional input parameters are used. All documented exceptions (`PermissionDeniedError`, `NotFoundError`, `InvalidInputError`) are handled. There are no placeholders or TODO comments. The function iterates through relevant sections of the presentation data within the global `DB` to find the matching page. The returned dictionary structure matches the docstring description.  The logic is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_page` does not handle any phone number or email address inputs.  Its inputs are `presentationId` and `pageObjectId`, which are treated as strings and validated only for being non-empty strings. There is no processing or validation related to phone numbers or email addresses. Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "summarize_presentation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and functionality.  It accurately describes the function's role in extracting text from a presentation for summarization purposes. The description of the `include_notes` parameter and its effect is clear.  The Args and Returns sections are well-structured, specifying types and providing detailed explanations of the dictionary structure, including nested dictionaries within the `slides` list. The Raises section correctly lists potential exceptions.  Type hints are used consistently throughout."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a manual check `if presentationId is None:` to validate the `presentationId` parameter.  However, it does not use Pydantic models to validate this or the `include_notes` parameter. While the `None` check is a start, a Pydantic model could provide more robust validation, such as checking for string length or format restrictions on `presentationId`, and ensuring `include_notes` is actually a boolean.  The current validation is insufficient for production-level code.  Using a Pydantic model would improve the validation process."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and null checks on the `presentationId` parameter.  It checks if `presentationId` is None and also implicitly checks its type (as it's used as a key in a dictionary).  It then performs a domain-specific check to ensure the ID corresponds to an existing Google presentation file.  The `include_notes` parameter, while a boolean, doesn't strictly require value validation as `False` is a valid default and the code handles both `True` and `False` appropriately.  Therefore, while the validation is not completely comprehensive, it's good enough to prevent most common errors.  The missing element would be explicit type checking for `include_notes`, although the implicit type handling by Python makes this less critical."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `summarize_presentation` has excellent parameter design and type annotations.  Both parameters (`presentationId` and `include_notes`) are properly type-annotated with their expected types (`str` and `bool`, respectively). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the return dictionary are also properly specified (e.g., `List[dict]`)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the extraction of text content from a presentation, including optional speaker notes, as described in its docstring.  Both functional input parameters (`presentationId` and `include_notes`) are used appropriately.  The documented exceptions (`NotFoundError` and `ValidationError`) are handled correctly. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, correctly using the global `DB` dictionary. The returned dictionary structure matches the docstring's description.  The handling of presentations with no slides is also correctly implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `summarize_presentation` does not handle any phone number or email address inputs.  Its purpose is to extract text content from a Google Slides presentation. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "google_slides": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations.  The SimulationEngine folder contains all the essential components (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`). The tests folder is well-organized with multiple test files. The main API folder has the expected `presentations.py` and `README.md`."
+      }
+    }
+  }
+}

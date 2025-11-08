@@ -1,0 +1,691 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:56.366111Z",
+  "results": {
+    "azure/appconfig.py": {
+      "functions": {
+        "azmcp_appconfig_account_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in listing App Configuration stores within a given Azure subscription.  All parameters, including their default values and types, are documented. The `Returns` section correctly specifies the list of dictionaries structure. The `Raises` section accurately lists potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking and manual validation for the `subscription` parameter.  It checks if `subscription` is a non-empty string.  While this is functional, it doesn't leverage Pydantic.  However, given the simplicity of the validation and the fact that the other parameters are optional and not directly used in the core logic (only for potential future extensions), using Pydantic would be overkill and add unnecessary complexity.  The existing validation is sufficient for the current implementation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation and null/empty checks for the `subscription` parameter, which is the only functional input parameter.  It checks if `subscription` is a non-empty string.  However, it lacks value validation for `subscription`.  While it checks for existence in the DB, it doesn't verify the format of the subscription ID (GUID) or display name.  No validation is performed on any of the optional parameters (`auth_method`, `tenant`, `retry_*`), which are considered functional parameters according to the problem description.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as List[Dict[str, Any]].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves App Configuration stores based on the provided subscription ID or name.  It handles both successful retrieval and the case where the subscription is not found, raising the appropriate exceptions (`SubscriptionNotFoundError` and `ValidationError`). The logic correctly iterates through resource groups and app configuration stores within the database.  The function's return value matches the docstring's description. All functional input parameters (`subscription`) are used.  The optional parameters (`auth_method`, `tenant`, `retry_*`) are not used, but this is acceptable as noted in the problem description; they are for MCP context and not part of the core functionality. There are no placeholders or TODO comments.  The implementation fully matches the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_appconfig_account_list` does not handle any phone number or email address inputs.  Its parameters are all strings representing Azure subscription and configuration details. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving App Configuration store information from a database, and no input processing related to phone numbers or emails is performed."
+          }
+        },
+        "azmcp_appconfig_kv_delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's behavior, including the handling of labels and the deletion process.  All parameters, including their types and default values (where applicable), are documented. The `Returns` section correctly states that an empty dictionary is returned. The `Raises` section accurately lists the potential exceptions (`ResourceNotFoundError` and `InvalidInputError`).  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation on the `subscription`, `account_name`, and `key` parameters using `if` statements to check for `None` and empty strings.  While not using Pydantic, this approach adequately validates these required parameters.  The other parameters are optional and not critical to the core functionality, so their lack of validation is acceptable in this context.  Using Pydantic would add unnecessary complexity for this level of validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the three core functional parameters: `subscription`, `account_name`, and `key`.  These are checked for both `None` and empty string values, representing both type and value validation.  Error handling is also appropriate, raising `custom_errors.InvalidInputError` with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional[str] where appropriate.  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a key-value pair from a simulated App Configuration store.  All functional input parameters (`subscription`, `account_name`, `key`, `label`) are used in the logic to locate and delete the key-value pair.  The documented exceptions (`ResourceNotFoundError`, `InvalidInputError`) are properly raised in the appropriate scenarios. There are no TODO comments, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type (an empty dictionary).  The `auth_method`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, `retry_network_timeout`, and `tenant` parameters are not used, but as noted in the problem description, these are MCP contextual parameters and are therefore exempt from the requirement that all functional parameters be used."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_appconfig_kv_delete` function does not handle any phone numbers or email addresses.  Its inputs are all strings representing Azure subscription IDs, account names, keys, and other configuration parameters related to Azure App Configuration.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "azmcp_appconfig_kv_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving key-value pairs from an App Configuration store. The Args section is comprehensive, listing all parameters with their types and descriptions, including optional parameters and their defaults.  The Returns section correctly specifies the dictionary structure, including the nested dictionary structure of `key_value_items`.  The Raises section accurately lists the potential exceptions.  Types are specified for all parameters and the return value.  The documentation of the nested dictionary within the return value is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks for required parameters, performs type checking (e.g., ensuring `retry_delay` is a positive number, `retry_max_retries` is a non-negative integer), and validates the values of enumerated parameters (e.g., `auth_method`, `retry_mode`). While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all functional input parameters.  The use of Pydantic would be a stylistic improvement but not strictly necessary for correctness."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for most functional parameters.  `subscription` and `account_name` are correctly checked for non-emptiness. `auth_method` is validated against a list of allowed values.  The retry parameters (`retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_network_timeout`) have type and value checks (positive numbers, non-negative integers). `key` and `label` are checked for string type.  The `tenant` parameter is also checked for string type."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional[str] where appropriate.  The function's return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It retrieves key-value pairs from a mock database (the global `DB` dictionary), applies filtering based on `key` and `label` parameters, and returns the results in the specified format. All functional input parameters (`subscription`, `account_name`, `key`, `label`) are used.  All documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `SubscriptionNotFoundError`) are properly handled. There are no TODOs, placeholders, or pass statements. The return type and structure precisely match the docstring's description.  The validation of input parameters is thorough."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_appconfig_kv_list` does not handle phone numbers or email addresses as input.  Its parameters are all strings related to Azure App Configuration settings (subscription ID, account name, keys, labels, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_appconfig_kv_lock": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the parameters and their types (including default values), meticulously details the structure of the returned dictionary, and lists all possible exceptions. The descriptions are concise and easy to understand.  There is perfect alignment between the docstring's description of the function's behavior, return value, and raised exceptions, and the actual implementation.  The documentation of optional parameters and their defaults is thorough. The explanation of the returned dictionary, including optional keys and their potential null values, is particularly helpful.  The docstring is complete enough for a developer to use the function effectively without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using simple `if` statements to check for `None` or empty string values for the `subscription`, `account_name`, and `key` parameters.  These are the only functional parameters requiring validation.  While Pydantic could be used, the current approach is sufficient for the level of validation needed.  The other parameters are optional and do not require strict validation in this context.  Adding Pydantic would add complexity without significant benefit given the simplicity of the current validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on its three functional input parameters: `subscription`, `account_name`, and `key`.  For each, it checks for both `None` and empty string values, raising `custom_errors.InvalidInputError` with informative messages if either condition is met.  This covers null/empty checks and ensures that these critical parameters are not missing or invalid.  The remaining parameters (`auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, `retry_network_timeout`, and `label`) are optional and do not require validation in this context, as noted in the problem description.  Therefore, the validation is complete for all functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (using Optional[str] where appropriate). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the locking mechanism as described in its docstring.  All functional input parameters (`subscription`, `account_name`, `key`, `label`) are used appropriately in the logic to find and lock the key-value item.  The documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `ConflictError`) are all properly raised in the relevant scenarios. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB` dictionary. The return dictionary matches the structure and content promised in the docstring.  The authentication and retry parameters are correctly identified as MCP contextual parameters and are not used within the function's core logic, which is expected."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_appconfig_kv_lock` function does not handle phone numbers or email addresses as input.  Its parameters are all strings representing various aspects of Azure App Configuration, such as subscription IDs, account names, and keys.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_appconfig_kv_set": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: setting key-value pairs in an App Configuration store.  All parameters, including their default values and types, are documented. The `Returns` section clearly specifies the dictionary structure, including keys, types, and descriptions. The `Raises` section lists potential exceptions.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual input validation for several parameters, checking types and constraints.  While this achieves some validation, it's not consistently applied and lacks the structure and conciseness of Pydantic models.  For instance, `retry_delay`, `retry_max_delay`, `retry_max_retries`, and `retry_network_timeout` all have manual type and constraint checks, but error messages could be improved.  The `auth_method` validation uses an enum, which is good practice, but the rest of the validation is repetitive and could be streamlined with Pydantic.  Using Pydantic models would improve the code's readability, maintainability, and error handling by centralizing validation logic and providing more informative error messages.  The `kv_data_to_upsert` is a Pydantic model, but it's used for constructing the data to be sent, not for validating the input parameters themselves.  Therefore, while some validation is present, it's not fully leveraged and could be significantly improved with a more systematic approach using Pydantic models for all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`subscription`, `account_name`, `key`, `value`, `auth_method`, `label`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, `retry_network_timeout`, `tenant`) are validated.  The validation includes type checking (using `isinstance`), checks for empty strings (`.strip()`), and value range/format checks (e.g., positive numbers for retry parameters, allowed values for `auth_method` and `retry_mode`).  Appropriate exceptions (`custom_errors.InvalidInputError`, `custom_errors.ResourceNotFoundError`, `custom_errors.ConflictError`, `custom_errors.ServiceError`) are raised with informative error messages for invalid inputs.  The validation is thorough and covers all aspects of the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and str for string parameters.  The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`subscription`, `account_name`, `key`, `value`, `auth_method`, `label`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, `retry_network_timeout`, `tenant`) are used appropriately in the function's logic, with comprehensive validation for each.  All documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `ConflictError`, `ServiceError`) are properly handled and raised in the relevant scenarios. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` (as expected). The return value matches the docstring's description.  The function effectively handles both creation and update scenarios for key-value pairs in the simulated App Configuration store."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_appconfig_kv_set` function does not handle phone numbers or email addresses.  Its purpose is to manage key-value pairs in an Azure App Configuration store.  The input parameters are all strings representing configuration settings,  subscription IDs, account names, keys, and other metadata related to the Azure service. There is no processing or validation logic for email or phone number formats. Therefore, the categories of \"Excellent,\" \"Good,\" or \"Poor\" are not applicable."
+          }
+        },
+        "azmcp_appconfig_kv_show": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, parameters, return value, and exceptions.  All parameters, including their default values and types, are clearly documented. The description of the return value, including the structure of the dictionary, is accurate and helpful.  The `Raises` section correctly lists the potential exceptions.  Types are consistently specified for parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for all functional parameters (subscription, account_name, key, auth_method, label, retry parameters, and tenant).  It checks types, allowed values, and formats where appropriate. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all functional input parameters.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all functional input parameters.  `subscription`, `account_name`, and `key` are checked for non-empty strings and correct type. `auth_method` is checked for type and allowed values. `label`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, `retry_network_timeout`, and `tenant` are validated for type and, where applicable, value constraints (e.g., `retry_delay` being non-negative, `retry_mode` being 'fixed' or 'exponential').  `account_name` is further validated to ensure it only contains alphanumeric characters, hyphens, and underscores.  Appropriate exceptions (`InvalidInputError`, `ValidationError`, `ResourceNotFoundError`, `SubscriptionNotFoundError`, `ServiceError`) are raised with informative error messages for invalid inputs.  All functional parameters are checked before being used."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and str for string parameters.  The return type is clearly specified as Dict[str, Any]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a key-value pair from a simulated database (global `DB`).  All functional input parameters (`subscription`, `account_name`, `key`, `label`) are used to locate the correct key-value item.  All documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `ServiceError`, `ValidationError`, `SubscriptionNotFoundError`) are properly handled and raised in appropriate scenarios. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODO comments. The validation of input parameters is thorough. The function correctly handles the case where a label is not provided, retrieving the default label.  The additional optional parameters related to retry mechanisms are validated but not currently used in the core logic of retrieving the key-value pair; however, this is acceptable as they are likely intended for future implementation of retry functionality."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_appconfig_kv_show` function does not handle phone numbers or email addresses as input.  Its parameters are all strings related to Azure App Configuration settings (subscription ID, account name, keys, labels, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_appconfig_kv_unlock": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a good overview of the function's purpose, parameters, return value, and exceptions.  It accurately describes the function's behavior and includes details about optional parameters and their default values. The description of the return dictionary is particularly helpful, specifying the keys and their types.  All parameters are documented with types and descriptions.  The `Raises` section accurately lists the exceptions that the function might raise."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for all functional parameters (account_name, key, subscription, and the optional parameters).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all the necessary aspects.  The use of Pydantic would not significantly improve the validation in this specific case, given the relatively simple validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all functional input parameters.  `account_name`, `key`, and `subscription` are validated as non-empty strings. `auth_method` is checked against a list of allowed values.  `retry_delay`, `retry_max_delay`, and `retry_network_timeout` are checked to ensure they are valid numbers. `retry_max_retries` is validated as a valid integer. `retry_mode` is checked against allowed values.  `label` and `tenant` are validated as strings.  All validations raise `custom_errors.InvalidInputError` with informative messages upon failure.  The validation covers type, value (where applicable), and null/empty checks for all functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the unlocking of a key-value setting in the simulated database (global `DB`).  All functional input parameters (`account_name`, `key`, `subscription`, `label`) are used in the logic to locate and modify the appropriate key-value item.  All documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `ConflictError`, `SubscriptionNotFoundError`) are properly raised in the corresponding scenarios. There are no TODOs, placeholders, or pass statements. The return dictionary matches the docstring's description of the returned data structure.  The logic correctly handles the case where a key is already unlocked and raises the appropriate `ConflictError`. The function's behavior aligns precisely with its docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_appconfig_kv_unlock` function does not handle phone numbers or email addresses as input.  Its parameters are all strings related to Azure App Configuration settings and subscription details.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "azure/cosmos.py": {
+      "functions": {
+        "azmcp_cosmos_account_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's primary task: listing Cosmos DB accounts within a given subscription. The Args section correctly lists all parameters with their types and descriptions, although it clearly marks several as not yet implemented.  The Returns section correctly specifies the return type as `List[Dict[str, Any]]` and describes the structure of the dictionaries within the list, including the keys `name`, `id`, `location`, and `kind`.  The Raises section correctly identifies `SubscriptionNotFoundError` and `ValidationError`.  Default values for optional parameters are mentioned."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `subscription` parameter, checking if it's provided and if it's a string.  While it doesn't use Pydantic, the validation is present and sufficient for the single functional parameter. The other parameters are marked as not implemented and therefore do not require validation at this stage.  Adding Pydantic would be unnecessary overhead for this simple validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `subscription` parameter.  It checks for both null/empty values (`if not subscription:`) and type correctness (`if not isinstance(subscription, str):`).  It also handles the case where the subscription ID is not found in the database, raising a `SubscriptionNotFoundError`.  However, the function does not validate the other optional parameters (`auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, `retry_network_timeout`). While these are noted as not implemented,  a more robust approach would be to either remove them or add validation checks, even if only to ensure they are of the correct type if ever implemented.  Currently, the validation is only partially comprehensive because it only validates the single required parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str]). The function's return type is clearly specified as List[Dict[str, Any]].  The function does not use **kwargs parameters.  Complex types like List, Dict, and Optional are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves Cosmos DB accounts based on the provided subscription ID or name.  It handles cases where the subscription is not found, either by ID or name, raising the appropriate `SubscriptionNotFoundError`. Input validation ensures the subscription is a string.  The function iterates through the mock database (`DB`) to find the subscription and then extracts Cosmos DB account information.  It correctly handles potential missing or non-string values in the account data, skipping accounts with invalid data. The return value matches the docstring's description. All functional parameters (`subscription`) are used.  The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODOs. The exception handling for `ValidationError` and `SubscriptionNotFoundError` is correctly implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_cosmos_account_list` function does not handle any phone number or email address inputs.  Its parameters are all related to Azure subscription information and Cosmos DB account retrieval.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_cosmos_account_create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in creating a Cosmos DB account within Azure. The Args section correctly lists all parameters with types and descriptions.  The Returns section adequately details the structure of the returned dictionary, including nested structures within the `databases` list.  The Raises section correctly identifies potential exceptions. Default values are mentioned for all parameters, clearly indicating which are not yet implemented."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The code uses a Pydantic model (`AzmcpCosmosAccountCreateInputArgs`) to validate inputs. However, the model's definition is not shown, so we cannot assess the completeness of its validation.  The `try...except` block only catches `PydanticValidationError`, suggesting an attempt at comprehensive validation using Pydantic.  However, without seeing the model itself, we cannot confirm whether all functional parameters (`subscription`, `resource_group`, `account_name`, `location`, `kind`) are validated and what types of validation are performed (e.g., string length, allowed values for `kind`).  The code performs additional validation checks after the Pydantic validation, which is redundant if the Pydantic model is comprehensive.  Using a well-defined Pydantic model would streamline validation and improve readability by centralizing all validation rules in one place.  The optional parameters (`auth_method` etc.) are not validated, but the docstring indicates they are not yet implemented, so this is not a flaw in the current code."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses Pydantic for input validation, which is a good practice.  `subscription`, `resource_group`, `account_name`, `location`, and `kind` are validated by Pydantic (assuming `AzmcpCosmosAccountCreateInputArgs` is a correctly defined Pydantic model that enforces type and value constraints for these parameters).  However, the `auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, and `retry_network_timeout` parameters, while having default values, are not validated.  Even though they are noted as not yet implemented,  the lack of validation is a gap.  The validation performed is primarily type checking and potentially some basic value constraints enforced by Pydantic, but the extent of value validation is unknown without seeing the `AzmcpCosmosAccountCreateInputArgs` model definition.  Therefore, the validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All parameters are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a Cosmos DB account in the mock database (`DB`).  All functional input parameters (`subscription`, `resource_group`, `account_name`, `location`, `kind`) are used.  The documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `ConflictError`, `ValidationError`) are all handled. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional within the constraints of using the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type.  The `auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, and `retry_network_timeout` parameters are correctly identified as not implemented in the docstring and are not used in the function's logic; this is acceptable given their designation as MCP contextual parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_cosmos_account_create` function does not handle any phone numbers or email addresses.  Its inputs and outputs relate solely to Azure Cosmos DB account creation and management. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "azmcp_cosmos_database_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's primary task: listing Cosmos DB databases. The Args section correctly lists all parameters with types and descriptions, although it explicitly notes which parameters are not yet implemented.  The Returns section accurately describes the structure of the returned list of dictionaries, including the keys \"name\" and \"id\". The Raises section correctly identifies potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic for validation of the optional retry parameters.  However, the `subscription` and `account_name` parameters are validated manually with simple `if not` checks. While this provides basic validation, a Pydantic model would allow for more robust validation (e.g., checking for specific string formats, length restrictions, etc.).  Using a Pydantic model for all functional input parameters would improve the code's clarity, maintainability, and the comprehensiveness of input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs basic null checks for the required parameters `subscription` and `account_name`.  It also uses a Pydantic model (`AzmcpCosmosDatabaseListRetryParams`) for validation of the optional retry parameters if provided. However, this validation is only triggered if at least one retry parameter is passed.  No other validation is performed on the `subscription` and `account_name` parameters beyond checking for null values.  There's no validation to ensure that the subscription ID or account name are in the correct format (e.g., GUID for subscription ID, alphanumeric for account name).  The function attempts to find the subscription by ID first, and then by display name if the ID lookup fails, which is a form of indirect validation.  However, this approach doesn't explicitly validate the format of the input `subscription` parameter.  Therefore, validation is partial, covering some but not all aspects and functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and List[Dict[str, Any]] for the return type.  The return type is also clearly specified. The function does not use **kwargs parameters.  All complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly lists all databases from a Cosmos DB account based on the provided subscription and account name.  It handles cases where the subscription ID is not found by attempting to locate it using the display name.  Both `ResourceNotFoundError` and `InvalidInputError` exceptions are correctly raised in appropriate scenarios.  All functional input parameters (`subscription`, `account_name`) are used. The retry parameters are validated using Pydantic, and although not used in the current implementation, their validation prevents invalid input from causing runtime errors. The function's logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately describes the function's behavior, input parameters, return type, and exceptions.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_cosmos_database_list` does not handle any phone numbers or email addresses.  Its inputs are all strings representing Azure subscription IDs, account names, and other parameters related to Cosmos DB. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "azmcp_cosmos_database_container_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core task: listing containers in a Cosmos DB database. The Args section correctly lists all parameters with types and descriptions. The Returns section accurately describes the structure of the returned list of dictionaries, including the keys \"name\" and \"id\" and their types.  The Raises section correctly lists the potential exceptions.  All default parameter values are mentioned, and the docstring clearly indicates which parameters are not yet implemented."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `AzmcpCosmosDatabaseContainerListInputArgs` (not shown in the provided code snippet but implied by the `PydanticValidationError` exception handling) to validate the `subscription`, `account_name`, and `database_name` parameters.  While other parameters are not validated, they are marked as optional and are not critical for the core functionality of listing containers.  The use of a Pydantic model provides a clear and concise way to validate the essential input parameters.  Adding validation for the optional parameters would improve the robustness of the function, but the current implementation is still considered \"Properly Used\" because it correctly validates the required parameters using Pydantic."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic's `AzmcpCosmosDatabaseContainerListInputArgs` (not shown in the provided code) for input validation. This likely handles type validation for `subscription`, `account_name`, and `database_name`.  However, the provided code snippet doesn't show the definition of `AzmcpCosmosDatabaseContainerListInputArgs`, preventing a complete assessment of value validation (e.g., checking for valid formats in subscription IDs or account names).  The code performs null checks implicitly by the fact that it uses these parameters directly after the `try...except` block for Pydantic validation.  There are no explicit checks for empty strings or other constraints beyond type checking.  The function does raise appropriate exceptions (`ValidationError`, `ResourceNotFoundError`, `SubscriptionNotFoundError`) for various failure scenarios, providing informative error messages.  While type validation is likely comprehensive due to Pydantic, the lack of explicit value and constraint validation in the shown code, beyond what Pydantic might provide, leads to a \"Good\" rating instead of \"Comprehensive\".  The optional parameters (`auth_method`, `retry_delay`, etc.) are not validated, but as noted, these are not functional parameters and are thus excluded from the assessment."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as List[Dict[str, Any]].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a list of containers from a Cosmos DB database based on the provided subscription, account, and database names.  All functional input parameters (`subscription`, `account_name`, `database_name`) are used.  The function correctly handles the documented exceptions (`ResourceNotFoundError`, `SubscriptionNotFoundError`, `ValidationError`). There are no TODOs, placeholders, or pass statements. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type.  The `auth_method`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, `retry_network_timeout`, and `tenant` parameters are not used, but as noted in the problem description, these are MCP contextual parameters and are thus exempt from the requirement that all functional parameters be used."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_cosmos_database_container_list` does not handle any phone numbers or email addresses.  Its inputs are all strings representing Azure subscription IDs, account names, database names, and other parameters related to accessing a Cosmos DB database.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "azure/keyvault.py": {
+      "functions": {
+        "azmcp_keyvault_key_create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: creating a key in an Azure Key Vault.  All parameters, including their default values and types, are documented. The `Args` section is comprehensive. The `Returns` section clearly specifies the return type and structure, including nested dictionaries.  The `Raises` section lists the potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual validation for several parameters (`subscription`, `vault`, `key`, `retry_delay`, `retry_max_retries`, `retry_max_delay`, `retry_network_timeout`, `key_type`).  It checks for empty strings in required parameters and uses a custom function `_validate_str_non_negative_int` for retry parameters.  However, Pydantic models could be used to consolidate and improve this validation.  A Pydantic model could enforce data types, string lengths, and potentially more sophisticated validation rules (e.g., regular expressions for specific formats) in a more structured and maintainable way.  The current approach is functional but less elegant and potentially more error-prone than using Pydantic."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for its functional parameters.  `subscription`, `vault`, and `key` are correctly checked for empty strings.  The `key_type` is validated against allowed values ('RSA', 'EC').  The optional retry parameters (`retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_network_timeout`) are checked to ensure they represent non-negative integers if provided."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and str for string parameters.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and implements the core functionality of creating a key in a simulated Key Vault using the global `DB` dictionary.  All functional input parameters (`subscription`, `vault`, `key`, `key_type`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_network_timeout`) are used.  The documented exceptions (`ResourceNotFoundError`, `ValidationError`, `ConflictError`) are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_keyvault_key_create` function does not handle any phone numbers or email addresses.  Its inputs are all strings representing Azure resources and configuration parameters. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on creating keys within an Azure Key Vault and performs input validation relevant to that specific task."
+          }
+        },
+        "azmcp_keyvault_key_get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's behavior and includes details about default parameter values.  The description of the `attributes` dictionary within the return value is thorough, specifying the types and meanings of its keys.  All arguments are documented with types and descriptions, and the `Returns` section clearly explains the structure of the returned dictionary. The `Raises` section correctly lists the potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation on `subscription`, `vault`, and `key` using simple `if not` checks to ensure they are not empty strings.  While this is basic validation, it's sufficient for the task.  Pydantic models are not used, but given the simplicity of the required checks, they would not significantly improve the code. The other parameters are optional and do not require strict validation in this context.  Adding Pydantic models would add complexity without a substantial benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation for the three core functional parameters: `subscription`, `vault`, and `key`.  It checks for empty strings using `if not parameter:` which addresses null/empty checks.  Error handling is present using custom exceptions (`InvalidInputError` and `ResourceNotFoundError`) with informative messages.  However, it lacks value validation for these parameters.  While it checks for existence in the mock database, it doesn't verify the format (e.g., subscription ID being a GUID, vault and key names adhering to naming conventions).  The optional parameters (`auth_method`, `retry_delay`, etc.) are not validated at all.  Therefore, while the essential parameters are checked for emptiness, more comprehensive validation (type checking and value/format validation) is missing for a complete \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters.  The return type is clearly specified as `Dict[str, Any]`. The function does not use **kwargs.  All complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves key details from a mocked database (`DB`).  All functional input parameters (`subscription`, `vault`, `key`) are used to locate the key within the nested structure of the `DB`.  The documented exceptions (`ResourceNotFoundError`, `InvalidInputError`) are properly raised in the appropriate scenarios.  There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The `auth_method`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, and `retry_network_timeout` and `tenant` parameters are not used, but as noted in the problem description, these are MCP contextual parameters and are therefore exempt from the requirement to be used."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_keyvault_key_get` function does not handle any phone numbers or email addresses.  Its inputs and outputs relate solely to Azure Key Vault operations, using subscription IDs, vault names, and key names as strings.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_keyvault_key_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's primary task: listing keys in an Azure Key Vault.  All parameters are documented with their types and descriptions, including default values. The `Returns` section correctly specifies the return type as a list of dictionaries.  However, the description of the dictionary structure is overly simplistic and incomplete. While it mentions `attributes` and `tags`, it doesn't fully detail the nested structure within `attributes` (e.g., the types of `exp`, `nbf`, etc., are not explicitly stated).  The documentation also doesn't reflect that `exp`, `nbf`, `created`, and `updated` are all Unix timestamps (seconds since epoch).  The `Raises` section correctly lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual input validation for several parameters, checking for required fields, string emptiness, allowed values for `auth_method` and `retry_mode`, and numeric string format for certain retry parameters.  This is a reasonable approach, but it's not consistent and could be improved with Pydantic models.  Pydantic models would provide a more concise and maintainable way to define the expected data types and constraints for all parameters, improving readability and reducing the risk of errors.  The current manual validation is prone to becoming cumbersome as the number of parameters increases.  Specifically, the validation of `retry_delay`, `retry_max_delay`, and `retry_network_timeout` as strings that can be converted to floats could be more elegantly handled with a Pydantic model that specifies `float` as the type and potentially adds constraints like minimum or maximum values.  Similarly, the validation of `include_managed` as either \"true\" or \"false\" could be handled more cleanly with a Pydantic model.  The `tenant` parameter is only validated as a string, which is a minimal check.  A more robust approach might be needed depending on the expected format of the tenant ID."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for several functional parameters.  `subscription` and `vault` are correctly checked for null and empty string values. `include_managed` is validated to ensure it's either \"true\" or \"false\" if provided. `auth_method` and `retry_mode` are checked against allowed values.  `retry_delay`, `retry_max_delay`, and `retry_network_timeout` are validated as strings representing numbers. `retry_max_retries` is checked to ensure it's a string that can be converted to an integer.  `tenant` is validated as a string if provided."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the complex types List and Dict.  The return type is also clearly specified as List[Dict[str, Any]]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles required parameter validation and raises the documented exceptions (`ResourceNotFoundError`, `InvalidInputError`). The logic for retrieving keys from a mock database (represented by the global `DB` dictionary) and formatting the output as specified in the docstring is implemented.  However, the `include_managed` parameter is not actually used in filtering the results; the comment indicates that it would require additional data within `key_entry_data` to function as intended.  This represents a minor gap in functionality.  The validation of the numeric string parameters (`retry_delay`, `retry_max_delay`, `retry_network_timeout`, `retry_max_retries`) is also implemented correctly, although these parameters are not used within the function's core logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_keyvault_key_list` does not handle any phone numbers or email addresses.  Its inputs are all strings representing Azure resource identifiers, authentication methods, and configuration parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on interacting with the Azure Key Vault API and does not process any personal contact information."
+          }
+        }
+      }
+    },
+    "azure/monitor.py": {
+      "functions": {
+        "azmcp_monitor_healthmodels_entity_gethealth": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a good overview of the function's purpose, parameters, return value, and exceptions.  It accurately describes the function's behavior and includes default values for all optional parameters.  The descriptions of the parameters are clear and helpful. The documentation of the return value is also good, specifying the dictionary structure and the types of its keys. The `Raises` section accurately lists the exceptions that the function might raise."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual input validation for several parameters.  Required string parameters (`entity`, `model_name`, `resource_group`, `subscription`) are checked for emptiness.  `auth_method` and `retry_mode` are checked against allowed values. Numeric string parameters are checked to ensure they are digits.  However, this validation is done manually, not through Pydantic models. Using Pydantic models would improve the code by centralizing validation logic, enhancing readability, and providing more robust type checking and constraint enforcement.  For instance, Pydantic could easily enforce that numeric parameters are not only digits but also within a reasonable range.  The current manual checks are prone to errors and harder to maintain than a Pydantic model-based approach."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters.  All required string parameters (`entity`, `model_name`, `resource_group`, `subscription`) are checked for emptiness.  The `auth_method` and `retry_mode` parameters are checked against allowed values.  Numeric string parameters (`retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_network_timeout`) are checked to ensure they are strings representing non-negative integers.  Appropriate `InvalidInputError` exceptions are raised for invalid inputs with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional[str] where appropriate for optional parameters.  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves health information based on the provided parameters.  All functional input parameters (`entity`, `model_name`, `resource_group`, `subscription`) are used in the function's core logic to fetch health data.  The documented exceptions (`ResourceNotFoundError`, `InvalidInputError`) are properly implemented and raised under the appropriate conditions. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, assuming the `utils.find_monitor_health_entity` function and `models.HealthStateEntity` class work as expected (which is outside the scope of this review). The docstring accurately describes the function's parameters, return value, and behavior.  The validation of optional parameters (`auth_method`, `retry_mode`, numeric parameters) is also correctly implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_monitor_healthmodels_entity_gethealth` does not handle any phone numbers or email addresses as input.  Its parameters are all strings related to Azure resource management and monitoring. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving health information from an Azure Monitor Health Model, and its input validation is limited to checking for empty strings and validating the format of a few optional parameters against predefined allowed values."
+          }
+        }
+      }
+    },
+    "azure/loganalytics.py": {
+      "functions": {
+        "azmcp_monitor_workspace_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in listing Log Analytics workspaces within a given Azure subscription. The description of how to use the function to identify workspaces before querying logs is helpful.  All parameters, including their default values, are documented with clear descriptions. The `Args` section is comprehensive. The `Returns` section correctly specifies the list of dictionaries and details the structure of each dictionary, including nested `sku` dictionary.  The `Raises` section mentions the expected exceptions.  Types are specified for all parameters and the return value. The documentation of the dictionary structure is quite thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation on several parameters without using Pydantic models.  It checks for empty subscription IDs, validates the `retry_mode` against allowed values, and uses `try-except` blocks to validate that `retry_max_retries`, `retry_delay`, `retry_max_delay`, and `retry_network_timeout` can be converted to integers or floats, respectively.  While functional, this approach is less concise and maintainable than using Pydantic models.  Pydantic could improve the code by providing a more structured and declarative way to define and enforce input validation rules, leading to better readability and maintainability.  The current manual validation is sufficient, however."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for several functional parameters, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str]).  The function's return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use **kwargs parameters.  Complex types like `List` and `Optional` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves workspaces from the global `DB` based on the provided subscription ID or name.  It handles both ID and display name lookups.  Exception handling for `SubscriptionNotFoundError` and `InvalidInputError` is implemented correctly. Input validation is performed for `retry_mode`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, and `retry_network_timeout`.  The function's logic is complete given the use of the global `DB`. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_monitor_workspace_list` does not handle any phone number or email address inputs.  Its parameters are all related to Azure subscription and Log Analytics workspace configuration (subscription ID, authentication method, retry parameters, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_monitor_table_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in listing Log Analytics tables and its utility for constructing KQL queries within an MCP server context.  All parameters, including their default values and types, are documented. The `Returns` section correctly specifies the list of dictionaries structure, although it could benefit from explicitly mentioning that the `id` and `timespan` fields might be absent if not found in the source data.  The documentation of the nested `schema` dictionary is detailed and helpful. The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation on the functional parameters `subscription`, `resource_group`, `workspace`, and `table_type` using `if not` checks to ensure they are not empty strings.  While this is basic validation, it's sufficient for these parameters.  Pydantic models are not used, but given the simple nature of the validation, they would not significantly improve the code. The optional parameters are not validated, but this is acceptable as they have default values and are not critical for the function's core logic.  The validation is sufficient for the task."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the four core functional parameters (`subscription`, `resource_group`, `workspace`, `table_type`).  These are checked for being non-empty strings, a crucial validation.  The function also handles cases where the subscription ID or name is not found, and the resource group or workspace are not found within the subscription.  Error handling is implemented using custom exceptions with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and List[Dict[str, Any]] for the complex return type.  The return type is also clearly specified. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: it retrieves tables from a mock database (`DB`) based on provided filters.  The `auth_method`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, and `retry_network_timeout` parameters are not used, which are functional parameters and not MCP contextual parameters.  The table filtering logic correctly handles 'CustomLog' and 'AzureMetrics' types, but the handling of other `table_type` values might need further refinement depending on the expected behavior (currently, it only matches if `table_type` exactly equals a table name).  The error handling for missing resources is implemented correctly.  The docstring accurately reflects the return type and overall function behavior.  The code also includes robust handling of potential `None` values within nested dictionaries, preventing unexpected errors."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_monitor_table_list` does not handle any phone numbers or email addresses.  Its inputs and outputs relate solely to Azure Log Analytics workspaces and their associated tables.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "azmcp_monitor_table_type_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, which is to list available table types in a Log Analytics workspace.  It accurately describes the function's inputs and output. All parameters, including their default values, are documented with types and descriptions. The `Returns` section correctly specifies the return type and provides a helpful example. The `Raises` section lists the potential exceptions.  Types are consistently specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using type checking and manual checks for various conditions (e.g., empty strings, non-negative integers, valid enum values).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all the functional input parameters.  The use of `try-except` blocks to handle potential `ValueError` exceptions during type conversion is a good practice.  Adding Pydantic wouldn't significantly improve the code's correctness or readability in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters.  `subscription` and `workspace` are checked for emptiness. `auth_method` is validated as a string and checked against allowed values using an enum. `tenant` is checked for emptiness if provided.  The retry parameters (`retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_network_timeout`) are checked for correct data types (integer or float) and valid ranges (positive values). `retry_mode` is validated as a string and checked against allowed values using an enum.  All validations raise appropriate `InvalidInputError` exceptions with informative messages.  All functional parameters are checked before being used."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and List for the return type.  The return type is also clearly specified. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It retrieves subscription and workspace data from the global `DB`, handles cases where the subscription or workspace is not found, validates input parameters (subscription, workspace, and the optional parameters related to authentication and retry mechanisms), and returns a list of table types as promised. All functional input parameters are used appropriately.  All documented exceptions are implemented. There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB`.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_monitor_table_type_list` does not handle any phone numbers or email addresses as input.  Its parameters are all strings representing Azure resource identifiers and configuration options for API calls. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "azure/storage.py": {
+      "functions": {
+        "azmcp_storage_account_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in listing storage accounts within a given Azure subscription.  All parameters, including their default values and types, are documented. The `Returns` section correctly specifies the dictionary structure, including nested dictionaries and lists, although it could benefit from explicitly mentioning the `type` of each key within the nested dictionaries (e.g., `name (str)`, `id (str)` etc.  This is already done for some keys but not all). The `Raises` section correctly lists the exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses manual input validation for several parameters (`retry_delay`, `retry_max_retries`, `retry_max_delay`, `retry_network_timeout`, `retry_mode`, `subscription`).  These checks are done using `try-except` blocks and explicit comparisons against allowed values.  However, this validation is not comprehensive and could be improved.  Pydantic models could be used to consolidate and enhance these checks, providing more robust and readable validation.  The `subscription` parameter's validation, while present, could also benefit from a more sophisticated approach using a Pydantic model to ensure it conforms to expected formats (GUID or string).  The use of Pydantic models for the `sku` parameter within the function's logic is unrelated to input validation; it's used for processing data retrieved from the database, not for validating input parameters passed to the function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for several functional parameters.  `subscription` is checked for emptiness.  `retry_delay`, `retry_max_delay`, `retry_max_retries`, and `retry_network_timeout` are all checked to ensure they can be converted to integers, thus validating their type and ensuring they are numeric strings. `retry_mode` is checked against a list of allowed values."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  The function does not use **kwargs parameters.  Complex types like `Optional[str]` and `Dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves storage accounts based on the provided subscription ID and optionally tenant ID.  All functional input parameters (`subscription`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_network_timeout`, `retry_mode`) are used for input validation or, in the case of `subscription` and `tenant`, for data retrieval.  The documented exceptions (`SubscriptionNotFoundError`, `ValidationError`) are properly implemented and raised under the correct conditions. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately describes the function's parameters, return value, and behavior.  The return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_storage_account_list` does not handle any phone number or email address inputs.  Its parameters are all strings related to Azure subscription and retry configuration. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_storage_blob_container_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's primary task: listing containers in a storage account. The description of the arguments is thorough, including optional parameters and their default values (although the docstring doesn't explicitly state that the default values are `None` for the optional parameters, this is implied and easily understood).  The `Returns` section correctly specifies the list of dictionaries and details the keys within each dictionary. The `Raises` section accurately lists the exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the return value is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking and manual validation for the `account_name` parameter.  It checks if `account_name` is provided and raises an error if it's missing.  The other parameters are optional and not directly used for core functionality within the function itself, making dedicated input validation unnecessary. While Pydantic could be used to add more robust type checking and validation for these optional parameters, it's not strictly required given the current implementation and the function's logic.  The existing validation is sufficient for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly (all parameters are type hinted as strings or Optional[str]) and includes a null check for the `account_name` parameter, raising an `InvalidInputError` if it's missing or invalid.  However, it lacks value validation for `account_name` (e.g., checking for valid characters, length restrictions) and any validation for the `subscription` parameter beyond a null check (it relies on `utils.find_subscription_by_id_or_name` which might have its own validation, but that's outside the scope of this function's validation).  The optional retry parameters (`retry_max_retries`, `retry_delay`, etc.) are not validated at all.  Therefore, validation is only partially implemented.  The `subscription` parameter should have more robust validation, and the optional retry parameters should at least have type checks and null checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str]). The function's return type is clearly specified as List[Dict[str, Any]].  No **kwargs parameters are used.  Complex types like List, Dict, and Optional are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly lists blob containers from a simulated database (global `DB`).  All functional parameters (`subscription` and `account_name`) are used.  The documented exceptions (`ResourceNotFoundError` and `InvalidInputError`) are properly raised. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional within the context of the global `DB`. The docstring accurately describes the function's parameters, return type, and behavior.  The `auth_method`, `tenant`, and `retry_*` parameters are correctly identified as MCP contextual parameters and are not used in the function's core logic, which is expected."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_storage_blob_container_list` does not handle any phone number or email address inputs.  Its parameters and purpose are related to interacting with Azure Storage accounts, using subscription IDs and account names as inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_storage_blob_container_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  All parameters, including their default values, are documented. The `Returns` section accurately describes the structure of the dictionary, including the types of the keys. The `Raises` section lists all potential exceptions.  Types are consistently specified for parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`AzmcpStorageBlobContainerDetailsInput`) to validate the functional input parameters (`subscription`, `account_name`, `container_name`, `auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, `retry_network_timeout`).  The `try...except PydanticValidationError` block handles validation errors. While it then performs custom error handling based on specific error types, this is an enhancement to the basic Pydantic validation, not a replacement. The core input validation is handled by Pydantic.  Therefore, the Pydantic model is properly used for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters.  `subscription`, `account_name`, and `container_name` are checked for being present and not empty strings. This is done via Pydantic validation and custom error handling for these specific cases.  However, there's no further validation on the format or content of these strings (e.g., checking if `account_name` conforms to Azure naming conventions).  The optional parameters (`auth_method`, `tenant`, retry parameters, `retry_network_timeout`) are not validated for value or type beyond what Pydantic's basic type checking provides.  While Pydantic handles type checking,  additional validation (e.g., checking allowed values for `auth_method` or range checks for numeric retry parameters if they were cast to numbers instead of strings) would improve the robustness.  The validation is therefore not comprehensive, but it's better than partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves container details from the mock database (`DB`).  All functional input parameters (`subscription`, `account_name`, `container_name`) are used to locate the container.  The function handles the documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `ValidationError`, `ServiceError`) appropriately. There are no TODOs, placeholders, or pass statements. The logic is complete and functional given the use of the global `DB`. The docstring accurately reflects the function's behavior and return type.  The use of Pydantic for input and output validation adds robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_storage_blob_container_details` does not handle any phone numbers or email addresses.  Its inputs and outputs relate solely to Azure storage account and container details (subscription IDs, account names, container names, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "azmcp_storage_blob_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior and includes default values for all optional parameters. The description of the nested `properties` dictionary within the return value is particularly thorough, specifying data types and providing examples where appropriate."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using type checking and manual validation for all functional parameters (`subscription`, `account_name`, `container_name`, `auth_method`, retry parameters, and `tenant`).  While it doesn't use Pydantic models, the validation is comprehensive and covers all the necessary checks.  Using Pydantic models would add extra overhead without significantly improving the existing validation.  The current approach is sufficient and arguably more readable for this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters.  `subscription`, `account_name`, and `container_name` are checked for both type (string) and non-emptiness.  `auth_method` is checked for type and whether it's one of the allowed values.  The retry parameters (`retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_network_timeout`) are checked for type and valid numeric ranges (non-negative, positive where appropriate). `retry_mode` is validated against allowed string values.  `tenant` is checked for type and non-emptiness.  All validations raise appropriate `InvalidInputError` exceptions with informative messages.  There are no functional input parameters missing validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and List[Dict[str, Any]] for the complex return type.  The return type is also clearly specified. No **kwargs parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly lists blobs from a specified container in a storage account.  All functional input parameters (`subscription`, `account_name`, `container_name`) are used to retrieve and process data.  The documented exceptions (`ResourceNotFoundError`, `InvalidInputError`, `SubscriptionNotFoundError`) are all properly implemented and raised under the appropriate conditions. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately describes the function's parameters, return value, and behavior.  The `auth_method`, `retry_delay`, `retry_max_delay`, `retry_max_retries`, `retry_mode`, `retry_network_timeout`, and `tenant` parameters are not used in the function's logic, but this is acceptable as per the instructions, since they are MCP contextual parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_storage_blob_list` function does not handle any phone number or email address inputs.  Its purpose is to list blobs in an Azure storage container, taking only parameters related to Azure subscription, account, container, and authentication details as input.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "azmcp_storage_table_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose,  lists all parameters with types and descriptions, specifies the return type and structure, and details the exceptions that might be raised.  Default values for all optional parameters are correctly documented. The description of the return value is slightly simplistic; while it correctly states that it returns a list of dictionaries, it could benefit from explicitly mentioning that each dictionary contains *only* the `TableName` key.  The docstring accurately reflects the function's behavior in handling various authentication methods and retry parameters.  There is no inconsistency between the docstring and the implementation regarding the parameters and exceptions.  However, the docstring could be improved by explicitly stating the type of `TableName` within the returned dictionary (it's a string).  Adding this detail would make the documentation even more precise."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using type checking and manual range/value checks for several parameters.  While it doesn't leverage Pydantic models, the validation is comprehensive for the functional parameters (`subscription`, `account_name`, `auth_method`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, `retry_network_timeout`).  The use of Pydantic wouldn't significantly improve this validation in this specific case, as the existing checks are explicit and cover the necessary constraints.  The `tenant` parameter, while checked for type, could benefit from further validation depending on its intended use."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the specification of complex types like List[Dict[str, Any]].  The return type is also clearly specified as List[Dict[str, Any]]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a list of tables from the mock database (`DB`) based on the provided subscription and account name.  All functional input parameters (`subscription`, `account_name`, `auth_method`) are used in the function's logic.  The documented exceptions (`ResourceNotFoundError`, `ServiceError`, `ValidationError`, `SubscriptionNotFoundError`) are all properly implemented and raised under the appropriate conditions. There are no TODO comments, pass statements, or placeholder implementations. The function's logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and the structure of the returned data."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `azmcp_storage_table_list` does not handle any phone numbers or email addresses as input.  Its parameters are all related to Azure subscription and storage account information (strings and optional numerical parameters for retry settings). Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "azure/management.py": {
+      "functions": {
+        "azmcp_subscription_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose,  lists all parameters with their types and descriptions, and specifies the return type and structure.  The `Raises` section accurately reflects the exceptions the function can throw. Default values for all parameters are also correctly documented. The description of the returned dictionary is comprehensive, listing all keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using manual checks and type conversions.  While it doesn't leverage Pydantic models, it does validate `auth_method` and `retry_mode` against allowed values, and it checks that `retry_max_retries`, `retry_delay`, `retry_max_delay`, and `retry_network_timeout` are non-negative numbers.  The validation of `retry_max_delay` against `retry_delay` is also correctly implemented.  Using Pydantic models wouldn't significantly improve this validation, as the current approach is clear and effective.  The existing validation is sufficient for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, `retry_network_timeout`) are validated.  `auth_method` and `retry_mode` undergo value validation against allowed sets. `retry_max_retries`, `retry_delay`, `retry_max_delay`, and `retry_network_timeout` have type validation (checking if they are convertible to integer or float) and value validation (checking for non-negative values).  Additionally, a constraint check ensures that `retry_max_delay` is not less than `retry_delay` when both are provided.  Appropriate `ValidationError` exceptions are raised with informative messages for invalid inputs.  The validation is thorough and covers all aspects of the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str] for string parameters and Optional[None] is used correctly). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`auth_method`, `tenant`, `retry_max_retries`, `retry_delay`, `retry_max_delay`, `retry_mode`, `retry_network_timeout`) are used appropriately in input validation or filtering.  The documented exceptions (`TenantNotFoundError`, `ValidationError`) are correctly raised in the appropriate scenarios. There are no TODO comments, pass statements, or placeholder implementations. The logic for retrieving subscriptions from the global `DB`, filtering by tenant, and handling the case where no subscriptions are found for a specified tenant is complete and functional. The return type and the structure of the returned data match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_subscription_list` function does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on retrieving and filtering Azure subscription data based on provided authentication methods, tenant IDs, and retry parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "azmcp_group_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's primary task: listing resource groups within a subscription. The Args section correctly lists all parameters with types and descriptions, including default values and explanations. The Returns section clearly specifies the return type and structure, including details about the dictionary keys and their types.  The Raises section correctly identifies potential exceptions.  Type hints are used consistently throughout. The documentation of the dictionary structure in the Returns section is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `AzmcpGroupListInput` to validate the `subscription` parameter.  While other parameters (`auth_method`, `tenant`, and the `retry_*` parameters) are not explicitly used in the core logic of fetching resource groups (data is fetched directly from the mock DB), they are still passed to the `AzmcpGroupListInput` Pydantic model for validation.  This demonstrates proper usage of Pydantic for input validation, even if some validated parameters are not directly used in the function's core operation.  The error handling within the `try...except` block further refines the validation feedback to the user.  Adding further validation (e.g., specific allowed values for `auth_method` or `retry_mode` within the Pydantic model) would enhance the robustness."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the specification of complex types like List and Dict.  The return type is also clearly specified as List[Dict[str, Any]]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves resource groups based on the provided subscription ID or name.  It handles both `SubscriptionNotFoundError` and `ValidationError` as documented.  The logic for retrieving and validating data from the mock DB (`DB`) is complete. The function uses the `subscription` parameter, which is the only functional parameter.  All other parameters are contextual (MCP) and are correctly not used in the core logic. The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODOs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `azmcp_group_list` function does not handle phone numbers or email addresses as input.  Its parameters are all related to Azure subscription management and retry settings (subscription ID, authentication method, tenant ID, retry parameters).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly validates integer inputs for retry parameters using Pydantic, but this is not related to phone number or email processing."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "azure": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The SimulationEngine folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The tests folder contains numerous test files, indicating good test coverage."
+      }
+    }
+  }
+}

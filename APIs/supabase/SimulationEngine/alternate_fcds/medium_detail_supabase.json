@@ -1,0 +1,506 @@
+[
+    {
+        "name": "apply_migration",
+        "description": "Applies a migration to the database, specifically for executing DDL operations. Avoid hardcoding references to generated IDs when performing data migrations.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The ID of the project. This parameter must be a non-empty string."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the migration, which must be formatted in snake_case."
+                },
+                "query": {
+                    "type": "string",
+                    "description": "The SQL query string to apply to the database. This query is intended for Data Definition Language (DDL) operations. Do not hardcode references to generated IDs when providing data migrations."
+                }
+            },
+            "required": [
+                "name",
+                "project_id",
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "confirm_cost",
+        "description": "Asks the user to confirm their understanding of the cost for creating a new project or branch. This function requires `get_cost` to be called first and returns a unique confirmation ID. This ID must then be passed to `create_project` or `create_branch`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "Specifies the type of item for which the cost is being confirmed. This value must be either \"project\" or \"branch\"."
+                },
+                "recurrence": {
+                    "type": "string",
+                    "description": "Specifies the recurrence pattern of the cost. It must be either \"hourly\" or \"monthly\"."
+                },
+                "amount": {
+                    "type": "number",
+                    "description": "The numerical amount of the cost, specified as a floating-point number. This value must be positive."
+                }
+            },
+            "required": [
+                "amount",
+                "recurrence",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "create_branch",
+        "description": "Creates a development branch for a Supabase project by applying all migrations from the main project to a fresh database. Production data is not carried over to the branch. The new branch receives a unique `project_id` which must be used for executing queries and migrations on it.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The string identifier for the existing project from which to create the new development branch. This parameter cannot be empty and must refer to an active, existing project."
+                },
+                "confirm_cost_id": {
+                    "type": "string",
+                    "description": "A string representing the cost confirmation ID. This ID must be obtained by first calling the `confirm_cost` function."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the branch to create. It defaults to \"develop\"."
+                }
+            },
+            "required": [
+                "confirm_cost_id",
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "create_project",
+        "description": "Creates a new Supabase project, always ensuring the user is prompted to select the target organization. Project initialization may take several minutes; monitor its status using `get_project`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the project. It cannot be an empty string."
+                },
+                "organization_id": {
+                    "type": "string",
+                    "description": "The string ID of the organization in which the new project will be created. This ID cannot be empty and must correspond to an existing organization."
+                },
+                "confirm_cost_id": {
+                    "type": "string",
+                    "description": "The cost confirmation ID. This ID must be obtained by first calling the `confirm_cost` function."
+                },
+                "region": {
+                    "type": "string",
+                    "description": "Specifies the region where the project will be created. This parameter accepts string values from a predefined list of regions: \"us-west-1\", \"us-east-1\", \"us-east-2\", \"ca-central-1\", \"eu-west-1\", \"eu-west-2\", \"eu-west-3\", \"eu-central-1\", \"eu-central-2\", \"eu-north-1\", \"ap-south-1\", \"ap-southeast-1\", \"ap-northeast-1\", \"ap-northeast-2\", \"ap-southeast-2\", \"sa-east-1\". If the region is not specified (i.e., `None`), it defaults to the closest available region."
+                }
+            },
+            "required": [
+                "confirm_cost_id",
+                "name",
+                "organization_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_branch",
+        "description": "Deletes a specific development branch. The branch to be deleted is identified by its `branch_id`, which is a string representing the branch's unique identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The ID of the branch to be deleted. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "deploy_edge_function",
+        "description": "Deploys an Edge Function to a specified Supabase project. If a function with the same name already exists, this operation creates a new version of it.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the Supabase project."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the Edge Function."
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the file (e.g., 'index.ts', 'utils/helper.ts')."
+                            },
+                            "content": {
+                                "type": "string",
+                                "description": "The string content of the file."
+                            }
+                        },
+                        "required": [
+                            "content",
+                            "name"
+                        ]
+                    },
+                    "description": "A list of dictionaries representing the files to upload, which must include the entrypoint file and all its relative dependencies. Each dictionary corresponds to a single file and must contain specific keys that describe it."
+                },
+                "entrypoint_path": {
+                    "type": "string",
+                    "description": "The path to the function's entrypoint file. If not provided, this defaults to `index.ts`."
+                },
+                "import_map_path": {
+                    "type": "string",
+                    "description": "An optional path to the import map file for the function, which defaults to `None`."
+                }
+            },
+            "required": [
+                "files",
+                "name",
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "execute_sql",
+        "description": "Execute raw SQL queries against a PostgreSQL-like environment, which operates in-memory without persistence between sessions; use `apply_migration` for DDL operations instead. This function supports common SQL operations like SELECT, INSERT, UPDATE, and DELETE, along with various standard data types and transaction commands. Be aware of limitations, including partial support for advanced PostgreSQL features, manual ID management for SERIAL/BIGSERIAL types, and limited foreign key constraint enforcement, especially across schemas.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the project. It must be provided as a non-empty string and correspond to an existing project."
+                },
+                "query": {
+                    "type": "string",
+                    "description": "The SQL query to execute. This parameter must be a string and cannot be null, empty, or consist solely of whitespace."
+                }
+            },
+            "required": [
+                "project_id",
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "generate_typescript_types",
+        "description": "Generates TypeScript type definitions for a project, identified by its `project_id`. This function processes the project information to produce a string containing the TypeScript types.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier for a project. This parameter must be a non-empty string and correspond to an existing project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "get_anon_key",
+        "description": "Gets the anonymous API key for a specified project. It returns a dictionary that includes the project ID and the anonymous API key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the project. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "get_cost",
+        "description": "Calculates the cost for creating a new project or branch. Costs vary by organization, and the item type must be specified as 'project' or 'branch'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The type of item for which the cost is requested, limited to either 'project' or 'branch'."
+                },
+                "organization_id": {
+                    "type": "string",
+                    "description": "A string that uniquely identifies the organization for which costs are being requested. This ID is crucial because costs can differ per organization, and it must correspond to an existing organization to prevent a `NotFoundError`."
+                }
+            },
+            "required": [
+                "organization_id",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "get_logs",
+        "description": "Retrieves logs for a specified Supabase project, filtered by service type, to aid in debugging application issues. It only returns logs generated within the last minute; if older logs are required, re-run the actions or tests that produce them.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The ID of the Supabase project. This parameter must be a non-empty string and correspond to an existing project."
+                },
+                "service": {
+                    "type": "string",
+                    "description": "Specifies the service for which to fetch logs, which must be one of 'api', 'branch-action', 'postgres', 'edge-function', 'auth', 'storage', or 'realtime'."
+                }
+            },
+            "required": [
+                "project_id",
+                "service"
+            ]
+        }
+    },
+    {
+        "name": "get_organization",
+        "description": "Retrieves an organization's full details, including a nested subscription plan object that provides its ID, name, price, currency, and included features.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier for the organization. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_project",
+        "description": "Retrieves details for a Supabase project. It identifies the project using its unique ID to fetch its information.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the project."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_project_url",
+        "description": "Retrieves the API URL for a specified project. This function returns a dictionary containing the `project_id` and the `api_url`, which may be `None` if no URL is configured for the project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique string identifier for the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_branches",
+        "description": "Lists all development branches associated with a Supabase project. For each branch, it returns detailed information including its current status, which can be used to track the completion of operations like merge, rebase, or reset.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "A non-empty string that uniquely identifies the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_edge_functions",
+        "description": "Lists all Edge Functions available within a specified Supabase project. For each Edge Function, it provides comprehensive details including its unique identifier, slug, display name, current version, operational status, and timestamps for creation and last update.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The string identifier for the Supabase project. This value cannot be empty."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_extensions",
+        "description": "Lists all extensions in the database associated with the specified project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The string identifier for the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_migrations",
+        "description": "Lists all migrations in the database. It specifically retrieves migrations associated with the provided project identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The string identifier for the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_organizations",
+        "description": "Lists all organizations of which the user is a member. Each organization is represented as a dictionary containing its unique `id` and `name`.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "list_projects",
+        "description": "Lists all Supabase projects for the user. This function helps discover the project ID of the project the user is currently working on.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "list_tables",
+        "description": "Lists all tables within one or more specified schemas for a given project. If no schemas are provided, it defaults to listing tables from all available schemas associated with the project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The identifier of the project. It must be a string and correspond to an existing project."
+                },
+                "schemas": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of schema names (strings) to include when listing tables. If `None`, the function will include all available schemas by default."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "merge_branch",
+        "description": "Merges migrations and edge functions from a development branch, specified by its `branch_id`, into the production environment. It returns a dictionary detailing the status of this merge operation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The ID of the development branch targeted for the merge operation. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "pause_project",
+        "description": "Pauses a specified Supabase project. Provide the `project_id` as a string to identify the project. The function returns a dictionary detailing the outcome, including the project's new status.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The string ID of the project to pause. It must not be null or empty."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "rebase_branch",
+        "description": "Rebases a development branch on production by running any newer migrations from production onto the branch to help handle migration drift.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The unique string identifier of the branch to be rebased. This identifier must not be empty or consist only of whitespace."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "reset_branch",
+        "description": "Resets migrations for a specified development branch. This operation discards any untracked data or schema changes and can optionally revert the branch to a particular migration version.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The string ID of the development branch to be reset."
+                },
+                "migration_version": {
+                    "type": "string",
+                    "description": "An optional string that specifies the exact migration version to which the development branch will be reset."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "restore_project",
+        "description": "Restores a Supabase project using its unique project ID. This operation is successful only if the identified project is currently in a 'INACTIVE' status.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the project, which must be a non-empty string."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    }
+]

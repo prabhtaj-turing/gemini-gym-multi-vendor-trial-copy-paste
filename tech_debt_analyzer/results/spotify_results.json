@@ -1,0 +1,1107 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:59.088100Z",
+  "results": {
+    "spotify/user_profile.py": {
+      "functions": {
+        "get_current_user_profile": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving user profile information and its importance for customizing user experiences. The \"Returns\" section is detailed, specifying the type and describing the structure of the dictionary, including optional fields.  The \"Raises\" section correctly lists potential exceptions.  Type hints are used effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_current_user_profile` does not have any functional input parameters.  It retrieves data based on the current user, which is determined internally via `utils.get_current_user_id()`. Therefore, the question of input validation using Pydantic or other methods is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_current_user_profile` has no functional input parameters.  All data it uses is retrieved internally, either from a utility function (`utils.get_current_user_id()`) or the global `DB`. Therefore, no input parameter validation is needed or possible."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_current_user_profile` has no parameters.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves user data from the global `DB` dictionary based on the user ID obtained using `utils.get_current_user_id()`.  It handles the `custom_errors.NoResultsFoundError` and raises `custom_errors.AuthenticationError` appropriately in case of authentication failures.  The returned data structure seems consistent with the docstring's description. However, the function lacks robustness.  It directly returns `user_data` without any checks to ensure that `user_data` actually contains all the fields specified in the docstring.  If a user record is missing some fields (e.g., `country`, `email`), the function will still return a partial dictionary, potentially leading to errors in calling functions that expect all fields to be present.  Adding validation to check for the presence of all expected keys in `user_data` before returning it would improve the function's completeness and reliability."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_current_user_profile` function does not handle any phone number or email address inputs.  It retrieves user profile data from a database. While the function retrieves an email address (`user_data.get('email')` is implied within the function), it doesn't perform any normalization or validation on it.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and returning existing user data; it doesn't involve input processing of phone numbers or emails."
+          }
+        },
+        "get_user_top_artists_and_tracks": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's parameters, including default values and valid ranges. The `Args` section is well-structured and informative.  The `Returns` section is also comprehensive, detailing the structure of the dictionary response, including nested dictionaries and lists.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `type`, `limit`, `offset`, and `time_range` parameters.  These checks cover type checking and range constraints. While Pydantic could provide a more structured and potentially more concise way to perform these validations, the existing manual checks are sufficient and correctly handle the validation requirements.  The use of Pydantic would not significantly improve the code in this case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All four functional input parameters (`type`, `limit`, `offset`, `time_range`) have comprehensive validation.  `type` is checked against allowed string values. `limit` is checked for integer type and range (1-50). `offset` is checked for non-negative integer type. `time_range` is checked against a list of valid string values.  Each validation includes appropriate error handling with clear error messages using custom exceptions.  All checks are performed before the parameters are used in subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`type`, `limit`, `offset`, `time_range`) are properly type-annotated with their expected types (str, int, int, str respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the type annotations (Dict, List) are also correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `type`, `limit`, and `offset` parameters in its logic to retrieve and paginate the top artists or tracks from the global `DB`.  Exception handling for `InvalidInputError`, `AuthenticationError`, and `NoResultsFoundError` is implemented. The docstring accurately reflects the function's behavior and return type.  However, the `time_range` parameter is not used in the function's logic, which is a minor gap.  The function assumes that the data in `DB` is already appropriately structured and does not handle potential inconsistencies or errors in the data itself.  Adding checks for data integrity would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_user_top_artists_and_tracks` does not handle any phone number or email address inputs.  Its parameters and purpose are related to retrieving user's top artists and tracks from a Spotify-like music service using parameters like `type`, `limit`, `offset`, and `time_range`.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_user_profile": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in retrieving user profile information. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values.  The documentation of the dictionary structure in the Returns section is particularly thorough, detailing the keys, types, and nested structures."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking and empty string checks to validate the `user_id` input.  While Pydantic could be used, the current validation is sufficient for this simple case.  Using Pydantic would add complexity without significant benefit given the straightforward nature of the input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_user_profile` performs comprehensive validation of its single functional input parameter, `user_id`.  It checks for the correct data type (string) using `isinstance` and also checks for emptiness using `if not user_id`.  Appropriate custom exceptions (`InvalidInputError` and `NoResultsFoundError`) are raised with informative error messages for both type and value errors.  All aspects of functional input validation are covered."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_user_profile` has excellent parameter design and type annotations.  The single parameter `user_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves user profile data from the global `DB` dictionary based on the provided `user_id`.  It handles the `InvalidInputError` for non-string or empty `user_id` and `NoResultsFoundError` when the user ID is not found in the database. All functional input parameters are used. The return type and the described behavior in the docstring match the implementation. There are no placeholders or TODO comments.  The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_user_profile` does not handle any phone number or email address inputs.  Its sole purpose is to retrieve user profile data from a database using a user ID. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the input `user_id` as a non-empty string, but this is unrelated to the specified criteria for phone number and email handling."
+          }
+        }
+      }
+    },
+    "spotify/follow.py": {
+      "functions": {
+        "follow_playlist": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, including its relevance to an MCP server (managing user playlists).  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the return type and structure. The `Raises` section is comprehensive, listing all potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` and `public` parameters.  `playlist_id` is validated by a custom function `utils.validate_playlist_id` (the contents of which are unknown but assumed to perform validation). The `public` parameter is checked to ensure it's a boolean. While Pydantic could be used, the current approach is sufficient and avoids unnecessary dependency.  Using Pydantic would offer more structured validation and error handling, but it's not strictly necessary given the existing checks."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `playlist_id` and `public`.  `playlist_id` undergoes further validation via the `utils.validate_playlist_id()` function, which is assumed to perform value and potentially special constraint checks (e.g., format of Spotify playlist IDs).  The `public` parameter is checked to ensure it's a boolean.  However, there's no explicit check for an empty `playlist_id` string within the `follow_playlist` function itself, although this is likely handled within `utils.validate_playlist_id()`.  If `utils.validate_playlist_id()` doesn't handle empty strings, then the validation would be considered Partial.  Assuming `utils.validate_playlist_id()` provides sufficient validation, the overall validation is good but could be improved with explicit empty string checks within `follow_playlist` for better clarity and maintainability."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id` and `public`) are properly type-annotated with their expected types (str and bool, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates both `playlist_id` and `public` parameters, handles the expected exceptions (`InvalidInputError`, `NoResultsFoundError`, although `AuthenticationError` and `AuthorizationError` are not explicitly handled in the provided code, they are mentioned in the docstring and would likely be handled in a real-world implementation by checking authentication tokens and permissions before accessing the database.), and stores the follow information in the simulated database (`DB`). The return value matches the docstring's description. All functional input parameters (`playlist_id` and `public`) are used. There are no placeholders or TODO comments.  The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `follow_playlist` does not handle any phone numbers or email addresses.  Its inputs are a playlist ID (string) and a boolean indicating public/private status. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "unfollow_playlist": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose within the context of an MCP server.  The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values. The description of the `Returns` section accurately reflects the structure of the returned dictionary."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a custom `utils.validate_playlist_id` function for input validation.  While Pydantic could be used to achieve the same result, the existing validation is sufficient.  The use of a separate validation function is acceptable and doesn't necessitate the use of Pydantic.  There is no need for Pydantic in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function `unfollow_playlist` performs type and value validation on the `playlist_id` parameter.  `utils.validate_playlist_id(playlist_id)` is called, which presumably (based on the error handling) checks that `playlist_id` is a non-empty string. This addresses type and null/empty checks. However, it's unclear from the provided code snippet what specific value constraints `utils.validate_playlist_id` enforces (e.g., length restrictions, character set, format).  More detailed information about the `utils.validate_playlist_id` function would be needed to determine if it's truly comprehensive.  Therefore, the validation is good but not fully comprehensive due to the lack of explicit detail on the value constraints within `utils.validate_playlist_id`.  The function also raises appropriate exceptions for invalid inputs (`InvalidInputError`, `NoResultsFoundError`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `unfollow_playlist` has excellent parameter design and type annotations.  The single parameter `playlist_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the unfollowing of a playlist.  It validates the input `playlist_id`, checks for the playlist's existence, and removes it from the user's followed playlists in the global `DB`.  All documented exceptions are handled. The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODOs. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `unfollow_playlist` does not handle any phone numbers or email addresses.  Its input is a playlist ID, which is treated as a string and validated for existence in a database.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "follow_artists_or_users": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments (`ids` and `type`), their types, and constraints (maximum 50 IDs). The `Returns` section correctly specifies the dictionary structure and the success message.  The `Raises` section lists all potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `ids` and `type` parameters.  While Pydantic could be used to structure and validate these inputs, the existing manual checks are comprehensive and cover all aspects of validation required.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `ids` and `type`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`ids` and `type`) are properly type-annotated with their expected types (`List[str]` and `str`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `List` and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`ids` and `type`) are used.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `follow_artists_or_users` does not handle any phone numbers or email addresses.  Its input consists of a list of user or artist IDs (strings) and a type string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on managing user-following relationships within a database, and its input validation is relevant to that specific task."
+          }
+        },
+        "unfollow_artists_or_users": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior in unfollowing artists or users. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for all parameters and the return value.  The description of the return dictionary is slightly lacking in detail; it only mentions a success message, but the actual implementation returns a message indicating the number of items unfollowed. This is a minor inconsistency. The docstring correctly reflects the exceptions raised.  The examples provided for `ids` are helpful.  Overall, the docstring is comprehensive and allows a developer to understand and use the function effectively.  The only improvement would be to specify the exact structure of the returned dictionary more precisely (e.g., `{\"message\": str}`) to fully align with the implementation."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `ids` and `type` parameters.  While Pydantic could be used to structure this validation more concisely and potentially improve readability, the existing manual checks are comprehensive and cover all aspects of the input.  Therefore, Pydantic is not strictly needed for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `unfollow_artists_or_users` demonstrates comprehensive input validation for its two functional parameters, `ids` and `type`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`ids` and `type`) are properly type-annotated with their expected types (`List[str]` and `str`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the unfollowing of artists or users based on the provided `ids` and `type`.  All functional input parameters (`ids` and `type`) are used.  All documented exceptions are handled. There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `unfollow_artists_or_users` does not handle phone numbers or email addresses.  Its input consists of a list of Spotify IDs and a type string (\"artist\" or \"user\").  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on validating and processing Spotify IDs within the context of a user unfollowing artists or other users on a platform."
+          }
+        },
+        "check_user_follows_playlist": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, how it's useful in an MCP server context (displaying follow/unfollow buttons, understanding social reach), and provides detailed descriptions of the arguments and return value, including types and examples.  The `Raises` section accurately lists all potential exceptions.  The docstring accurately reflects the function's implementation; there are no inconsistencies between the docstring's promises and the actual code behavior.  All types are specified, and the description of the return value (`List[bool]`) is precise.  The docstring is complete enough for someone to use the function effectively without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` and `user_ids` parameters.  While Pydantic could be used to structure and validate these inputs, the existing manual checks are comprehensive and cover type checking, length restrictions, and emptiness.  Using Pydantic wouldn't significantly improve the validation in this specific case, though it might offer some advantages in terms of code readability and maintainability for more complex validation scenarios.  The existing approach is sufficient for this function's needs."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `playlist_id` and `user_ids`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id` and `user_ids`) are properly type-annotated with their expected types (`str` and `List[str]`, respectively). The function's return type is also clearly specified as `List[bool]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`playlist_id` and `user_ids`) are used.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The return type and behavior match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `check_user_follows_playlist` does not handle any phone numbers or email addresses.  Its inputs and outputs are solely Spotify playlist and user IDs, which are treated as strings. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "check_user_follows_artists_or_users": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's inputs (`ids` and `type`), its output (a list of booleans), and the exceptions it might raise.  The examples provided for `ids` are helpful.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `ids` and `type` parameters.  While Pydantic could be used to structure and validate these inputs, the existing manual checks are comprehensive and cover all aspects of the input requirements.  Using Pydantic wouldn't significantly improve the validation in this case, although it might offer a more concise and potentially more readable alternative."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `ids` and `type`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`ids` and `type`) are properly type-annotated with their expected types (`List[str]` and `str`, respectively). The function's return type is also clearly specified as `List[bool]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates all inputs (`ids` and `type`), handles the specified exceptions (`InvalidInputError`, `NoResultsFoundError`), and uses both functional input parameters (`ids` and `type`) effectively in its logic. The logic correctly checks for the existence of artists/users and their follow status using the global `DB`.  The return type matches the docstring's description. There are no placeholders, TODOs, or pass statements.  The implementation is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `check_user_follows_artists_or_users` does not handle any phone numbers or email addresses.  Its input consists solely of Spotify user and artist IDs, which are treated as strings and validated for their format and existence within a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_followed_artists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate, providing a clear description of the function's purpose, arguments, return value, and exceptions.  It correctly mentions default values and types for parameters. The documentation of the nested dictionary structure in the `Returns` section is comprehensive and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `limit` and `after` parameters.  While Pydantic could be used to achieve the same result in a more structured and potentially more concise way, the existing manual checks are sufficient to validate the input types and constraints.  The validation is complete for all functional input parameters.  Using Pydantic would not significantly improve the code in this specific case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `limit` and `after`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`limit` and `after`) are properly type-annotated with their expected types (`int` and `Optional[str]`, respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within the return type annotation are also properly specified (e.g., `List[Dict[str, Any]]`, `Dict[str, Any]`)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `limit` and `after` parameters for pagination.  Exception handling for invalid `limit` and `after` values is implemented. The docstring accurately reflects the function's behavior and return type. However, there's a minor gap in the error handling:  While it checks if the `after` artist ID exists in the `artists_table`, it doesn't explicitly handle authentication or authorization errors as documented.  The code assumes the existence of `utils.get_current_user_id()` and `custom_errors.InvalidInputError` without showing their definitions, which is acceptable given the context of a code review focusing on a single function within a larger codebase.  Adding explicit checks for authentication and authorization would make it fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_followed_artists` does not handle any phone numbers or email addresses.  Its input and output are related to Spotify artist data, using artist IDs and URIs. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "spotify/albums.py": {
+      "functions": {
+        "get_album": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving album information and its usefulness in a music application context. The Args and Returns sections are comprehensive, detailing parameter types and the structure of the returned dictionary, including nested structures.  The default value for the `market` parameter is correctly specified and explained.  The Raises section lists potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`album_id: str`, `market: Optional[str]`) and manual validation functions (`utils.validate_album_id`, `utils.validate_market`) to check the input parameters.  While Pydantic models could provide a more structured and potentially more comprehensive approach to validation, the existing method is sufficient for the task.  The manual validation functions handle the specific requirements of the input parameters (checking for empty strings and valid country codes), making the use of Pydantic models redundant in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`album_id` and `market`) are properly type-annotated with their expected types (`str` and `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types within the function signature and docstrings are also properly specified using `List`, `Dict`, and `Optional`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using both `album_id` and `market` parameters in its logic.  It handles the documented exceptions (`InvalidMarketError`, `NoResultsFoundError`). The docstring accurately reflects the function's behavior and return type. However, the `limit` parameter in the `tracks_info` dictionary is hardcoded to 20.  While this isn't strictly incorrect, a more robust implementation might allow the user to specify the limit, making the function more flexible and aligning better with a real-world Spotify API.  Additionally, the error handling for `utils.validate_album_id` is implicit; it's assumed that `utils.validate_album_id` raises an appropriate exception, but this isn't explicitly checked or handled within `get_album`.  Explicitly handling this would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_album` does not handle any phone number or email address inputs.  Its inputs are an `album_id` (string) and an optional `market` code (string), neither of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and formatting album data from a database."
+          }
+        },
+        "get_several_albums": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving multiple album details efficiently. The Args and Returns sections are well-structured, and types are specified for parameters and return values.  The documentation of the nested dictionary structures within the Returns section is particularly thorough, making it easy to understand the complex data structure returned.  Default values are mentioned and explained. The Raises section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `album_ids` and `market` parameters.  It checks the type and length of `album_ids`, ensures all IDs are non-empty strings, and validates the `market` parameter using a custom `utils.validate_market` function. While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is comprehensive and effective for the task.  Therefore, Pydantic models are not strictly needed here."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_several_albums` demonstrates comprehensive input validation for its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`album_ids` and `market`) are properly type-annotated with their expected types (`List[str]` and `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types are properly specified using `List`, `Dict`, and `Optional`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves album information based on a list of album IDs and an optional market parameter.  All functional input parameters (`album_ids` and `market`) are used.  The function handles the documented exceptions (`InvalidInputError`, `InvalidMarketError`, and implicitly `NoResultsFoundError` which is caught and handled within the loop). There are no TODOs, placeholders, or pass statements. The docstring accurately describes the function's behavior, input validation, return type, and potential exceptions.  The logic iterates through the provided album IDs, fetches album details using a presumed `get_album` function (whose implementation is outside the scope of this review), and handles cases where an album ID is not found. The function returns a dictionary in the format specified by the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_several_albums` function does not handle any phone number or email address inputs.  Its inputs are a list of Spotify album IDs and an optional market code.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the input `album_ids` and `market` parameters within its own context (list type, length, and market code validity)."
+          }
+        },
+        "get_album_tracks": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: retrieving album tracks with pagination and market filtering. Default values for parameters are correctly stated and explained.  The Args section is comprehensive, listing all arguments with types and descriptions.  The Returns section is exceptionally detailed, meticulously outlining the structure of the dictionary response, including nested dictionaries and lists.  This level of detail is highly beneficial. The Raises section correctly identifies potential exceptions. Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `album_id`, `market`, `limit`, and `offset` parameters.  These checks are performed using functions within a `utils` module (the exact contents of which are not provided, but are assumed to perform the necessary validation). While Pydantic models could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all the necessary input parameters.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`album_id`, `market`, `limit`, `offset`) have validation checks.  `album_id` is validated for type and emptiness via `utils.validate_album_id`. `market` is checked for type (implicitly, as it's optional) and validity using `utils.validate_market` if provided. `limit` and `offset` are validated for value ranges (1-50 for `limit`, non-negative for `offset`) via `utils.validate_limit_offset`.  Appropriate exceptions (`InvalidInputError`, `InvalidMarketError`, `NoResultsFoundError`) are raised with informative messages for invalid inputs.  All validation happens before the parameters are used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`album_id`, `market`, `limit`, `offset`) are properly type-annotated with their expected types (str, Optional[str], int, int respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Optional[str]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `album_id`, `market`, `limit`, and `offset` parameters in its logic.  It handles the documented exceptions (`InvalidInputError` and `NoResultsFoundError`) appropriately, although it uses custom error types which are not shown in the provided code snippet. There are no placeholders or TODO comments.  The core logic of retrieving tracks, applying market filtering, sorting, and pagination works correctly given the mock database. However, the docstring mentions `InvalidMarketError`, which isn't explicitly raised in the code; instead, a generic `InvalidInputError` is used if `utils.validate_market` returns False.  The function also implicitly relies on the `utils` module's `validate_album_id`, `validate_market`, `validate_limit_offset`, and `apply_pagination` functions, whose implementations are not provided and could affect the overall completeness.  The enhancement of artist and album objects to match the Spotify API structure is thorough.  The return value matches the docstring description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone numbers or email addresses.  It's a function designed to retrieve Spotify album track information using an album ID as input.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on data retrieval and formatting of Spotify API responses, not on input sanitization of contact details."
+          }
+        },
+        "get_users_saved_albums": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring, while extensive in attempting to describe the nested structure of the return value, suffers from several critical flaws:"
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `limit`, `offset`, and `market` parameters.  Pydantic models are not used, but the validation is implemented directly within the function using `utils.validate_limit_offset` and `utils.validate_market`.  This approach is sufficient for the validation needs of this function. While Pydantic could provide a more structured and potentially more readable way to perform the validation, the current method is functional and avoids unnecessary complexity."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `limit` and `offset` parameters using the `utils.validate_limit_offset` function (the implementation of which is not provided, but assumed to perform these checks).  It also checks if the `market` parameter is provided and, if so, validates it against a valid country code using `utils.validate_market` (again, the implementation is not shown but assumed to perform this check).  Error handling is present for invalid `market` values.  However, there's no explicit check for the type of `market` (it's declared as Optional[str], but a type error could still occur if a non-string value is passed).  While the `limit` and `offset` validation is assumed to be comprehensive (based on the function name), the lack of explicit type checking for `market` prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`limit`, `offset`, `market`) are properly type-annotated with their expected types (`int`, `int`, `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types within the type annotations (like `Optional` and `Dict`) are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality, correctly using the `limit` and `offset` parameters for pagination and the `market` parameter for filtering.  The core logic of retrieving albums from the mock database (`DB`) and applying pagination works.  The docstring accurately reflects the structure of the returned dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_users_saved_albums` does not handle any phone number or email address inputs.  Its purpose is to retrieve a list of saved albums from a Spotify-like database, using parameters like `limit`, `offset`, and `market` (a country code).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses on data retrieval and formatting of album and track information, not user contact details."
+          }
+        },
+        "save_albums_for_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  The description is clear and helpful.  The Args, Returns, and Raises sections are present and generally accurate. Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `album_ids` parameter.  It checks if `album_ids` is a list, if it contains more than 50 IDs, and if all IDs are non-empty strings.  While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is comprehensive for the single input parameter.  Therefore, Pydantic is not strictly needed in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `save_albums_for_user` performs comprehensive validation on its single functional input parameter, `album_ids`.  The validation checks include:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `save_albums_for_user` has excellent parameter design and type annotations.  All parameters (`album_ids`) have proper type annotations (`List[str]`). The return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly validates the input `album_ids`, retrieves the current user ID, checks for album existence, and adds albums to the user's saved albums list, avoiding duplicates.  The exception handling for `InvalidInputError` and `NoResultsFoundError` is correctly implemented. However, the return value is inconsistent with the docstring. The docstring states that the return value should be a dictionary with a `message` key and an `Any` value, but the function returns `{\"message\": \"The album is saved\"}`.  This should be pluralized to \"The albums are saved\" to reflect that multiple albums might be added.  Additionally, a more robust success message might include the number of albums saved."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `save_albums_for_user` does not handle any phone numbers or email addresses.  Its input is a list of album IDs (strings), and its functionality is solely focused on managing a user's saved albums in a database. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "remove_albums_for_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: removing albums from a user's library. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values.  The description of the return value is slightly simplistic (\"Success response indicating albums were removed\"), but it's functionally adequate.  The docstring correctly lists the exceptions that the function might raise."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `album_ids` parameter.  It checks if `album_ids` is a list, if it exceeds the maximum length, and if all elements are non-empty strings.  While Pydantic could provide a more concise and potentially more robust way to perform these checks, the existing validation is sufficient and covers all aspects of the input.  Therefore, a Pydantic model is not strictly needed for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `remove_albums_for_user` performs comprehensive validation on its single functional input parameter, `album_ids`.  The validation includes:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `remove_albums_for_user` has excellent parameter design and type annotations.  The `album_ids` parameter is correctly type-annotated as `List[str]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the removal of albums from a user's saved albums list within the global `DB` dictionary.  All functional input parameters (`album_ids`) are used.  The documented exceptions (`InvalidInputError`, `AuthenticationError`, `AuthorizationError`) are partially implemented: `InvalidInputError` is handled comprehensively, but `AuthenticationError` and `AuthorizationError` are missing.  The function's logic is mostly complete but lacks handling for the cases where `current_user_id` is not found in `saved_albums_table` or when an album ID to be removed is not found in `user_saved_albums`.  The docstring accurately reflects the function's return type and behavior, except for the missing exception handling.  There are no placeholders or TODO comments.  The missing exception handling and the lack of handling for cases where the user or album ID is not found prevent this function from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `remove_albums_for_user` does not handle any phone numbers or email addresses.  Its input is a list of album IDs (strings), and its functionality is solely focused on removing those album IDs from a user's saved albums list within a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "check_users_saved_albums": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, how it benefits an MCP server (checking user preferences without fetching full album data), and accurately reflects the function's behavior.  The Args, Returns, and Raises sections are complete and correctly specify types.  The description of the return value (`List[bool]`) is particularly clear.  There are no inconsistencies between the docstring and the implementation; the docstring accurately reflects the function's input validation, database interaction (although simplified to a mock DB), and the generation of the boolean list indicating saved album status.  The maximum number of allowed album IDs is also correctly specified. The docstring is sufficient for a developer to understand and use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `album_ids` parameter.  It checks if `album_ids` is a list, if it contains more than 50 IDs, and if all IDs are non-empty strings.  While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is sufficient and covers all aspects of the input.  Therefore, Pydantic is not strictly needed for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `check_users_saved_albums` performs comprehensive validation on its single functional input parameter, `album_ids`.  The validation includes:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `check_users_saved_albums` has excellent parameter design and type annotations.  The `album_ids` parameter is correctly type-annotated as `List[str]`. The return type is clearly specified as `List[bool]`.  No `**kwargs` are used.  The `album_ids` parameter name is clear and descriptive.  The complex type `List` is properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates the input `album_ids` as specified, handles the potential exceptions (`InvalidInputError`, although `AuthenticationError` and `AuthorizationError` are not explicitly raised in this example, they are mentioned in the docstring and would likely be handled in a complete production environment), and uses the `album_ids` parameter to check against the user's saved albums in the global `DB`. The return value is a list of booleans accurately reflecting the saved status of each album ID.  The logic is complete and functional within the constraints of using the global `DB`. There are no placeholders or TODOs. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `check_users_saved_albums` does not handle any phone numbers or email addresses.  Its input is a list of album IDs (strings), and its purpose is to check if those albums are saved in a user's library.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "spotify/artists.py": {
+      "functions": {
+        "get_artist": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose,  how it's useful within an MCP server context (artist pages, recommendations, etc.), and accurately details the input (`artist_id`), output (`Dict[str, Any]` with nested structures fully explained), and potential exceptions.  The nested structures within the dictionary return value are meticulously documented, including types for all keys.  The `Args`, `Returns`, and `Raises` sections are complete and easy to understand. There is perfect alignment between the docstring's description of the function's behavior and the actual implementation.  The docstring is sufficient for someone to use the function effectively without needing to examine the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a custom `utils.validate_artist_id` function for input validation.  While Pydantic could be used, the existing approach is sufficient if `utils.validate_artist_id` performs adequate type and content checks on `artist_id`.  The current solution avoids unnecessary complexity if the custom validation function is robust.  Using Pydantic would only be beneficial if it offered features beyond what `utils.validate_artist_id` already provides (e.g., more sophisticated data type handling or built-in error messages)."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and null/empty checks on the `artist_id` parameter.  `utils.validate_artist_id(artist_id)` is used, but the implementation of `utils.validate_artist_id` is not provided.  Assuming this function performs both type and value validation (e.g., checking for a specific format or length of the Spotify ID), the validation is good. However, without seeing the implementation of `utils.validate_artist_id`, it's impossible to definitively say it's comprehensive.  If `utils.validate_artist_id` only checks for type and not value, then the validation would be partial.  The function also includes appropriate error handling for the case where no artist is found.  The only functional input parameter is `artist_id`, and it is validated."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_artist` has excellent parameter design.  All parameters are properly type-annotated (`artist_id: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The single parameter name is clear and descriptive.  Complex types within the return annotation (Dict, List) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves artist data from the global `DB` based on the provided `artist_id`.  It validates the `artist_id` using a helper function (`utils.validate_artist_id`), which is assumed to exist and function correctly.  The function raises `NoResultsFoundError` as documented if the artist is not found. The return value matches the docstring's description, providing a dictionary containing the expected artist information. All functional input parameters (`artist_id`) are used. There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB`.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_artist` does not handle any phone number or email address inputs.  Its input is an `artist_id` which is treated as a string and validated for emptiness and correct type. There is no processing or validation related to phone numbers or email addresses. Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_several_artists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in retrieving multiple artists' information efficiently. The Args, Returns, and Raises sections are well-structured and informative, including types and nested structures for dictionaries.  Type hints are used consistently.  The documentation of the `artists` response is quite thorough, detailing the structure of each artist object."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `artist_ids` parameter.  It checks if the input is a list, if the list is empty, if the list exceeds the maximum length, and if all items in the list are non-empty strings.  While Pydantic could provide a more concise and potentially more robust way to perform these checks, the existing manual validation is comprehensive for this specific case.  Therefore, Pydantic is not strictly needed for input validation in this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_several_artists` performs comprehensive validation on its single functional input parameter, `artist_ids`.  The validation checks include:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_several_artists` has excellent parameter design and type annotations.  The `artist_ids` parameter is correctly type-annotated as `List[str]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  All type annotations are complete and accurately reflect the expected types."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates the input `artist_ids` as specified, retrieves artist data from the global `DB` (as expected), handles the `NoResultsFoundError` appropriately, and returns a dictionary matching the specified structure. All functional input parameters (`artist_ids`) are used.  There are no placeholders, TODOs, or incomplete logic. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_several_artists` does not handle any phone numbers or email addresses.  Its input is a list of Spotify artist IDs (strings), which are validated for correct type and length, but no phone number or email address processing is involved. Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_artists_albums": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: retrieving an artist's albums with filtering and pagination. Default values for parameters are correctly stated. The `Args` and `Returns` sections are comprehensive, detailing parameter types and the structure of the dictionary returned, including nested structures.  The `Raises` section lists the potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`artist_id`, `include_groups`, `market`, `limit`, `offset`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  The use of Pydantic would not significantly improve the validation in this specific case, given the relatively simple validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`artist_id`, `include_groups`, `market`, `limit`, `offset`) have validation checks.  `artist_id` is validated using a helper function (`utils.validate_artist_id`), which is assumed to perform type and emptiness checks (though the implementation isn't shown). `include_groups` is checked for type and whether its values are within an allowed set. `market` is validated using another helper function (`utils.validate_market`), assumed to check for valid ISO 3166-1 alpha-2 codes. `limit` and `offset` are validated together using `utils.validate_limit_offset`, checking for appropriate ranges and positivity.  Appropriate exceptions (`InvalidInputError`, `InvalidMarketError`, `NoResultsFoundError`) are raised with informative messages for invalid inputs.  All validation happens before the parameters are used in the core logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (artist_id, include_groups, market, limit, offset) are properly type-annotated with their expected types (str, Optional[str], Optional[str], int, int respectively).  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types like Optional and List are used correctly in the annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of an artist's albums from the global `DB` dictionary, applying filtering based on `include_groups` and `market`, sorting by release date, and paginating the results according to `limit` and `offset`.  All functional input parameters (`artist_id`, `include_groups`, `market`, `limit`, `offset`) are used appropriately.  All documented exceptions (`InvalidInputError`, `NoResultsFoundError`, `InvalidMarketError`) are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  The function's logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_artists_albums` does not handle any phone number or email address inputs.  Its inputs are an artist ID (string), optional filter parameters (strings), a limit (integer), and an offset (integer).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and filtering artist album data from a database, which it does without any issues related to phone numbers or emails."
+          }
+        },
+        "get_artists_top_tracks": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving an artist's top tracks from a given market. The Args and Returns sections are well-structured, and types are specified for parameters and return values.  The documentation of the nested dictionary structures within the `Returns` section is particularly thorough, clearly outlining the structure of the `tracks` array and its constituent dictionaries. The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `artist_id` and `market` parameters.  `utils.validate_artist_id(artist_id)` and `utils.validate_market(market)` are called to perform these checks. While Pydantic could be used, the existing validation is sufficient and avoids the overhead of introducing a Pydantic model for only two parameters.  The manual approach is clear and directly addresses the validation requirements."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on both functional input parameters.  `artist_id` is validated indirectly via `utils.validate_artist_id` (the implementation of which is not provided, but we assume it checks for string type and non-emptiness).  `market` is explicitly checked to ensure it's a valid ISO 3166-1 alpha-2 country code using `utils.validate_market` and raises a custom exception if invalid.  Both checks are performed before the parameters are used in any further logic.  The validation is good, but could be improved by showing the explicit checks performed within `utils.validate_artist_id` for completeness.  If `utils.validate_artist_id` only checks for string type and non-emptiness, then the validation is not comprehensive because it doesn't check for the validity of the artist ID against the database."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`artist_id` and `market`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  All type annotations are complete and accurately reflect the expected types."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly uses both `artist_id` and `market` parameters.  It implements the documented exception handling for `InvalidMarketError` and `NoResultsFoundError`.  The logic for retrieving tracks, filtering by market, and sorting by popularity is present.  However, the `utils.validate_artist_id` function is not shown, leaving a potential gap in input validation.  The docstring describes a return of a dictionary with a `tracks` key containing a list of track objects.  The implementation matches this structure.  While the function works within the constraints of the global `DB`, a more robust implementation might involve error handling for cases where `tracks_table` or `track_data` might be unexpectedly malformed or missing keys.  There are no placeholders or TODOs.  The limitation to the top 10 tracks is implicitly implemented through slicing."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_artists_top_tracks` does not handle any phone number or email address inputs.  Its inputs are an artist ID (string) and a market code (string), neither of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and processing data related to Spotify artists and their tracks from an internal database."
+          }
+        },
+        "get_artists_related_artists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  The description is clear and the `Args` and `Returns` sections are well-structured, including types and nested structures for dictionaries.  The `Raises` section accurately lists the exceptions.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a custom `utils.validate_artist_id` function to validate the `artist_id` parameter.  This function is not shown, but it presumably checks if the input is a string and is not empty.  While Pydantic could be used, the existing validation is sufficient for this simple input.  No Pydantic models are used.  The function only has one functional input parameter, which is validated."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `artist_id` parameter.  `utils.validate_artist_id(artist_id)` is called, which presumably (without seeing the `utils` module) performs checks to ensure `artist_id` is a non-empty string. The function also checks if an artist with the given ID exists in the database, raising a `NoResultsFoundError` if not.  This is a form of value validation specific to the application domain. However, the exact checks performed within `utils.validate_artist_id` are unknown, leaving a small gap in the completeness of the validation.  If `utils.validate_artist_id` only checks for string type and non-emptiness, then the validation is good but not comprehensive.  If `utils.validate_artist_id` performs more robust checks (e.g., format validation specific to Spotify artist IDs), then the validation would be closer to comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_artists_related_artists` has excellent parameter design and type annotations.  The single parameter `artist_id` is correctly type-annotated as `str`. The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used.  The type annotation for the return value is slightly less precise than it could be (a more specific type hint for the `artists` list would be ideal), but it is still sufficiently informative."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the specified functionality. It validates the input `artist_id`, retrieves artist data from the global `DB`, finds related artists based on genre similarity, sorts them by popularity, limits the results to the top 20, and returns the data in the format specified in the docstring.  All functional input parameters are used.  The documented exceptions (`InvalidInputError` and `NoResultsFoundError`) are handled (although `InvalidInputError` is implicitly handled by `utils.validate_artist_id`). There are no placeholders or TODO comments. The implementation matches the docstring's description of the return type and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_artists_related_artists` does not handle any phone numbers or email addresses.  Its input is an artist ID (string), and its processing focuses solely on retrieving and manipulating data from a simulated database of artists. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "spotify/browse.py": {
+      "functions": {
+        "get_new_releases": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in retrieving new album releases from Spotify. Default values for `limit` and `offset` are correctly specified. The `Args` section adequately documents the parameters, including types and descriptions.  The `Returns` section is quite detailed, outlining the nested structure of the dictionary response, including types for most elements.  However, it could be improved by explicitly stating the type of `albums` (it's a dictionary, but the type annotation is missing).  The `Raises` section mentions the `InvalidInputError`, but the actual exception raised in the code is `InvalidMarketError`. This is a significant inconsistency.  While the docstring attempts to comprehensively document the nested dictionary structure of the response, some minor details might be missing or slightly inaccurate compared to the actual implementation (e.g., precise types within nested dictionaries). The overall completeness is good, enabling effective function usage based on the docstring alone, but the inconsistency in exception handling and minor omissions in type specification prevent it from being rated as excellent."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `country`, `limit`, and `offset` parameters.  It checks if `country` is a valid market using a `utils.validate_market` function, and it validates `limit` and `offset` using a `utils.validate_limit_offset` function. While Pydantic could be used to achieve the same validation, the current approach is sufficient and avoids the overhead of introducing a Pydantic model for this simple validation task.  The existing validation is comprehensive for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on the `limit` and `offset` parameters, and type and value validation on the `country` parameter if provided.  `limit` and `offset` are checked for being within acceptable ranges. `country` is checked against a validation function (`utils.validate_market`).  However, there's no explicit check for `country` being a string (though `utils.validate_market` likely performs this check internally).  While the validation is mostly thorough, the lack of an explicit string check for `country` prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`country`, `limit`, `offset`) are properly type-annotated with their expected types (`Optional[str]`, `int`, `int` respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used.  Complex types within the type annotations (like `Optional`, `Dict`, `List`) are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves albums from the global `DB`, applies filtering by country (if provided), sorts by release date, and applies pagination using the `limit` and `offset` parameters.  The exception handling for invalid country codes and limit/offset values is also implemented correctly via calls to `utils.validate_market` and `utils.validate_limit_offset`. The docstring accurately reflects the function's behavior and return type.  However, the `albums` dictionary returned does not include the `total` number of new releases which is mentioned in the docstring.  Adding this would make the implementation fully compliant with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_new_releases` function does not handle any phone number or email address inputs.  Its parameters and functionality are solely focused on retrieving and paginating album release data from a database, using country code, limit, and offset as input parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_featured_playlists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values are correctly specified and explained. The `Args` and `Returns` sections are comprehensive, although the nested structure of the `Returns` dictionary could benefit from more concise descriptions of deeply nested elements (e.g.,  `owner`, `external_urls`, etc., could be summarized rather than listing every key).  The documentation of the `playlists` dictionary within the `Returns` section is particularly good, providing a detailed breakdown of its structure."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`country`, `locale`, `limit`, `offset`, `timestamp`).  While Pydantic could be used to structure and validate these inputs, the existing manual checks are sufficient and cover all the required validation logic.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (country, locale, limit, offset, timestamp) are properly type-annotated with their expected types (Optional[str], int, etc.). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types like List and Dict are properly specified using type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of retrieving and paginating playlists from the global `DB`.  Input parameters `limit` and `offset` are used for pagination.  The validation for `country`, `locale`, and `timestamp` is also implemented, raising the appropriate exceptions as documented. However, the function lacks the actual filtering of playlists based on the `country`, `locale`, and `timestamp` parameters.  Currently, all playlists in the `DB` are treated as featured regardless of these filters.  This is a significant gap in functionality, but the core structure and exception handling are in place.  The docstring accurately reflects the return type and structure, although the actual filtering functionality is missing."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_featured_playlists` function does not handle any phone number or email address inputs.  Its parameters are designed for querying Spotify playlists based on country, locale, limit, offset, and timestamp.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_categories": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, parameters, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `country`, `locale`, `limit`, and `offset` parameters.  While Pydantic could be used to structure and validate these inputs, the existing manual checks are sufficient.  The validation is not ideal (e.g., error messages could be more informative), but it does cover all functional input parameters.  Using Pydantic would improve readability and potentially make the validation more robust, but it's not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for most functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (country, locale, limit, offset) are properly type-annotated with their expected types (Optional[str], Optional[str], int, int respectively). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types like Optional, List, and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves categories from the global `DB`, applies pagination using the `limit` and `offset` parameters, and returns a dictionary in the specified format.  The input validation for `country` and `locale` is implemented, and the `limit` and `offset` are validated via a helper function. The docstring accurately reflects the function's behavior and return type. However, the error handling only raises `InvalidMarketError` and `InvalidInputError`, while the docstring mentions a more general `InvalidInputError`.  This is a minor inconsistency.  Also, the function does not explicitly handle cases where the `categories_table` in the DB is empty or does not contain the expected structure. While it would still function (returning an empty list), adding a check for this edge case would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_categories` does not handle any phone number or email address inputs.  Its purpose is to retrieve and paginate a list of categories from a database, using country and locale codes as optional filters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does perform input validation on the `country` and `locale` parameters, but this is unrelated to phone numbers or emails."
+          }
+        },
+        "get_category": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a clear description of the function's purpose and usage within the context of an MCP server.  It accurately describes the function's arguments, including default values and their purpose. The `Returns` section adequately explains the structure of the returned dictionary, although it could benefit from more specific examples of the data within `external_urls` and `icons`.  The `Raises` section correctly lists the exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `category_id`, `country`, and `locale` parameters.  While Pydantic could be used to structure this validation more concisely, the existing checks are sufficient to ensure that the inputs are of the correct type and format.  The use of helper functions (`utils.validate_category_id` and `utils.validate_market`) improves readability and maintainability.  Using Pydantic wouldn't add significant value in this case, given the simplicity of the validation rules."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (category_id, country, locale) are properly type-annotated with their expected types (str, Optional[str], Optional[str] respectively). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves category data from the global `DB` based on the `category_id`.  It also implements validation for `category_id` using a helper function (`utils.validate_category_id`), and includes error handling for invalid `category_id` and missing categories (`NoResultsFoundError`).  The validation for `country` and `locale` is partially implemented; however, it only checks for the format of the inputs and doesn't seem to perform any further validation (e.g., checking if the country code actually exists). The `country` and `locale` parameters are used for input validation, but their values are not used in retrieving the category data from the database.  The docstring accurately reflects the function's behavior and return type.  The function is missing more robust validation for `country` and `locale`, but otherwise functions as expected given the provided database."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_category` does not handle any phone number or email address inputs.  Its purpose is to retrieve category data from a database using a category ID, country code, and locale.  Therefore, the criteria for phone number normalization and email validation are not applicable to this function.  The function does perform input validation for the `category_id`, `country`, and `locale` parameters, but these are not phone numbers or email addresses."
+          }
+        },
+        "get_category_playlists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values are correctly specified and explained.  The `Args` and `Returns` sections are comprehensive, including types and descriptions. The documentation of the nested `playlists` dictionary within the return value is particularly good, detailing the structure and types of its keys.  The `Raises` section accurately lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`category_id`, `country`, `limit`, `offset`) through helper functions in a `utils` module.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all necessary checks.  There's no need for Pydantic in this specific case given the existing validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on most functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (category_id, country, limit, offset) are properly type-annotated with their expected types (str, Optional[str], int, int respectively).  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `category_id`, `limit`, and `offset` parameters.  It also correctly handles the `country` parameter and raises the documented exceptions (`InvalidMarketError` and `NoResultsFoundError`). The pagination is implemented using the `utils.apply_pagination` function. However, the core logic of fetching playlists is a placeholder; it includes all playlists in the `playlists_table` regardless of the category.  In a real-world scenario, this would need to filter playlists based on the `category_id`, which is currently missing.  The docstring accurately reflects the intended functionality, except for the simulated playlist retrieval."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_category_playlists` does not handle any phone number or email address inputs.  Its parameters are `category_id`, `country`, `limit`, and `offset`, all of which are strings or integers related to retrieving Spotify playlists.  Therefore, the criteria for phone number normalization and email validation are not applicable.  The function focuses solely on data retrieval and pagination, and performs input validation relevant to its specific task (e.g., validating the `category_id` and `country` code formats)."
+          }
+        },
+        "get_recommendations": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in generating music recommendations. Default values for parameters are correctly stated and explained. The Args section adequately documents each parameter with its type and a clear description, including examples.  The Returns section specifies the type and provides a detailed description of the structure of the dictionary, including nested structures within `seeds` and `tracks`.  The Raises section correctly lists the exceptions. Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `seed_artists`, `seed_genres`, `seed_tracks`, `limit`, and `market` parameters.  It checks the number of seeds, the type and range of `limit`, and the validity of the `market` code using a custom `utils.validate_market` function.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (seed_artists, seed_genres, seed_tracks, limit, market) are properly type-annotated with their expected types using Optional and List where appropriate.  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly handling seed validation, limit checks, and market filtering within the constraints of using the global `DB` dictionary.  All functional input parameters (`seed_artists`, `seed_genres`, `seed_tracks`, `limit`, `market`) are used.  The exception handling for `InvalidInputError` and `InvalidMarketError` is implemented. There are no placeholders or TODO comments.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_recommendations` does not handle any phone numbers or email addresses.  Its inputs and outputs are related to Spotify music data (artist IDs, track IDs, genres, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_available_genre_seeds": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: retrieving available genre seeds for use in recommendations.  It accurately reflects the function's role in an MCP server context. The description of how the returned data can be used is helpful.  The Returns section correctly identifies the dictionary structure and provides an example of the `genres` list. The \"Raises\" section accurately states that no exceptions are raised."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_available_genre_seeds` does not take any input parameters.  Therefore, the question of input validation using Pydantic or other methods is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_available_genre_seeds` has no functional input parameters.  Therefore, no input validation is needed, and the absence of validation is not a flaw."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_available_genre_seeds` has no parameters, so the question of parameter type annotations does not apply.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves genre data from the global `DB` dictionary and returns it in the format specified by the docstring.  There are no unused functional parameters, no exceptions to handle (as correctly documented), no placeholders, and the docstring accurately reflects the function's behavior and return type.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_available_genre_seeds` does not handle any phone numbers or email addresses.  Its purpose is to retrieve genre data from a database. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function is well-written for its intended purpose, but the question's criteria are irrelevant to its functionality."
+          }
+        }
+      }
+    },
+    "spotify/search.py": {
+      "functions": {
+        "search_for_item": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is overly verbose and contains significant inconsistencies with the actual implementation. While it attempts to comprehensively document the function's purpose and parameters, the description of the `Returns` section is excessively detailed and inaccurate.  The docstring describes a complex nested structure for the return value, implying a rich, detailed response with pagination information for each search type ('tracks', 'artists', 'albums', etc.). However, the implementation uses a simplified, less detailed structure.  The docstring's example of the nested structure within the `tracks` key, for instance, is far more elaborate than what the function actually returns.  The actual implementation returns a simpler dictionary for each search type, lacking many of the fields described (e.g., `href`, `next`, `previous` are hardcoded URLs, not dynamically generated based on the search parameters).  This discrepancy between the promised return value and the actual return value is a major flaw.  Furthermore, while the docstring mentions `InvalidInputError`, it doesn't specify the `custom_errors` module, making it difficult for a user to understand the exception handling. The excessive detail in the `Returns` section, combined with the significant inconsistencies, makes the docstring difficult to use and understand.  A more concise and accurate description of the actual return structure is needed."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The `search_for_item` function performs input validation using type checking and manual validation for each parameter.  While Pydantic could be used to structure this validation more concisely, the existing approach is functional and covers all functional input parameters.  The current method is sufficient and avoids unnecessary complexity.  Pydantic would offer benefits in terms of readability and maintainability for a larger codebase, but is not strictly needed for this specific function's validation requirements."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`q`, `type`, `market`, `limit`, `offset`, `include_external`) are validated.  The validation includes type checking, value range checks (for `limit` and `offset`), allowed value checks (for `type` and `include_external`), and null/empty checks (for `q`).  Appropriate exceptions (`custom_errors.InvalidInputError`) with informative messages are raised for invalid inputs.  Each parameter is checked before being used in the search logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`q`, `type`, `market`, `limit`, `offset`, `include_external`) are properly type-annotated with their expected types (str, str, Optional[str], int, int, Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional` and `Dict` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly implementing the search functionality across different content types using the global `DB`.  All functional input parameters (`q`, `type`, `market`, `limit`, `offset`) are used.  Exception handling for the documented `InvalidInputError` is implemented correctly. There are no TODOs or placeholders.  The `include_external` parameter is not used, but this is acceptable as it's not clear from the provided code what functionality it would enable. The docstring accurately reflects the function's behavior and return type.  However, the search logic is simplistic (searching only within the name field). A more robust implementation would involve a more sophisticated search mechanism, potentially using full-text search capabilities if the `DB` supported them.  The pagination logic is correctly implemented, but the `href`, `next`, and `previous` URLs are hardcoded and should ideally be dynamically generated based on the actual API endpoint structure."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_for_item` function does not handle any phone number or email address inputs.  Its purpose is to search a Spotify-like catalog based on text queries,  `q`, and content types, `type`. There is no provision for or use of phone numbers or email addresses within the function's parameters, logic, or return values. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "spotify/playlist.py": {
+      "functions": {
+        "get_playlist": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's inputs and their types, including default values and explanations. The `Returns` section attempts to comprehensively document the structure of the returned dictionary, but it's excessively verbose and repetitive, especially in detailing nested dictionaries.  This level of detail, while seemingly thorough, makes the docstring cumbersome and difficult to read.  The `Raises` section accurately lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id`, `market`, and `additional_types` parameters.  These checks are sufficient and cover the necessary validation logic.  While Pydantic could be used, it's not strictly necessary given the existing, clear, and effective validation.  The `fields` parameter is also handled with a simple type check, which is sufficient for its purpose.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (playlist_id, market, fields, additional_types) are properly type-annotated with their expected types (str, Optional[str], Optional[str], Optional[str] respectively).  The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters.  Complex types like Optional and Dict are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `playlist_id`, `market`, and `additional_types` parameters in its logic.  It handles the documented exceptions (`InvalidInputError`, `InvalidMarketError`, `NoResultsFoundError`). There are no placeholders or TODO comments.  The `fields` parameter is declared but not used in the implementation; the docstring states that it would filter results, but this functionality is not implemented.  While the function works within the context of the global `DB`, the field filtering promised in the docstring is missing, making it only mostly complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_playlist` does not handle any phone number or email address inputs.  Its inputs are a playlist ID (string), a market code (string), fields (string), and additional types (string). None of these are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on retrieving and processing playlist data from a database, and its input validation is relevant to its specific parameters (playlist ID, market code, etc.)."
+          }
+        },
+        "change_playlist_details": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in managing playlist metadata within an MCP server context. The Args section correctly lists all parameters with types and descriptions, including default values (although the descriptions could be slightly more concise in some cases). The Returns section accurately states that an empty dictionary signifies success. The Raises section correctly lists and describes the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`playlist_id`, `name`, `public`, `collaborative`, `description`).  While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  The manual validation approach is sufficient in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`playlist_id`, `name`, `public`, `collaborative`, `description`) are validated.  `playlist_id` is validated via a separate function (`utils.validate_playlist_id`), which is assumed to perform necessary checks (though its implementation isn't shown). The other parameters undergo type checking and value validation (length restrictions, empty string checks, boolean checks, and a constraint check for the combination of `public` and `collaborative`).  Appropriate `InvalidInputError` exceptions are raised for invalid inputs with informative error messages.  The validation also checks for the interaction between `public` and `collaborative` flags, ensuring that a playlist cannot be both public and collaborative."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (playlist_id, name, public, collaborative, description) are properly type-annotated with their expected types (str, Optional[str], Optional[bool], Optional[bool], Optional[str] respectively).  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`playlist_id`, `name`, `public`, `collaborative`, `description`) are used appropriately in the function's logic.  All documented exceptions (`InvalidInputError`, `NoResultsFoundError`, `AuthenticationError`) are properly handled and raised under the correct conditions. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, correctly interacting with the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return type and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `change_playlist_details` does not handle any phone number or email address inputs.  Its parameters are designed for modifying playlist metadata (ID, name, public/private status, etc.), none of which involve phone numbers or emails. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_playlist_items": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's role in retrieving playlist items and their metadata, which is crucial for an MCP server dealing with Spotify playlist information. Default values for `limit` and `offset` are correctly specified.  All arguments are documented with types and descriptions. The `Returns` section clearly explains the structure of the returned dictionary, including nested dictionaries and lists, although it could benefit from more concise descriptions of some nested fields (e.g., instead of listing every field within `added_by` or `track`, a brief summary like \"User object\" and \"Track object\" would suffice, with a note to refer to Spotify API docs for detailed field descriptions). The `Raises` section accurately lists the potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`playlist_id`, `market`, `limit`, `offset`, `additional_types`).  It performs type checking and range checks where appropriate. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all the necessary checks.  The use of helper functions (`utils.validate_playlist_id`, `utils.validate_market`, `utils.validate_limit_offset`, `utils.validate_type`) improves readability and maintainability."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id`, `market`, `fields`, `limit`, `offset`, `additional_types`) are properly type-annotated with their expected types (str, Optional[str], Optional[int], etc.).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types are properly specified using `Optional`, `List`, and `Dict`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of playlist items based on the provided `playlist_id`, handling pagination and market filtering as specified in the docstring.  All functional input parameters (`playlist_id`, `market`, `limit`, `offset`, `additional_types`) are used appropriately in the function's logic.  The documented exceptions (`InvalidInputError`, `InvalidMarketError`, `NoResultsFoundError`) are all properly implemented and raised under the correct conditions. There are no TODO comments, pass statements, or placeholder implementations. The return value matches the structure described in the docstring.  The function's logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_playlist_items` does not handle any phone number or email address inputs.  Its purpose is to retrieve playlist items from a Spotify-like database, using a playlist ID as the primary input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_playlist_items": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose,  parameters, return value, and exceptions.  All parameters, including their default values (where applicable), are documented with types and descriptions. The `Returns` section correctly specifies the return type and describes the `snapshot_id` key. The `Raises` section lists all potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (playlist_id, uris, range_start, insert_before, range_length, snapshot_id).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all the necessary aspects.  The use of Pydantic wouldn't add significant value in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`playlist_id`, `uris`, `range_start`, `insert_before`, `range_length`, `snapshot_id`) are validated.  The validation includes type checking, checks for null/empty values, and range/value checks where appropriate. For example, `uris` is checked to be a list of non-empty strings with a maximum length, `range_start` and `insert_before` are checked to be non-negative integers, and `range_length` is checked to be a positive integer. `snapshot_id` is checked to be a non-empty string.  Error handling is implemented using custom exceptions with informative messages.  The validation is thorough and covers all aspects of the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types using type hints (str, Optional[List[str]], Optional[int], etc.).  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles playlist updates through replacement (using `uris`) and reordering (using `range_start`, `insert_before`, and `range_length`).  Exception handling for the documented exceptions is implemented. The docstring accurately reflects the function's behavior and return type.  The logic for adding tracks to the playlist correctly extracts track IDs from URIs and constructs the necessary data structure.  However, there's a minor gap: the `snapshot_id` parameter, while validated, isn't used for anything other than comparison against the current snapshot ID.  If the snapshot ID is provided and matches, it's not used to update the playlist from a previous snapshot.  This could be considered a minor oversight, but it doesn't render the core functionality broken."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_playlist_items` does not handle any phone numbers or email addresses.  Its input and output are solely related to Spotify playlist management using playlist IDs and URIs. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "add_items_to_playlist": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's main task: adding items to a playlist. The Args section correctly lists and describes all parameters, including their types and default values (position). The Returns section correctly specifies the return type and provides a descriptive example. The Raises section accurately lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `add_items_to_playlist` does not use Pydantic models for input validation. However, it performs comprehensive manual validation of the `playlist_id`, `uris`, and `position` parameters using type checking, length checks, regular expressions, and range checks.  The validation is thorough enough that adding Pydantic models would not significantly improve the code's robustness or readability in this specific case.  The existing manual validation is sufficient and well-structured."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters (`playlist_id`, `uris`, `position`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id`, `uris`, `position`) are properly type-annotated with their expected types (str, List[str], Optional[int] respectively). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the addition of tracks or episodes to a Spotify playlist.  All functional input parameters (`playlist_id`, `uris`, `position`) are used appropriately in the validation and playlist update logic.  All documented exceptions (`InvalidInputError`, `NoResultsFoundError`, `AuthenticationError`) are handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `add_items_to_playlist` does not handle any phone numbers or email addresses.  Its inputs and outputs relate solely to Spotify playlist IDs and URIs. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function does a good job validating its Spotify-related inputs."
+          }
+        },
+        "remove_tracks_from_playlist": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: removing tracks from a playlist. The Args section is well-structured, clearly specifying types and providing helpful examples. The Returns section correctly indicates the dictionary structure. The Raises section lists the potential exceptions.  Default values are mentioned (`snapshot_id`). Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`playlist_id`, `tracks`, `snapshot_id`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  The use of regular expressions for URI validation is particularly noteworthy.  Therefore, Pydantic models are not strictly needed for this function, although they might offer some advantages in terms of code organization and readability for more complex validation scenarios."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters: `playlist_id`, `tracks`, and `snapshot_id`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`playlist_id`, `tracks`, `snapshot_id`) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  Complex types like `List`, `Dict`, and `Optional` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the removal of tracks from a playlist based on the provided `playlist_id` and `tracks`.  All functional input parameters (`playlist_id`, `tracks`, `snapshot_id`) are used appropriately in the function's logic.  The documented exceptions (`InvalidInputError`, `NoResultsFoundError`) are properly raised under the specified conditions. There are no TODO comments, pass statements, or placeholder implementations. The logic for removing tracks, updating the database (`DB`), and generating a new snapshot ID is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, input/output types, and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `remove_tracks_from_playlist` does not handle any phone numbers or email addresses.  Its input and output are solely related to Spotify playlist IDs and URIs. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_current_users_playlists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior regarding pagination and error handling. Default values are clearly stated and explained.  The `Args` and `Returns` sections are detailed, including nested dictionary structures within the response.  The types are consistently specified for parameters and return values. The documentation of the `items` list within the return dictionary is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `limit` and `offset` parameters.  It checks the type and range of `limit` and the type and non-negativity of `offset`. While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is sufficient and covers all functional input parameters.  Using Pydantic would not provide significant benefits in this specific case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_current_users_playlists` performs comprehensive validation on both its functional input parameters, `limit` and `offset`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`limit` and `offset`) are properly type-annotated with their expected types (`int`). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used.  Complex types within the return type annotation (Dict, List) are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of a user's playlists with pagination, handling exceptions as documented.  All functional input parameters (`limit` and `offset`) are used to control the pagination and data retrieval. The logic for building the response, including the `next` and `previous` links, is complete and accurate.  The docstring accurately reflects the function's behavior and return type.  There are no placeholders or TODO comments.  The exception handling for `InvalidInputError` and `AuthenticationError` is correctly implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_current_users_playlists` does not handle any phone number or email address inputs.  Its purpose is to retrieve a user's playlists from a database, using a user ID obtained through an authentication mechanism (implied by the error handling).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_user_playlists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's parameters, including default values and their constraints. The `Returns` section is detailed, outlining the structure of the dictionary response, including nested dictionaries and lists.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `user_id`, `limit`, and `offset` parameters.  It checks the type and value ranges of these parameters. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  Using Pydantic would not significantly improve the code in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`user_id`, `limit`, and `offset`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (user_id, limit, offset) are properly type-annotated with their expected types (str, int, int).  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used.  Complex types within the return type annotation (List, Dict) are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`user_id`, `limit`, `offset`) are used to retrieve and paginate the user's playlists from the global `DB`.  All documented exceptions (`InvalidInputError`, `NoResultsFoundError`) are properly handled. There are no TODOs, pass statements, or placeholder implementations. The response dictionary structure matches the docstring's description, including pagination information (`next`, `previous`).  The logic for pagination and error handling is complete and functional within the context of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_user_playlists` does not handle any phone number or email address inputs.  Its inputs are a user ID (string), a limit (integer), and an offset (integer). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and paginating playlist data based on a user ID from an internal database."
+          }
+        },
+        "create_playlist": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior in creating a playlist and adding it to the user's playlist list. Default values for `public`, `collaborative`, and `description` are correctly specified.  The `Args` section adequately documents each parameter with its type and a concise description.  The `Returns` section correctly identifies the return type as `Dict[str, Any]` and provides a detailed description of the dictionary's structure, including nested dictionaries and lists.  The `Raises` section lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for all functional input parameters (`user_id`, `name`, `public`, `collaborative`, `description`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is sufficient and covers all necessary checks.  The manual checks ensure that the inputs are of the correct type and meet basic requirements (e.g., `user_id` and `name` being non-empty strings).  Using Pydantic would not significantly improve the code's correctness or readability in this specific case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters (`user_id`, `name`, `public`, `collaborative`, and `description`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (user_id, name, public, collaborative, description) are properly type-annotated with their expected types (str, str, bool, bool, Optional[str]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new playlist, validating inputs, handling exceptions as documented, and storing the playlist data in the global `DB`. All functional input parameters (`user_id`, `name`, `public`, `collaborative`, `description`) are used appropriately. The returned dictionary matches the structure described in the docstring.  There are no placeholders or TODO comments. The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_playlist` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on creating Spotify playlists based on provided user and playlist details.  No aspects of phone number or email processing are present in the code."
+          }
+        },
+        "get_playlist_cover_image": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's primary task: retrieving playlist cover images. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking and manual validation to ensure `playlist_id` is a non-empty string.  While Pydantic could be used, the existing validation is sufficient and clear.  Using Pydantic would add unnecessary complexity for this simple input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_playlist_cover_image` performs comprehensive validation on its single functional input parameter, `playlist_id`.  It checks that `playlist_id` is a non-empty string using `isinstance` and a length check (`not playlist_id`).  Appropriate exceptions (`custom_errors.InvalidInputError`) are raised for invalid input with clear error messages.  All aspects of type and value validation are covered for this parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_playlist_cover_image` has excellent parameter design.  The single parameter `playlist_id` is correctly type-annotated as `str`. The return type `List[Dict[str, Any]]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves playlist cover images from three potential locations within the global `DB`: `playlist_cover_images`, `playlist_images`, and the `images` key within the playlist itself.  It handles the cases where no images are found (returning an empty list) and where the retrieved data isn't in the expected list format.  Input validation ensures `playlist_id` is a non-empty string, and the documented exceptions (`InvalidInputError` and `NoResultsFoundError`) are correctly raised. The docstring accurately reflects the function's behavior and return type.  All functional input parameters (`playlist_id`) are used. There are no placeholders or TODOs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_playlist_cover_image` does not handle any phone number or email address inputs.  Its sole input is a playlist ID (string), which is validated only to ensure it's a non-empty string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving playlist cover images from a database."
+          }
+        },
+        "add_custom_playlist_cover_image": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: adding or replacing a playlist cover image. The Args and Raises sections are well-structured and informative.  The types for parameters and return values are correctly specified."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `playlist_id` and `image_data` parameters.  While Pydantic could be used to structure and validate these inputs, the existing manual checks are comprehensive, covering type, format (base64 encoding), size, and content (JPEG header).  The manual approach is sufficient in this case, and introducing Pydantic wouldn't offer significant advantages given the specific validation requirements.  The `utils.validate_playlist_id` function is assumed to perform adequate validation for `playlist_id`."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "Both functional input parameters, `playlist_id` and `image_data`, have comprehensive validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`playlist_id` and `image_data`) are properly type-annotated as `str`. The return type is correctly specified as `None`.  The function does not use `**kwargs`.  All type annotations are complete and accurate for the given parameter types."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates both `playlist_id` and `image_data` as specified, raising appropriate exceptions (`InvalidInputError` and `NoResultsFoundError`) when issues are detected.  All functional input parameters (`playlist_id` and `image_data`) are used. The logic for storing the simulated image data in the `DB` is complete and functional within the context of the global `DB` dictionary.  The function correctly returns `None` as documented. There are no placeholders, TODO comments, or pass statements. The docstring accurately reflects the function's behavior and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `add_custom_playlist_cover_image` does not handle any phone numbers or email addresses.  Its inputs are a playlist ID (a string identifier) and base64-encoded JPEG image data. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on validating and processing playlist ID and image data within the context of a Spotify-like playlist management system."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "spotify": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely sound and follows modern best practices.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `SimulationEngine` folder has all the essential components (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, etc.). The `tests` folder is well-organized with tests for different API components."
+      }
+    }
+  }
+}

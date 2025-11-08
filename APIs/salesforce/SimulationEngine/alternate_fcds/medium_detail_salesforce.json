@@ -1,0 +1,643 @@
+[
+  {
+    "name": "create_event",
+    "description": "Creates a new event, allowing specification of its name, subject, start and end dates/times, description, location, and whether it is an all-day event. It also supports linking the event to an owner, a contact, or a related record via provided IDs.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string",
+          "description": "Specifies the name of the event. This parameter is an optional string."
+        },
+        "Subject": {
+          "type": "string",
+          "description": "The optional subject for the event, provided as a string."
+        },
+        "StartDateTime": {
+          "type": "string",
+          "description": "Specifies the start time of the event."
+        },
+        "EndDateTime": {
+          "type": "string",
+          "description": "The end time of the event, provided as an optional string."
+        },
+        "Description": {
+          "type": "string",
+          "description": "An optional string that provides the description for the event."
+        },
+        "Location": {
+          "type": "string",
+          "description": "Specifies the location of the event. This is an optional string parameter."
+        },
+        "IsAllDayEvent": {
+          "type": "boolean",
+          "description": "Indicates whether the event spans the entire day. This parameter accepts a boolean value."
+        },
+        "OwnerId": {
+          "type": "string",
+          "description": "The unique identifier (ID) for the event's owner. This parameter is an optional string."
+        },
+        "WhoId": {
+          "type": "string",
+          "description": "The unique identifier for a contact related to the event. This parameter accepts an optional string value."
+        },
+        "WhatId": {
+          "type": "string",
+          "description": "Specifies the ID of a related record. This parameter is optional and must be a string."
+        }
+      }
+    }
+  },
+  {
+    "name": "create_task",
+    "description": "Creates a new task, which requires a specified priority and status. If a custom ID is not provided, a unique identifier is automatically generated. The function returns the complete task object, including its assigned ID and all specified attributes.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "Priority": {
+          "type": "string",
+          "description": "The priority level of the task. This is a required parameter."
+        },
+        "Status": {
+          "type": "string",
+          "description": "The status of the task. This is a required string parameter."
+        },
+        "Id": {
+          "type": "string",
+          "description": "A custom ID for the task. If this parameter is not provided, a UUID will be automatically generated."
+        },
+        "Name": {
+          "type": "string",
+          "description": "An optional string that represents the name of the task."
+        },
+        "Subject": {
+          "type": "string",
+          "description": "Defines the subject for the task."
+        },
+        "Description": {
+          "type": "string",
+          "description": "An optional string that specifies the description for the task."
+        },
+        "ActivityDate": {
+          "type": "string",
+          "description": "An optional string specifying the due date of the task."
+        },
+        "DueDate": {
+          "type": "string",
+          "description": "An optional string field that specifies an alternative due date for the task."
+        },
+        "OwnerId": {
+          "type": "string",
+          "description": "The optional ID of the task owner, provided as a string."
+        },
+        "WhoId": {
+          "type": "string",
+          "description": "An optional string ID used to specify the related contact for the task."
+        },
+        "WhatId": {
+          "type": "string",
+          "description": "Specifies the ID of a related record. This parameter is an optional string."
+        },
+        "IsReminderSet": {
+          "type": "boolean",
+          "description": "Indicates whether a reminder is set for the task. This is an optional boolean value."
+        },
+        "ReminderDateTime": {
+          "type": "string",
+          "description": "Specifies the reminder date and time. This parameter is an optional string."
+        }
+      },
+      "required": [
+        "Priority",
+        "Status"
+      ]
+    }
+  },
+  {
+    "name": "delete_event",
+    "description": "Deletes an event, identified by its `event_id` string. It returns an empty dictionary upon successful deletion or a dictionary containing an `error` key with a string message if the event is not found.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "A string representing the ID of the event to be deleted."
+        }
+      },
+      "required": [
+        "event_id"
+      ]
+    }
+  },
+  {
+    "name": "delete_task",
+    "description": "Deletes a task identified by its unique ID. It returns an empty dictionary on success or an error dictionary with an `error` key if the task is not found.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "description": "A string representing the ID of the task to be deleted."
+        }
+      },
+      "required": [
+        "task_id"
+      ]
+    }
+  },
+  {
+    "name": "describe_event_layout",
+    "description": "Describes the layout of an event. The layout description is returned as a dictionary with the key `layout`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "The ID string for the event to be described."
+        }
+      },
+      "required": [
+        "event_id"
+      ]
+    }
+  },
+  {
+    "name": "describe_event_object",
+    "description": "Describes the Event object. It returns a dictionary where the 'object' key contains the event's description as a string.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "describe_task_layout",
+    "description": "Provides a description of the task layout. It returns a dictionary with a 'layout' key that contains the string description of the task's arrangement.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "describe_task_object",
+    "description": "Describes Task SObjects. The function returns a dictionary that contains the task object description under the 'object' key.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "execute_soql_query",
+    "description": "Executes a SOQL-like query against the in-memory database. The query string is first URL-decoded and must adhere to a specific SOQL-like syntax, requiring uppercase keywords for clauses such as `FROM`, `WHERE`, `ORDER BY`, `OFFSET`, and `LIMIT`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "A SOQL-like query string used to filter and retrieve records. It supports `SELECT`, `FROM`, `WHERE`, `ORDER BY`, `OFFSET`, and `LIMIT` clauses. All clause keywords (except `SELECT`), operators like `AND`, and `ASC`/`DESC` must be uppercase, and string literals in conditions must be quoted. The query string is first URL-decoded; for example: `SELECT Name, Location FROM Event WHERE Location = 'Boardroom' ORDER BY Name ASC OFFSET 0 LIMIT 5`."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    }
+  },
+  {
+    "name": "get_deleted_events",
+    "description": "Retrieves deleted events, returning them as a dictionary containing a list of event objects under the 'deleted' key.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_deleted_tasks",
+    "description": "Retrieves deleted tasks. The function returns a dictionary where the `deleted` key contains a list of deleted task objects.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_updated_events",
+    "description": "Retrieves updated events. It returns a dictionary where the 'updated' key contains a list of updated event objects.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "get_updated_tasks",
+    "description": "Retrieves updated tasks. The function returns a dictionary where the 'updated' key contains a list of updated task objects.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "parse_where_clause_conditions",
+    "description": "Parses a list of condition strings, interpreting them as WHERE clause conditions. It supports comparison operations including '=', 'IN', 'LIKE', and 'CONTAINS', processing inputs like \"Field = 'Value'\" or \"Field IN ('Value1', 'Value2')\".",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of condition strings to be parsed, formatted similarly to a WHERE clause. Each string must define a field, an operator (such as `=`, `IN`, `LIKE`, or `CONTAINS`), and its corresponding value(s). For example, \"Subject = 'Meeting'\" or \"Location IN ('Boardroom', 'Conference Room')\"."
+        }
+      },
+      "required": [
+        "conditions"
+      ]
+    }
+  },
+  {
+    "name": "query_events",
+    "description": "Queries events, optionally filtering them using a dictionary of key-value pairs. These criteria can include event properties such as Subject (str), IsAllDayEvent (bool), or StartDateTime (str).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "criteria": {
+          "type": "object",
+          "properties": {
+            "Subject": {
+              "type": "string",
+              "description": "A string representing the subject of the event."
+            },
+            "IsAllDayEvent": {
+              "type": "boolean",
+              "description": "A boolean value indicating whether the event is an all-day event."
+            },
+            "StartDateTime": {
+              "type": "string",
+              "description": "The start time of the event, provided as a string."
+            },
+            "EndDateTime": {
+              "type": "string",
+              "description": "Specifies the end time of the event. This parameter must be provided as a string within the `criteria` dictionary."
+            },
+            "Description": {
+              "type": "string",
+              "description": "A string representing the event's description."
+            },
+            "Location": {
+              "type": "string",
+              "description": "Defines the location where the event takes place. This parameter should be provided as a string."
+            },
+            "OwnerId": {
+              "type": "string",
+              "description": "The string identifier for the event owner."
+            }
+          },
+          "description": "A dictionary of key-value pairs used to filter events. It supports keys such as `Subject` (str), `IsAllDayEvent` (bool), `StartDateTime` (str), `EndDateTime` (str), `Description` (str), `Location` (str), and `OwnerId` (str).",
+          "required": [
+            "Description",
+            "EndDateTime",
+            "IsAllDayEvent",
+            "Location",
+            "OwnerId",
+            "StartDateTime",
+            "Subject"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "query_tasks",
+    "description": "Queries tasks based on an optional dictionary of criteria. This dictionary specifies key-value pairs for filtering, such as \"Subject\", \"Priority\", \"Status\", or \"ActivityDate\" (e.g., \"2024-01-01\"). The structure of the provided criteria dictionary is validated to ensure proper formatting.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "criteria": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary of optional key-value pairs used to filter tasks. Valid keys include 'Subject', 'Priority', 'Status', and 'ActivityDate', each accepting an optional string value (e.g., '2024-01-01' for 'ActivityDate')."
+        }
+      }
+    }
+  },
+  {
+    "name": "retrieve_event_details",
+    "description": "Retrieve details for a specific event identified by its `event_id`. This function returns the event object if found, or a dictionary containing an 'error' key with a message if the event does not exist.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "The string identifier for the event to retrieve."
+        }
+      },
+      "required": [
+        "event_id"
+      ]
+    }
+  },
+  {
+    "name": "retrieve_task_details",
+    "description": "Retrieves a specific task using its unique ID. If found, the function returns the task object as a dictionary; otherwise, it returns a dictionary containing an error message.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "description": "The ID of the task to retrieve."
+        }
+      },
+      "required": [
+        "task_id"
+      ]
+    }
+  },
+  {
+    "name": "search_events",
+    "description": "Searches for events by matching a specified search term within their fields. It returns a list of event objects that contain the search term.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "search_term": {
+          "type": "string",
+          "description": "The string term to search for within event fields."
+        }
+      },
+      "required": [
+        "search_term"
+      ]
+    }
+  },
+  {
+    "name": "search_tasks",
+    "description": "Searches for tasks using a specified `search_term` string. It returns a dictionary with a `results` key, containing a list of task objects that match the search term.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "search_term": {
+          "type": "string",
+          "description": "The string term to search for within task fields."
+        }
+      },
+      "required": [
+        "search_term"
+      ]
+    }
+  },
+  {
+    "name": "undelete_event",
+    "description": "Restores a deleted event. This is a placeholder function and does not track actual deletions or revert an event's deletion status.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "The string ID of the event to be restored."
+        }
+      },
+      "required": [
+        "event_id"
+      ]
+    }
+  },
+  {
+    "name": "undelete_task",
+    "description": "Retrieves a task by its ID, serving as a placeholder for future undeletion capabilities. Currently, this function does not track or restore actually deleted tasks, only returning existing ones.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "description": "The string identifier for the task to undelete."
+        }
+      },
+      "required": [
+        "task_id"
+      ]
+    }
+  },
+  {
+    "name": "update_event",
+    "description": "Updates an existing event identified by its `event_id`. Provide optional parameters to modify specific event properties. The function returns the updated event object, or an error if the specified `event_id` is not found.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "The unique identifier for the event to be updated. This ID must be provided as a string."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The name of the event. This is an optional string parameter."
+        },
+        "Subject": {
+          "type": "string",
+          "description": "The optional subject of the event, provided as a string."
+        },
+        "StartDateTime": {
+          "type": "string",
+          "description": "The optional start time of the event, provided as a string."
+        },
+        "EndDateTime": {
+          "type": "string",
+          "description": "The end time of the event. This parameter is an optional string."
+        },
+        "Description": {
+          "type": "string",
+          "description": "An optional string that provides a detailed description for the event."
+        },
+        "Location": {
+          "type": "string",
+          "description": "The optional location of the event, provided as a string."
+        },
+        "IsAllDayEvent": {
+          "type": "boolean",
+          "description": "A boolean value indicating whether the event is an all-day event."
+        },
+        "OwnerId": {
+          "type": "string",
+          "description": "The optional string ID of the event owner."
+        },
+        "WhoId": {
+          "type": "string",
+          "description": "The optional ID of a related contact, provided as a string."
+        },
+        "WhatId": {
+          "type": "string",
+          "description": "An optional string ID for a related record."
+        }
+      },
+      "required": [
+        "event_id"
+      ]
+    }
+  },
+  {
+    "name": "update_task",
+    "description": "Updates an existing task using its unique `task_id`. Optional parameters allow modification of specific task attributes including Name, Subject, Priority, Status, Description, ActivityDate, OwnerId, WhoId, WhatId, IsReminderSet, and ReminderDateTime.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "description": "The unique identifier for the task to be updated. This parameter expects a string value."
+        },
+        "Name": {
+          "type": "string",
+          "description": "Specifies the optional string value for the task's name."
+        },
+        "Subject": {
+          "type": "string",
+          "description": "An optional string that specifies the subject of the task."
+        },
+        "Priority": {
+          "type": "string",
+          "description": "The optional priority level for the task, provided as a string."
+        },
+        "Status": {
+          "type": "string",
+          "description": "Specifies the current status of the task. This is an optional string parameter."
+        },
+        "Description": {
+          "type": "string",
+          "description": "Specifies the descriptive text for the task. This optional parameter is a string that provides additional details about the task."
+        },
+        "ActivityDate": {
+          "type": "string",
+          "description": "Specifies the due date for the task. This optional parameter accepts a string value."
+        },
+        "OwnerId": {
+          "type": "string",
+          "description": "The ID of the task owner. This parameter is an optional string."
+        },
+        "WhoId": {
+          "type": "string",
+          "description": "The string ID of the related contact."
+        },
+        "WhatId": {
+          "type": "string",
+          "description": "The string identifier for a record related to the task."
+        },
+        "IsReminderSet": {
+          "type": "boolean",
+          "description": "A boolean value indicating whether a reminder is set for the task."
+        },
+        "ReminderDateTime": {
+          "type": "string",
+          "description": "Specifies the reminder date and time for the task. This is an optional string parameter."
+        }
+      },
+      "required": [
+        "task_id"
+      ]
+    }
+  },
+  {
+    "name": "upsert_event",
+    "description": "Creates or updates an event. To update an existing event, its ID must be provided.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string",
+          "description": "The optional name of the event, which is a string."
+        },
+        "Id": {
+          "type": "string",
+          "description": "The unique identifier for the event. This parameter is required when performing an update operation."
+        },
+        "Subject": {
+          "type": "string",
+          "description": "Specifies the subject of the event. This is an optional string parameter."
+        },
+        "StartDateTime": {
+          "type": "string",
+          "description": "The optional start time of the event, provided as a string."
+        },
+        "EndDateTime": {
+          "type": "string",
+          "description": "The end time of the event, provided as a string."
+        },
+        "Description": {
+          "type": "string",
+          "description": "The textual description for the event."
+        },
+        "Location": {
+          "type": "string",
+          "description": "Specifies the location where the event occurs, provided as a string."
+        },
+        "IsAllDayEvent": {
+          "type": "boolean",
+          "description": "A boolean value indicating whether the event spans the entire day."
+        },
+        "OwnerId": {
+          "type": "string",
+          "description": "Specifies the optional string ID for the owner of the event."
+        },
+        "WhoId": {
+          "type": "string",
+          "description": "A string ID identifying a contact associated with the event."
+        },
+        "WhatId": {
+          "type": "string",
+          "description": "Specifies the ID of a record related to the event being created or updated."
+        }
+      }
+    }
+  },
+  {
+    "name": "upsert_task",
+    "description": "Creates a new task or updates an existing one. A Task ID is required to update an existing task.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string",
+          "description": "The unique identifier for the task. This ID is required when updating an existing task."
+        },
+        "Name": {
+          "type": "string",
+          "description": "An optional string parameter that defines the name for the task."
+        },
+        "Subject": {
+          "type": "string",
+          "description": "An optional string specifying the subject of the task."
+        },
+        "Priority": {
+          "type": "string",
+          "description": "Specifies the priority level for the task. This is an optional string parameter."
+        },
+        "Status": {
+          "type": "string",
+          "description": "The status of the task, specified as an optional string."
+        },
+        "Description": {
+          "type": "string",
+          "description": "An optional string that describes the task."
+        },
+        "ActivityDate": {
+          "type": "string",
+          "description": "Specifies the optional due date of the task as a string."
+        },
+        "OwnerId": {
+          "type": "string",
+          "description": "The ID of the task owner."
+        },
+        "WhoId": {
+          "type": "string",
+          "description": "The ID of the related contact."
+        },
+        "WhatId": {
+          "type": "string",
+          "description": "An optional string identifier for the related record."
+        },
+        "IsReminderSet": {
+          "type": "boolean",
+          "description": "A boolean indicating whether a reminder is set for the task."
+        },
+        "ReminderDateTime": {
+          "type": "string",
+          "description": "The date and time for a task reminder. This parameter expects an optional string value."
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,895 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.170258Z",
+  "results": {
+    "google_calendar/EventsResource.py": {
+      "functions": {
+        "delete_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and generally well-written. It accurately describes the function's purpose, arguments, return value, and the exception it raises.  Default values are correctly specified and explained, including the note about `sendUpdates` not being implemented.  Types are specified for all parameters and the return value. The description of the dictionary return value is sufficient."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It checks if the `key` (combination of `calendarId` and `eventId`) exists in the `DB[\"events\"]` dictionary before attempting to delete the event. This implicitly validates that `calendarId` and `eventId` are strings (as the dictionary keys must be hashable), and checks for the existence of the event. While a Pydantic model could be used to make this validation more explicit and potentially add more sophisticated checks (e.g., length restrictions on IDs), the existing validation is sufficient for the function's purpose.  The `sendUpdates` parameter, while having a limited set of acceptable values, is not currently used and therefore does not require validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation implicitly through type hinting (`str` for `calendarId` and `eventId`), and it checks for the existence of the event in the `DB` which acts as a value validation.  However, it lacks explicit checks for empty strings in `calendarId` and `eventId`.  While `sendUpdates` has allowed values, there's no validation for those values.  Therefore, the validation is good but not comprehensive due to the missing explicit empty string checks and the absence of `sendUpdates` value validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId`, `eventId`, `sendUpdates`) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes an event from the global `DB` dictionary using the provided `calendarId` and `eventId`.  The `sendUpdates` parameter is correctly identified as optional and not used in the current implementation (as noted in the docstring), which is acceptable.  The function raises a `ValueError` as documented when the event is not found. The return dictionary matches the docstring's specification.  All functional parameters are used appropriately, and there are no placeholders or TODOs. The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_event` does not handle any phone number or email address inputs.  Its purpose is to delete calendar events given a calendar ID and event ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values are correctly documented.  The `Args` and `Returns` sections are comprehensive, including detailed descriptions of nested dictionary structures. The `Raises` section accurately lists the exceptions. Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`alwaysIncludeEmail`, `calendarId`, `eventId`, `maxAttendees`, `timeZone`).  It performs type checking and value validation (e.g., checking for empty strings, negative numbers). While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks are comprehensive for this specific function.  The use of Pydantic would not significantly improve the code in this case, given its simplicity and the existing thorough validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`alwaysIncludeEmail`, `calendarId`, `eventId`, `maxAttendees`, `timeZone`) are validated for both type and value.  Type validation ensures that each parameter is of the expected data type (bool, str, int). Value validation checks for empty strings, negative numbers (for `maxAttendees`), and a basic format check for `timeZone`.  Null/empty checks are performed where appropriate, and clear error messages are raised using custom exceptions (`TypeError`, `InvalidInputError`, `ResourceNotFoundError`) for invalid inputs.  All functional input parameters are checked before being used in the core logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`alwaysIncludeEmail`, `calendarId`, `eventId`, `maxAttendees`, `timeZone`) are properly type-annotated with their expected types (bool, str, Optional[str], Optional[int], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `calendarId`, `eventId`, `maxAttendees`, and `timeZone` parameters in its logic.  Exception handling for `TypeError`, `InvalidInputError`, and `ResourceNotFoundError` is implemented. The docstring accurately reflects the function's behavior and return type. However, the `alwaysIncludeEmail` parameter is marked as deprecated but is not actually used in the function's logic, which is a minor gap.  The timezone handling is simulated rather than a true conversion, but this is acceptable given the context of a mock database."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_event` does not handle any phone number or email address inputs.  Its parameters and return values relate to calendar events, including email addresses of organizers and attendees. However, it doesn't process or validate these email addresses beyond simply including them in the returned dictionary.  There's no input field for phone numbers at all. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on calendar event retrieval and parameter validation, not on contact information processing."
+          }
+        },
+        "import_event": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the function's arguments, including default values and types. The `Args` section accurately describes the expected structure of the `resource` dictionary, including nested structures.  The `Returns` section also correctly describes the structure of the returned dictionary. The `Raises` section correctly identifies the `ValueError`.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the `resource` parameter, which is the only functional parameter requiring validation.  While it checks for `resource` being None, it doesn't validate the structure or data types within the `resource` dictionary.  The `calendarId` parameter is validated implicitly by its type hint (str), but more robust validation (e.g., length restrictions, allowed characters) might be beneficial.  The other parameters (`conferenceDataVersion`, `supportsAttachments`) have type hints but lack further validation.  Using Pydantic models would significantly improve the robustness of input validation by providing a declarative and comprehensive way to specify the expected structure and data types of the `resource` dictionary and other parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `calendarId` implicitly through type hinting, and a null check on the `resource` parameter.  It raises a ValueError if `resource` is None. However, it lacks value validation for `calendarId` (e.g., checking for valid calendar ID format or length).  It also lacks validation of the contents of the `resource` dictionary; while it checks for the presence of the dictionary itself, it doesn't verify the existence or format of required fields like \"summary\", \"start\", and \"end\", nor does it validate the data types or formats within those nested dictionaries (e.g., ensuring \"dateTime\" is in the correct ISO 8601 format).  Therefore, validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId`, `conferenceDataVersion`, `supportsAttachments`, `resource`) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly imports an event into the global `DB`.  It handles the case where an event ID is not provided by generating a UUID. The `ValueError` exception is correctly raised if the `resource` parameter is missing. All functional parameters (`resource`, `calendarId`) are used. The docstring accurately reflects the function's behavior and return type.  The function's logic is complete and functional within the context of the global `DB`.  There are no placeholders or TODO comments. The `conferenceDataVersion` and `supportsAttachments` parameters are not used, but this is acceptable as per the instructions (MCP contextual parameters)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `import_event` function does not handle phone numbers or email addresses.  Its purpose is to import calendar events, taking a dictionary as input that specifies event details (summary, start time, end time, etc.).  There's no input field for phone numbers or emails within the `resource` dictionary. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It correctly describes the default values for `calendarId` and `sendUpdates`. The `Args` and `Returns` sections are detailed, including types and nested structures for dictionaries.  The examples are helpful and illustrate different usage scenarios.  The documentation of `resource` is particularly thorough, covering all its nested fields and providing clear examples for `recurrence`."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`EventResourceInputModel`) to validate the `resource` parameter, which is the main functional input carrying the event data.  This model handles complex nested structures and data type validation effectively.  Other functional parameters (`calendarId` and `sendUpdates`) also have basic type checking and value validation. While basic type checking is sufficient for `calendarId` and `sendUpdates`, using Pydantic models for these parameters would improve consistency and potentially allow for more sophisticated validation rules in the future (e.g., regular expressions for `calendarId` or more complex checks on `sendUpdates`).  However, the existing validation is sufficient to prevent common errors.  The use of Pydantic for the `resource` parameter is a strength of the code."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId`, `resource`, `sendUpdates`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used.  Complex types like `Dict`, `List`, and `Optional` are correctly specified within the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly handles the creation of events in the `DB` and validates inputs as documented.  The `sendUpdates` parameter is not used in the implementation, as noted in the docstring.  However, this is explicitly stated as not yet implemented, so it's not a significant flaw.  The function correctly maps \"primary\" calendarId to the actual primary calendar ID from the DB.  The handling of exceptions is also correct.  The docstring accurately reflects the function's behavior and return type.  The only minor gap is the unimplemented `sendUpdates` functionality, which is clearly acknowledged."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_event` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating calendar events and deals with data like event summaries, start/end times, recurrence rules, and attendees (with optional email addresses for attendees, but no validation or normalization is performed on these emails).  The email addresses in the `attendees` field are not processed in any way beyond basic data storage.  There's no input normalization or validation for phone numbers at all."
+          }
+        },
+        "list_event_instances": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the dictionary structure, including nested dictionaries and lists, although it overstates the number of items returned (it claims to handle pagination and `maxResults`, but the implementation always returns a single event or an empty list). The `Raises` section correctly lists the exceptions.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters through type checking and value checks (e.g., checking for empty strings, negative numbers, valid ISO 8601 formats).  While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual approach covers all functional parameters.  The use of Pydantic would be a stylistic improvement, but it's not strictly necessary given the existing comprehensive validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters are checked for correct data types and valid values.  `alwaysIncludeEmail` and `showDeleted` are validated as booleans. `calendarId` and `eventId` are validated as non-empty strings. `maxAttendees` is validated as a non-negative integer, and `maxResults` as a positive integer. `originalStart`, `timeMax`, and `timeMin` are validated as non-empty strings representing valid ISO 8601 datetimes. `pageToken` is validated as a non-empty string. `timeZone` is validated as a non-empty string in the format \"Continent/City\".  Additionally, there's a check for consistency between `timeMin` and `timeMax` to ensure `timeMin` is before `timeMax`.  Appropriate `TypeError` and `InvalidInputError` exceptions are raised with informative messages for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (bool, str, int, Optional[str], Optional[int]). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality, correctly handling input validation and using most functional parameters.  The core logic for retrieving and filtering events from the `DB` is present. However, the docstring mentions handling pagination with `pageToken`, but the implementation only ignores it, stating it would be handled in a \"real implementation.\"  Similarly, `maxResults` is mentioned as limiting the number of returned instances, but the mock implementation only returns a maximum of one event.  These omissions prevent a \"Fully Implemented\" rating.  All functional parameters are used except for `alwaysIncludeEmail`, which is not used in the core logic.  The exception handling is complete and correct. There are no placeholders or TODO comments.  The return type and structure generally match the docstring, with the caveat of the pagination and `maxResults` limitations."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_event_instances` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on calendar events and their attributes (IDs, times, attendees, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates and processes its given parameters, but it doesn't deal with the data types mentioned in the task description."
+          }
+        },
+        "list_events": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the `list_events` function.  It accurately describes the function's purpose and the meaning of most parameters. Default values are correctly stated. The `Args` and `Returns` sections are well-structured, and types are specified for parameters and return values.  The documentation of the nested dictionary structure within the `Returns` section is quite thorough. The `Raises` section correctly lists the exceptions that the function might raise."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for all functional parameters using type checking and range/value checks.  While Pydantic could provide a more concise and potentially more robust validation framework, the existing manual checks adequately cover the validation requirements for the input parameters.  The current approach is sufficient and avoids the overhead of introducing a Pydantic model for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`calendarId`, `maxResults`, `timeMin`, `timeMax`, `q`, `singleEvents`, `orderBy`) are validated.  Type validation is performed for all parameters.  `maxResults` has value validation to ensure it's a positive integer. `timeMin` and `timeMax` have value validation to check for valid ISO datetime strings using `parse_iso_datetime`. `orderBy` is checked against a list of allowed values.  Null/empty checks are implicitly handled for optional parameters through the `if parameter is not None:` checks.  Appropriate `TypeError` and `InvalidInputError` exceptions are raised with informative messages for invalid inputs.  The validation is thorough and covers all aspects of the functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str], int, bool, etc.).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types are properly specified using `Optional`, `List`, and `Dict`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using all functional input parameters.  The exception handling is comprehensive, covering all documented exceptions. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  It's a function designed to list calendar events based on various parameters (calendar ID, time range, query string, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "move_event": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types (including default values), meticulously details the structure of the dictionary return value, and lists all possible exceptions with informative messages.  The description of the `sendUpdates` parameter's possible values is particularly helpful.  The docstring aligns perfectly with the function's implementation; there are no inconsistencies between what the docstring promises and what the function actually does.  The level of detail provided makes the function readily usable based solely on the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (calendarId, eventId, destination, sendNotifications, sendUpdates).  While Pydantic could provide a more concise and potentially type-safer way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input.  Therefore, Pydantic is not strictly needed for input validation in this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`calendarId`, `eventId`, `destination`, `sendNotifications`, `sendUpdates`) are validated.  Type validation is performed for all parameters.  `calendarId`, `eventId`, and `destination` are checked for empty or whitespace strings. `sendUpdates` is checked against a list of allowed values. `sendNotifications` is checked to ensure it's a boolean.  All validations raise appropriate exceptions with informative error messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, eventId, destination, sendNotifications, sendUpdates) are properly type-annotated with their expected types (str, str, str, Optional[bool], Optional[str]).  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the moving of an event between calendars using the global `DB`.  All functional input parameters (`calendarId`, `eventId`, `destination`, `sendNotifications`) are used in the input validation or core logic.  All documented exceptions are handled. There are no placeholders or TODOs. The docstring accurately reflects the function's behavior and return type.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `move_event` does not handle any phone numbers or email addresses.  Its inputs and outputs are all calendar and event identifiers, which are strings. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "patch_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It correctly describes the function's partial update functionality and the default value for `calendarId`. The `Args` and `Returns` sections are comprehensive, including detailed explanations of the nested dictionary structures within the `resource` argument and the return value.  The `Raises` section accurately lists the exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`EventPatchResourceModel`) to validate the `resource` parameter, which is the main functional input carrying complex data.  Other functional parameters (`calendarId`, `eventId`, `sendUpdates`) are validated using type checking and manual checks for empty strings or valid values. While manual validation is sufficient for these simple parameters, using a Pydantic model for them would not significantly improve the code's clarity or maintainability in this specific case. The existing validation is comprehensive and covers all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, eventId, resource, sendUpdates) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types such as `Optional[str]`, `Optional[Dict[str, Any]]`, `List[Dict[str, Any]]` are correctly used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the patching of an event based on the provided `resource` dictionary.  All functional input parameters (`calendarId`, `eventId`, `resource`) are used.  The function correctly validates inputs, handles exceptions as documented (TypeError, ValueError, InvalidInputError, ValidationError), and updates the event in the global `DB`. The `sendUpdates` parameter is not used, as noted in the docstring, and this is acceptable. The return value matches the docstring's description.  There are no placeholders or TODOs. The logic is complete and functional within the constraints of using the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `patch_event` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable. The function focuses on updating calendar events and validates other aspects of the input data (like `sendUpdates` and the structure of the `resource` dictionary) but doesn't deal with phone numbers or emails at all."
+          }
+        },
+        "quick_add_event": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the parameters (including default values and types), and thoroughly details the return value, including its structure and nested types.  The `Raises` section correctly lists and describes all potential exceptions.  The documentation of the dictionary structure in the return value is particularly noteworthy, providing sufficient detail for a user to understand the data format.  There is perfect alignment between the docstring's description of the function's behavior, its parameters, return value, and the raised exceptions, and the actual implementation.  The docstring is complete enough for a user to understand and effectively use the function without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type and value checking for all functional input parameters (`calendarId`, `sendNotifications`, `sendUpdates`, `text`).  While Pydantic could provide a more concise and potentially more robust way to perform these checks, the existing validation is comprehensive and covers all aspects of the input.  Therefore, Pydantic is not strictly needed for this specific function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`calendarId`, `sendNotifications`, `sendUpdates`, and `text`) have both type and value validation checks.  `calendarId` and `text` are checked for empty or whitespace strings. `sendUpdates`, when provided, is checked against a list of allowed values.  `sendNotifications` is checked to ensure it's a boolean.  Appropriate `TypeError` and `InvalidInputError` exceptions are raised with informative messages for all invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, sendNotifications, sendUpdates, text) are properly type-annotated with their expected types (str, bool, Optional[str], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of creating an event and storing it in the global `DB`.  Input validation for `calendarId`, `sendNotifications`, `sendUpdates`, and `text` is performed as documented.  All documented exceptions are raised appropriately. The function uses all functional input parameters (`calendarId`, `text`, `sendNotifications`, `sendUpdates`). The docstring accurately reflects the function's behavior and return type.  However, the `start` and `end` fields promised in the docstring's return value are missing from the returned dictionary.  Adding these would make the implementation fully compliant with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `quick_add_event` function does not handle any phone number or email address inputs.  Therefore, there is no normalization or validation to assess.  The function focuses solely on creating calendar events based on a text description, calendar ID, and notification settings.  No email or phone number fields are present in the function's parameters or processing."
+          }
+        },
+        "update_event": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It correctly documents default values (sendUpdates) and types.  The documentation of the `resource` dictionary and its nested structures is particularly thorough, including examples of RRULE usage and supported parameters.  The examples provided are helpful."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`EventPatchResourceModel`) to validate the `resource` parameter, which is the main functional input containing the event data.  This model handles complex nested structures and data type validation effectively.  Other functional parameters (`eventId`, `calendarId`, `sendUpdates`) are validated using basic type checking and value checks, which is sufficient for their simplicity. While these could potentially be incorporated into a Pydantic model for consistency, the current approach is adequate and doesn't necessitate a change.  The use of a Pydantic model for the complex `resource` parameter demonstrates proper usage of Pydantic for input validation in this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (eventId, calendarId, resource, sendUpdates) are properly type-annotated with their expected types, including the use of Optional and Dict annotations to specify complex types.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`eventId`, `calendarId`, `resource`) are used appropriately in the logic.  The documented exceptions (`TypeError`, `InvalidInputError`, `ResourceNotFoundError`) are all properly implemented and raised under the correct conditions. There are no TODO comments, pass statements, or placeholder implementations. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling. The `sendUpdates` parameter is correctly validated but its functionality is not implemented, as noted in the docstring; this is acceptable given the explicit statement in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone number or email address inputs.  The function `update_event` deals with calendar events and their attributes (summary, start/end times, attendees, recurrence rules, etc.).  There is no field within the `resource` dictionary or any other input parameter that would accept phone numbers or email addresses.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable to this function."
+          }
+        },
+        "watch_events": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, lists all parameters with types and descriptions, specifies the return type and description, and details the exceptions that can be raised.  Default values are correctly noted.  The descriptions of parameters are helpful and informative.  The `resource` parameter's dictionary structure is adequately documented, although a more detailed example might improve clarity."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all its functional input parameters.  While Pydantic could provide a more concise and potentially more robust way to perform these checks (especially for complex validation rules), the existing manual validation covers all functional parameters adequately.  The current approach is functional and readable.  Using Pydantic would be a stylistic choice for improvement, not a necessity to fix a validation deficiency."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  Type validation is performed for all parameters using `isinstance`. Value validation is thorough, checking for positive integers (`maxAttendees`, `maxResults`), valid enum values (`eventTypes`, `orderBy`), correct ISO 8601 date/time formats (`timeMax`, `timeMin`, `updatedMin`), and non-empty strings (`timeZone`).  Null/empty checks are implicitly handled by the `if parameter is not None` checks combined with the type checks.  The `resource` parameter is validated for type and the presence of a required `address` field.  Appropriate `TypeError` and `InvalidInputError` exceptions are raised with informative error messages for all validation failures.  All functional input parameters are checked before being used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, and Dict where appropriate.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements a watch for calendar events. All functional input parameters are used in the validation and logic of the function.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The core logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including return types and raised exceptions.  There are no unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `watch_events` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on managing calendar events and setting up watch channels, dealing with parameters like calendar IDs, event types, time ranges, and watch configurations.  There are no fields in the function's parameters that would represent phone numbers or email addresses."
+          }
+        }
+      }
+    },
+    "google_calendar/CalendarsResource.py": {
+      "functions": {
+        "clear_calendar": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: clearing a calendar by deleting all associated events.  The Args section accurately documents the `calendarId` parameter, including how to obtain calendar IDs and the special \"primary\" keyword. The Returns section correctly specifies the dictionary structure and the types of its keys (`success` and `message`).  Type hints are used consistently for parameters and return values.  The docstring accurately reflects the function's behavior in handling the \"primary\" calendar ID."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`isinstance`) and manual validation (`calendarId in DB[\"calendar_list\"]`) to check the `calendarId` parameter.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling different error types more elegantly), the existing validation is sufficient for the function's needs.  Using Pydantic here would be an unnecessary addition of complexity."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `calendarId` parameter, ensuring it's a string.  It also performs value validation by checking if the `calendarId` exists in the `DB[\"calendar_list\"]`.  The check for the \"primary\" keyword is also a form of value validation.  However, there's no explicit check for an empty string \"\" as a `calendarId`, which could be considered a missing validation.  While unlikely to cause a crash, it might lead to unexpected behavior.  Therefore, the validation is good but not comprehensive due to this minor gap."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `clear_calendar` has excellent parameter design and type annotations.  The single parameter `calendarId` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the clearing of a calendar by removing all associated events from the global `DB[\"events\"]` dictionary.  The `calendarId` parameter is used correctly, handling both string IDs and the special \"primary\" keyword.  All documented exceptions (`TypeError`, `ValueError`) are implemented. There are no placeholders or TODO comments. The function's logic is complete and functional within the context of the global `DB`. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `clear_calendar` does not handle any phone numbers or email addresses.  Its input is a `calendarId` which is a string identifier, not an email or phone number. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete_calendar": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately describes the arguments and their types (`calendarId` as a string), correctly details the return value as a dictionary with \"success\" (bool) and \"message\" (str) keys, and lists all possible exceptions (`ValueError`, `TypeError`). The description of how to obtain the `calendarId` is helpful.  The docstring accurately reflects the function's behavior, including the handling of primary calendar deletion attempts and the error handling for non-existent calendars.  There are no inconsistencies between the docstring and the implementation.  The documentation of the dictionary structure in the Returns section is sufficient.  All aspects of the function's behavior and potential issues are clearly addressed, making it easy for a developer to understand and use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking and manual validation to check the `calendarId` parameter.  It verifies that `calendarId` is a string, that it's not the primary calendar ID, and that it exists in the `DB`. While Pydantic could provide a more structured approach, the existing validation is sufficient and covers all aspects of the input.  Using Pydantic would add unnecessary complexity in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_calendar` performs comprehensive validation of its single functional input parameter, `calendarId`.  It checks for the correct data type (string) using `isinstance`. It then checks for valid values by ensuring the ID is not \"primary\", does not match the primary calendar ID obtained from `get_primary_calendar_entry()`, and exists within the `DB[\"calendar_list\"]`.  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for invalid inputs.  All possible failure scenarios for the `calendarId` parameter are handled."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_calendar` has excellent parameter design and type annotations.  The `calendarId` parameter is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a secondary calendar from the mock database represented by the global `DB` dictionary.  It handles the `calendarId` input parameter correctly, raising appropriate `TypeError` and `ValueError` exceptions as documented. The logic for deleting the calendar from both `DB[\"calendar_list\"]` and `DB[\"calendars\"]` is complete and functional. The return value matches the docstring's specification.  There are no placeholders, TODOs, or unused functional parameters.  The docstring accurately reflects the function's behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_calendar` does not handle any phone number or email address inputs.  Its input is a calendar ID, which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_calendar": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including a helpful explanation of how to obtain calendar IDs. The return value is well-documented, including the types and descriptions of the dictionary keys.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value. The documentation of the dictionary return value is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance`) and manual validation (`if calendarId not in DB[\"calendar_list\"]`) to validate the `calendarId` input.  While Pydantic could be used, the existing validation is sufficient and correctly handles the potential errors.  Using Pydantic here would add unnecessary complexity without significant benefit."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_calendar` performs comprehensive validation of its single functional input parameter, `calendarId`.  It checks for the correct data type (string) using `isinstance`. It also handles the special case of \"primary\" and performs a value check against the `DB[\"calendar_list\"]` to ensure the calendar ID exists, raising a `ValueError` if not found.  All possible paths of `calendarId` are validated before use.  The error messages are clear and informative."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_calendar` has excellent parameter design and type annotations.  The single parameter `calendarId` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The type annotation for the return dictionary is appropriately detailed, even if it uses `Any` for the values."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves calendar metadata based on the provided `calendarId`.  It handles the special case of \"primary\" correctly by calling `get_primary_calendar_entry()`.  Both `TypeError` and `ValueError` exceptions are properly raised as documented. The function uses the `calendarId` parameter effectively.  The return value matches the docstring's description. There are no placeholders or TODOs. The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_calendar` does not handle any phone number or email address inputs.  Its input is a `calendarId` which is a string identifier, not a phone number or email. Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_calendar": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose and parameters.  It accurately describes the function's role in creating a calendar within the system. The Args section is comprehensive, detailing the structure of the nested dictionaries within the `resource` parameter.  The Returns section also adequately describes the structure of the returned dictionary, including the addition of the `primary` field, which is missing from the implementation.  This is a significant inconsistency.  The Raises section correctly lists the exceptions.  Types are mostly specified correctly."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`CalendarResourceInputModel`) to validate the `resource` input parameter.  This model presumably defines the expected structure and types for the dictionary, handling validation of the nested `conferenceProperties` and its `allowedConferenceSolutionTypes` list.  The `try...except` block correctly catches `ValidationError` exceptions raised by Pydantic, providing a mechanism to handle invalid input.  All functional input is validated using this method.  No other input validation methods are needed because the Pydantic model comprehensively handles the validation of the `resource` dictionary."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic's `CalendarResourceInputModel` (not shown in the provided code, but implied) for comprehensive validation of the `resource` dictionary. This approach likely handles type validation, value validation (including allowed values for `allowedConferenceSolutionTypes`), and null/empty checks for all fields within the `resource` dictionary.  The `if resource is None:` check explicitly handles the case where no resource is provided.  Error handling is done via the `try...except ValidationError` block, which provides informative error messages from Pydantic.  Therefore, all functional input parameters (`resource` and its sub-fields) are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_calendar` has excellent parameter design and type annotations.  The single parameter `resource` is correctly type-annotated as `Optional[Dict[str, Any]]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The type annotations are complete and accurately reflect the expected data types, including nested dictionaries and lists."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly creates a calendar entry in the global `DB` dictionary, handling the case where an `id` is not provided in the input `resource`.  It also correctly raises a `ValueError` if `resource` is `None` and handles `ValidationError` from Pydantic. The docstring accurately reflects the function's behavior and return type. However, the condition `if validated_resource_model.kind is None and \"kind\" in calendar_data_to_store and calendar_data_to_store[\"kind\"] is None:` seems redundant and unnecessary.  The `calendar_data_to_store` dictionary already excludes `None` values due to `model_dump(exclude_none=True)`.  This redundant check doesn't affect functionality but adds unnecessary complexity.  Also, the function uses both `DB[\"calendar_list\"]` and `DB[\"calendars\"]` to store the same data, which might be redundant depending on the intended use of these two keys within the larger application.  This redundancy could be considered a minor implementation gap."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_calendar` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating calendar entries based on a dictionary input, dealing with calendar-related fields like `summary`, `description`, `timeZone`, etc., but none of these fields are related to contact information like phone numbers or emails."
+          }
+        },
+        "patch_calendar": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The descriptions are helpful and the inclusion of examples for `calendarId` and `timeZone` enhances understanding.  Type hints are complete and correctly reflect the parameter and return types.  The documentation of the `resource` dictionary is thorough, listing allowed keys, their types, and optional nature."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `calendarId` and `resource` parameters.  Type checking and value checks are performed to ensure that `calendarId` is a string, `resource` is a dictionary, and that the keys and values within `resource` conform to expected types and constraints. While Pydantic could provide a more concise and potentially more robust way to express these validation rules, the existing manual validation is comprehensive for the given task.  Using Pydantic wouldn't add significant value in this case given the simplicity of the validation requirements."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `calendarId` and `resource`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId` and `resource`) are properly type-annotated with their expected types (`str` and `Optional[Dict[str, Any]]` respectively). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the patching of calendar entries based on the provided `calendarId` and `resource` parameters.  All functional input parameters (`calendarId` and `resource`) are used.  All documented exceptions (`TypeError` and `ValueError`) are properly handled and raised under the appropriate conditions. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, correctly updating both `DB[\"calendar_list\"]` and `DB[\"calendars\"]`. The docstring accurately reflects the function's behavior, including return types and raised exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `patch_calendar` function does not handle any phone number or email address inputs.  Its purpose is to update calendar entries based on a provided `resource` dictionary, which only accepts strings for summary, description, and timezone.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_calendar": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of replacing a calendar. The Args section correctly lists and describes parameters, including the optional `resource` and its nested structure.  The Returns section correctly specifies the type and describes the structure of the returned dictionary. The Raises section accurately lists the exceptions.  Types are specified for all parameters and return values.  The docstring clearly explains how to use the `primary` keyword."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking (`str` for `calendarId` and `Optional[Dict[str, Any]]` for `resource`) and manual validation to check if `calendarId` exists in `DB[\"calendar_list\"]` and if `resource` is not `None`.  While this provides some input validation, it's not comprehensive.  For instance, it doesn't validate the structure or types within the `resource` dictionary.  Pydantic models could significantly improve this by providing a more robust and declarative way to specify the expected structure and types of the `resource` dictionary, including data type validation and default values.  However, the existing validation is sufficient to prevent the most basic errors."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on `calendarId` (checking if it's a string implicitly through the comparison with \"primary\" and the DB lookup) and null/empty checks on `resource` (using `if resource is None`).  It also performs value validation on `calendarId` by checking its existence in `DB[\"calendar_list\"]`.  However, it lacks validation on the contents of the `resource` dictionary. While the docstring specifies expected keys (`summary`, `description`, `timeZone`), the code doesn't check if these keys exist or if their values meet any specific constraints (e.g., `timeZone` format).  Therefore, the validation is good but not comprehensive due to the missing checks within the `resource` dictionary."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId` and `resource`) are properly type-annotated with their expected types (`str` and `Optional[Dict[str, Any]]` respectively). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types like `Optional` and `Dict` are correctly used in the type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of updating a calendar entry in the global `DB`.  It handles the `calendarId` parameter correctly, including the special case of \"primary\". It raises `ValueError` exceptions as documented when the calendar is not found or if the resource is missing. The return value matches the docstring's description. However, the function unnecessarily updates both `DB[\"calendar_list\"][calendarId]` and `DB[\"calendars\"][calendarId]`.  This redundancy might indicate a design flaw in the broader system using this function, but from the perspective of this single function, it's unnecessary and could be simplified by removing the second update.  This redundancy is a minor gap, but doesn't significantly impact the core functionality."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_calendar` function does not handle any phone number or email address inputs.  Its purpose is to update calendar entries based on a calendar ID and a resource dictionary.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_calendar/ColorsResource.py": {
+      "functions": {
+        "get_colors": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and attempts to describe the function's purpose and return value.  It correctly identifies the return type as `Dict[str, Any]`.  However, the description of the nested dictionary structure within the return value is overly verbose and repetitive.  The docstring states that both `calendar` and `event` dictionaries contain `id`, `background`, and `foreground` keys, implying a symmetrical structure.  This level of detail is unnecessary and could be simplified.  More critically, the docstring **fails to reflect the actual implementation's lack of structure**. The function simply returns `DB[\"colors\"]`, implying that the structure of `DB[\"colors\"]` is completely undefined and could vary. The docstring's detailed description of the nested dictionaries is therefore misleading and inaccurate.  A more concise and accurate docstring would simply state that it returns a dictionary containing color definitions for calendars and events without specifying the exact nested structure, as this is not guaranteed by the implementation.  No exceptions are raised, so no \"Raises\" section is needed.  There are no arguments, so no \"Args\" section is needed.  The type hinting is correct for the return value.  While the docstring is present and the type hinting is accurate, the over-specification and mismatch with the implementation's lack of structure lowers its quality."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_colors` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable.  The function simply retrieves data from the global `DB`."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_colors` has no input parameters.  Therefore, no input parameter validation is possible, and the rating is \"None\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_colors` has no parameters.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves color definitions from the global `DB[\"colors\"]` dictionary as described in its docstring.  There are no unused functional parameters, no exceptions to handle (as per the provided code), no placeholders, and the docstring accurately reflects the function's behavior and return type.  The implementation is concise and directly addresses the stated purpose."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_colors()` does not handle any phone numbers or email addresses.  It retrieves color definitions from a database. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_calendar/AclResource.py": {
+      "functions": {
+        "delete_rule": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately describes the arguments and their types (`calendarId` and `ruleId` as strings), and correctly specifies the return type as a dictionary with `success` (boolean) and `message` (string) keys.  The `Raises` section correctly lists all potential exceptions (`TypeError` and `ValueError`) with informative descriptions of the conditions under which they are raised.  The documentation of the dictionary structure in the Returns section is also clear and precise.  There are no inconsistencies between the docstring and the function's implementation; the docstring accurately reflects the function's behavior and exception handling.  The docstring is complete enough for someone to understand how to use the function and what to expect."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `calendarId` and `ruleId` parameters.  It checks for `None`, correct type (string), and empty/whitespace-only strings.  While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is comprehensive and covers all necessary checks for the functional parameters.  Therefore, Pydantic is not strictly needed for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive input validation on both `calendarId` and `ruleId`.  Both parameters are checked for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId` and `ruleId`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of an access control rule based on the provided `calendarId` and `ruleId`.  All functional input parameters (`calendarId` and `ruleId`) are used.  All documented exceptions are handled. There are no placeholders, TODOs, or pass statements. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and raised exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_rule` does not handle any phone numbers or email addresses.  Its inputs are `calendarId` and `ruleId`, which are treated as strings and validated for being non-null, non-empty, and of the correct type.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on access control rule management within a (simulated) database."
+          }
+        },
+        "get_rule": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and comprehensive.  It clearly explains the function's purpose, accurately describes the arguments and their types, provides a detailed explanation of the returned dictionary structure including nested dictionaries, and lists all possible exceptions with informative messages.  The descriptions are concise and easy to understand. There is perfect alignment between the docstring's description of the function's behavior, return type, and raised exceptions, and the actual implementation.  The docstring is complete enough for someone to use the function effectively without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `calendarId` and `ruleId` parameters.  It checks for the correct type (string) and whether the strings are empty or whitespace.  While Pydantic could provide a more concise and potentially more feature-rich validation approach, the existing manual checks adequately cover the input validation requirements for these parameters.  Using Pydantic would be an improvement in terms of readability and maintainability, but it's not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of both functional input parameters, `calendarId` and `ruleId`.  Both are checked for correct type (string) using `isinstance` and for empty or whitespace values using `.strip()`.  Furthermore, value validation is performed to ensure the `ruleId` exists in the `DB` and that the rule associated with `ruleId` belongs to the specified `calendarId`.  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for all validation failures.  All functional input parameters are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId` and `ruleId`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves an access control rule from the global `DB` based on the provided `calendarId` and `ruleId`.  Both `calendarId` and `ruleId` are used in input validation and in fetching and verifying the rule from the `DB`. All documented exceptions (`TypeError` and `ValueError`) are properly handled and raised under the appropriate conditions. The function's logic is complete, and the returned dictionary matches the structure described in the docstring.  There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_rule` does not handle any phone number or email address inputs.  Its inputs are `calendarId` and `ruleId`, which are both treated as strings and validated for non-emptiness and correct type.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on accessing and validating data within an internal database (`DB`)."
+          }
+        },
+        "create_rule": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in creating access control rules for a calendar within the MCP server context. The description of arguments and their types is thorough, including the nested structure of the `resource` dictionary and its `scope` sub-dictionary.  Default values are correctly mentioned and explained. The `Returns` section accurately details the structure of the returned dictionary, including the added `ruleId` and `notificationsSent` fields. The `Raises` section lists the potential exceptions with clear descriptions.  Types are consistently specified for all parameters and return values.  The documentation of the dictionary structures is detailed and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`calendarId`, `sendNotifications`, `resource`).  While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks cover all necessary type and value constraints.  The current approach is sufficient, though Pydantic might offer some advantages in terms of readability and maintainability for more complex validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters: `calendarId`, `sendNotifications`, and `resource`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId`, `sendNotifications`, `resource`) are properly type-annotated with their expected types (str, bool, Dict[str, Any] respectively).  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  Complex types like `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of an access control rule.  All functional input parameters (`calendarId`, `sendNotifications`, `resource`) are used.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including return types and exception handling.  The function correctly generates a `ruleId` if one is not provided, and it correctly handles the `sendNotifications` boolean.  The validation of the `resource` dictionary and its nested fields is thorough and prevents invalid data from being stored."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_rule` does not handle phone numbers or email addresses as input.  The `scope.value` field is intended to hold email addresses or other identifiers, but the function only performs basic string validation (checking for emptiness and correct type). There's no specific normalization for phone numbers (no digit extraction or area code separation) and no email validation beyond checking if it's a non-empty string.  Therefore, the rating is \"Not Applicable\" because the core functionality of the function doesn't involve processing phone numbers or emails in a way that requires normalization or validation beyond basic string checks."
+          }
+        },
+        "list_rules": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly identifies the dictionary structure, although the description of `nextPageToken` as \"Always None\" highlights a limitation (lack of pagination implementation) that should be more prominently addressed in the function description itself.  The `Raises` section correctly lists the exceptions.  The documentation of the nested dictionary structure within the `items` list is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `calendarId` and `maxResults` parameters.  It checks the type and performs additional checks for valid values (e.g., `calendarId` not being empty, `maxResults` being positive). While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all functional input parameters.  The other parameters (`pageToken`, `showDeleted`, `syncToken`) are explicitly noted as not implemented and therefore don't require validation at this stage."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on its functional input parameters.  `calendarId` is checked for type (string), emptiness/whitespace, and `maxResults` is checked for type (integer) and value (positive integer).  All functional parameters are validated before use.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages.  The `pageToken`, `showDeleted`, and `syncToken` parameters are correctly identified as not implemented and therefore do not require validation in this context."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, maxResults, pageToken, showDeleted, syncToken) are properly type-annotated with their expected types (str, int, Optional[str], bool, Optional[str] respectively).  The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters.  Complex types like List and Dict are properly specified, including the use of Optional where appropriate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core functionality of listing access control rules, using the `calendarId` and `maxResults` parameters effectively.  Input validation is thorough, raising appropriate exceptions for invalid inputs. The docstring accurately reflects the function's behavior, including the structure of the returned dictionary.  However, the `pageToken` and `showDeleted` parameters are explicitly marked as \"Not implemented\" in the docstring and are not used in the function's logic.  While this isn't necessarily incorrect given the docstring's clear indication, it represents a minor gap in the complete utilization of functional parameters.  The implementation simulates filtering by `calendarId` from the `DB[\"acl_rules\"]` which is acceptable given the context of using a mock database."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_rules` does not handle phone numbers or email addresses as input.  Its inputs are a calendar ID (string), a maximum results integer, and optional string tokens.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on calendar access control rules and their retrieval."
+          }
+        },
+        "patch_rule": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values for `sendNotifications`, and their types. The `Returns` section correctly specifies the return type and structure, including nested dictionary details.  The `Raises` section lists the potential exceptions with clear descriptions.  The documentation of the `resource` dictionary, while detailed, could be slightly improved by explicitly stating that it's optional (as indicated by the `None` default).  The docstring accurately reflects the function's behavior in handling and validating the input `resource` dictionary.  There are no inconsistencies between the docstring and the implementation regarding return types or exceptions.  The only minor improvement would be to explicitly mention the optionality of the `resource` parameter in the Args section."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`calendarId`, `ruleId`, `sendNotifications`, and `resource`).  While Pydantic could provide a more concise and potentially type-safer way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  Using Pydantic would not significantly improve the validation in this specific case, given the complexity of nested structures within the `resource` parameter.  The current approach is sufficient and avoids unnecessary dependencies."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all functional parameters (`calendarId`, `ruleId`, `sendNotifications`, and `resource`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, ruleId, sendNotifications, resource) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the patching of access control rules based on the provided `resource` dictionary.  All functional input parameters (`calendarId`, `ruleId`, `sendNotifications`, `resource`) are used appropriately in the input validation and update logic.  All documented exceptions are handled, and there are no placeholders or TODO comments. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  The `sendNotifications` parameter is used implicitly in the sense that its validation ensures correct input type, but its value doesn't directly affect the update process.  This is not a flaw, as the docstring clearly states its purpose (presumably for future notification logic that is not yet implemented)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `patch_rule` function does not handle phone numbers or email addresses as input.  Its inputs are calendar IDs, rule IDs, a boolean flag, and a dictionary representing resource updates.  The function focuses on validating and updating access control rules within a calendar system, not on processing or validating contact information.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_rule": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's behavior of replacing an existing access control rule. The default value for `sendNotifications` is correctly documented.  All arguments are documented with their types and descriptions. The `Args` section clearly explains the structure of the `resource` dictionary, including nested structures. The `Returns` section accurately describes the structure of the returned dictionary. The `Raises` section lists all possible exceptions with clear descriptions. Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`calendarId`, `ruleId`, `sendNotifications`, and `resource`).  It performs type checking and value checks (e.g., ensuring strings are not empty). While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks cover all functional input parameters adequately.  Using Pydantic would be a stylistic improvement, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters (`calendarId`, `ruleId`, `sendNotifications`, and `resource`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, ruleId, sendNotifications, resource) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`calendarId`, `ruleId`, `resource`) are used. All documented exceptions are handled. There are no placeholders or TODO comments. The logic is complete and functional, correctly updating the `DB[\"acl_rules\"]` dictionary. The return value matches the docstring's description. The `sendNotifications` parameter is used to conditionally execute a placeholder comment (which is acceptable given the context of a simulated notification system).  The function's logic accurately reflects its docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_rule` does not handle phone numbers or email addresses as input.  Its inputs are a calendar ID, a rule ID, a boolean, and a dictionary representing rule data. The \"scope\" field within the dictionary *could* contain an email address, but the function only performs basic string validation on it, not email address validation.  There's no attempt to normalize or extract information from phone numbers.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "watch_rules": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in setting up a watch for access control rule changes within the context of an MCP server.  Default values for parameters are correctly documented.  The Args, Returns, and Raises sections are comprehensive and well-structured.  Types are specified for all parameters and the return value.  The documentation of the `resource` dictionary is adequate, specifying the allowed keys (\"type\" and \"id\") and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`calendarId`, `maxResults`, `resource`).  While Pydantic could provide a more concise and potentially type-safer way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data.  The use of Pydantic would not significantly improve the validation in this specific case, given the relatively simple data types and validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all functional parameters.  `calendarId`, `maxResults`, and `resource` undergo both type and value validation.  `calendarId` is checked to ensure it's a non-empty string. `maxResults` is validated as a positive integer.  `resource` is checked for the correct type (dictionary) and its contents are checked for allowed keys (\"type\" and \"id\"), with further validation on the type and non-emptiness of those keys.  The `showDeleted` and `pageToken` parameters, while not currently used, are still type-checked, indicating a proactive approach to future implementation.  All validation failures raise appropriate `TypeError` or `ValueError` exceptions with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (calendarId, maxResults, pageToken, showDeleted, syncToken, resource) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles input validation for `calendarId`, `maxResults`, and the `resource` dictionary, raising appropriate `TypeError` and `ValueError` exceptions as documented. The core logic of creating a watch channel and storing it in the global `DB` is implemented.  The docstring accurately reflects the return value."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `watch_rules` does not handle any phone numbers or email addresses.  Its inputs and outputs are related to calendar IDs, watch configurations, and channel details. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_calendar/CalendarListResource.py": {
+      "functions": {
+        "delete_calendar_list": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and accurately reflects the function's behavior.  It clearly explains the function's purpose,  lists all arguments with their types and descriptions, specifies the return type and structure including the nested dictionary keys and types, and details all possible exceptions with their conditions. The description of the `Returns` section accurately reflects the dictionary structure returned. There are no inconsistencies between the docstring and the function's implementation.  The docstring is complete and allows someone to effectively use the function without needing to refer to the code."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation with type checking and value checks for the `calendarId` parameter.  While Pydantic could be used, the existing validation is sufficient and clear.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_calendar_list` performs comprehensive validation of its single functional input parameter, `calendarId`.  It checks for the correct data type (string) using `isinstance`, checks for empty or None values using `not calendarId or not calendarId.strip()`, and validates that the `calendarId` exists in the `DB[\"calendar_list\"]` and is not the primary calendar.  All checks are performed before the `calendarId` is used, and appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_calendar_list` has excellent parameter design and type annotations.  The single parameter `calendarId` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a calendar list entry, adhering to all specified conditions.  All functional input parameters (`calendarId`) are used.  All documented exceptions (TypeError, ValueError) are handled appropriately. There are no placeholders, TODOs, or pass statements. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and raised exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_calendar_list` does not handle any phone numbers or email addresses.  Its input is a calendar ID, which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the `calendarId` input as a non-empty string and checks for its existence in a database."
+          }
+        },
+        "get_calendar_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the `TypeError` and `ValueError` exceptions. The description of the return value is also mostly accurate, specifying the dictionary structure and the types of `id`, `summary`, `description`, and `timeZone`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance`) and manual validation (`calendarId == \"primary\"` and `calendarId not in DB[\"calendar_list\"]`) to validate the `calendarId` input.  While Pydantic could be used, the existing validation is sufficient and correctly handles the potential issues.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_calendar_list` performs comprehensive validation of its single functional input parameter, `calendarId`.  It checks for the correct data type (string) using `isinstance`. It also handles the special case of \"primary\" and checks if the provided `calendarId` (or the ID of the primary calendar if \"primary\" was given) exists as a key in the `DB[\"calendar_list\"]` dictionary.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for invalid inputs.  All aspects of functional input validation are covered."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_calendar_list` has excellent parameter design and type annotations.  The single parameter `calendarId` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a calendar list entry based on the provided `calendarId`.  It handles the \"primary\" case appropriately by fetching the primary calendar's ID.  Exception handling for `TypeError` and `ValueError` is implemented as documented. The logic is complete and functional, using the global `DB` as expected. The function ensures the 'id' field is present in the returned dictionary.  The docstring accurately reflects the function's behavior and return type. There are no placeholders or TODOs. All functional input parameters (`calendarId`) are used."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_calendar_list` does not handle any phone number or email address inputs.  Its input is a `calendarId` string, which is treated as an identifier and not subjected to any normalization or validation beyond checking its type and existence in a database.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_calendar_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in creating calendar list entries within the MCP server context. The Args and Returns sections are well-structured, specifying types and providing clear descriptions of the dictionary keys and their types.  The Raises section correctly lists the potential exceptions.  The docstring correctly points out that the `id` field is optional and will be generated if not provided."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `CalendarListResourceInput` (presumably defined elsewhere) to validate the `resource` dictionary.  This model is used to ensure that the input dictionary contains the expected keys and that the data types are correct.  The `try...except` block handles `ValidationError` exceptions raised by Pydantic, providing clear error handling.  All functional input parameters are validated using this method.  No other input validation is needed."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation and some value validation on the `resource` dictionary using `CalendarListResourceInput`.  This implicitly checks that required fields (`summary`, `description`, `timeZone`) are present and of the correct type.  However, it lacks explicit value validation for these fields. For example, it doesn't check for the validity of the `timeZone` string (e.g., using a timezone library to verify it's a valid IANA timezone).  The `id` field is handled correctly, generating a UUID if not provided.  The `resource` itself is checked for `None`, but more granular checks within the resource dictionary could be beneficial (e.g., checking for empty strings in `summary` or `description`).  While the `try-except` block handles validation errors from `CalendarListResourceInput`, more specific error handling might improve clarity and debugging.  Overall, the validation is good but could be more comprehensive with explicit value checks for all fields."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_calendar_list` has excellent parameter design and type annotations.  The single parameter `resource` is correctly type-annotated as `Dict[str, Any]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The type annotation for `resource` is arguably not perfectly precise, as it doesn't explicitly define the expected keys, but it correctly conveys that a dictionary is expected.  The internal use of `CalendarListResourceInput` suggests a more precise type could be used, but that's a separate issue from the function's parameter design itself."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly creates a calendar list entry using the provided resource.  It handles the case where an ID is not provided by generating a UUID.  All functional input parameters (`resource`) are used. The documented exceptions (`ValueError`, `ValidationError`) are properly implemented. There are no placeholders or TODO comments. The logic is complete and functional, using the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_calendar_list` does not handle phone numbers or email addresses as input.  Its purpose is to create calendar list entries based on a dictionary `resource` containing fields like `summary`, `description`, and `timeZone`.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list_calendar_lists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly identifies the dictionary structure, although the `nextPageToken` is documented as \"Not implemented,\" which is a minor inconsistency since the function *does* return it (as `None`).  The `Raises` section accurately lists the exceptions.  The description of the nested dictionaries within the `items` list is thorough and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation with `isinstance` and comparison checks to validate the `maxResults` parameter.  This covers the type and value constraints. While using a Pydantic model would provide a more structured and potentially more concise way to perform this validation, the existing manual approach is sufficient and correctly handles the single functional input parameter.  Therefore, Pydantic is not strictly needed for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `list_calendar_lists` has one functional input parameter: `maxResults`.  The validation for this parameter is comprehensive.  It checks for the correct data type (integer) using `isinstance` and then checks for valid values (positive integers) using a comparison.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for invalid inputs.  All aspects of input validation are covered for the single functional parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_calendar_lists` has excellent parameter design and type annotations.  All parameters (`maxResults`) are properly type-annotated with their expected types (int). The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used.  Complex types within the return dictionary (List, Dict) are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly lists calendar entries from the global `DB` up to `maxResults`.  Input validation correctly handles `TypeError` and `ValueError` as documented. The `maxResults` parameter is fully utilized. The return dictionary matches the docstring's specification, including the `nextPageToken` being set to `None` as described.  There are no placeholders or TODOs. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_calendar_lists` does not handle any phone number or email address inputs.  Its input is solely an integer (`maxResults`) representing the maximum number of calendar entries to retrieve. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the `maxResults` input to ensure it's a positive integer."
+          }
+        },
+        "patch_calendar_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including default values for `colorRgbFormat`, and their types. The `Returns` section correctly specifies the return type and structure, including all fields. The `Raises` section lists the potential exceptions.  The documentation of the `resource` dictionary is detailed, specifying the possible keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `calendarId`, `colorRgbFormat`, and `resource` parameters.  It checks the types and values of these parameters using `isinstance` and other conditional checks. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual validation covers all functional input parameters adequately.  The use of Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId`, `colorRgbFormat`, `resource`) are properly type-annotated with their expected types (str, bool, Dict[str, Any], respectively).  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  Complex types like `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  The `colorRgbFormat` parameter is accepted but not used in the function's logic; this is noted in a comment, suggesting it's for future compatibility.  This is a minor gap, but the core functionality of patching a calendar list entry based on the provided `calendarId` and `resource` is implemented correctly, including input validation and exception handling as documented.  The function correctly handles the \"primary\" calendar ID, retrieves the existing entry, applies updates, and returns the updated entry.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `patch_calendar_list` function does not handle phone numbers or email addresses.  Its input and output are related to calendar entries, using only strings (`calendarId`, `summary`, `description`, `timeZone`) and a boolean (`colorRgbFormat`).  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_calendar_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values are correctly documented.  Types are specified for all parameters and the return value. The documentation of the `resource` dictionary is thorough, listing expected keys and types. The `Raises` section accurately reflects the exceptions that the function can throw."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `calendarId`, `colorRgbFormat`, and `resource` parameters.  It checks types and performs checks for empty strings and null values. While Pydantic could provide a more concise and potentially more robust way to perform these checks, the existing manual validation covers all functional input parameters.  The use of Pydantic would not be strictly necessary in this case, though it might improve readability and maintainability."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`calendarId`, `colorRgbFormat`, `resource`) are properly type-annotated with their expected types (str, bool, Dict[str, Any], respectively). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of updating a calendar list entry in the global `DB`.  All functional input parameters (`calendarId`, `resource`) are used.  Exception handling for `TypeError` and `ValueError` is implemented as documented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_calendar_list` does not handle any phone number or email address inputs.  Its purpose is to update calendar entries in a database, using a calendar ID, a boolean flag, and a resource dictionary as input.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function does perform input validation for the parameters it *does* use, checking types and ensuring the `calendarId` is not empty."
+          }
+        },
+        "watch_calendar_lists": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose,  lists all parameters with their types and descriptions, and specifies the return type and possible exceptions. Default values are correctly documented.  The description of the `resource` dictionary is adequate, although it could benefit from explicitly listing the expected keys (\"id\" and \"type\") and their types within the docstring's Args section, rather than only in the validation section. The `Returns` section accurately reflects the structure of the returned dictionary, but it omits the fact that the `calendarId` is hardcoded to \"primary\" in the implementation. This is a minor inconsistency.  The docstring correctly mentions that `syncToken` and `minAccessRole` cannot be used together, aligning with the implementation's business rule validation.  Overall, the docstring is comprehensive and helpful, making it easy for a developer to understand and use the function.  However, the omission of the hardcoded `calendarId` value in the `Returns` section and the lack of explicit key/type details for the `resource` dictionary within the `Args` section prevent a rating of \"Excellent\"."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all functional input parameters.  While Pydantic could provide a more concise and potentially more maintainable way to perform this validation, the existing manual checks are comprehensive and cover all the necessary aspects.  There's no missing validation for functional parameters.  The use of a global `DB` is outside the scope of this input validation review."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  `maxResults` is checked for type (integer) and value (range 1-250). `minAccessRole` is checked for type (string) and value (membership in a predefined set). `pageToken` and `syncToken` are checked for type (string). `showDeleted` and `showHidden` are checked for type (boolean). `resource` is checked for type (dictionary), presence (cannot be None), and the \"id\" and \"type\" fields within the dictionary are checked for type (string) and emptiness.  All checks raise appropriate `TypeError` or `ValueError` exceptions with informative messages. The mutual exclusivity of `syncToken` and `minAccessRole` is also correctly validated."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and Dict annotations for complex types.  The return type is also clearly specified as Dict[str, Any].  The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements a watch for calendar list entries.  All functional input parameters (`maxResults`, `minAccessRole`, `pageToken`, `showDeleted`, `showHidden`, `syncToken`, `resource`) are used appropriately in input validation and business rule checks.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic for generating and storing channel information in the global `DB` is complete and functional. The docstring accurately reflects the function's behavior, including return type and raised exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `watch_calendar_lists` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on managing calendar list watches, using parameters like `maxResults`, `minAccessRole`, `pageToken`, etc.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "google_calendar/ChannelsResource.py": {
+      "functions": {
+        "stop_channel": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and accurately reflects the function's behavior.  It clearly explains the function's purpose,  lists all arguments with their types and descriptions, specifies the return type and structure, and details all possible exceptions. The description of the `resource` dictionary, including the nested `id` field, is comprehensive.  The docstring correctly notes the `resource` parameter's default value of `None`.  There are no inconsistencies between the docstring and the implementation; the docstring accurately describes the function's input validation, database interaction, and return value.  The docstring is complete enough for a developer to understand and use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `resource` parameter.  It checks if `resource` is a dictionary, if it contains the \"id\" key, and if the \"id\" value is a non-empty string.  While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks are sufficient and cover all aspects of the functional input parameter.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `stop_channel` performs comprehensive validation of its single functional input parameter, `resource`.  The validation includes:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `stop_channel` has excellent parameter design and type annotations.  All parameters (`resource`) have proper type annotations, including the use of `Dict[str, Any]` to specify the expected dictionary structure. The return type `Dict[str, Any]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`resource`) are used.  All documented exceptions are properly raised and handled. There are no placeholders, TODO comments, or pass statements. The logic for removing the channel from the `DB[\"channels\"]` dictionary is complete and functional given the use of the global `DB`. The return value matches the docstring's specification."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `stop_channel` function does not handle any phone numbers or email addresses.  Its input is a dictionary representing a channel resource, identified solely by a string ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly validates the input dictionary structure and the channel ID's type and content."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "google_calendar": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files."
+      }
+    }
+  }
+}

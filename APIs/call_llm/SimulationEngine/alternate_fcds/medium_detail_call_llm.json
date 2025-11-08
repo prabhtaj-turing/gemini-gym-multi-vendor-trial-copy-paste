@@ -1,0 +1,102 @@
+[
+  {
+    "name": "generate_llm_response",
+    "description": "Generates a text response from a Google Generative AI model. It supports processing both text prompts and file uploads within the same request.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The text prompt or question for the language model to process. This value cannot be an empty string."
+        },
+        "api_key": {
+          "type": "string",
+          "description": "The Google AI API key used for authentication. This key must be valid and have permission to access the specified model."
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "An optional list of file paths to upload to the model. Each item in the list must be a string representing a valid path."
+        },
+        "system_prompt": {
+          "type": "string",
+          "description": "A system-level instruction, separate from the user prompt, that sets the model's context or behavior to guide its responses."
+        },
+        "model_name": {
+          "type": "string",
+          "description": "Specifies the Google Generative AI model to use for the response. Defaults to 'gemini-2.5-pro'."
+        }
+      },
+      "required": [
+        "api_key",
+        "prompt"
+      ]
+    }
+  },
+  {
+    "name": "generate_llm_response_with_tools",
+    "description": "Generates a model response that can include function call requests based on the provided tools. The response contains the model's text and any functions it requests to call. The caller is responsible for executing any requested functions and sending the results back in a subsequent call.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The text prompt or question to be processed by the model."
+        },
+        "api_key": {
+          "type": "string",
+          "description": "A Google AI API key used for authentication. This key must be valid and have access to the specified model."
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of file paths to be uploaded and provided as context to the model."
+        },
+        "model_name": {
+          "type": "string",
+          "description": "The name of the Google Generative AI model to use for generating the response. This parameter defaults to 'gemini-2.5-pro'."
+        },
+        "system_prompt": {
+          "type": "string",
+          "description": "A system-level instruction that sets the model's context or behavior. This instruction is separate from the user's content and helps guide the model's responses."
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "A list of `Tool` objects that define functions the model can call. Each tool can be created using `make_tool_from_docstring()` or similar methods."
+        }
+      },
+      "required": [
+        "api_key",
+        "prompt"
+      ]
+    }
+  },
+  {
+    "name": "make_tool_from_docstring",
+    "description": "Converts a Python function's docstring into a Google Generative AI `Tool` object for use in function calling. It parses the docstring, which must follow standard Python conventions, to define the tool's name, description, and parameters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "docstring": {
+          "type": "string",
+          "description": "The docstring of the function to be converted. It must contain clear descriptions of the function's purpose and parameters for successful parsing."
+        },
+        "function_name": {
+          "type": "string",
+          "description": "The name of the function that the docstring belongs to, which is used as the function name for the generated tool."
+        }
+      },
+      "required": [
+        "docstring",
+        "function_name"
+      ]
+    }
+  }
+]

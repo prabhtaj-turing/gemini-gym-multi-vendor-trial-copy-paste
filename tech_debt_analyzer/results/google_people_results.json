@@ -1,0 +1,519 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.586356Z",
+  "results": {
+    "google_people/people.py": {
+      "functions": {
+        "get_contact": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, and return value.  It accurately describes the function's behavior in retrieving a person's data by resource name. Default values for optional parameters (`person_fields` and `sources`) are mentioned and explained.  The `Args` and `Returns` sections are well-structured, and types are specified for parameters and return values. The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The code uses a Pydantic model `GetContactRequest`, but the code does not show the definition of this model.  Without seeing the model's definition, we cannot determine if it properly validates the `resource_name`, `person_fields`, and `sources` parameters.  The only validation currently performed is a check within the function to see if the `resource_name` exists in the `people_data` dictionary. This is insufficient validation for the `resource_name` (it should check the \"people/\" prefix), and there is no validation for `person_fields` and `sources` at all.  Therefore, comprehensive input validation is missing.  Adding constraints and validation rules within the `GetContactRequest` Pydantic model would significantly improve the robustness of the function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses Pydantic for validation, which handles type checking.  `resource_name` is checked for its presence in the `people_data` dictionary, implicitly validating that it exists in the database.  However, the explicit format check (\"people/{personId}\") for `resource_name` is missing.  The `person_fields` parameter is checked for type and then split and stripped, but lacks validation against the list of allowed fields. Similarly, the `sources` parameter lacks validation against the list of allowed sources.  While Pydantic likely handles type validation, the crucial value validation for `resource_name`, `person_fields`, and `sources` is incomplete.  Therefore, the validation is only partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name`, `person_fields`, `sources`) are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves data from the global `DB` based on the `resource_name`.  It handles the `person_fields` parameter by filtering the returned data appropriately. The `sources` parameter, however, is not used in the function's logic.  The function also includes a default value for the `etag` field in case it's missing from the database.  While the function is mostly complete and functional, the unused `sources` parameter represents a minor gap.  The exception handling for `ValueError` when a person is not found is correctly implemented.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Poor",
+            "notes": "The provided `get_contact` function does not perform any normalization of phone numbers or validation of email addresses.  While it handles phone numbers and email addresses as potential fields within the `person` data structure retrieved from the database, it does not process or sanitize these values in any way.  The function simply retrieves the data as it is stored in the database and returns it.  Therefore, no normalization of phone numbers (extracting digits, handling area codes) or validation of email addresses (using regex or a library) is performed.  To improve this, the function would need to include logic to process these fields before returning the response.  For example, it could use regular expressions to validate email formats and extract only the numerical digits from phone numbers."
+          }
+        },
+        "create_contact": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in creating new contacts. The Args section correctly lists the required and optional fields within the `person_data` dictionary, although it could benefit from specifying the types within the nested dictionaries (e.g., `displayName: str`, `value: str`). The Returns section accurately describes the structure of the returned dictionary.  The Raises section correctly identifies potential exceptions.  Types are specified for parameters and return values using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic models (`Person` and `CreateContactRequest`) to validate the `person_data` dictionary. However, the validation is only partially effective because the `Person` model's definition is not shown, so we cannot assess the completeness of its validation rules.  If `Person` doesn't adequately validate all fields within `person_data` (e.g., checking data types, required fields, and data formats within nested dictionaries like names, emailAddresses, etc.), then the validation is incomplete.  Adding more comprehensive validation rules within the `Person` Pydantic model would improve the robustness of input validation.  Currently, it relies on the `Person` model, which might not cover all validation needs.  Therefore, the validation is only partially used effectively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic for input validation, which provides type and value validation for the `person_data` dictionary.  This covers the names and emailAddresses fields, ensuring at least one name and one email are present.  Pydantic likely handles type checking for other fields (phoneNumbers, addresses, etc.) as well. However, the validation relies entirely on the Pydantic model (`Person`).  The code doesn't explicitly show the definition of the `Person` Pydantic model, so we can't definitively assess the completeness of its validation rules.  It's possible that the `Person` model lacks validation for certain fields or constraints (e.g., format of email addresses, length restrictions on names).  Therefore, while the use of Pydantic suggests a good level of validation, the lack of visibility into the `Person` model prevents a \"Comprehensive\" rating.  The validation is good, but not demonstrably comprehensive based on the provided code snippet."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_contact` has excellent parameter design.  The single parameter `person_data` is correctly type-annotated as `Dict[str, Any]`. The return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  While `Any` is used, it's appropriate given the flexible nature of the input data.  The docstring clearly outlines the expected structure within the dictionary."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality. It correctly uses the `person_data` input to create a new contact entry in the simulated `DB`.  The generated `resourceName` and `etag` are appropriately handled.  The return value matches the docstring's description. However, the function lacks explicit handling for `ValueError` and `ValidationError` as documented.  While it uses Pydantic for validation implicitly (assuming `Person` and `CreateContactRequest` are Pydantic models that raise exceptions on validation failure),  it would be better to explicitly catch and re-raise these exceptions to clarify the error handling.  The implicit validation is sufficient for the \"mostly complete\" rating, but explicit handling would improve robustness and clarity."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function shows a good attempt at input handling but falls short of being excellent due to the lack of explicit phone number normalization and email validation within the function itself."
+          }
+        },
+        "update_contact": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's parameters, including default values for `update_person_fields`. The `Args` and `Returns` sections are well-structured and informative.  The `Raises` section correctly lists potential exceptions. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic models (`Person` and `UpdateContactRequest`) to validate the `person_data` parameter.  However, the `resource_name` parameter, which requires validation to ensure it starts with \"people/\", is only checked later in the function using a simple string check.  Adding a Pydantic field validator to the `UpdateContactRequest` model to enforce this constraint would improve the validation process and centralize it within the Pydantic model.  The `update_person_fields` parameter also lacks validation; a regex check or a list of allowed values within the Pydantic model would be beneficial.  Therefore, while Pydantic is used, it doesn't cover all functional input parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic to validate `person_data`, ensuring its structure and type conformity. This covers type and value validation for this parameter comprehensively.  However, validation of `resource_name` is only partially done. It checks if the resource name exists in the database but doesn't verify the \"people/\" prefix as specified in the docstring.  The `update_person_fields` parameter has a basic check for its presence, but lacks validation of the comma-separated field names against the allowed list.  While the code handles the case where `update_person_fields` is missing, it doesn't explicitly check for invalid field names within the string.  Therefore, while significant validation is present, some gaps remain, leading to a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name`, `person_data`, `update_person_fields`) are properly type-annotated with their expected types (str, Dict[str, Any], Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Dict` and `Optional` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`resource_name`, `person_data`, `update_person_fields`) are used appropriately in the logic.  The documented exceptions (`ValueError` for invalid resource name or person not found) are handled. There are no TODOs, pass statements, or placeholder implementations. The logic for updating either all fields or only specified fields is complete and functional given the global `DB` context. The docstring accurately reflects the function's behavior, including return type and exception handling."
+          },
+          "input_normalization": {
+            "status": "Poor",
+            "notes": "The provided code snippet does not perform any normalization or validation of phone numbers or email addresses.  While it uses a Pydantic model (`Person`), the code itself doesn't show how this model handles phone number or email address validation.  The `Person` model's definition is missing, so we cannot assess whether it correctly handles normalization (extracting digits from phone numbers) or validation (using regular expressions or other methods to check email format).  Without seeing the `Person` model's structure, we can only conclude that the provided function, as shown, lacks the necessary normalization and validation steps.  The function relies entirely on the unspecified `Person` model to handle this, and without that definition, we cannot assess its quality."
+          }
+        },
+        "delete_contact": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  The description clearly explains that the function deletes a contact permanently. The `Args` and `Returns` sections are well-structured and informative, including type hints. The `Raises` section correctly lists the potential exceptions.  The documentation of the dictionary structure in the `Returns` section is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `DeleteContactRequest` to validate the `resource_name` input parameter.  This is the primary functional input, and the Pydantic model ensures it's a string.  While the code also includes a check to see if the resource exists in the database, this is a separate check for data existence, not input validation. The input validation itself is handled effectively by Pydantic.  No further input validation is needed."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `resource_name` parameter using Pydantic's `DeleteContactRequest` model.  This implicitly handles null/empty checks as Pydantic models typically reject None or empty strings for required fields.  However, the validation is not fully comprehensive because it lacks explicit value validation beyond checking that the `resource_name` starts with \"people/\".  There's no check for the format of the ID after \"people/\", for example, to ensure it's a valid numerical ID or alphanumeric string of a specific length.  While the code raises a `ValueError` if the resource is not found, this is not strictly input validation; it's a runtime check.  Therefore, the validation is good but not comprehensive due to the missing explicit value constraints on the resource name beyond the prefix check."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_contact` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`resource_name: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The `resource_name` parameter is clear and descriptive.  The type annotation for the return value is a dictionary with string keys and any type values, which is appropriate given the function's behavior."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a contact based on the provided `resource_name`.  It validates the input using a Pydantic model (presumably `DeleteContactRequest`), handles the case where the contact is not found by raising a `ValueError`, and uses the `resource_name` to remove the contact from the in-memory `DB`. The function also validates the response using a Pydantic model (presumably `DeleteContactResponse`) before returning it.  The returned dictionary matches the docstring's specification.  All functional input parameters are used. There are no placeholders, TODOs, or pass statements. The exception handling is correctly implemented. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `delete_contact` function does not handle phone numbers or email addresses as input.  Its input is a `resource_name` string, which appears to be an internal identifier, not a user-provided phone number or email. Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly validates the `resource_name` format indirectly through a Pydantic model (though the model's definition isn't shown), but this is not related to phone number or email processing."
+          }
+        },
+        "list_connections": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose and usage.  It accurately describes the function's core functionality of listing connections for an authenticated user.  Default values for all parameters are correctly specified and explained. The `Args` and `Returns` sections are well-structured, with types clearly indicated. The `Returns` section provides a helpful example of the dictionary structure.  The `Raises` section correctly lists potential exceptions.  Type completeness is good."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `ListConnectionsRequest` to validate the functional input parameters (`resource_name`, `person_fields`, `page_size`, `page_token`, `sort_order`, `sync_token`, `request_sync_token`).  This model likely contains validation rules (constraints) for each parameter, ensuring data types and value ranges are correct before the function proceeds with its logic.  No other input validation methods are needed because Pydantic handles it comprehensively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic for input validation, which provides type checking for all parameters.  `resource_name` is checked to ensure it starts with \"people/\". `page_size` is checked to ensure it's within the range of 1 to 1000.  `sort_order` is checked implicitly by the conditional logic, ensuring it's one of the allowed values.  However, there's no explicit validation for `person_fields`, which should be checked against a list of allowed fields.  The validation of `page_token` is only partial; it attempts to convert it to an integer but doesn't check if the resulting integer is within a valid range for the index.  While Pydantic handles type checking, additional explicit checks for valid values within the function would improve robustness.  Therefore, the validation is good but not comprehensive due to these gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[int], Optional[bool]). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality.  It correctly uses `resource_name`, `person_fields`, `page_size`, `page_token`, and `sort_order` in its logic.  The pagination and field filtering mechanisms work as described. The addition of the `sync_token` based on `request_sync_token` is also correctly implemented.  However, there's a minor gap: the `totalItems` in the response reflects only the number of items *after* pagination and filtering, not the total number of connections in the database. The docstring states that `totalItems` should represent the total number of connections, which is not accurately reflected in the current implementation.  Also, error handling for invalid `sort_order` values beyond the explicitly handled ones is missing.  Finally, no exceptions (`ValueError` or `ValidationError`) are explicitly raised, despite being documented.  The use of a Pydantic model for validation is implied but not shown in the provided code.  If the Pydantic models correctly handle validation, then these exceptions would be implicitly raised.  However, without seeing the model definitions, it's impossible to confirm this."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_connections` function does not handle phone numbers or email addresses as input.  It deals with a different type of data related to a contact list, using fields like `names`, `emailAddresses`, and `phoneNumbers` which are *outputs* of the function, not inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles other aspects of its input, such as pagination and field selection, but it doesn't process or validate email or phone numbers directly."
+          }
+        },
+        "search_people": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the dictionary structure, although it could benefit from more precise type annotations within the nested dictionaries (e.g., specifying the types within `names`, `emailAddresses`, etc., instead of just `...`). The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The code uses a Pydantic model `SearchPeopleRequest` to validate the `query`, `read_mask`, and `sources` parameters.  These are the functional input parameters of the `search_people` function.  The validation is done at the beginning of the function before any processing.  No other input validation methods are used for these parameters.  The use of a Pydantic model is appropriate and effective for this purpose."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic's `SearchPeopleRequest` model for input validation. This handles type validation for `query` (str), `read_mask` (Optional[str]), and `sources` (Optional[List[str]]).  The `query` parameter is further checked for emptiness within the Pydantic model (though the code doesn't explicitly show this constraint in the provided snippet, it's implied by the docstring and the raising of `ValueError` if the query is invalid).  However, the maximum length constraint of 1000 characters for the `query` parameter, as specified in the docstring, is not explicitly enforced in the provided code.  The validation of `read_mask` and `sources` against allowed values (field names and source types respectively) is also not explicitly shown in the provided code, although it's implied by the docstring.  Therefore, while type validation and a basic null check for `query` are present, the complete value validation (maximum length and allowed values for `read_mask` and `sources`) is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `read_mask`, `sources`) are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `List` and `Optional` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements the search functionality as described in the docstring.  It uses the `query`, `read_mask`, and `sources` parameters. However, the `sources` parameter is not actually used in the search logic; the function searches across all data in the `people_data` dictionary regardless of the specified sources.  This represents a minor gap in functionality.  The exception handling for `ValueError` and `ValidationError` is not explicitly implemented, relying instead on the Pydantic model validation. While this is a common and acceptable approach, it's worth noting that explicit exception handling might improve robustness and provide more informative error messages.  The function correctly handles duplicate results and applies the `read_mask` filter. The docstring accurately reflects the return type and overall behavior, with the caveat of the unused `sources` parameter."
+          },
+          "input_normalization": {
+            "status": "Poor",
+            "notes": "The provided `search_people` function does not perform any normalization of phone numbers or validation of email addresses.  It simply searches for a given query string within the `value` field of email addresses and does not process phone numbers in any special way.  There's no extraction of digits from phone numbers, no area code separation, and no checking for the validity of email address syntax (e.g., using a regular expression or a dedicated email validation library).  The function relies on the data being pre-formatted correctly in the database.  To improve, it should incorporate:"
+          }
+        },
+        "get_batch_get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's role in retrieving multiple people efficiently.  The Args, Returns, and Raises sections are well-structured and mostly accurate. Default values for optional parameters are correctly mentioned. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `BatchGetRequest` to validate the `resource_names`, `person_fields`, and `sources` parameters. However, the validation within the Pydantic model itself is not shown in the provided code snippet.  Without seeing the definition of `BatchGetRequest`, it's impossible to know the extent of its validation capabilities.  If `BatchGetRequest` adequately validates the length and format of `resource_names`, the allowed values of `person_fields`, and the allowed values of `sources` according to the docstrings, then the validation is sufficient.  If not, then additional validation or a more robust Pydantic model would be needed to ensure complete input validation.  The current implementation relies on the unspecified internal validation of the Pydantic model, making it partially used."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic's `BatchGetRequest` model for input validation. This handles type validation for `resource_names` (List[str]), `person_fields` (Optional[str]), and `sources` (Optional[List[str]]).  It implicitly checks for `None` or empty lists. However, the validation within the Pydantic model is not shown in the provided code snippet.  Therefore, we can't definitively assess the extent of value validation (e.g., checking the length of `resource_names`, verifying the format of each resource name starts with \"people/\", or validating allowed values in `person_fields` and `sources`).  The code also raises a `ValueError` if `resource_names` is invalid, but the specific error message isn't shown.  While the use of Pydantic suggests a good approach, without seeing the model's definition, we can't confirm comprehensive validation of all aspects of the input parameters.  The existence of the Pydantic model and the `ValueError` raise suggest a good level of validation, but without seeing the model's details, it's not possible to rate it as \"Comprehensive\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_names`, `person_fields`, `sources`) are properly type-annotated with their expected types (List[str], Optional[str], Optional[List[str]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves data from the global `DB` based on the provided `resource_names`, filters results based on `person_fields`, and handles cases where resources are not found.  The response structure matches the docstring. However, the function does not implement the documented `ValueError` exception for empty or invalid `resource_names`.  The `sources` parameter is a functional parameter that is not used in the function's logic.  While the Pydantic validation likely handles some of these issues, explicit error handling within the function itself would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_batch_get` function does not handle phone numbers or email addresses as input.  It operates on a list of `resource_names` which appear to be identifiers for people in a database, not directly on phone numbers or emails.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable to this function.  The function focuses on retrieving data based on provided resource names and optionally filtering the fields returned."
+          }
+        },
+        "get_directory_person": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, and return value.  It accurately describes the function's role in retrieving directory person data and mentions the use of a field mask for filtering. Default values for optional parameters (`read_mask` and `sources`) are correctly documented.  The `Args` and `Returns` sections are well-structured and informative. The `Raises` section correctly lists potential exceptions. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The code uses a Pydantic model `GetDirectoryPersonRequest`, however, the model itself is not defined within the provided code snippet.  Therefore, there's no actual input validation happening. The function relies on a simple check for the existence of the `resource_name` in the `directory_people_data` dictionary, but this is insufficient validation.  There's no validation for the format of `resource_name` (it should start with \"directoryPeople/\"), nor is there any validation of `read_mask` or `sources` to ensure they contain only allowed values.  Adding a properly defined Pydantic model with appropriate field types, constraints (e.g., `regex` for `resource_name`), and allowed values for `read_mask` and `sources` would significantly improve the input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses Pydantic's `GetDirectoryPersonRequest` for validation, which likely handles type checking.  However, the effectiveness of this validation depends entirely on the definition of `GetDirectoryPersonRequest`.  The code shows that `resource_name` *must* start with \"directoryPeople/\", but we don't know if `GetDirectoryPersonRequest` enforces this.  Similarly,  `read_mask` and `sources` have specified valid values, but we cannot assess if the Pydantic model validates against these.  Therefore, while type validation is likely present via Pydantic, value validation for the constraints mentioned in the docstrings is uncertain without seeing the `GetDirectoryPersonRequest` model definition.  The code does check if `resource_name` exists in the `directory_people_data` dictionary, which is a form of value validation.  However, this is only a partial check, as it doesn't validate the format of `resource_name` itself.  Overall, the validation is incomplete without knowing the specifics of the Pydantic model."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name`, `read_mask`, `sources`) are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves data from the global `DB` based on the `resource_name`.  It handles the `read_mask` parameter to filter the returned data, and it raises a `ValueError` if the resource is not found.  The docstring accurately reflects the function's behavior and return type. However, the `sources` parameter is not used in the function's logic.  Additionally, the default value for the `etag` in the response is hardcoded (\"etag123\"), which might not be ideal; a more robust solution would be to either always use a value from the database or handle the case where \"etag\" is missing more gracefully (e.g., raise an exception or use a null value)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_directory_person` does not handle phone numbers or email addresses as inputs.  It retrieves data from a database using a `resource_name` which appears to be an identifier, not a phone number or email.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable to this function.  The function focuses on retrieving and filtering data based on a resource name and a read mask, not on processing contact information."
+          }
+        },
+        "list_directory_people": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's role in retrieving directory people from a Google Workspace domain within the context of an MCP server.  All parameters, including their default values, are documented with types and descriptions. The `Args` section is well-structured and easy to understand. The `Returns` section clearly specifies the dictionary structure, although it could benefit from explicitly mentioning that `totalItems` reflects the number of people *after* filtering and pagination.  The `Raises` section correctly lists potential exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the `Returns` section is adequate, but could be improved by showing example values for nested structures like `names` and `emailAddresses` to make it even clearer."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The code uses a Pydantic model `ListDirectoryPeopleRequest` to represent the input parameters. However,  it performs additional validation outside the Pydantic model.  The line `if not request.read_mask: raise ValueError(\"read_mask is required for list_directory_people\")` is redundant because a Pydantic model with a required `read_mask` field would already raise a `ValidationError` if `read_mask` is missing.  The `page_size` validation (being between 1 and 1000) is also missing from the Pydantic model.  While the Pydantic model provides *some* input validation, it's incomplete and supplemented by manual checks.  A more comprehensive Pydantic model would eliminate the need for the manual checks and improve the overall validation process."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through Pydantic's `ListDirectoryPeopleRequest` model.  However, value validation is incomplete.  `page_size` is not explicitly checked to be between 1 and 1000, despite the docstring specifying this requirement.  `read_mask` is checked for null but not for the validity of the comma-separated field names.  `page_token` and `sync_token` are not validated beyond basic type checking.  Therefore, while type validation is handled well via Pydantic, crucial value validation is missing for several functional parameters.  The `ValueError` for a missing `read_mask` is a positive aspect."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`read_mask`, `page_size`, `page_token`, `sync_token`, `request_sync_token`) are properly type-annotated with their expected types (using `Optional` where appropriate).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using the `read_mask`, `page_size`, `page_token`, and `request_sync_token` parameters.  The pagination logic is implemented, and the `read_mask` filtering works as expected.  The `sync_token` parameter, however, is not used in the function's logic.  The docstring accurately reflects the function's behavior and return type.  The `ValueError` exception is correctly raised if `read_mask` is missing.  There are no placeholders or TODO comments.  The totalItems count in the response reflects the number of items *after* pagination, which might not always match the total number of items in the database.  A more accurate `totalItems` count would require either storing the total count separately or calculating it based on the unfiltered `people` list."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_directory_people` function does not handle phone numbers or email addresses as inputs.  It operates on a pre-existing `directory_people_data` structure which presumably contains this information, but the function itself doesn't process or validate any email or phone number data.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable.  The function focuses on filtering and paginating data from a database based on a `read_mask` parameter."
+          }
+        },
+        "search_directory_people": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's search capabilities and the parameters it accepts. Default values for `page_size` are correctly mentioned.  The Args section adequately documents all arguments with types and descriptions. The Returns section correctly specifies the dictionary structure, although it could benefit from more precise type annotations within the nested dictionaries (e.g., specifying the types within `names`, `emailAddresses`, etc.). The Raises section correctly lists potential exceptions. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `SearchDirectoryPeopleRequest` to validate the `query`, `read_mask`, `page_size`, `page_token`, and `sources` parameters.  However, the validation within the Pydantic model itself is not shown in the provided code snippet.  Without seeing the definition of `SearchDirectoryPeopleRequest`, we cannot assess the completeness of its validation.  The code also performs additional validation on `read_mask` outside the Pydantic model, raising a ValueError if it's missing. This redundancy suggests that the Pydantic model might not be fully comprehensive in its validation, or that the additional check is a safeguard against potential issues not handled by the model.  Using Pydantic consistently for all validation would improve code clarity and maintainability."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `read_mask`, `page_size`, `page_token`, `sources`) are properly type-annotated with their expected types (str, Optional[str], Optional[int], Optional[str], Optional[List[str]] respectively).  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: searching a directory for people based on a query, applying a read mask, and handling pagination.  All functional input parameters (`query`, `read_mask`, `page_size`, `page_token`, `sources`) are used. The `sources` parameter, however, doesn't seem to affect the search logic; it's only passed to the Pydantic model and not used in the search itself.  The `ValueError` for an empty `read_mask` is correctly implemented.  While a `ValidationError` is documented, it's not explicitly raised in the code (Pydantic might raise it internally, but it's not handled explicitly). The pagination logic uses the `page_token` as a string representation of an index, which is a somewhat unconventional approach and might be prone to errors if the `page_token` is manipulated.  The `totalItems` in the response reflects the number of items *after* pagination, not the total number of matching items in the database, which might be misleading.  The implementation lacks robust error handling beyond the single `ValueError`.  For example, it doesn't handle potential exceptions during database access (though this is unlikely given the use of a global in-memory dictionary)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_directory_people` function does not handle phone number or email address inputs in a way that requires normalization or validation.  The function searches a directory based on a text query, and while it processes `emailAddresses` and `phoneNumbers` fields *if they are present in the data*, it doesn't perform any validation or normalization on these fields as they are received from the database.  The function's core logic is searching and filtering existing data, not processing or validating new inputs of phone numbers or emails.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "google_people/contact_groups.py": {
+      "functions": {
+        "get": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the return type and provides a clear example of the dictionary structure.  The `Raises` section lists potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The code uses a Pydantic model `GetContactGroupRequest`, but the code does not define this model.  Therefore, there's no actual Pydantic validation happening.  The function lacks any other form of input validation for `resource_name`, `max_members`, or `group_fields`.  For example, there's no check to ensure `resource_name` starts with \"contactGroups/\", or that `max_members` is within the 1-1000 range, or that `group_fields` contains only valid field names.  Adding a properly defined Pydantic model would significantly improve the robustness of the input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic to validate `resource_name`, `max_members`, and `group_fields`.  `resource_name` is checked for its presence in the `contact_groups_data` dictionary, implying a check for existence.  `max_members` is implicitly validated by Pydantic's type checking (it's an Optional[int]) and its use within a conditional statement that limits the number of members returned.  However, there's no explicit check to ensure `max_members` is within the specified range (1 to 1000).  `group_fields` is checked for validity by splitting it into a list and comparing each field to the keys in the `contact_group` dictionary.  However, it doesn't explicitly check for the presence of commas or handle cases where the input is not a comma-separated string.  While Pydantic likely handles type validation, explicit range checks for `max_members` and more robust handling of `group_fields` would improve validation.  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name`, `max_members`, `group_fields`) are properly type-annotated with their expected types (str, Optional[int], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves data from the global `DB`, handles the `max_members` parameter to limit the number of members returned, and filters fields based on the `group_fields` parameter.  The exception for a missing contact group is also correctly implemented.  However, the `etag` value in the response is hardcoded to \"etag123\" if the contact group doesn't have an `etag` field.  A more robust solution would be to either raise an exception if `etag` is missing or use a default value that's more meaningful (e.g., an empty string).  Additionally, input validation is delegated to a Pydantic model (presumably `GetContactGroupRequest`), which is good practice, but the validation itself is not shown in the provided code snippet, so it's impossible to assess its completeness.  Finally, while the docstring specifies that `ValueError` is raised if the resource name is invalid, the code only checks for the absence of the resource name in the database, not its validity (i.e., it doesn't check if it starts with \"contactGroups/\")."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get` does not handle phone numbers or email addresses as input.  Its inputs are a resource name (string), an optional maximum number of members (integer), and an optional comma-separated list of fields (string).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on retrieving and filtering data from a contact group database, not on processing contact details like phone numbers or emails."
+          }
+        },
+        "create": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's creation of a contact group, including the required and optional fields in the input dictionary. The description of the return dictionary is detailed and helpful, including example values. Default values for `groupType` and `memberResourceNames` are correctly specified.  The `Args` and `Returns` sections are well-structured and informative.  The `Raises` section correctly lists potential exceptions. Types are specified for all parameters and return values.  The documentation of the dictionary structures is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic models (`ContactGroup` and `CreateContactGroupRequest`) to validate the `contact_group_data` input. However, the validation is only partially effective because the `CreateContactGroupRequest` model seems redundant as it simply wraps the `ContactGroup` model.  The actual validation logic resides within the `ContactGroup` model (which is not shown in the provided code snippet).  Without seeing the definition of `ContactGroup`, we cannot definitively assess the completeness of its validation.  If `ContactGroup` thoroughly validates all fields of `contact_group_data` as described in the docstring (name, groupType, memberResourceNames), then the validation would be more complete.  If `ContactGroup` does not validate all aspects, then additional validation might be needed.  Therefore, the current implementation is only partially using Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic to validate the `contact_group_data` dictionary.  Pydantic's model validation implicitly handles type checking, value validation (including checking for the required 'name' field), and null/empty checks for all fields within the `ContactGroup` model (assuming the `ContactGroup` model is correctly defined to enforce the constraints specified in the docstring, such as the allowed values for `groupType` and the format of `memberResourceNames`).  The code also leverages the `CreateContactGroupRequest` model, further ensuring data integrity before processing.  Therefore, all functional input parameters are validated comprehensively.  The `ValueError` and `ValidationError` exceptions provide appropriate error handling for invalid inputs, although the specific error messages are not shown in the provided code snippet."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create` has excellent parameter design.  The single parameter `contact_group_data` is properly type-annotated as `Dict[str, Any]`. The return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  The type annotation for `contact_group_data` is arguably not as precise as it could be (using a Pydantic model would improve this), but it's still a valid type annotation."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional. It correctly uses the `contact_group_data` input parameter to create a new contact group entry in the `DB`.  The generated response matches the docstring's description of the return value.  However, the function lacks explicit exception handling for `ValueError` and `ValidationError` as documented. While it uses Pydantic for validation implicitly (assuming `ContactGroup` and `CreateContactGroupRequest` are Pydantic models that raise exceptions on validation failure),  explicit `try...except` blocks would improve clarity and robustness.  The implicit handling relies on the Pydantic models raising exceptions which are then unhandled, potentially causing the function to crash unexpectedly.  Adding explicit exception handling would make the function more robust."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create` function does not handle phone numbers or email addresses as input.  Its purpose is to create contact groups, taking a dictionary of group data as input.  This data includes a group name, type, and a list of member resource names (which appear to be IDs, not email addresses or phone numbers).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's behavior of updating a contact group, including the option to update specific fields. The Args, Returns, and Raises sections are well-structured and informative.  Default values are correctly mentioned and explained. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic models (`ContactGroup` and `UpdateContactGroupRequest`) to validate the `contact_group_data` input.  However, the `resource_name` parameter only receives a basic type check (it's annotated as `str`) but lacks validation to ensure it starts with \"contactGroups/\".  While the code later checks for the resource name's existence in the database, this is not input validation; it's a check against the data store.  Adding validation for the `resource_name` format within the Pydantic model would improve the input validation.  The `update_group_fields` parameter also only has a type annotation and no validation to ensure it contains only valid field names.  Therefore, the Pydantic validation is only partially used."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name`, `contact_group_data`, `update_group_fields`) are properly type-annotated with their expected types (str, Dict[str, Any], Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`resource_name`, `contact_group_data`, `update_group_fields`) are used appropriately in the logic.  The documented exceptions (`ValueError` for resource not found) are handled. There are no TODOs, pass statements, or placeholders. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling.  The function uses Pydantic models for validation, adding robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function `update` deals with updating Google Contact Groups, taking a resource name and a dictionary of group data as input.  There's no field in the input data (`contact_group_data`) that would represent a phone number or email address.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles updating contact group data based on the provided fields."
+          }
+        },
+        "delete": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values are correctly specified and explained.  Types are consistently included for parameters and the return value. The description of the return dictionary is clear and accurate."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `DeleteContactGroupRequest` to validate the `resource_name` and `delete_contacts` parameters.  These are the only functional parameters requiring validation.  The validation is done before any database interaction, ensuring that invalid inputs are caught early.  No other input validation methods are needed because Pydantic handles the validation comprehensively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function uses Pydantic to validate the `resource_name` and `delete_contacts` parameters.  `resource_name` validation is implicit within the Pydantic model (we don't see the model definition, but it's assumed to enforce the string type).  The code also checks if the `resource_name` exists in the database, which is a form of value validation.  `delete_contacts` is validated as an Optional[bool], ensuring it's either a boolean or None. However, there's no explicit validation on the format of `resource_name` beyond checking its presence in the database.  The specification states it \"Must start with 'contactGroups/'\".  While the database lookup implicitly enforces this constraint to some extent, an explicit check would improve robustness and clarity.  Therefore, the validation is good but not comprehensive due to the missing explicit format check on `resource_name`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name` and `delete_contacts`) are properly type-annotated with their expected types (str and Optional[bool], respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a contact group, optionally including its contacts.  Both `resource_name` and `delete_contacts` parameters are used appropriately.  The documented `ValueError` exception is raised when the resource is not found.  The return dictionary matches the docstring's specification.  There are no placeholders or TODOs. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete` does not handle any phone numbers or email addresses.  Its input and output are related to contact group management within a database, using resource names as identifiers.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in listing contact groups. Default values for parameters are correctly stated and explained. The `Args` and `Returns` sections are well-structured, with types specified for all parameters and the return value.  The `Returns` section provides a clear example of the dictionary structure, which is helpful. The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The code uses a Pydantic model `ListContactGroupsRequest` to validate the input parameters `page_size`, `page_token`, `sync_token`, and `group_fields`. However, the model itself (which is not shown in the provided code) is not fully validating the `page_size` parameter.  While it likely checks the type, it doesn't enforce the constraint that `page_size` must be between 1 and 1000 as specified in the docstring.  The `group_fields` parameter also requires validation to ensure it only contains valid field names.  Adding these constraints to the Pydantic model would improve input validation.  Therefore, while Pydantic is used, it's not fully utilized to its potential for comprehensive input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses Pydantic to validate `page_size`, `page_token`, `sync_token`, and `group_fields`.  However, the validation performed by Pydantic is not explicitly shown in the provided code snippet.  We can only assume that a `ListContactGroupsRequest` Pydantic model exists and performs the necessary type and value checks.  Without seeing the definition of this Pydantic model, we cannot definitively assess the comprehensiveness of its validation.  Therefore, we cannot say for certain that all constraints (e.g., `page_size` being between 1 and 1000, `group_fields` containing only valid field names) are enforced. The code does handle potential `ValueError` during the conversion of `page_token` to an integer, but this is more of an error handling mechanism than explicit value validation.  The validation is therefore only partially complete, pending confirmation of the Pydantic model's thoroughness."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`page_size`, `page_token`, `sync_token`, `group_fields`) are properly type-annotated with their expected types (Optional[int] and Optional[str]). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements the described functionality.  It correctly uses `page_size` and `page_token` for pagination and `group_fields` for filtering.  The `sync_token` parameter, however, is not used in the function's logic.  While a new `nextSyncToken` is generated, the provided `sync_token` is ignored, which might be a functional gap depending on the intended behavior.  The exception handling for invalid parameters is implicitly handled by the Pydantic model validation, but explicit `ValueError` or `ValidationError` raising within the function itself is absent, which could be improved for clarity and more robust error handling.  The docstring accurately reflects the return type and structure."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list` does not handle phone numbers or email addresses as input.  Its purpose is to list contact groups, taking pagination and filtering parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles pagination and field filtering for its intended purpose."
+          }
+        },
+        "modify_members": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in modifying contact group members. The Args and Returns sections are well-structured, clearly specifying types and providing examples where appropriate (especially helpful for the nested dictionary structures).  The Raises section correctly lists the potential exceptions.  Type completeness is good, with types specified for all parameters and return values.  The documentation of the dictionary structures in both the request and response is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `ModifyMembersRequest` to validate the `resource_name` and `request_data` parameters. However, the validation within the Pydantic model itself is not shown in the provided code snippet.  The code performs additional validation checks within the function, such as verifying that the resource name starts with \"contactGroups/\" and that members to be added exist in the `people` data.  While Pydantic is used, it's unclear from the provided code whether it comprehensively validates all aspects of `request_data`, such as ensuring `resourceNamesToAdd` and `resourceNamesToRemove` contain strings starting with \"people/\".  More complete validation within the Pydantic model would improve the robustness of input validation.  The current implementation relies on a combination of Pydantic and manual checks, making the validation partially implemented using Pydantic."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name` and `request_data`) are properly type-annotated with their expected types (str and Dict[str, Any], respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within `request_data` are also properly hinted at, although a more precise Pydantic model would improve type safety."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the modification of contact group members as described in its docstring.  Both `resource_name` and `request_data` are fully utilized in the function's logic.  The documented `ValueError` exception is raised appropriately when a contact group is not found.  The function handles adding and removing members, including duplicate removal and reporting of not-found resources.  The return value matches the docstring's description.  There are no placeholders or TODO comments. The use of Pydantic models (implicitly assumed from `ModifyMembersRequest` and `ModifyMembersResponse`) for input validation and response structuring is a good practice, although the models themselves are not shown in the provided code.  The logic is complete and functional within the context of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `modify_members` function does not handle phone numbers or email addresses.  Its input and output deal exclusively with resource names (strings) in the format \"people/123456789\" and \"contactGroups/family\". There is no processing or validation of email or phone number formats within the function's logic.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "google_people/other_contacts.py": {
+      "functions": {
+        "get_other_contact": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the return type and provides a clear example of the dictionary structure. The `Raises` section mentions the `ValueError` exception.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The code uses a Pydantic model `GetOtherContactRequest`, but the provided code snippet does not show its definition.  Therefore, we cannot assess whether it performs adequate input validation.  Without seeing the model's fields and validation rules, we cannot determine if it validates `resource_name`, `read_mask`, and `sources` appropriately.  There is no other input validation present in the `get_other_contact` function itself.  The only check performed is whether the `resource_name` exists as a key in the `other_contacts_data` dictionary, which is a check for existence, not validation of the format or content of the `resource_name` itself.  Adding validation rules to the Pydantic model (or defining the model in the first place) would significantly improve the robustness of the function's input handling."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function uses Pydantic to validate the `resource_name` parameter's type.  However, it lacks explicit value validation for `resource_name` beyond checking its presence in the `other_contacts_data` dictionary. The requirement that it must start with \"otherContacts/\" is not explicitly checked.  There's no validation of `read_mask` beyond type checking; it should check that the provided fields are from the allowed list. Similarly, `sources` needs validation to ensure that only the allowed source types are provided.  While the function raises a `ValueError` if the resource name is not found, this is not strictly input validation but rather a consequence of the data lookup.  The function has type checking for all inputs, but value and constraint checks are missing for `read_mask` and `sources`, and a constraint check is missing for `resource_name`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`resource_name`, `read_mask`, `sources`) are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves data from the global `DB` based on the `resource_name`.  It handles the `read_mask` parameter by filtering the returned data, and it raises a `ValueError` if the resource is not found, as documented.  The docstring accurately reflects the function's behavior and return type. However, the `sources` parameter is not used in the function's logic.  Also, the default value for \"etag\" in the response is hardcoded which might not be desirable in a production environment.  A more robust solution would be to handle the case where \"etag\" is missing in a more meaningful way, perhaps by logging a warning or using a more appropriate default."
+          },
+          "input_normalization": {
+            "status": "Poor",
+            "notes": "The provided function does not perform any normalization of phone numbers or validation of email addresses.  While it handles phone numbers and email addresses as part of the data it retrieves and returns (in the `other_contact` dictionary), it does not process them in any way.  There's no code to extract digits from phone numbers, separate area codes, or check the format of email addresses using regular expressions or a validation library.  The function simply passes the data through as it is found in the database.  To improve, the function should include explicit logic to handle phone number normalization and email validation before storing or returning the data.  This would involve adding code to process the \"phoneNumbers\" and \"emailAddresses\" lists within the `other_contact` dictionary."
+          }
+        },
+        "list_other_contacts": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in retrieving other contacts and explains the use of pagination and field masking.  All parameters, including their default values, are documented with types and descriptions. The `Returns` section clearly specifies the dictionary structure, although it could benefit from explicitly mentioning the types of elements within the nested lists (e.g., `names: List[Dict[str, str]]`). The `Raises` section correctly mentions `ValueError`.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The code uses a Pydantic model `ListOtherContactsRequest` to represent the function's input parameters. However, the validation performed by this model is not comprehensive.  While it might implicitly validate types (depending on the model's definition, which is not shown), it doesn't explicitly validate the `page_size` range (1-1000) or the format of `read_mask`. The code then performs additional validation on `read_mask` and `page_token` outside the Pydantic model.  Using Pydantic's validators within the model would consolidate and improve the validation logic.  The `request_sync_token` and `sync_token` parameters are not validated at all.  Therefore, the Pydantic model is only partially used for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type and value validation on `page_size` (checking if it's an integer within a specific range) and  `read_mask` (checking for null and using it to filter results).  It also implicitly validates `page_token` by attempting to convert it to an integer, raising a ValueError if it fails. However, it lacks explicit validation for the format or content of `read_mask` (beyond checking for null),  `page_token`, and `sync_token`.  While `request_sync_token` is a boolean and thus implicitly type-validated, no further validation is performed.  The validation is good but not comprehensive due to these omissions."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str], Optional[int], Optional[bool]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses `read_mask`, `page_size`, `page_token`, and `request_sync_token` in its logic. The `sync_token` parameter, however, is not used. The exception handling for `read_mask` is correctly implemented. The pagination logic is functional, although the `totalItems` in the response reflects the number of items *after* pagination, not the total number of items in the database.  The docstring accurately reflects the function's behavior, except for the discrepancy in `totalItems`.  The use of Pydantic models for input and output validation is a good practice and enhances the robustness of the function."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_other_contacts` does not handle phone number or email address inputs directly.  It retrieves contact information from a database (`db.get(\"otherContacts\", {})`) and applies filtering and pagination based on the provided `read_mask`, `page_size`, and `page_token`.  The function's purpose is to list contacts, not to process or validate individual phone numbers or email addresses.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does correctly handle other aspects of data retrieval and pagination."
+          }
+        },
+        "search_other_contacts": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's search mechanism and the handling of pagination.  Default values for `page_size` are correctly documented. The `Args` and `Returns` sections are well-structured, with types specified for parameters and return values.  The description of the dictionary structure in the `Returns` section is clear and helpful. The `Raises` section correctly mentions the `ValueError` exception."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `SearchOtherContactsRequest` to validate the `query`, `read_mask`, `page_size`, and `page_token` parameters. However, the validation within the Pydantic model itself is not shown in the provided code snippet.  The code then proceeds to perform additional validation checks, such as raising a ValueError if `read_mask` is empty. While the Pydantic model is a good start, the additional manual checks suggest that the model might not be fully comprehensive in its validation, or that some validation rules are easier to express manually.  A more robust solution would involve a more complete Pydantic model that handles all validation rules, eliminating the need for the manual checks.  The current implementation is a partial use of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for the `query` and `page_size` parameters.  `query` is checked for emptiness and length (though a more robust check might ensure it's only alphanumeric or contains allowed special characters). `page_size` is checked to ensure it's within the allowed range (1-1000).  The `read_mask` parameter is checked for null/empty, but lacks validation of its contents against the allowed field names.  The `page_token` parameter has a basic check to handle potential `ValueError` during conversion to an integer, but doesn't validate its format or content beyond that.  Overall, the validation is not comprehensive due to the missing content check in `read_mask` and the limited validation of `page_token`.  The function also raises appropriate `ValueError` exceptions for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `read_mask`, `page_size`, `page_token`) are properly type-annotated with their expected types (str, Optional[str], Optional[int], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional` are used correctly."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements the search functionality as described in the docstring.  All functional input parameters (`query`, `read_mask`, `page_size`, `page_token`) are used. The `ValueError` for an empty `read_mask` is correctly raised.  The pagination logic is implemented, though the page token handling could be improved for robustness (it currently assumes the page token is always a valid integer). The search logic itself is a simple implementation and could be optimized for performance with larger datasets.  The `totalItems` in the response reflects the number of items *after* filtering and pagination, which is slightly inconsistent with the docstring's implication that it represents the total number of matching contacts before pagination.  Finally, the function uses a simple duplicate removal method which could be improved for efficiency with a very large number of results."
+          },
+          "input_normalization": {
+            "status": "Poor",
+            "notes": "The provided function does not perform any normalization of phone numbers or validation of email addresses.  It searches for a query string within the `value` field of phone numbers and email addresses without any attempt to extract digits from phone numbers or verify the format of email addresses.  The search is purely string-based and relies on the input data being already correctly formatted.  There's no handling of potential malformed phone numbers or invalid email addresses.  To improve, the function should incorporate:"
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "google_people": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely sound and follows modern best practices.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, etc.). The `tests` folder has a good set of test files covering different parts of the API."
+      }
+    }
+  }
+}

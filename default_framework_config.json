@@ -1,0 +1,112 @@
+{
+  "mutation": {
+    "global": {
+      "mutation_name": ""
+    },
+    "services": {
+      "gmail": {
+        "mutation_name": "m01"
+      },
+      "retail": {
+        "mutation_name": "m02",
+        "function_mutation_overrides": [
+          {
+            "original_name": "calculate",
+            "new_name": "evaluate_math_formula",
+            "args": [
+              {
+                "original_name": "expression",
+                "new_name": "math_formula"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "search_engine": {
+    "global_config": {
+      "default_strategy_name": "substring",
+      "strategy_configs": {}
+    },
+    "services": {
+      "gmail": {
+        "default_strategy_name": "hybrid",
+        "strategy_configs": {
+          "hybrid": {
+            "rapidfuzz_config": {
+              "score_cutoff": 80
+            },
+            "semantic_config": {
+              "score_threshold": 0.9
+            }
+          }
+        }
+      },
+      "gdrive": {
+        "default_strategy_name": "keyword",
+        "strategy_configs": {}
+      },
+      "jira": {
+        "default_strategy_name": "fuzzy",
+        "strategy_configs": {
+          "fuzzy": {
+            "score_cutoff": 75
+          }
+        }
+      }
+    }
+  },
+  "authentication": {
+    "global": {
+      "authentication_enabled": true
+    },
+    "services": {
+      "gmail": {
+        "authentication_enabled": true,
+        "excluded_functions": [],
+        "is_authenticated": false
+      },
+      "gdrive": {
+        "authentication_enabled": true,
+        "excluded_functions": [],
+        "is_authenticated": true
+      },
+      "slack": {
+        "authentication_enabled": false,
+        "excluded_functions": [],
+        "is_authenticated": false
+      }
+    }
+  },
+  "error": {
+    "services": {
+      "gdrive": {
+        "config": {
+          "RuntimeError": {
+            "probability": 1.0,
+            "dampen_factor": 0.0,
+            "num_errors_simulated": 1
+          }
+        },
+        "max_errors_per_run": 1
+      }
+    }
+  },
+  "error_mode": {
+    "global": {
+      "error_mode": "raise"
+    },
+    "services": {
+      "gmail": {
+        "error_mode": "error_dict"
+      },
+      "gdrive": {
+        "error_mode": "raise"
+      },
+      "slack": {
+        "error_mode": "error_dict"
+      }
+    }
+  }
+}

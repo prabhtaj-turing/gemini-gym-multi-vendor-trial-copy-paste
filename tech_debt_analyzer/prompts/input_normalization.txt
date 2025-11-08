@@ -1,0 +1,53 @@
+Analyze the provided Python function to evaluate its input normalization and validation, specifically for phone numbers and email addresses.
+
+**Function to Analyze:**
+```python
+{function_code}
+```
+
+**Analysis Criteria:**
+
+1.  **Phone Number Normalization:**
+    *   **Requirement:** If the function accepts a phone number, it MUST be normalized to a standard format (e.g., E.164 standard like "+14155552671"). Raw, unformatted phone numbers should not be used.
+    *   **Check:** Look for evidence of a normalization process, such as using a library (e.g., `phonenumbers`) or custom logic to parse, validate, and reformat phone number strings.
+
+2.  **Email Address Validation:**
+    *   **Requirement:** If the function accepts an email address, it MUST be validated to ensure it is syntactically correct.
+    *   **Check:** Look for evidence of validation, such as using a library (e.g., Pydantic's `EmailStr`) or a robust regular expression. A simple `isinstance(email, str)` or checking for "@" is NOT sufficient.
+
+**Response Format:**
+
+Your response MUST be a single, valid JSON object. Do not include any text or markdown formatting before or after the JSON block.
+
+**JSON Structure:**
+```json
+{{
+  "status": "...",
+  "notes": "..."
+}}
+```
+
+**"status" field values:**
+
+*   `Excellent`: The function correctly normalizes phone numbers to a standard format AND robustly validates email addresses according to the criteria.
+*   `Good`: The function performs some partial normalization or validation, but it's not fully robust (e.g., basic regex for email, no library use).
+*   `Poor`: The function accepts phone or email inputs but performs no significant normalization or validation.
+*   `Not Applicable`: The function's parameters and logic do not involve handling phone numbers or email addresses.
+
+**"notes" field:**
+
+*   This field is **MANDATORY**.
+*   Provide a concise, factual justification for the chosen status.
+*   If the status is `Poor` or `Good`, you MUST state the **exact reason** for the deficiency. For example: "The function accepts `email_address` but only checks if it's a string without performing syntactic validation." or "The function uses the raw `phone_number` string directly without normalization."
+*   If `Not Applicable`, briefly explain why (e.g., "The function's inputs are `user_id` and `item_id`, which are not contact information.").
+
+**Example Response:**
+
+```json
+{{
+  "status": "Poor",
+  "notes": "The function accepts a `recipient_phone_number` but uses the raw string directly in the `call_record` without any normalization."
+}}
+```
+
+Begin your analysis.

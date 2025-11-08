@@ -1,0 +1,557 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.885775Z",
+  "results": {
+    "zendesk/Organizations.py": {
+      "functions": {
+        "create_organization": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The `Args` section is comprehensive.  The `Returns` section correctly specifies the dictionary structure, including the `success` boolean and the nested `organization` dictionary.  However, the description of the nested `organization` dictionary is not entirely complete.  While it lists many keys, it omits `details`, `created_at`, `updated_at`, and `url`, which are all present in the returned dictionary.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and return values.  The docstring is generally well-written and easy to understand, making it suitable for developers using the MCP server.  However, the omission of some keys in the `Returns` section's description of the nested dictionary prevents a perfect score.  The docstring's description of the function's behavior aligns well with the implementation, except for the slight incompleteness in the `Returns` section regarding the `organization` dictionary's contents."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `OrganizationCreateInputData` to validate the input parameters `name`, `industry`, `location`, `domain_names`, `external_id`, `group_id`, `notes`, `details`, `shared_tickets`, `shared_comments`, `tags`, and `organization_fields`.  These are all the functional input parameters.  The model handles type checking and default values effectively.  No other input validation is needed because the Pydantic model already covers it."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through type hints and default values for optional parameters.  The `name` parameter is the only one with explicit value validation (implicitly enforced by the `OrganizationCreateInputData` class, assuming it performs validation).  However, there's no explicit validation for the length or content of the `name` field, nor are there checks for the validity of `domain_names`, `external_id`, `group_id`, or other parameters beyond type hinting.  Empty lists and dictionaries are handled gracefully via the `or []` and `or {}` defaults, but this is not explicit validation.  No explicit error handling is present beyond the docstring mentioning `ValidationError` and `OrganizationAlreadyExistsError`.  The function lacks comprehensive value validation and explicit error handling for invalid functional input parameters.  Therefore, the validation is only partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List type annotations for optional and list parameters.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly creates a new organization in the `DB` and returns the expected dictionary.  All functional input parameters are used.  However, the function lacks exception handling for `ValidationError` and `OrganizationAlreadyExistsError` as documented in the docstring.  The `_generate_sequential_id` function is not defined within the provided code, and its implementation is assumed.  Adding exception handling and defining or importing `_generate_sequential_id` would make this function fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_organization` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating organization records based on other data fields.  To rate it as Good or Excellent, the function would need to include parameters for phone numbers and emails, and implement the appropriate normalization and validation logic."
+          }
+        },
+        "list_organizations": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good description of the function's purpose: listing all organizations from the database.  The Returns section accurately describes the structure of the returned list of dictionaries, including the possible keys and their types.  It comprehensively lists all potential keys and their types, which is helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `list_organizations` does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_organizations` has no input parameters.  Therefore, there is no input parameter validation to assess."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_organizations` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves all organizations from the `DB[\"organizations\"]` dictionary and returns them as a list of dictionaries.  The docstring accurately describes the function's behavior and the structure of the returned data. There are no unused functional parameters, placeholders, or exceptions to handle. The implementation matches the docstring's promises."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_organizations` does not handle any phone number or email address inputs.  It only retrieves data from a database (presumably named `DB`). Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function's purpose is solely to retrieve and return organization data, not to process or validate user inputs."
+          }
+        },
+        "show_organization": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the `organization_id` type. The `Returns` section is detailed, correctly listing the potential keys and their types within the returned dictionary.  The `Raises` section correctly identifies the `TypeError` and `OrganizationNotFoundError` exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the return value is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance`) to validate the `organization_id` parameter.  While Pydantic could be used, the existing type check is sufficient for this simple input validation.  Adding Pydantic would add unnecessary complexity for this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `organization_id` parameter, checking if it's an integer using `isinstance`.  It also performs a value check by verifying if the organization ID exists within the `DB[\"organizations\"]` dictionary.  However, it lacks checks for negative organization IDs, which might be invalid depending on the database schema.  While the existence check implicitly handles some value constraints, explicit range validation would improve robustness.  The error handling is appropriate, raising a `TypeError` for incorrect type and a custom `OrganizationNotFoundError` for non-existent IDs, providing informative error messages.  Only one functional input parameter exists (`organization_id`), and it receives type and partial value validation.  More comprehensive value validation (e.g., range checks) is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `show_organization` has excellent parameter design.  All parameters are properly type-annotated (`organization_id: int`). The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  Complex types within the return dictionary are also hinted at, although not strictly enforced by the type checker (this is acceptable given the dynamic nature of the `Any` type in the return)."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves organization details from the global `DB` based on the provided `organization_id`.  It handles the `TypeError` and `OrganizationNotFoundError` exceptions as documented. The function uses the `organization_id` parameter effectively.  The docstring accurately reflects the function's behavior and return type. There are no placeholders or incomplete logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `show_organization` function does not handle any phone number or email address inputs.  Its sole purpose is to retrieve organization details based on an integer ID from a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles type checking for the input `organization_id`."
+          }
+        },
+        "update_organization": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's parameters, including their types and default values. The `Args` section is comprehensive. The `Returns` section correctly specifies the dictionary structure, although it omits the `'success'` key's type (bool) and doesn't fully detail the nested `'organization'` dictionary's structure.  The docstring mentions the `'industry'` and `'location'` keys in the returned `'organization'` dictionary, but these keys are not present in the function's implementation. This is a significant inconsistency.  The `Raises` section correctly lists the exceptions.  Types are mostly specified correctly for parameters and return values.  However, the documentation of the `organization` dictionary within the return value could be more precise and complete, reflecting the actual keys returned.  The docstring is generally complete enough for effective use, but the discrepancy between the documented and implemented return value needs correction."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for all functional input parameters.  While Pydantic could provide a more concise and potentially more robust validation mechanism, the existing approach is sufficient and correctly handles type checking and constraint validation for each parameter.  The use of Pydantic would be a stylistic improvement but isn't strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`organization_id`, `name`, `domain_names`, `external_id`, `group_id`, `notes`, `details`, `shared_tickets`, `shared_comments`, `tags`, `organization_fields`) are checked for their correct data types.  `organization_id` is further checked for existence in the `DB`.  `domain_names` and `tags` are validated not only as lists but also to ensure all elements within are strings.  Appropriate `TypeError` exceptions are raised for invalid input types, and an `OrganizationNotFoundError` is raised if the organization ID is not found.  No value validation beyond type checking is performed (e.g., length restrictions on strings, range checks on integers), but this is acceptable given the context.  All functional parameters are checked before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types using Python's type hinting system.  These include the use of Optional for parameters that can be omitted, List for lists of strings, and Dict for dictionaries. The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates an organization in the global `DB` based on the provided `organization_id` and optional parameters.  All functional input parameters are used to update the corresponding fields in the `DB`.  The documented exceptions (`OrganizationNotFoundError` and `TypeError`) are properly implemented and raised under the correct conditions. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The `details` parameter is used, and the returned dictionary includes the updated organization details as specified in the docstring.  The `updated_at` timestamp is correctly updated."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_organization` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on updating organization details from a variety of other data types (strings, integers, booleans, lists, dictionaries), but it does not include any fields designed for phone numbers or email addresses.  To rate it on those criteria would be inappropriate."
+          }
+        },
+        "delete_organization": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  The description is clear. The `Args` section accurately documents the single argument. The `Returns` section correctly specifies the dictionary type and lists the keys with their types, including optional fields using `Optional`. The `Raises` section correctly lists the exceptions.  Types are specified for all parameters and return values.  The documentation of the dictionary structure in the return value is comprehensive."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `isinstance` check to validate that `organization_id` is an integer.  While a Pydantic model isn't used, the existing type check is sufficient for this single input parameter.  Adding a Pydantic model would add unnecessary complexity for this simple validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_organization` performs comprehensive validation of its single functional input parameter, `organization_id`.  It checks for the correct data type (integer) using `isinstance` and also validates that the provided ID exists within the `DB[\"organizations\"]` dictionary.  Appropriate exceptions (`TypeError` and `OrganizationNotFoundError`) are raised with informative error messages for invalid inputs.  All aspects of functional input validation are addressed."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_organization` has excellent parameter design and type annotations.  All parameters (`organization_id`) are properly type-annotated with their expected types (int). The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes an organization from the global `DB` dictionary based on the provided `organization_id`.  It handles the `TypeError` and `OrganizationNotFoundError` exceptions as documented. The `organization_id` is used correctly. The function returns a dictionary containing the deleted organization's data, matching the docstring's description of the return type and content.  There are no placeholders, TODOs, or incomplete logic.  The implementation fully aligns with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_organization` does not handle any phone number or email address inputs.  Its sole purpose is to delete an organization from a database (presumably represented by `DB`) based on its integer ID.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "zendesk/Tickets.py": {
+      "functions": {
+        "create_ticket": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and attempts to comprehensively document the function's parameters and return values.  It accurately describes the function's purpose \u2013 creating a new ticket.  The `Args` section is quite extensive, detailing many optional parameters and their nested structures. The `Returns` section similarly provides a detailed description of the returned dictionary, including nested structures.  The `Raises` section correctly mentions the `ValidationError`.  Types are mostly specified correctly for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `TicketCreateInputData` to validate the `ticket` input dictionary.  This model is responsible for validating all the fields within the `ticket` dictionary according to the types and constraints defined within the model (which are extensive based on the docstrings).  The `try...except` block around the model instantiation handles `ValidationError` exceptions, indicating that the function relies on Pydantic for input validation.  No other input validation mechanisms are used for the functional input parameter."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function leverages `TicketCreateInputData` (presumably a Pydantic model) to perform comprehensive validation of all functional input parameters before they are used.  This model is responsible for type checking, value validation (including ranges, formats, and allowed values), and null/empty checks. The `try...except` block around the model instantiation effectively handles and propagates validation errors.  All functional input parameters are validated through this mechanism.  The code then safely uses the validated data from the Pydantic model.  No domain-specific constraints (like file path or URL validation) are explicitly shown in this snippet, but it's assumed that `TicketCreateInputData` handles those if needed based on the function's docstring."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_ticket` has an excellent parameter design.  The single parameter `ticket` is properly type-annotated as `Dict[str, Any]`.  The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`. All types within the `ticket` dictionary are also explicitly defined using type hints (Optional, List, Dict etc.)."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality. It correctly uses most of the input parameters from the `ticket` dictionary to create a new ticket entry in the `DB`, including handling optional fields and default values as specified in the docstring.  The logic for processing user lists (`_process_user_list`) is well-structured and handles the addition and removal of users appropriately.  The audit and comment creation are also implemented, reflecting the changes made to the ticket. The response message is dynamically generated based on whether an assignee is present."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_ticket` function does not handle phone numbers or email addresses as inputs.  The function's input is a dictionary (`ticket: Dict[str, Any]`) which contains various fields related to ticket creation, but none of these fields are explicitly defined as phone numbers or email addresses. While the `assignee_email` field might seem like an email address, it's handled as a string without any validation or normalization within the function itself.  The validation, if any, is assumed to be performed by a `TicketCreateInputData` Pydantic model (which is not shown in the code), external to this function.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function's current implementation."
+          }
+        },
+        "list_tickets": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and attempts to comprehensively document the function's return value, including the structure of the nested dictionaries.  It accurately reflects the function's purpose: listing all tickets from the database. The \"Returns\" section is quite detailed, listing many keys within the dictionary.  However,  the level of detail is excessive and could be improved for readability.  Many fields are documented that are not explicitly created or modified within the function itself; these are inherited from the global `DB`.  While this isn't inherently wrong, it makes the docstring unnecessarily long and potentially confusing.  The docstring lacks a description of *how* the function is helpful to an MCP server; this context would improve its value.  There's no mention of potential exceptions (e.g., database errors), which should be included in a \"Raises\" section.  Finally, while the docstring mentions `base64` encoding for `encoded_id`, it doesn't explicitly state that this happens *only* if the field is missing.  The docstring should be more concise and focus on the essential information relevant to the function's core behavior and its interaction with the MCP server."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The `list_tickets` function does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_tickets` has no functional input parameters.  Therefore, no input parameter validation is needed or possible.  The function operates solely on data retrieved from the global `DB[\"tickets\"]` dictionary."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_tickets` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves tickets from the global `DB[\"tickets\"]` dictionary and adds missing fields (`encoded_id`, `followup_ids`, `generated_timestamp`, `url`) for backward compatibility.  The function's logic is mostly complete and functional, and the return type matches the docstring. However, the docstring mentions several fields (e.g., 'external_id', 'subject', 'description', 'priority', etc.) that are not explicitly handled or checked for existence within the function. The function assumes these fields exist in the `DB[\"tickets\"]` entries.  If these fields are missing from some tickets in the database, the function will not explicitly handle that case, potentially leading to unexpected behavior or errors downstream.  Adding checks for the existence of these fields and handling missing values (e.g., setting defaults) would improve robustness.  The function also implicitly relies on the `ticket` values in `DB[\"tickets\"]` being dictionaries.  Adding a check to ensure this would also improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_tickets` does not handle any phone number or email address inputs.  It retrieves and formats data from a database (presumably a Zendesk-like ticketing system) but doesn't process or validate any such contact information as part of its operations.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and structuring ticket data."
+          }
+        },
+        "show_ticket": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a comprehensive description of the function's purpose and behavior.  The Args and Returns sections are detailed, including types and descriptions of all parameters and the dictionary structure of the return value.  The Raises section accurately lists the exceptions.  Type information is complete for parameters and return values.  The documentation of the dictionary's nested structure is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance`) and a manual check against the `DB` to validate the `ticket_id` input.  While a Pydantic model could be used, the existing validation is sufficient and correctly handles the expected input type and potential errors (non-existent ticket).  Using Pydantic wouldn't add significant value in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `show_ticket` performs comprehensive validation of its single functional input parameter, `ticket_id`.  It checks for the correct data type using `isinstance(ticket_id, int)` and for a valid value by checking if the `ticket_id` exists as a key in the `DB[\"tickets\"]` dictionary.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for invalid inputs.  All aspects of functional input validation are covered."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `show_ticket` has excellent parameter design.  All parameters are properly type-annotated (`ticket_id: int`). The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types within the return dictionary are not explicitly annotated within the function signature (as they are part of the return value, not a parameter), but the docstring provides a comprehensive description of the expected structure and types of the dictionary's contents."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of retrieving ticket details from the global `DB` and handles the `TypeError` and `ValueError` exceptions as documented.  It also adds missing fields (`encoded_id`, `followup_ids`, `generated_timestamp`, `url`) for backward compatibility. However, the docstring mentions  `safe_update`, `ticket_form_id`, `updated_stamp`, `via_followup_source_id`, `via_id`, `voice_comment` fields which are not included in the returned dictionary.  Adding these would make the implementation fully consistent with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `show_ticket` function does not handle any phone number or email address inputs.  It only takes a ticket ID as input and retrieves ticket details from a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses solely on retrieving and potentially augmenting existing ticket data."
+          }
+        },
+        "update_ticket": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and arguments.  It correctly identifies the function's role in updating tickets within the MCP server context.  The Args section is comprehensive, listing all parameters with their types. The Returns section accurately describes the structure of the returned dictionary, including the `success` flag and the keys within the `ticket` dictionary.  The Raises section correctly mentions `ValueError` and `ValidationError`.  Types are mostly specified correctly for parameters and return values.  The documentation of the dictionary structures (both `ticket_updates` and the returned dictionary) is quite detailed, though it could be slightly improved by using a more structured format (e.g., a table) for better readability."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`TicketUpdateInputData`) to validate the `ticket_updates` dictionary, which is a functional input parameter.  The `ticket_id` is also validated separately for type and existence in the mock database. While the separate validation of `ticket_id` could be incorporated into the Pydantic model for a more unified approach, the current implementation uses Pydantic effectively for validating the main functional input data.  All functional input parameters are validated."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`ticket_id`, `ticket_updates`) are properly type-annotated with their expected types (`int`, `Dict[str, Any]`). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within `ticket_updates` are also properly specified using `Optional` and `List`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements the update functionality as described in the docstring.  All functional input parameters are used.  Documented exceptions are handled. There are no TODOs or placeholders. The logic is mostly complete and functional, updating the ticket in the global `DB`.  The docstring accurately reflects the return type and behavior. However, the function adds a comment and audit entry even if no comment is provided in the `ticket_updates`.  While not strictly incorrect, it's an unnecessary side effect that deviates slightly from a strict interpretation of the docstring's description of updating a ticket.  The addition of the `encoded_id`, `followup_ids`, `generated_timestamp`, and `url` fields if they don't exist is a good addition for backward compatibility, but could be better documented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_ticket` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with ticket updates, including fields like subject, comment body, priority, and status, but none of these fields are related to phone numbers or email addresses.  The `requester` field might contain an email address, but there's no validation or normalization performed on it within the function.  The function relies on a Pydantic model (`TicketUpdateInputData`) for validation, but the code for that model is not provided, so we cannot assess its validation capabilities regarding email addresses."
+          }
+        },
+        "delete_ticket": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  The description is clear, and the Args and Returns sections are comprehensive, including types and detailed descriptions of the dictionary structure.  The Raises section accurately lists the exceptions.  Type information is complete for parameters and return values.  The documentation of the dictionary's nested structure in the Returns section is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `delete_ticket` uses a simple `isinstance` check to validate that `ticket_id` is an integer.  While a Pydantic model isn't used, the type check is sufficient for this single input parameter.  Adding a Pydantic model would be unnecessary overhead for this simple validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `ticket_id` parameter, ensuring it's an integer using `isinstance()`.  It also performs a value check by verifying the existence of the ticket ID in the `DB[\"tickets\"]` dictionary.  However, it doesn't explicitly check for negative `ticket_id` values, which could be a valid value check to add for robustness.  While the existence check in the DB implicitly handles the case of a non-existent ticket, an explicit check for `ticket_id` being less than zero might be beneficial.  Therefore, the validation is good but not fully comprehensive due to the lack of a check for negative IDs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_ticket` has excellent parameter design.  The single parameter `ticket_id` is correctly type-annotated as `int`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  All type annotations are complete and accurate for the given parameter."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a ticket from the global `DB` dictionary based on the provided `ticket_id`.  It handles the `TypeError` and `TicketNotFoundError` exceptions as documented. The return value matches the docstring's description, returning a dictionary containing all the specified ticket details. All functional input parameters (`ticket_id`) are used. There are no placeholders, TODO comments, or incomplete logic.  The docstring accurately reflects the function's behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `delete_ticket` function does not handle any phone number or email address inputs.  Its sole purpose is to delete a ticket based on its integer ID.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles integer type checking for the ticket ID and raises appropriate exceptions if the ID is invalid or the ticket is not found."
+          }
+        }
+      }
+    },
+    "zendesk/Users.py": {
+      "functions": {
+        "create_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in creating users and its comprehensive Zendesk API support.  All parameters, including their types and default values, are clearly documented in the Args section. The Returns section correctly specifies the dictionary structure, including the types of its keys and values.  The Raises section mentions the `ValidationError` and `UserAlreadyExistsError` exceptions.  Types are consistently specified throughout."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`UserCreateInputData`) to validate the input parameters `name`, `email`, `role`, `organization_id`, `tags`, `photo`, `details`, `default_group_id`, `alias`, `custom_role_id`, `external_id`, `locale`, `locale_id`, `moderator`, `notes`, `only_private_comments`, `phone`, `remote_photo_url`, `restricted_agent`, `shared_phone_number`, `signature`, `suspended`, `ticket_restriction`, `time_zone`, `verified`, and `user_fields`.  These are all the functional parameters of the function.  The `try...except` block correctly handles `ValidationError` exceptions raised by Pydantic.  No other input validation methods are needed because Pydantic handles all functional parameter validation comprehensively."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The code uses Pydantic for input validation, which provides type checking for all functional parameters.  This addresses point 1 (Type Validation) and partially addresses point 3 (Null/Empty Checks) as Pydantic handles `None` values for optional parameters.  However, it lacks explicit value validation for several parameters. For example,  `role` should be checked against allowed values (\"end-user\", \"agent\", \"admin\"), and email format validation is missing.  `organization_id` and `default_group_id` might need checks to ensure they are positive integers referencing existing organizations and groups (this would require database interaction, which is outside the scope of input validation itself).  There's no validation for the content of the `tags`, `photo`, and `user_fields` dictionaries.  While Pydantic handles type checking, more robust value checks are needed for a comprehensive validation.  Error handling is good as it re-raises the Pydantic `ValidationError`.  All functional input parameters are *passed* to Pydantic for type checking, fulfilling point 6 (Coverage), but not all are fully validated for value constraints."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, Dict, and Union where appropriate.  The return type is also clearly specified.  The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new user in the global `DB` dictionary.  All functional input parameters are used to populate the `user_data` object and subsequently the `user_dict`.  The `ValidationError` exception is properly handled, re-raising the original Pydantic exception.  There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional. The docstring accurately reflects the function's behavior, including the return type and the handling of exceptions.  The function also correctly adds the read-only fields ('active', 'created_at', 'updated_at', 'url')."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The provided code uses Pydantic for input validation, which is a good approach.  However, the level of normalization and validation for phone numbers and emails isn't explicitly shown in the snippet.  The `UserCreateInputData` Pydantic model (not shown) is crucial here."
+          }
+        },
+        "list_users": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: listing all users from the database.  It accurately describes the function's return value as a list of dictionaries, and it meticulously details the structure of each dictionary, including optional fields.  The type hinting (`-> List[Dict[str, Any]]`) is correct.  The documentation of the dictionary keys, their types, and nested structures is comprehensive."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The `list_users` function does not take any input parameters.  Therefore, the question of input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_users` has no functional input parameters.  Therefore, no input validation is needed or possible.  The function directly accesses the global `DB` to retrieve user data."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_users` has no parameters.  The return type is clearly specified as `List[Dict[str, Any]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves all users from the global `DB[\"users\"]` dictionary, creates deep copies to avoid modifying the original data, and handles the potential nested structures within the user data (specifically \"photo\", \"user_fields\", and \"tags\").  The transformation of the \"url\" key in the \"photo\" dictionary to \"content_url\" is correctly implemented. The function's return value matches the docstring's description in terms of data structure and content. There are no placeholders, TODOs, or exceptions to handle.  All elements promised in the docstring are present in the returned data. There are no unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_users` function does not perform any input normalization or validation on phone numbers or email addresses.  It retrieves user data from a database (presumably represented by `DB[\"users\"]`) and returns it.  The function focuses on data copying and restructuring, not on data cleaning or validation of the input fields.  Therefore, the criteria of phone number normalization and email validation are not applicable.  To rate it as anything else would be misleading."
+          }
+        },
+        "show_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and return value, including types. The documentation of the dictionary return value is particularly thorough, listing all potential keys with their types and even detailing nested structures like `photo` and `user_fields`. The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking and manual validation to ensure that the `user_id` parameter is an integer and is positive.  While Pydantic could be used, the existing validation is sufficient and clear.  The use of Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `show_user` performs comprehensive validation of its single functional input parameter, `user_id`.  It checks for the correct data type (integer) using `isinstance`, validates that the value is positive using `user_id <= 0`, and checks for the existence of the user in the database (`str(user_id) not in DB[\"users\"]`).  Appropriate exceptions (`TypeError` and `ValueError`) are raised for invalid inputs, and a custom `UserNotFoundError` is raised if the user ID is not found.  All aspects of type, value, and existence are validated."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `show_user` has excellent parameter design.  All parameters are properly type-annotated (`user_id: int`). The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  Complex types within the return dictionary are also well-specified using `Optional` and `List` where appropriate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly handles the `user_id` parameter, raising appropriate exceptions for invalid input types and values.  It retrieves data from the global `DB` and performs a deep copy to prevent unintended modifications. The transformation of the \"photo\" field to match the specified model structure is also correctly implemented.  However, the deep copy of `user_fields` and `tags` is redundant as `user_data.copy()` already creates a deep copy of the entire dictionary.  This redundancy doesn't affect functionality but represents a minor inefficiency.  There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `show_user` does not handle phone number or email address inputs.  It retrieves user data from a database (represented by `DB[\"users\"]`) and performs some data transformation and copying to ensure the returned data matches a specific model. However, there is no input validation or normalization for phone numbers or emails because these are retrieved from the database, not provided as function arguments.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, parameters, return value, and exceptions.  It accurately describes the partial update functionality and the automatic `updated_at` timestamp update.  All parameters, including their default values and types, are documented. The `Args` section is detailed, explaining the constraints and allowed values for several parameters.  The `Returns` section clearly specifies the dictionary structure, including the `success` boolean and the nested `user` dictionary.  However, the description of the nested `user` dictionary could be improved by explicitly listing all possible keys and their types (e.g.,  `'active' (bool)`, `'created_at' (str)`, etc.) instead of just saying \"Plus all optional fields...\". The docstring also correctly mentions the `ValidationError` and `UserNotFoundError` exceptions.  The docstring's claim of \"Comprehensive validation: All fields are validated according to Zendesk API standards\" is slightly misleading as it doesn't specify the exact validation mechanism used (Pydantic). While the implementation uses Pydantic, the docstring doesn't explicitly state this, which could be beneficial for clarity.  Overall, the docstring is quite good, but minor improvements in the `Returns` section and a more precise description of the validation process would make it excellent."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The code attempts to use a Pydantic model (`UserUpdateInputData`) for input validation. However, the provided code snippet is missing the definition of this Pydantic model.  Without the model definition, we cannot assess whether it comprehensively validates all functional input parameters. The current implementation only creates a dictionary `validation_data` and passes it to the `UserUpdateInputData` constructor.  If `UserUpdateInputData` is properly defined with validation rules for all relevant fields (excluding the MCP contextual parameters), then the validation would be complete.  As it stands, we only know that *some* attempt at validation is made, but the extent of that validation is unknown.  Therefore, the validation is only partially used.  A fully defined Pydantic model would improve the validation by providing clear, centralized, and type-safe validation rules."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The code uses Pydantic for input validation, which provides type checking.  However, the level of value validation is incomplete and lacks explicit checks for many constraints mentioned in the docstrings."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, and Dict where appropriate.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters are used to update the user data in the `DB` dictionary.  The documented exceptions, `ValidationError` and `UserNotFoundError`, are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, updating the `updated_at` timestamp as promised. The docstring accurately reflects the function's behavior, including the return type and the handling of optional parameters.  There are no inconsistencies between the docstring and the implementation."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function performs email validation implicitly through the use of a Pydantic model (presumably defined elsewhere, as `UserUpdateInputData` is not defined in the provided code).  Pydantic models are excellent for data validation and would likely include email validation using a regular expression or similar.  However, the code itself doesn't explicitly show this validation; it relies on the assumed functionality of the `UserUpdateInputData` model.  This makes the code less self-contained and harder to fully assess."
+          }
+        },
+        "delete_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  The description is clear, and the Args and Returns sections are comprehensive, including types and detailed descriptions of the dictionary structure.  The Raises section accurately lists the exceptions.  Type hints are used consistently.  The documentation of the dictionary's keys, types, and nested structures in the Returns section is particularly thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking and manual validation to ensure that `user_id` is a positive integer.  While Pydantic could be used, the existing validation is sufficient and correctly handles the required checks.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_user` performs comprehensive validation of its single functional input parameter, `user_id`.  It checks for the correct data type (integer) using `isinstance`, validates that the value is positive using a comparison (`user_id <= 0`), and checks for the existence of the user in the database (`str(user_id) not in DB[\"users\"]`).  Appropriate exceptions (`TypeError` and `ValueError`) with informative messages are raised for invalid inputs.  All aspects of type, value, and existence validation are present for the functional input."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_user` has an excellent parameter design.  The single parameter `user_id` is correctly type-annotated as `int`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the deletion of a user from the `DB` and returns the deleted user's data.  Input validation for `user_id` (integer type and positive value) is performed, and the `UserNotFoundError` exception is correctly raised if the user ID is not found. The function also correctly handles the transformation of the \"photo\" field to match the expected model structure.  However, there's a minor gap:  The deep copies created for `user_fields` and `tags` are unnecessary if the goal is to return a copy of the data *before* deletion.  The `user_copy` already contains a copy of the data, and modifying the nested dictionaries within `user_copy` after the `pop()` operation won't affect the original `DB`. Removing these unnecessary deep copies would improve efficiency.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `delete_user` function does not handle phone numbers or email addresses as inputs.  Its input is a user ID (integer), and its operation is deleting a user from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended input and performs its task without issues related to phone numbers or emails."
+          }
+        }
+      }
+    },
+    "zendesk/Search.py": {
+      "functions": {
+        "list_search_results": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written. It clearly explains the function's purpose,  the Zendesk query syntax it uses, and provides detailed examples of supported filter fields for tickets, users, and organizations.  Default values for parameters are correctly specified. The `Args` and `Returns` sections are thorough, including descriptions of nested dictionary structures within the return value. The `Raises` section accurately lists potential exceptions.  Types are specified for all parameters and the return value using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for all its functional input parameters (query, sort_by, sort_order, page, per_page, include).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is comprehensive and effective.  The manual checks cover type and value constraints for each parameter.  Using Pydantic would add complexity without offering significant benefits in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  `query`, `sort_by`, `sort_order`, `page`, and `per_page` are all checked for both type and value validity.  `include` is checked for type.  Type validation uses `isinstance` checks, and value validation includes range checks (e.g., `per_page`), allowed value checks (e.g., `sort_by`, `sort_order`), and checks for values less than 1 (e.g., `page`).  Appropriate `TypeError` and `ValueError` exceptions with informative messages are raised for invalid inputs.  All functional parameters are validated before being used in subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `sort_by`, `sort_order`, `page`, `per_page`, `include`) are properly type-annotated with their expected types using Python's type hinting system.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types like `Optional[str]`, `int`, and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using all functional input parameters (`query`, `sort_by`, `sort_order`, `page`, `per_page`, `include`).  Exception handling for the documented `TypeError` and `ValueError` cases is implemented.  The logic for searching across different data types (tickets, users, organizations) and applying sorting and pagination is present. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_search_results` function does not handle phone numbers or email addresses as inputs.  It's designed to search a simulated Zendesk database using a query string, and while the query string *can* contain email addresses as part of the search criteria (e.g.,  `email:user@example.com`), the function itself doesn't perform any normalization or validation on these email addresses.  The function processes the query string as a whole, leaving the validation and normalization to the underlying database or search mechanism (which is not explicitly shown in the provided code).  Therefore, the rating of \"Not Applicable\" is appropriate."
+          }
+        }
+      }
+    },
+    "zendesk/Comments.py": {
+      "functions": {
+        "list_ticket_comments": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the `ticket_id`, `include`, and `include_inline_images` parameters, including their types and default values. The `Returns` section accurately describes the overall structure of the returned dictionary.  The `Raises` section correctly lists the exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking for its functional input parameters (`ticket_id`, `include`, `include_inline_images`).  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling default values, more complex validation rules), the existing type checks adequately address the basic validation needs for this function.  The manual checks cover all functional parameters."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on all three functional input parameters: `ticket_id`, `include`, and `include_inline_images`.  It correctly checks if `ticket_id` is an integer, `include` is a string (if provided), and `include_inline_images` is a boolean.  It also checks for the existence of the ticket in the DB, which is a form of value validation. However, it lacks value validation for `ticket_id` beyond checking its type and existence in the DB; there's no check for negative IDs or other potential invalid values.  The `include` parameter has a value constraint mentioned in the docstring (\"Accepts 'users'\") but this constraint is not enforced in the code.  Therefore, while type validation is comprehensive, value validation is partial, leading to a \"Good\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (ticket_id, include, include_inline_images) are properly type-annotated with their expected types (int, Optional[str], bool, respectively). The function's return type is clearly specified as Dict[str, List[Dict[str, Any]]].  No **kwargs parameters are used.  Complex types like List and Dict are properly specified, including the use of Optional for the 'include' parameter."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves comments based on `ticket_id`, handles `include_inline_images` to include or exclude attachments, and raises the `TicketNotFoundError` exception as documented.  The input validation for `ticket_id`, `include`, and `include_inline_images` is also correctly implemented. However, the `include` parameter, while validated, is not actually used in the function's logic.  The functionality promised by the `include=users` example in the docstring is not implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_ticket_comments` does not handle any phone number or email address inputs.  Its parameters and return values deal exclusively with ticket IDs, comments, attachments, and metadata.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function is well-structured and handles its intended inputs correctly, but it simply doesn't involve the data types mentioned in the task description."
+          }
+        }
+      }
+    },
+    "zendesk/Attachments.py": {
+      "functions": {
+        "delete_attachment": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is well-written and accurately reflects the function's behavior.  It clearly explains the function's purpose,  the `token` argument's purpose and constraints, and the expected return value (None, equivalent to a 204 No Content HTTP status).  The `Raises` section correctly lists all potential exceptions (`TypeError`, `ValueError`, `AttachmentNotFoundError`).  The docstring is complete enough for a developer to understand how to use the function and what to expect.  There are no inconsistencies between the docstring and the implementation; the docstring accurately describes the function's type handling, error conditions, and return value.  The type hints in the function signature (`token: str`, `-> None`) are consistent with the docstring's description of the argument and return types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking (`isinstance`) and manual validation (`if not token.strip():`) to check the `token` parameter.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is sufficient and correctly handles the required checks.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_attachment` performs comprehensive validation of its single functional input parameter, `token`.  It checks for the correct data type (string) using `isinstance`, validates that it's not empty or whitespace-only using `token.strip()`, and checks if the token exists in the `DB[\"upload_tokens\"]` dictionary.  Appropriate exceptions (`TypeError`, `ValueError`, `AttachmentNotFoundError`) are raised with informative error messages for each validation failure.  All possible failure scenarios for the `token` parameter are handled."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_attachment` has excellent parameter design.  All parameters are properly type-annotated (`token: str`). The return type is clearly specified as `-> None`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of attachments based on the provided token.  It performs input validation for the `token` parameter, checks for the existence of the token and associated attachments in the `DB`, updates the `deleted` flag for the attachments, removes the token record, and returns `None` as documented. All functional parameters are used, and all documented exceptions are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_attachment` does not handle any phone numbers or email addresses.  Its input is a string token used to identify an uploaded file. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "show_attachment": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types (`attachment_id` as an integer), meticulously details the structure of the dictionary returned (including optional fields and their types), and thoroughly lists all potential exceptions (`TypeError`, `ValueError`, `AttachmentNotFoundError`). The descriptions are concise and easy to understand.  The docstring accurately reflects the function's implementation; there are no inconsistencies between what the docstring promises and what the code actually does.  The documentation of the dictionary's keys, types, and nested structures is exemplary.  A user could confidently use this function based solely on the provided docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type and value checking for the `attachment_id` parameter.  While Pydantic could be used, the current manual validation is sufficient and correctly handles the required checks.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `show_attachment` performs comprehensive validation of its single functional input parameter, `attachment_id`.  It checks for the correct data type (integer) using `isinstance` and then validates the value, ensuring it's a positive integer.  Appropriate exceptions (`TypeError` and `ValueError`) are raised with informative messages for invalid inputs.  Finally, it checks for the existence of the attachment in the mock database (`DB`) and whether it's marked as deleted, raising a custom `AttachmentNotFoundError` if either condition is true.  All aspects of functional input validation are present and correctly implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `show_attachment` has an excellent parameter design.  The single parameter `attachment_id` is correctly type-annotated as `int`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of attachment metadata based on the provided `attachment_id`.  It performs input validation for the `attachment_id`, checks for the attachment's existence and deleted status in the global `DB`, and returns the metadata as specified in the docstring. All documented exceptions are handled.  There are no placeholders or TODO comments. The logic is complete and functional given the use of the global `DB`.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `show_attachment` function does not handle any phone number or email address inputs.  Its purpose is to retrieve metadata about an attachment given its ID from a database (presumably).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_attachment": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's simulation of file uploads and the generation of tokens and metadata.  Default values for `token`, `content_type`, and `file_size` are correctly mentioned. The `Args` and `Returns` sections are well-structured, listing all parameters and their types.  The `Raises` section correctly identifies potential `TypeError` and `ValueError` exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and value validation for the functional input parameters (`filename`, `token`, `content_type`, `file_size`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is sufficient and correctly handles type and value constraints.  The manual checks cover all functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters.  `filename` is checked for correct type (string) and non-empty content. `file_size` is checked for correct type (integer) and a positive value. `token` and `content_type` are checked for correct type (string or None).  All checks utilize appropriate `TypeError` and `ValueError` exceptions with informative messages.  Every functional input parameter is validated before being used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (filename, token, content_type, file_size) are properly type-annotated with their expected types (str, Optional[str], Optional[str], int respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types like `Optional[str]` and `Dict[str, Any]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of attachments and upload tokens, managing them within the global `DB`. All functional input parameters (`filename`, `token`, `content_type`, `file_size`) are used appropriately in the logic.  All documented exceptions (`TypeError`, `ValueError`) are handled. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_attachment` function does not handle phone numbers or email addresses.  Its inputs are a filename, an optional token, an optional content type, and a file size.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable.  The function focuses solely on managing file uploads and their metadata."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "zendesk": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations.  The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The `tests` folder is well-populated with numerous test files."
+      }
+    }
+  }
+}

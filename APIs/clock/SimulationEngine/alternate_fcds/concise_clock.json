@@ -1,0 +1,445 @@
+[
+  {
+    "name": "change_alarm_state",
+    "description": "Change the state of one or more specified alarms, or change the state of all alarms in bulk.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "alarm_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of unique identifiers for the alarms to modify."
+        },
+        "alarm_type": {
+          "type": "string",
+          "description": "The alarm type to change."
+        },
+        "time_of_day": {
+          "type": "string",
+          "description": "Time of the day of the alarm in strict HH:MM:SS format (e.g., '13:30:00', '01:00:00')."
+        },
+        "am_pm_or_unknown": {
+          "type": "string",
+          "description": "Specifies the time period as `AM`, `PM`, or `UNKNOWN`."
+        },
+        "label": {
+          "type": "string",
+          "description": "The label of the alarm to be modified."
+        },
+        "state_operation": {
+          "type": "string",
+          "description": "The operation to perform on the alarm's state."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the alarm to modify."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "Filters for alarms scheduled on or after this date."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "Filters for alarms scheduled to fire on or before this date."
+        },
+        "bulk_operation": {
+          "type": "boolean",
+          "description": "Specifies whether to apply the state change to all alarms."
+        }
+      }
+    }
+  },
+  {
+    "name": "change_timer_state",
+    "description": "Changes the state of one or more timers (e.g., resume, pause, reset, cancel, stop).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "timer_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of IDs for the timers to modify."
+        },
+        "timer_type": {
+          "type": "string",
+          "description": "The type of the timer, which must be `UPCOMING`, `PAUSED`, or `RUNNING`."
+        },
+        "duration": {
+          "type": "string",
+          "description": "The duration of the timer to modify."
+        },
+        "label": {
+          "type": "string",
+          "description": "The label of the timer to modify."
+        },
+        "state_operation": {
+          "type": "string",
+          "description": "The state change operation to perform, such as `resume`, `pause`, `reset`, `cancel`, or `delete`."
+        },
+        "bulk_operation": {
+          "type": "boolean",
+          "description": "Specifies whether to apply the state change to all timers."
+        }
+      }
+    }
+  },
+  {
+    "name": "create_alarm",
+    "description": "Creates a new alarm for a specific time or after a given duration.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Duration of the alarm. Format: \"<hours>h<minutes>m<seconds>s\", e.g., \"5h30m20s\", \"10m\", \"2m15s\", \"5h\", or \"45s\". Any combination of these units is allowed, but the total duration must be greater than 0 seconds."
+        },
+        "time": {
+          "type": "string",
+          "description": "The alarm time in 12-hour `H[:M[:S]]` format (e.g., \"11:20\")."
+        },
+        "date": {
+          "type": "string",
+          "description": "The scheduled date, formatted as `YYYY-MM-DD`."
+        },
+        "label": {
+          "type": "string",
+          "description": "A label for the alarm."
+        },
+        "recurrence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of one or more days for recurrence, such as `SUNDAY` or `MONDAY`."
+        }
+      }
+    }
+  },
+  {
+    "name": "create_clock",
+    "description": "Creates a new timer or alarm.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the clock component; must be `TIMER` or `ALARM`."
+        },
+        "duration": {
+          "type": "string",
+          "description": "Duration of the timer or alarm. Format: \"<hours>h<minutes>m<seconds>s\", e.g., \"5h30m20s\", \"10m\", \"2m15s\", \"5h\", or \"45s\". Any combination of these units is allowed, but the total duration must be greater than 0 seconds."
+        },
+        "time_of_day": {
+          "type": "string",
+          "description": "Time of day in strict HH:MM:SS format (e.g., '13:30:00', '01:00:00')."
+        },
+        "am_pm_or_unknown": {
+          "type": "string",
+          "description": "One of `AM`, `PM`, or `UNKNOWN`."
+        },
+        "date": {
+          "type": "string",
+          "description": "The scheduled date in `YYYY-MM-DD` format."
+        },
+        "label": {
+          "type": "string",
+          "description": "A descriptive label for the timer or alarm."
+        },
+        "recurrence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of strings specifying the recurrence pattern for the alarm."
+        }
+      },
+      "required": [
+        "type"
+      ]
+    }
+  },
+  {
+    "name": "create_timer",
+    "description": "Creates a new timer to go off after a given duration or at a specific time.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Duration of the timer. Format: \"<hours>h<minutes>m<seconds>s\", e.g., \"5h30m20s\", \"10m\", \"2m15s\", \"5h\", or \"45s\". Any combination of these units is allowed, but the total duration must be greater than 0 seconds."
+        },
+        "time": {
+          "type": "string",
+          "description": "Time of day for the timer to fire, in the 12-hour format `H[:M[:S]]`."
+        },
+        "label": {
+          "type": "string",
+          "description": "An optional, descriptive label for the timer."
+        }
+      }
+    }
+  },
+  {
+    "name": "modify_alarm",
+    "description": "Modify one or more existing alarms.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The time of day or label of the alarm to modify."
+        },
+        "alarm_type": {
+          "type": "string",
+          "description": "The type of alarm to modify."
+        },
+        "new_time_of_day": {
+          "type": "string",
+          "description": "The new time of the day in strict HH:MM:SS format (e.g., '13:30:00', '01:00:00')."
+        },
+        "new_am_pm_or_unknown": {
+          "type": "string",
+          "description": "The new period of the day: `AM`, `PM`, or `UNKNOWN`."
+        },
+        "new_label": {
+          "type": "string",
+          "description": "The alarm's new label."
+        },
+        "alarm_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of IDs for the alarms to be modified."
+        },
+        "duration_to_add": {
+          "type": "string",
+          "description": "Duration to add to the alarm."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the alarm to modify."
+        },
+        "new_date": {
+          "type": "string",
+          "description": "The new date for the alarm."
+        },
+        "new_recurrence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The new recurrence pattern for the alarm."
+        },
+        "bulk_operation": {
+          "type": "boolean",
+          "description": "Specifies whether to apply the modification to all alarms."
+        }
+      }
+    }
+  },
+  {
+    "name": "modify_alarm_v2",
+    "description": "Modifies the label, time, or state of one or more alarms.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "filters": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary of key-value pairs to identify the alarms to modify."
+        },
+        "modifications": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary of attributes to modify, such as `label`, `time`, `date`, `recurrence`, `duration_to_add`, or `state_operation`."
+        },
+        "bulk_operation": {
+          "type": "boolean",
+          "description": "Required to be `True` to modify multiple alarms when the provided `filters` match more than one."
+        }
+      }
+    }
+  },
+  {
+    "name": "modify_timer",
+    "description": "Modify a timer's duration or label.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The duration or label of the timer to modify."
+        },
+        "timer_type": {
+          "type": "string",
+          "description": "The type of timer to modify, which must be `UPCOMING`, `PAUSED`, or `RUNNING`."
+        },
+        "new_duration": {
+          "type": "string",
+          "description": "The new duration to set for the timer."
+        },
+        "duration_to_add": {
+          "type": "string",
+          "description": "Amount of time to add to the timer's current duration."
+        },
+        "new_label": {
+          "type": "string",
+          "description": "The new label for the timer."
+        },
+        "timer_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of timer IDs to modify."
+        },
+        "bulk_operation": {
+          "type": "boolean",
+          "description": "Specifies if the modification applies to all timers."
+        }
+      }
+    }
+  },
+  {
+    "name": "modify_timer_v2",
+    "description": "Modify a timer's or multiple timers' label, duration, or state.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "filters": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary of criteria for identifying the timers to modify."
+        },
+        "modifications": {
+          "type": "object",
+          "properties": {},
+          "description": "A dictionary of modifications to apply, where keys can be `label`, `duration`, `duration_to_add`, or `state_operation` (e.g., 'PAUSE', 'RESUME', 'DELETE')."
+        },
+        "bulk_operation": {
+          "type": "boolean",
+          "description": "When `true`, applies modifications to all timers matching the `filters`."
+        }
+      }
+    }
+  },
+  {
+    "name": "show_matching_alarms",
+    "description": "Retrieves alarms that match specified criteria.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The exact time or label of the alarm."
+        },
+        "alarm_type": {
+          "type": "string",
+          "description": "The type of alarm to show; can be `UPCOMING`, `DISABLED`, or `ACTIVE`."
+        },
+        "alarm_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of alarm IDs to retrieve."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date to show alarms for, formatted as `YYYY-MM-DD`."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "A filter for alarms scheduled to fire on or after this date, in `YYYY-MM-DD` format."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "Filters for alarms scheduled to fire on or before this date, formatted as `YYYY-MM-DD`."
+        }
+      }
+    }
+  },
+  {
+    "name": "show_matching_timers",
+    "description": "Retrieves and lists timers that match the specified filters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The duration, time of day, or label of the timer."
+        },
+        "timer_type": {
+          "type": "string",
+          "description": "Filters timers by type: `UPCOMING`, `PAUSED`, or `RUNNING`."
+        },
+        "timer_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of timer IDs to show."
+        }
+      }
+    }
+  },
+  {
+    "name": "show_stopwatch",
+    "description": "Shows the current state of the stopwatch.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "snooze",
+    "description": "Snooze any currently firing alarms.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string",
+          "description": "The time to snooze until in 12-hour `H[:M[:S]]` format."
+        },
+        "duration": {
+          "type": "integer",
+          "description": "The number of seconds to snooze the alarm."
+        }
+      }
+    }
+  },
+  {
+    "name": "snooze_alarm",
+    "description": "Snooze an alarm that has fired.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "snooze_duration": {
+          "type": "string",
+          "description": "The snooze duration in seconds, provided as a string."
+        },
+        "snooze_till_time_of_day": {
+          "type": "string",
+          "description": "The time of day to snooze the alarm until in strict HH:MM:SS format (e.g., '13:30:00', '01:00:00')."
+        },
+        "am_pm_or_unknown": {
+          "type": "string",
+          "description": "Specifies the period of the day, which must be `AM`, `PM`, or `UNKNOWN`."
+        }
+      }
+    }
+  },
+  {
+    "name": "start_stopwatch",
+    "description": "Starts or resumes the stopwatch.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+]

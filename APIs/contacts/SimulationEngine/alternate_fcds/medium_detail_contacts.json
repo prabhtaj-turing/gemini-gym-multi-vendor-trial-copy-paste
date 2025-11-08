@@ -1,0 +1,181 @@
+[
+  {
+    "name": "create_contact",
+    "description": "Creates a new contact in Google Contacts using personal details. A `given_name` is required, along with at least one additional detail: `family_name`, `email`, or `phone`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "given_name": {
+          "type": "string",
+          "description": "The first name of the contact. This value must be a non-empty string."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "The last name of the contact."
+        },
+        "email": {
+          "type": "string",
+          "description": "The contact's email address. This address must be unique and formatted correctly."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The contact's phone number."
+        }
+      },
+      "required": [
+        "given_name"
+      ]
+    }
+  },
+  {
+    "name": "delete_contact",
+    "description": "Deletes a contact from your Google Contacts using its specified resource name. Directory contacts and 'otherContacts' cannot be deleted with this method.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The resource name of the contact to delete, which must be formatted as `people/*`."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  },
+  {
+    "name": "get_contact",
+    "description": "Retrieves detailed information for a specific contact, identified by either their resource name (`people/*`) or email address.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "The contact's unique identifier, provided as either a resource name formatted as `people/*` or an email address."
+        }
+      },
+      "required": [
+        "identifier"
+      ]
+    }
+  },
+  {
+    "name": "get_other_contacts",
+    "description": "Retrieves contacts from the \"Other contacts\" section, which contains people you have interacted with but have not explicitly added to your contacts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "max_results": {
+          "type": "integer",
+          "description": "The maximum number of results to return, which must be a positive integer. Defaults to 50."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_contacts",
+    "description": "Lists all Google contacts, or filters the list to return only contacts that match a specified name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name_filter": {
+          "type": "string",
+          "description": "A string used to filter contacts by name. If this parameter is omitted, all contacts are returned."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "The maximum number of contacts to return, which must be a positive integer. Defaults to 100 if not specified."
+        }
+      }
+    }
+  },
+  {
+    "name": "list_workspace_users",
+    "description": "Lists Google Workspace users from the organization's directory. Allows for filtering results with a search query and controlling the number of users returned.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A search term for finding specific users by their name, email address, or phone number."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "The maximum number of results to return. This value must be a positive integer and defaults to 50."
+        }
+      }
+    }
+  },
+  {
+    "name": "search_contacts",
+    "description": "Searches for contacts by matching a query against their name, email, or phone number. The number of results returned can be limited.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A search term to find contacts by matching against their names, emails, and phone numbers."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "The maximum number of results to return, which must be a positive integer. If this parameter is not specified, it defaults to 10."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "search_directory",
+    "description": "Searches for people in your organization's Google Workspace directory. The search can be targeted by a person's name, email address, or phone number.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The query for searching directory members by name, email, or phone number."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "The maximum number of results to return, which defaults to 20."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "update_contact",
+    "description": "Updates an existing contact with new information. An update requires that at least one optional parameter is provided.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resource_name": {
+          "type": "string",
+          "description": "The unique resource name that identifies the contact. It must be formatted as `people/*`, where `*` represents the contact's specific ID."
+        },
+        "given_name": {
+          "type": "string",
+          "description": "The updated first name for the contact."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "The updated last name for the contact."
+        },
+        "email": {
+          "type": "string",
+          "description": "The new email address for the contact. This value will update the contact's primary email address."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The contact's new phone number. This value updates the primary phone number; if no primary number exists, it updates the first phone number on record."
+        }
+      },
+      "required": [
+        "resource_name"
+      ]
+    }
+  }
+]

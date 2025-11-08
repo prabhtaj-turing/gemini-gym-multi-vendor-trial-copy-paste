@@ -1,0 +1,1047 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:58.004648Z",
+  "results": {
+    "confluence/ContentAPI.py": {
+      "functions": {
+        "create_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It correctly identifies required and optional fields within the `body` dictionary and describes their types. The nested structure of the `version` and `body` dictionaries within the `body` argument is also well-documented.  Default values for several parameters are clearly stated. The `Returns` section accurately reflects the structure of the returned dictionary. The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`ContentInputModel`) to validate the `body` dictionary, which contains all the functional input parameters.  The `model_validate` method is used to perform the validation.  This approach ensures that the input data conforms to the expected structure and types before the core logic of the function is executed.  No other input validation methods are necessary because Pydantic handles it comprehensively."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic's `ContentInputModel.model_validate(body)` to comprehensively validate the `body` dictionary.  This handles type validation, value validation (including format checks for `postingDay`), and null/empty checks for all required fields.  The `check_comment_ancestors` validator (not shown but referenced) further ensures that if the content type is 'comment', the `ancestors` field is present and not empty.  The code then explicitly checks for the existence of parent content based on the validated `ancestors` data.  Appropriate exceptions (`ValidationError`, `ParentContentNotFoundError`) are raised for invalid inputs with informative error messages.  All functional input parameters are indirectly validated through the Pydantic model."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_content` has excellent parameter design.  The single parameter `body` is correctly type-annotated as `Dict[str, Any]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  Complex types within the `body` dictionary are described in the docstring, although ideally, a Pydantic model would be used for more robust type checking and validation (as is done in the provided code).  The docstring clearly explains the expected structure and types of the dictionary."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of content items, handling both basic content and comments with ancestor relationships.  All functional input parameters from the `body` dictionary are used.  The documented exceptions (`pydantic.ValidationError`, `MissingCommentAncestorsError`, `ParentContentNotFoundError`) are all properly handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  The function correctly handles the cascading update of ancestors and descendants for comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_content` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on creating and managing content items within a database, dealing with fields like `type`, `title`, `spaceKey`, and versioning.  There's no input field or logic related to phone numbers or email addresses."
+          }
+        },
+        "get_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the return dictionary is comprehensive, detailing the structure and types of nested dictionaries. Default values are correctly mentioned.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `id` and `status` parameters.  It checks the type and, for `id`, also checks for emptiness.  While Pydantic could provide a more concise and potentially more feature-rich validation approach (e.g., handling more complex validation rules or providing more informative error messages), the existing manual validation is sufficient and covers all functional input parameters.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id` and `status`) are properly type-annotated with their expected types (str and Optional[str], respectively).  The return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types like `Optional` and `Dict` are correctly used in type annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles the `id` and `status` parameters, raising the appropriate exceptions when necessary. The logic for retrieving content from the `DB` and checking the status is implemented correctly.  However, the function's `else` block immediately returns the `content` without any further processing or validation.  While this works, it could be improved by adding a check to ensure the returned dictionary has the structure specified in the docstring.  The docstring specifies a particular structure for the returned dictionary, but the function doesn't explicitly validate that the `content` retrieved from the database conforms to this structure.  Adding a check to ensure all the required keys (id, type, title, spaceKey, status, version, body, ancestors, postingDay) are present and of the correct type would make the function more robust."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content` does not handle phone numbers or email addresses as input.  Its inputs are an ID (string) and an optional status (string). Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and validating content based on its ID and optional status from a database."
+          }
+        },
+        "update_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's core functionality: updating existing content, handling versioning, and special cases like restoring trashed pages and deleting drafts.  The Args and Returns sections are well-structured and mostly accurate, specifying types and providing descriptions of parameters and return values.  The Raises section correctly lists potential exceptions.  The documentation of the `body` dictionary is detailed, covering optional fields and nested structures like the `space` object."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`UpdateContentBodyInputModel`) to validate the `body` parameter.  However, it performs separate type checking on the `id` parameter. While the type checking on `id` is good,  integrating it into the Pydantic model would provide a more consistent and potentially more maintainable approach to input validation.  All functional parameters should be validated within the Pydantic model for better structure and readability."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on both `id` (string) and `body` (dictionary) using `isinstance`.  It leverages `UpdateContentBodyInputModel` (presumably a Pydantic model) for further validation of the `body` dictionary's structure and data types of its fields (title, status, body, space, ancestors). This handles value validation and special constraints implicitly defined within the Pydantic model.  However, there's no explicit null/empty checks for `id` or individual fields within the `body` dictionary.  While the Pydantic model likely handles some of these implicitly (e.g., preventing empty strings for required fields), explicit checks would improve robustness.  Error handling is good, raising `TypeError` for incorrect types and propagating `ValidationError` from Pydantic and `ValueError` from the database interaction.  All functional input parameters (`id` and `body`) receive some form of validation, making the overall validation \"Good\" but not \"Comprehensive\" due to the lack of explicit null/empty checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters `id` and `body` are properly type-annotated with `str` and `Dict[str, Any]` respectively.  The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function does not fully implement the special behaviors described in the docstring.  While it handles updating the status to \"current\" for restoring trashed content, it lacks the logic for deleting a draft (`query_status=\"draft\"`). The docstring specifies that in this case, the draft should be removed and the content's body replaced.  The current implementation only handles updating the status and other fields if provided, but doesn't specifically address draft deletion.  The `body` parameter is used, but the special handling for draft deletion is missing.  The function also doesn't increment the version number automatically as promised in the docstring; it only updates the version if the status is changed.  The `validated_body_model` is used for validation but the actual version update logic is missing.  Finally, the return value always includes the entire `content` dictionary, while the docstring mentions that \"Other metadata from the original content may also be present,\" suggesting that a subset of the original content might be returned in some cases.  This lack of explicit version management and incomplete handling of draft deletion prevents the function from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_content` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on updating content items based on a provided ID and a dictionary of updates, dealing with fields like title, status, and body, but none of these fields are explicitly defined as email addresses or phone numbers.  No input sanitization or validation related to these data types is present."
+          }
+        },
+        "delete_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the three main scenarios for content deletion (soft delete, hard delete with confirmation, and immediate hard delete). The description of how the function simulates deletion within the context of an MCP server is helpful.  Default values are mentioned and explained. The Args, Returns, and Raises sections are present and generally accurate. Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking to validate the `id` and `status` parameters.  While Pydantic could be used, the manual checks are sufficient and correctly handle the required validation.  Using Pydantic would add complexity without significant benefit in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its functional input parameters.  The `id` parameter is checked to ensure it's a string using `isinstance`. The `status` parameter is checked to ensure it's either None or a string, also using `isinstance`.  Both checks raise `TypeError` with informative messages if the types are incorrect. While there's no explicit check for empty strings in `id`, the subsequent lookup in `DB[\"contents\"].get(id)` will implicitly handle this case (returning None, which is then checked).  The code also implicitly validates that the `id` exists in the database by checking if `content` is not None.  All functional input parameters are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All parameters (`id` and `status`) are properly type-annotated with their expected types (str and Optional[str], respectively). The return type is clearly specified as `None`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements the described logic correctly and handles the specified exceptions.  However, there's a redundancy. The `elif status == \"trashed\"` condition is unnecessary because the preceding `elif current_status_in_db == \"trashed\" and status == \"trashed\"` already covers that scenario.  The `else: pass` is also unnecessary and could be removed for better readability.  The logic is functional, but this redundancy makes the implementation slightly less efficient and harder to read than it could be."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_content` does not handle phone numbers or email addresses as input.  Its inputs are an `id` (string) and an optional `status` (string), neither of which are related to phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "search_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's search capabilities using CQL, including supported operators and fields. Default values for `start` and `limit` are correctly mentioned.  The `Args` and `Returns` sections are well-structured, and types are specified for parameters and return values.  The documentation of the dictionary structure in the `Returns` section is quite detailed, although it could benefit from explicitly mentioning that `body` and `ancestors` are optional.  The `Raises` section correctly lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and range validation for the `cql`, `start`, and `limit` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is sufficient and correctly handles the required checks.  The use of `isinstance` for type checking and explicit checks for negative values for `start` and `limit` cover all necessary input validation for the functional parameters.  Using Pydantic would not significantly improve this specific validation, though it could be beneficial for more complex validation scenarios or larger models."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`cql`, `start`, `limit`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`cql`, `start`, `limit`) are properly type-annotated with their expected types (`str`, `int`, `int` respectively).  The function's return type is clearly specified as `List[Dict[str, Any]]`.  No `**kwargs` parameters are used.  Complex types like `List` and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly handles input validation for `cql`, `start`, and `limit`, raising the appropriate exceptions. The pagination logic is implemented correctly. The core functionality of searching and filtering based on a CQL query is present, although the CQL parsing is simplified and might not handle all possible CQL queries as described in the docstring (it doesn't support free text search, for example). The regex for tokenization has been improved to handle single and double quotes correctly.  The return type and structure match the docstring. However, the `_evaluate_cql_tree` function is not provided, so a complete evaluation of the CQL processing is impossible.  The assumption is made that this function correctly evaluates the tokenized CQL against the content items.  Without seeing the implementation of `_evaluate_cql_tree`, it's impossible to be certain that all CQL features are supported as documented.  If `_evaluate_cql_tree` has limitations, the overall functionality would be less complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code is a search function using Confluence Query Language (CQL).  It does not handle or process phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on querying and filtering content based on a CQL string, pagination parameters, and a database (DB).  There's no input field or processing logic related to phone numbers or emails."
+          }
+        },
+        "get_content_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, parameters, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks types, ranges, and allowed values. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is comprehensive and effective.  The use of Pydantic would not significantly improve the validation in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters are validated for type and value.  `type`, `spaceKey`, `title`, `status`, `postingDay`, and `expand` are checked for correct data types (string or None where applicable). `start` and `limit` are checked to be integers.  Value validation includes checking `status` against a list of allowed values, `postingDay` against a date format, `expand` against a set of allowed fields, and `start` and `limit` for non-negative values.  The function also correctly handles the case where `title` is required when `type` is \"page\" (although this is implicitly handled in the filtering logic, not explicitly raised as an exception if `title` is missing).  All checks raise appropriate exceptions with informative error messages.  The validation is thorough and covers all aspects of the functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the specification of complex types like List and Dict.  The return type is also clearly specified as List[Dict[str, Any]]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements its documented functionality.  All functional input parameters (`type`, `spaceKey`, `title`, `status`, `postingDay`, `expand`, `start`, `limit`) are used appropriately in the filtering and pagination logic.  All documented exceptions (`TypeError`, `InvalidParameterValueError`, `MissingTitleForPageError`, `ValueError`) are handled. There are no TODO comments, pass statements, or placeholder implementations. The docstring accurately reflects the function's behavior, including return types and exception handling.  The logic is complete and functional given the use of the global `DB` dictionary. The `expand` functionality, including handling of potential errors from `get_content_history`, is implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_list` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses on filtering and paginating content from a database based on various parameters like content type, space key, title, status, and posting day.  There's no input field designed for or processing phone numbers or email addresses."
+          }
+        },
+        "get_content_history": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly mentions the `id` and `expand` parameters, including their types and default value for `expand`. The `Args` and `Returns` sections are present and generally well-structured.  The `Raises` section correctly identifies the `ValueError`.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`id: str`, `expand: Optional[str] = None`) for input validation.  While Pydantic could provide more robust validation (e.g., checking the format of the `id` or the content of `expand`), the current type hints offer basic input validation sufficient for this function's simple needs.  Adding Pydantic would be an improvement for more complex validation scenarios, but it's not strictly needed here."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `id` parameter by declaring it as a string (`id: str`).  It also includes a null/empty check for the `id` parameter by checking if `content = DB[\"contents\"].get(id)` returns None.  If the content is not found, a ValueError is raised with a clear message. However, there's no validation on the `expand` parameter. While it's optional,  no checks are performed to ensure that if provided, it's a comma-separated string of valid field names.  Therefore, the validation is partial.  The `id` parameter has type and null checks, but the `expand` parameter lacks any validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id` and `expand`) are properly type-annotated with their expected types (`str` and `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types like `Optional` and `Dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function does not implement the core functionality described in its docstring.  While it correctly raises a ValueError if the content is not found, it does not retrieve a content history. Instead, it returns a mock dictionary that does not contain the \"results\" list of historical records as specified.  The `expand` parameter is also unused, which is a functional parameter that should be used if the function were to fully implement its intended behavior. The returned dictionary also lacks the expected structure (e.g., `results` list, correct `latest` structure).  The docstring promises a more complex return structure than what is actually implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `get_content_history` function does not handle any phone number or email address inputs.  Its parameters and functionality are focused solely on retrieving and formatting content history data based on a content ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_children": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving child content grouped by type, which is helpful for an MCP server managing content hierarchies.  Default values for `expand` and `parentVersion` are correctly documented, along with explanations acknowledging their unused status in the current simulation.  The `Args` and `Returns` sections are well-structured, and types are specified for all parameters and the return value.  The documentation of the nested dictionary structure within the return value is thorough and helpful. The `Raises` section correctly identifies the `ValueError` exception."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Optional[str]`, `int`) for its functional parameters (`id`, `expand`, `parentVersion`).  While this provides basic type checking, it doesn't offer the rich validation capabilities of Pydantic models (e.g., string length constraints, regular expressions, complex data structure validation).  However, given the simplicity of the input parameters and the fact that more robust validation isn't strictly necessary for the function's core logic (the primary validation happens on the data retrieved from the `DB`), using Pydantic would be an unnecessary overhead.  The existing type hints are sufficient for this specific function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `id` parameter by implicitly expecting a string (due to the `get` method on the `DB[\"contents\"]` dictionary).  It also includes a null check for the `id` parameter by checking if `content` is truthy after retrieving it from the database.  However, there's no validation for the `parentVersion` parameter beyond implicit type checking (it's an integer).  No validation is performed on the `expand` parameter, which is optional but could potentially contain unexpected values if it were to be used in a future version of the function.  While the function handles the case where the content with the given `id` is not found, it doesn't validate the format or content of the `id` itself (e.g., length restrictions, allowed characters).  Therefore, the validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `expand`, `parentVersion`) are properly type-annotated with their expected types (str, Optional[str], int, respectively).  The return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`. The function does not use `**kwargs`.  All complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves children based on their type and handles the case where a parent content is not found.  The `expand` and `parentVersion` parameters are not used, which is acceptable given the context that they are MCP parameters for contextual information.  The logic is functional within the constraints of the global `DB` dictionary. However, there's a minor gap: the code lacks robust handling of unexpected content types in the `children` list.  While it currently ignores them, a more robust solution might involve logging the unexpected type or raising a more specific exception.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_children` does not handle any phone number or email address inputs.  Its purpose is to retrieve and organize child content items based on a parent content ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_children_of_type": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose and parameters.  It accurately describes the function's role in retrieving child content of a specific type, including pagination. Default values for all parameters are correctly documented.  The `Args` and `Returns` sections are well-structured, and the `Raises` section correctly identifies the `ValueError`.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for its functional parameters.  `id` and `child_type` are used directly without any checks to ensure they are of the correct type or meet specific criteria (e.g., `id` being a valid UUID or `child_type` being from a predefined set). `start` and `limit` could benefit from checks to prevent negative values or values that could lead to out-of-bounds errors.  Using Pydantic models would significantly improve the robustness of the function by providing type checking and data validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through type hints (`id: str`, `child_type: str`, `parentVersion: int`, `start: int`, `limit: int`).  However, it lacks explicit value validation.  `id` is checked for existence in the DB, but there's no validation of the format or content of `id` itself, nor is there validation of `child_type` to ensure it's one of the expected types (\"page\", \"blogpost\", \"comment\", \"attachment\").  `start` and `limit` are used for pagination, and while they have default values, there's no check to ensure `start` is non-negative or that `limit` is within a reasonable range (e.g., to prevent excessively large queries).  Therefore, validation is partial, covering type hints but missing crucial value and range checks for several functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `child_type`, `expand`, `parentVersion`, `start`, `limit`) are properly type-annotated with their expected types.  The return type `List[Dict[str, any]]` is also clearly specified. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves children of a specified type from the global `DB` and handles the case where the parent content is not found.  The `expand` and `parentVersion` parameters are not used, but as noted in the problem description, these are MCP contextual parameters and are therefore exempt from the requirement that all functional parameters be used. The pagination using `start` and `limit` is implemented correctly.  The return type and structure match the docstring. However, the variable name `comments` is misleading; it suggests that only comments are being returned, while the function actually returns children of any specified type.  Renaming this variable to something more general (e.g., `filtered_children`) would improve clarity."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_children_of_type` does not handle any phone number or email address inputs.  Its purpose is to retrieve child content items from a database based on a parent ID and content type.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_comments": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's role in retrieving comments associated with content.  All parameters, including their default values and types, are documented. The `Returns` section correctly specifies the type as `List[Dict[str, any]]`.  However, the documentation of the dictionary structure within the list is overly simplistic with `Dict[str, any]`.  It should list the expected keys and their types (e.g., `id: str`, `type: str`, etc.) for better clarity and maintainability.  The `Raises` section correctly identifies the `ValueError`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints for input parameters (`id: str`, `parentVersion: int`, `start: int`, `limit: int`) which provides basic type checking.  While this is not as robust as Pydantic models, it's sufficient given the simplicity of the input parameters and the fact that the function's primary logic relies on the `DB` lookup.  Adding Pydantic models would add complexity without significantly improving the robustness of the input validation in this specific case.  The `start` and `limit` parameters could benefit from range checks (e.g., ensuring `limit` is positive and `start` is non-negative), but this is a minor enhancement.  The other parameters are strings or optional, and the type hints provide adequate validation for this function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `id` (implicitly through its use in `DB[\"contents\"].get(id)`, which expects a string key), `start`, and `limit` (implicitly through their use as indices).  It also implicitly validates `start` and `limit` to ensure they are non-negative (because negative indices are not allowed).  However, it lacks explicit type checking for these parameters.  No value validation is performed on `start` and `limit` to prevent values that would lead to out-of-bounds access or excessively large result sets.  Furthermore, there's no validation for `id` to ensure it's a valid content ID (e.g., checking its format or existence in the DB before attempting to access it).  The `expand`, `parentVersion`, `location`, and `depth` parameters are not used and therefore not validated, which is acceptable given their description.  The error handling is good, raising a `ValueError` if the content is not found.  Overall, validation is partial due to the missing explicit type checks and the lack of value range checks for `start` and `limit`, and the absence of any validation for the existence of `id` in the database."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], int, Optional[int]). The function's return type is clearly specified as List[Dict[str, any]].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves comments from the `DB[\"contents\"]` based on the provided `id`, handles the case where the content is not found by raising a `ValueError`, and implements pagination using `start` and `limit`.  The docstring accurately describes the function's behavior and return type. However, the `expand`, `parentVersion`, `location`, and `depth` parameters are not used in the function's logic, even though they are functional parameters (not MCP contextual parameters).  These parameters should either be removed or their functionality implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_comments` does not handle any phone number or email address inputs.  Its purpose is to retrieve comments associated with a content ID from a database (presumably represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_attachments": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  It accurately lists and describes all parameters, including their default values and types. The `Returns` section correctly specifies the type as `List[Dict[str, any]]` and attempts to describe the structure of the dictionary.  The `Raises` section correctly identifies the `ValueError` exception.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation.  While type hints are present in the function signature, these are only for static analysis and do not perform runtime validation.  Functional parameters (`id`, `start`, `limit`, `filename`, `mediaType`) could benefit from Pydantic models to ensure data types and potential constraints (e.g., `limit` being a positive integer) are enforced before the function executes.  Using Pydantic would improve the robustness of the function by handling invalid inputs gracefully."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function performs minimal input validation.  `id` is checked for type (str), but there's no validation for its content (e.g., empty string, valid format).  `start` and `limit` are checked for type (int), but there's no validation of their values (e.g., `start` should not be negative, `limit` should not be excessively large).  `filename` and `mediaType` have type checking but lack checks for empty strings or other invalid values.  No validation is performed on the content of the `id` parameter, which is crucial for database lookup.  There are no checks for special constraints or domain-specific rules.  While type checking is present for some parameters, the lack of value and content validation makes the overall validation minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (id, expand, start, limit, filename, mediaType) are properly type-annotated with their expected types.  The return type is clearly specified as `List[Dict[str, any]]`. The function does not use `**kwargs`.  All complex types are properly specified using `Optional` and `List`."
+          },
+          "implementation_status": {
+            "status": "Stub",
+            "notes": "The function returns an empty list regardless of input.  It does not interact with a global `DB` (which is expected) to retrieve and filter attachments based on the provided `id`, `filename`, and `mediaType` parameters.  These parameters are therefore unused.  The function lacks the core logic to fetch and filter attachments, making it a stub implementation.  While the docstring correctly describes the intended behavior and return type, the implementation does not match."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_attachments` does not handle any phone number or email address inputs.  Its parameters and functionality are solely focused on retrieving content attachments based on an ID and various filters. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_attachments": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and generally well-written. It accurately describes the function's purpose, arguments, and the `ValueError` exception.  Default values for optional parameters are correctly specified.  The types for parameters and return values are included."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Any`, `Optional[str]`, `bool`) for the functional parameters (`id`, `file`, `comment`, `minorEdit`).  While this provides some basic type checking, it doesn't perform comprehensive validation. For example, it doesn't check the content of the `id` string or the type and content of the `file` object beyond it being any type.  Pydantic models could enhance validation by adding constraints (e.g., `id` must be a UUID, `file` must be a specific file type). However, the existing type hints and the check for the existence of the content in the DB provide a basic level of validation sufficient for this mock database scenario.  More robust validation would be needed for a production environment."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking for `id` (implicitly through type hinting) and `minorEdit` (implicitly through type hinting).  It also includes a check for the existence of the content based on the provided `id`. However, it lacks validation for the `file` parameter.  No checks are performed to ensure that `file` is a valid file object or that it contains data.  While the `comment` parameter is optional, it could benefit from length checks or checks for disallowed characters.  Therefore, validation is only partially implemented.  The existence check on `id` is a value check, but further validation of `id`'s format or content might be beneficial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `file`, `comment`, `minorEdit`) are properly type-annotated with their expected types (str, Any, Optional[str], bool respectively). The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of creating an attachment and raising the `ValueError` exception as documented.  The `id`, `file`, `comment`, and `minorEdit` parameters are all used appropriately. However, the `attachmentId` is hardcoded to \"1\".  A more robust implementation would generate a unique ID, perhaps using a UUID library or incrementing a counter within the DB.  The `file` parameter's usage relies on the `file` object having a `name` attribute, which might not always be the case; more robust handling of this scenario would improve the function.  While functional, these limitations prevent it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_attachments` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with file attachments and content IDs, which are unrelated to the specified input types."
+          }
+        },
+        "update_attachment": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  The Args, Returns, and Raises sections are present and accurately reflect the function's parameters, return value, and exception handling.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation. While it performs a check for the existence of the content in the DB, it lacks validation for the `id`, `attachmentId`, and `body` parameters themselves.  For example, it doesn't check if `id` and `attachmentId` are strings of a certain format or length, or if `body` is a properly formatted dictionary containing expected keys and data types. Using Pydantic models would significantly improve input validation by providing type checking, data constraints, and automatic error handling."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `id`, `attachmentId`, and `body` implicitly through type hinting.  However, it lacks crucial value validation.  `id` and `attachmentId` are checked for existence in the `DB`, but no validation is performed on the content of `body`.  There's no check for empty strings or other invalid values in `id` or `attachmentId`, nor are there checks for the structure or content of the `body` dictionary.  While the function raises a `ValueError` if the content is not found, it does not handle potential issues with malformed or invalid data within the `body` dictionary.  Therefore, validation is only partially implemented."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `attachmentId`, `body`) are properly type-annotated with their expected types (str, str, Dict[str, Any] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameter is used.  Complex types (Dict) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function correctly handles the `id` parameter to check for the existence of the content in the DB.  However, the `attachmentId` parameter is not used beyond being returned in the output.  The function does not actually update any attachment metadata; it simply returns the provided `body` as `updatedFields`.  The docstring states that it updates attachment metadata, which is not what the implementation does.  The implementation is missing the logic to actually update the attachment within the `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_attachment` does not handle phone numbers or email addresses as input.  Its purpose is to update attachment metadata using a dictionary `body`, which may contain various data types, but the function itself doesn't perform any specific processing or validation on those data types.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_attachment_data": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  It accurately documents the arguments, including their types and default values (comment and minorEdit). The `Returns` section correctly specifies the return type as `Dict[str, Any]` and lists the keys.  The `Raises` section correctly identifies the `ValueError`.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the functional parameters `id`, `attachmentId`, and `file`.  While `id` and `attachmentId` are type hinted as strings, there's no check to ensure they are non-empty or meet specific format requirements. The `file` parameter is of type `Any`, which provides no validation whatsoever.  Using Pydantic models would significantly improve the robustness of this function by enforcing data types and potentially adding constraints like minimum length or allowed characters for the identifiers and validating the `file` object to ensure it's a file-like object."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking implicitly through type hints (e.g., `id: str`, `minorEdit: bool`), but lacks explicit value validation for any of the functional parameters.  `id` and `attachmentId` are checked for existence in the DB, but this is more of a lookup operation than validation of the input itself.  There's no check for empty strings in `id` or `attachmentId`, nor are there checks on the `file` object beyond accessing its `.name` attribute (which could fail if the object doesn't have this attribute).  No validation is performed on the `comment` parameter.  Therefore, while type hints provide some level of validation, crucial value and null/empty checks are missing for all functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `attachmentId`, `file`, `comment`, `minorEdit`) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the basic functionality of retrieving content from the DB and returning a dictionary with the specified keys.  The `id` and `attachmentId` parameters are used correctly. The exception handling for a missing content is also implemented. However, the function does not actually *update* any attachment data; it only constructs a dictionary based on the input.  The `file` parameter is used only to extract the filename; the actual file data is not processed or updated in the DB.  The function's name and docstring suggest a data update, which is not performed.  Therefore, while the core logic of constructing the return dictionary is complete, the core functionality of updating the attachment is missing."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_attachment_data` does not handle any phone number or email address inputs.  Its purpose is to update attachment data within a system, taking a file object and other metadata as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_descendants": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including default values, and the return type. The `Raises` section correctly identifies the `ValueError`.  The description of the dictionary structure in the Returns section is detailed and helpful, covering all key-value pairs and their types.  The docstring correctly notes that the `expand` parameter is not used."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Optional[str]`, `int`) for its functional parameters (`id`, `expand`, `start`, `limit`).  While not as robust as Pydantic models, these type hints provide basic type checking.  The `start` and `limit` parameters implicitly have further validation through their use in list slicing (`descendants[content_type][start : start + limit]`). Negative values for `start` or `limit` will not cause errors but will result in empty lists being returned, which is a reasonable outcome.  Using Pydantic would add more sophisticated validation (e.g., ensuring `limit` is within a reasonable range), but the existing checks are sufficient for the basic functionality.  No validation is needed for `expand` as it's not used functionally."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `id` parameter (it's explicitly typed as `str`), and value validation on `start` and `limit` (implicitly, by using them as indices).  It also implicitly handles the case where `expand` is None. However, it lacks explicit checks for negative values of `start` and `limit`, and doesn't validate that `id` is not an empty string.  While `id` is checked for existence in the DB, this is not strictly input validation; it's a check for data existence.  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `expand`, `start`, `limit`) are properly type-annotated with their expected types.  The return type is clearly specified as `Dict[str, List[Dict[str, any]]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of retrieving descendants, grouping them by type, and applying pagination.  The `id` parameter is used correctly to fetch the parent content from the DB. The `start` and `limit` parameters are used for pagination. The `ValueError` exception is correctly raised when the parent content is not found.  The `expand` parameter, however, is not used.  While this is not necessarily an error (as noted in the problem description, it may be an MCP parameter), its presence suggests potential incompleteness.  The function could be improved by either using the `expand` parameter to include additional fields or removing it from the function signature if it's truly unused."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_descendants` does not handle any phone number or email address inputs.  Its purpose is to retrieve and organize content data from a database based on a content ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_descendants_of_type": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values for `start` and `limit`, and their types. The `Returns` section correctly specifies the type and provides a detailed description of the structure of the returned dictionary, including optional fields. The `Raises` section correctly identifies the `ValueError` exception.  Types are specified for all parameters and return values.  The documentation of the dictionary structure in the return value is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Optional[str]`, `int`) for input parameters `id`, `type`, `expand`, `start`, and `limit`.  While not as robust as Pydantic models, these type hints provide basic type checking.  Python will raise a `TypeError` if the types are incorrect.  Furthermore, `start` and `limit` are implicitly validated by their use in list slicing; negative values or values exceeding the list length will not cause errors but will result in an empty list or a truncated result, which is acceptable behavior for pagination.  While Pydantic could provide more sophisticated validation (e.g., ensuring `limit` is within a reasonable range, or checking the format of `id` or `type`), the existing type hints and implicit validation through list slicing are sufficient for this function's needs.  Adding Pydantic would add complexity without significant benefit given the simplicity of the validation requirements."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `id` (str), `type` (str), `start` (int), and `limit` (int) implicitly through type hints.  However, it lacks value validation.  `id` should be checked for existence in the database before use (which it does, but this is a check for existence, not value validation). `type` should be checked against a whitelist of allowed content types. `start` and `limit` should be checked for non-negative values and potentially for reasonable upper bounds to prevent excessive resource consumption (e.g., `limit` should not be excessively large).  No explicit null or empty checks are performed on `id` or `type`, although the check for `parent` implicitly handles a missing `id`.  There is no validation of `expand`, but this is not a functional parameter.  The error handling is good for the `id` not found case.  Overall, the validation is partial due to the missing value checks on `type`, `start`, and `limit`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `type`, `expand`, `start`, `limit`) are properly type-annotated with their expected types.  The return type is clearly specified as `List[Dict[str, any]]`.  The function does not use `**kwargs`.  Complex types like `Optional[str]` and `List[Dict[str, any]]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves descendants of a specified type from the global `DB` and applies pagination using `start` and `limit`.  The `id` and `type` parameters are used correctly. The `ValueError` exception is raised appropriately if the parent content is not found.  However, the `expand` parameter is not used, which is a minor gap.  The function's logic is complete and functional given the use of the `_collect_descendants` function (which is assumed to be correctly implemented elsewhere). The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_descendants_of_type` does not handle any phone number or email address inputs.  Its purpose is to retrieve descendant content items from a database based on a given ID and type.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_labels": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core logic: retrieving content labels, applying a prefix filter, and pagination. Default values for `prefix`, `start`, and `limit` are correctly specified.  The `Args` section adequately documents the parameters, including types and descriptions. The `Returns` section correctly specifies the list type, but the description of the dictionary structure within the list is slightly lacking; it only mentions the `label` key without specifying its type (which is a string).  The `Raises` section accurately lists the potential exceptions and their conditions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation with `isinstance` checks and explicit comparisons to validate the `id`, `prefix`, `start`, and `limit` parameters.  While Pydantic could provide a more concise and potentially more feature-rich validation approach (e.g., custom validation rules, automatic error messages), the existing manual validation is comprehensive and correctly handles all functional input parameters.  Therefore, Pydantic is not strictly needed for this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters (`id`, `prefix`, `start`, `limit`).  Type validation is performed for all four using `isinstance`.  Value validation is also present: `start` is checked to be non-negative, and `limit` is checked to be positive.  The `id` parameter, while not explicitly checked for emptiness, will implicitly fail if it's not found in the `DB`, resulting in a `ValueError`.  The `prefix` parameter correctly handles the `None` case.  All validation failures raise appropriate `TypeError` or `ValueError` exceptions with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `prefix`, `start`, `limit`) are properly type-annotated with their expected types (str, Optional[str], int, int respectively).  The return type is also clearly specified as `List[Dict[str, Any]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the described functionality.  All functional input parameters (`id`, `prefix`, `start`, `limit`) are used appropriately in the filtering and pagination logic.  All documented exceptions (`TypeError`, `ValueError`) are handled correctly. There are no placeholders, TODO comments, or pass statements. The docstring accurately reflects the function's behavior, including the return type and the format of the returned list.  The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_labels` does not handle phone numbers or email addresses as input.  Its parameters are `id` (string), `prefix` (optional string), `start` (integer), and `limit` (integer).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and filtering a list of content labels from a database, based on the provided ID and optional prefix.  Its input validation is well-implemented for the parameters it *does* use."
+          }
+        },
+        "add_content_labels": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's core logic: adding labels to a content item, handling the case where no labels exist yet, and avoiding duplicate labels. The Args, Returns, and Raises sections are present and generally accurate.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for the `id` and `labels` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all aspects of the input validation requirements for the functional parameters.  Using Pydantic would add unnecessary complexity for this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its two functional input parameters, `id` and `labels`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id` and `labels`) are properly type-annotated with their expected types (`str` and `List[str]`, respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No `**kwargs` parameters are used.  Complex types are properly specified using `List` and `Dict`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It performs input validation on both `id` and `labels`, raises appropriate exceptions (`TypeError` and `ValueError`) as documented, handles the case where a content item doesn't exist or doesn't have labels yet, adds new labels while avoiding duplicates, and returns the updated label list in the specified format. All functional input parameters (`id` and `labels`) are used correctly. There are no placeholders, TODOs, or incomplete logic. The implementation matches the docstring's promises regarding return types and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `add_content_labels` does not handle phone numbers or email addresses as input.  Its inputs are a string ID and a list of strings representing labels.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on managing a list of labels associated with a content ID, and its input validation is correctly implemented for its intended purpose (string ID and list of string labels)."
+          }
+        },
+        "delete_content_labels": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: deleting labels from a content item, either individually or all at once.  It accurately reflects the function's behavior in handling the optional `label` parameter. The Args section correctly lists and describes the parameters, including the optional `label` with its default value implicitly shown as `None`. The Returns section correctly states that the function returns `None`. The Raises section accurately lists the `ValueError` exceptions and their conditions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`id: str`, `label: Optional[str]`) and conditional checks to validate the `id` and `label` parameters.  While these checks are sufficient for this function's needs, using Pydantic models would not significantly improve the validation. The existing validation is clear, concise, and directly addresses the potential issues (missing content, missing labels).  Pydantic would add overhead without providing substantial additional benefits in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `id` parameter by specifying `id: str` in the function signature.  It also implicitly checks for the existence of the `id` in the `DB[\"contents\"]` and `DB[\"content_labels\"]` dictionaries, acting as a value validation.  However, it lacks explicit value validation for the `id` itself (e.g., checking for a specific format or length).  The `label` parameter has a type hint (`Optional[str]`), but no explicit validation is performed beyond checking if it's `None` in the conditional `if label:`.  While the function handles the case where a content ID doesn't exist or has no labels, it doesn't explicitly check for empty strings in either `id` or `label`.  Therefore, the validation is good but not comprehensive due to the lack of explicit value checks and empty string checks for both parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All parameters (`id` and `label`) are properly type-annotated with `str` and `Optional[str]` respectively. The return type is correctly specified as `None`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of labels based on the provided `id` and optional `label` parameters.  Both `id` and `label` (when provided) are used appropriately in the function's logic.  The documented `ValueError` exceptions for missing content and lack of labels are correctly raised. There are no placeholders, TODOs, or pass statements. The function's logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_content_labels` does not handle any phone numbers or email addresses.  Its purpose is to delete labels associated with a content ID from a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_properties": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the function's arguments, including their types and default values. The `Args` section is well-structured. The `Returns` section correctly identifies the return type as a list of dictionaries. However, the description of the dictionary structure is overly simplistic and inaccurate.  The docstring states each dictionary will have `key`, `value`, and `version` fields.  **This is inconsistent with the implementation**, which only returns the `value` (which itself is a dictionary, not explicitly documented).  The `Raises` section accurately reflects the exception handling.  While the docstring is functional, the inaccuracy in the `Returns` section regarding the dictionary structure significantly detracts from its quality.  The documentation of the nested dictionary structure within the `value` field is missing entirely.  The docstring could be improved by providing a more precise description of the returned dictionary structure, reflecting the actual implementation."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation for its functional parameters.  While type hints are present (`id: str`, `expand: Optional[str]`, `start: int`, `limit: int`), these are only hints and do not enforce validation.  There's no check to ensure `start` and `limit` are non-negative, or that `limit` is a reasonable value.  The `expand` parameter is not validated for format (comma-separated string). Using Pydantic models would significantly improve the robustness of the function by enforcing these constraints and providing informative error messages upon invalid input."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `start` and `limit` by defining them as `int`.  However, it lacks crucial value validation for these parameters.  `start` and `limit` should be checked to ensure they are non-negative (`>= 0`).  Additionally, there's no validation for `id` beyond checking its type.  `id` should be checked for emptiness and potentially for a valid format depending on the expected format of content IDs.  The `expand` parameter is not validated at all. While it's optional, it should at least be checked for a valid format if it's provided (e.g., comma-separated string with no spaces).  No explicit error handling is present for invalid input values; the function might fail silently or throw an IndexError if `start` or `limit` are out of bounds.  The function also does not check if the `id` exists in the database before attempting to access it."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `expand`, `start`, `limit`) are properly type-annotated with their expected types (str, Optional[str], int, int respectively). The function's return type is clearly specified as `List[Dict[str, any]]`.  No **kwargs parameter is used.  Complex types like `List` and `Dict` are properly specified, including the use of `Optional` for the `expand` parameter."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function does not handle the case where no properties are found for the given ID.  The docstring states that a `ValueError` should be raised in this scenario, but the code simply returns an empty list.  This is a mismatch between the docstring and the implementation.  Additionally, the `expand` parameter is not used in the function's logic, making it a functional parameter that is not properly utilized. The function also does not return the structure described in the docstring.  It returns a list of property values directly from the DB, rather than a list of dictionaries with 'key', 'value', and 'version' as specified."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_properties` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve content properties from a database based on a content ID, pagination parameters (start and limit), and optional expansion parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_content_property": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  The description is clear enough. The Args and Returns sections accurately reflect the parameters and return value types.  The Raises section correctly lists the exceptions.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `id` and `body` parameters.  The `id` is checked for existence in the `DB`, and the `body` dictionary is checked for the presence of a \"key\".  While this validation is sufficient for this function's needs, using Pydantic models could improve the code's readability and maintainability by providing a more structured and declarative way to specify the expected input types and constraints.  However, the existing manual checks are adequate, so Pydantic is not strictly needed."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type checking for the `id` parameter (implicitly as it's annotated as `str`) and checks for `None` values for both `id` and the `key` within the `body` dictionary.  It also checks if the `key` exists within the `body` dictionary.  However, it lacks comprehensive value validation. While it ensures the `id` and `key` are not empty, it doesn't validate their content (e.g., length restrictions, allowed characters, format constraints).  The `value` parameter within the `body` dictionary is also not validated beyond checking if it exists; its contents could be arbitrarily complex and invalid.  Therefore, while the function has some validation in place, it's not exhaustive.  The validation present is primarily focused on null/empty checks and implicit type checking through type hints.  More robust value validation is missing for `id` and `key`, and any validation is absent for the `value` dictionary."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id` and `body`) are properly type-annotated with their expected types (`str` and `Dict[str, Any]`, respectively). The return type is also clearly specified as `Dict[str, any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a content property.  It uses both the `id` and `body` parameters as intended.  The exceptions for missing content and missing property key are properly raised. The logic for creating the property in the `DB[\"content_properties\"]` dictionary and returning the created object is complete and functional. The docstring accurately reflects the function's behavior, including the return type and raised exceptions.  There are no placeholders or TODOs."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_content_property` does not handle phone numbers or email addresses as input.  Its purpose is to create a content property based on a given ID and a JSON body.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended task of creating and storing content properties in the `DB`."
+          }
+        },
+        "get_content_property": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonably clear description of the function's purpose.  It correctly documents the arguments, including the optional `expand` parameter and its default value (although it doesn't explain what the `expand` parameter *does*). The return type and structure are well-documented, including the nested dictionary.  The `Raises` section accurately reflects the exceptions the function can throw.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation.  While it performs a check for the existence of the property in the `DB`, this is not input validation in the sense of verifying the format or type of the input parameters `id` and `key`.  The `id` and `key` parameters are assumed to be strings without explicit type checking or validation of their content (e.g., length restrictions, allowed characters).  Adding Pydantic models would significantly improve the robustness of the function by enforcing type constraints and potentially adding more sophisticated validation rules for `id` and `key`."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `id` and `key` by specifying them as `str` in the function signature.  However, it lacks value validation.  It checks for the existence of the property in the database, but doesn't validate the format or content of `id` and `key` themselves (e.g., length restrictions, allowed characters).  There's no explicit check for empty strings in `id` or `key`, although the database lookup implicitly handles empty strings (they would simply not be found).  The `expand` parameter is optional and not validated at all.  While the function raises a `ValueError` for missing properties, it doesn't explicitly handle cases of invalid `id` or `key` values beyond the implicit database lookup.  Therefore, validation is partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `key`, and `expand`) are properly type-annotated with their expected types (str, str, and Optional[str], respectively).  The return type is clearly specified as `Dict[str, any]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves a property from the `DB` based on the provided `id` and `key`.  It also correctly raises a ValueError if the property is not found. The `expand` parameter is not used, which is a minor gap.  The return value matches the docstring's description.  The implementation is mostly complete and functional, but the unused `expand` parameter prevents it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_property` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve a property from a database given a content ID and a key.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_content_property": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in updating a content property, including the incrementation of the version. The Args, Returns, and Raises sections are present and generally well-structured.  Types are specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation. While it performs some basic checks (e.g., checking if `prop` exists in `DB`), it lacks comprehensive validation for the `id`, `key`, and `body` parameters.  For example, it doesn't check if `id` and `key` are strings of appropriate length or format, or if `body` contains the expected keys (\"version\" and \"value\") with the correct types. Using Pydantic models would significantly improve input validation by providing data type checking, constraints, and automatic error handling.  The current validation is minimal and could lead to unexpected behavior or errors if invalid input is provided."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation for `id` (implicitly through type hinting) and `key` (implicitly through type hinting), and checks if `id` and `key` lead to an existing entry in `DB[\"content_properties\"]`.  However, it lacks comprehensive value validation.  While it checks for the existence of the property, it doesn't validate the content of `body`.  For example, there's no check to ensure that \"version\" and \"value\" keys exist within the `body` dictionary before attempting to access them.  The function also doesn't validate the type of `new_version` after it's extracted from `body`.  Missing is any validation of the data types or values within the `value` field of the `body` dictionary.  The function raises a `ValueError` if the property is not found, which is good error handling for that specific scenario.  More robust validation of the `body` dictionary's contents is needed."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `key`, `body`) are properly type-annotated with their expected types (str, str, Dict[str, Any] respectively). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types like `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`id`, `key`, and `body`) are used.  The documented `ValueError` exceptions are properly raised when the content or property is not found. There are no placeholders, TODOs, or pass statements. The logic for incrementing the version and updating the value in the `DB` is complete and functional. The return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_content_property` does not handle phone numbers or email addresses as input.  Its purpose is to update a property within a database based on a given ID and key, accepting a JSON body containing the new value and version.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "delete_content_property": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: deleting a content property.  The Args section accurately documents the parameters `id` and `key` with their types and descriptions. The Raises section correctly lists the `ValueError` exception that can be raised. The return type (`None`) is correctly specified.  The docstring accurately reflects the function's behavior in deleting a property from the `DB[\"content_properties\"]` dictionary.  However, the docstring could be slightly improved by explicitly stating that the function modifies the global `DB` dictionary, although this is not strictly necessary given the established coding pattern.  The description could also be more precise by mentioning that the property is identified by the concatenation of `id` and `key`.  While the implementation uses f-string formatting for the key, the docstring doesn't explicitly mention this detail.  The current docstring is sufficient for understanding and using the function, but minor improvements would enhance clarity."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type hinting (`id: str`, `key: str`) and a manual check to ensure the property exists in the `DB` before attempting deletion.  While this is functional, it doesn't provide comprehensive input validation (e.g., it doesn't check for empty strings or other invalid characters in `id` and `key`).  Pydantic could enhance this by providing more robust validation rules, such as string length constraints or regular expression matching, but the existing validation is sufficient to prevent the most obvious errors.  The manual check within the function acts as a form of input validation, albeit not as structured as Pydantic would provide."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through type hinting (`id: str`, `key: str`).  However, it lacks crucial value validation.  While it checks if the combined `prop_key` exists in the `DB`, this isn't a complete validation of `id` and `key` individually.  It doesn't check for empty strings or other invalid characters in `id` and `key` that might cause unexpected behavior or security vulnerabilities.  The function only raises a ValueError if the property is not found, not for invalid input formats.  Therefore, while type validation is present, value validation is missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both parameters `id` and `key` are properly type-annotated as `str`. The return type is correctly specified as `None`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes a property from the `DB[\"content_properties\"]` dictionary using the provided `id` and `key`.  Both `id` and `key` are used to construct the composite key `prop_key` and are functionally necessary for the operation. The `ValueError` exception is raised appropriately if the property is not found. The docstring accurately reflects the function's behavior, including the raised exceptions and the `None` return type.  There are no placeholders or incomplete logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_content_property` does not handle phone numbers or email addresses as input.  Its inputs are a content ID and a property key, both treated as strings without any normalization or validation beyond checking for their existence in a database.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_content_property_for_key": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's role in creating a content property and correctly mentions the `ValueError` exception. The Args and Returns sections are well-structured and include type hints."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation. While it performs some basic checks (e.g., checking if `content` exists in the DB), it lacks comprehensive validation for the `id`, `key`, and `body` parameters.  For example, it doesn't check if `id` and `key` are strings of appropriate length or format, or if `body` contains the expected structure and data types (e.g., ensuring \"version\" is an integer and \"value\" is a dictionary). Using Pydantic models would significantly improve input validation by providing a declarative and robust way to specify the expected data types, constraints, and default values for these parameters.  The current approach relies on scattered checks and is prone to errors and inconsistencies."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking for `id` (implicitly through type hinting) and `body` (implicitly through type hinting).  It also checks if `id` exists in the DB, which is a form of value validation. However, it lacks crucial validation for the `key` parameter.  There's no check for `key` being None, empty, or containing invalid characters.  While `body` is checked for type, there's no validation of the contents of the dictionary beyond checking for the existence of \"version\" and \"value\" keys.  The function assumes the \"version\" value is an integer, but this is not explicitly validated.  Therefore, the validation is partial, with significant gaps in input validation for the `key` parameter and insufficient validation of the `body` dictionary's contents."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id`, `key`, `body`) are properly type-annotated with their expected types (`str`, `str`, `Dict[str, Any]`). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of creating a content property, using the provided `id` and `key` to construct a unique key for storage in the `DB[\"content_properties\"]` dictionary.  The `body` dictionary is also correctly parsed to extract the `value` and `version`. The `ValueError` exception is correctly raised if the content with the specified ID is not found.  The function's return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_content_property_for_key` does not handle phone numbers or email addresses as input.  Its purpose is to create a content property based on a given ID, key, and a JSON body.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended task of creating and storing content properties."
+          }
+        },
+        "get_content_restrictions_by_operation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  It accurately describes the function's arguments, including default values for `expand`. The `Returns` section correctly specifies the dictionary type and provides a detailed explanation of its nested structure.  The `Raises` section correctly identifies the `ValueError` exception.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the provided `id` exists in the `DB[\"contents\"]` dictionary. This is sufficient input validation for the `id` parameter, which is the only functional parameter requiring validation.  The `expand` parameter is explicitly noted as not utilized and therefore doesn't require validation.  While using a Pydantic model would be possible, it's not strictly necessary given the simplicity and clarity of the existing validation.  Adding a Pydantic model would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `id` parameter by implicitly expecting a string (due to the `id: str` type hint and the `id in DB[\"contents\"]` check).  It also includes a check for the existence of the content ID in the `DB`, acting as a value validation. However, it lacks explicit checks for empty strings or None values in the `id` parameter.  The `expand` parameter, while having a type hint, is not used and therefore doesn't require validation in this specific function.  While the `id` validation is good, the lack of explicit null/empty checks prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`id` and `expand`) are properly type-annotated with `str` and `Optional[str]`, respectively.  The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the `ValueError` exception handling as documented.  The `id` parameter is used correctly to check for the existence of the content in the `DB`. The function returns a dictionary with the structure specified in the docstring. However, the `expand` parameter is not used, despite being a functional parameter (not an MCP contextual parameter).  The core logic is functional, but the lack of utilization of the `expand` parameter prevents it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_restrictions_by_operation` does not handle any phone number or email address inputs.  Its purpose is to retrieve content restrictions based on an ID, and it operates solely on string IDs. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_content_restrictions_for_operation": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  It accurately documents the arguments, including their types and default values. The `Returns` section correctly specifies the dictionary structure, including nested dictionaries and lists. The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value.  The documentation is complete enough for someone to use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `id` and `operationKey` parameters using `if` statements to check if the `id` exists in the `DB` and if `operationKey` is either \"read\" or \"update\".  The `start` and `limit` parameters have type hints but no explicit validation. While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., adding constraints on `start` and `limit` to ensure they are non-negative), the existing validation is sufficient for the current functionality.  The manual validation covers all functional input parameters.  Using Pydantic would add overhead without significant benefit given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on the two functional input parameters: `id` and `operationKey`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (id, operationKey, expand, start, limit) have proper type annotations.  The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the basic functionality of retrieving content restrictions, handling the `id` and `operationKey` parameters and raising the documented `ValueError` exceptions.  The return type and structure match the docstring. However, the `expand`, `start`, and `limit` parameters are not used, despite being functional parameters (not MCP contextual parameters).  While the function works as a basic implementation, it lacks the functionality promised by the inclusion of these parameters (pagination and expansion of fields).  Adding support for these parameters would make the implementation fully complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_content_restrictions_for_operation` does not handle any phone number or email address inputs.  Its parameters and functionality are focused solely on retrieving content restrictions based on an ID and operation key. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "confluence/ContentBodyAPI.py": {
+      "functions": {
+        "convert_content_body": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a generally good overview of the function's purpose, arguments, return value, and exceptions.  The descriptions are clear and helpful.  Types are correctly specified for parameters and the return value.  The documentation of the `body` dictionary and the return dictionary is thorough, including nested structures."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `to` and `body` parameters.  The `to` parameter is checked against a list of valid formats, and the `body` parameter is checked for the presence of \"type\" and \"value\" keys. While Pydantic could be used to achieve the same validation more concisely and with richer type information, the existing manual validation is sufficient and covers all functional input parameters.  Therefore, Pydantic is not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`to` and `body`) are properly type-annotated with their expected types (`str` and `Dict[str, Any]`, respectively). The function's return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the validation of the input `to` parameter and the `body` dictionary.  It also correctly handles the raising of `ValueError` exceptions as documented. The function uses all functional input parameters (`to` and `body`). The docstring accurately reflects the function's behavior and return type.  However, the core conversion logic is a placeholder (\"For this simulation, we'll just return the same content with the new format\").  While the function is structurally sound and handles errors appropriately, the actual conversion functionality is missing, making it \"mostly complete\" rather than \"fully implemented\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `convert_content_body` function does not handle phone numbers or email addresses.  Its purpose is to convert a generic content body between different formats (\"view\", \"export_view\", \"editor\", \"storage\").  There's no input field specifically designed for phone numbers or emails, and no code to normalize or validate such data.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "confluence/Search.py": {
+      "functions": {
+        "search_content": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is inadequate due to a significant inconsistency between its description of the return value and the actual function behavior.  The docstring states the function returns  `List[Dict[str, Any]]`,  a list of dictionaries. However, the function body always returns an empty list `[]`. This is misleading and makes the docstring inaccurate.  While the docstring correctly lists the parameters and their types, and mentions default values, the core issue of the incorrect return value description significantly diminishes its quality.  The docstring lacks a \"Raises\" section, which, while perhaps not strictly necessary for this simple example, would improve completeness.  The description of the return value dictionaries (`Dict[str, Any]`) is also too vague;  it doesn't specify what keys might be present in the dictionaries, which would be crucial for a user understanding how to use the returned data."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `search_content` lacks any input validation.  While type hints are present, they are not enforced.  There's no check to ensure `start` and `limit` are non-negative, or that `limit` is within a reasonable range.  The `expand` parameter's comma-separated string format is also not validated.  Using a Pydantic model would significantly improve the robustness of this function by enforcing these constraints and providing informative error messages upon invalid input."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `search_content` performs no input validation on any of its functional parameters (`query`, `start`, `limit`).  There are no type checks, value checks, null/empty checks, or any other form of validation.  While `expand` is optional, it still lacks validation should a value be provided.  Therefore, no input validation is present."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (query, expand, start, limit) are properly type-annotated with their expected types.  The return type is also clearly specified as `List[Dict[str, Any]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Stub",
+            "notes": "The function returns an empty list regardless of the input.  The `query`, `expand`, `start`, and `limit` parameters are not used in the function's logic.  The function does not interact with the global `DB` to perform a search.  The docstring states that the function searches for content, but the implementation does not perform any search operation.  There is no implementation logic beyond returning an empty list."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_content` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function's purpose is to execute a CQL query, and it doesn't involve any input processing related to phone numbers or emails."
+          }
+        }
+      }
+    },
+    "confluence/SpaceAPI.py": {
+      "functions": {
+        "get_spaces": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's parameters, including their types and default values. The `Returns` section correctly specifies the return type as a list of dictionaries.  The `Raises` section accurately lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation with type checking and range checks for the `spaceKey`, `start`, and `limit` parameters.  These checks cover all the functional input parameters. While using Pydantic models would provide a more structured and potentially more concise way to perform these validations, the existing manual approach is sufficient and correctly handles the validation requirements.  The use of Pydantic would not add significant value in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`spaceKey`, `start`, and `limit`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`spaceKey`, `start`, `limit`) are properly type-annotated with their expected types (`Optional[str]`, `int`, `int` respectively). The return type is also clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements its docstring.  All functional input parameters (`spaceKey`, `start`, `limit`) are used appropriately in the function's logic.  All documented exceptions (`TypeError`, `ValueError`) are properly handled. There are no TODOs, pass statements, or placeholder implementations. The core logic correctly retrieves spaces from the global `DB` dictionary, applies filtering based on `spaceKey`, and returns a paginated list as specified. The return type and content match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_spaces` does not handle any phone number or email address inputs.  Its purpose is to retrieve and paginate a list of spaces from a database based on a `spaceKey`, `start`, and `limit` parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function does, however, include good input validation for the parameters it *does* use, checking types and ranges."
+          }
+        },
+        "create_space": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's role in creating a new space within the system. The Args and Returns sections are well-structured and include type information. The Raises section correctly lists the potential exceptions.  Default values for `name` and `description` (empty strings due to Pydantic validation) are mentioned, although it might be beneficial to explicitly state that they default to empty strings rather than just relying on the mention of Pydantic validation."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`SpaceBodyInputModel`) to validate the `body` input, which is the only functional input parameter requiring validation.  The `try...except` block correctly handles `ValidationError` exceptions raised by the Pydantic model validation.  This ensures that the function only proceeds if the input dictionary conforms to the expected structure and types defined in the `SpaceBodyInputModel`.  No other input validation is needed because the Pydantic model handles all necessary checks for the functional input."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic's `SpaceBodyInputModel.model_validate(body)` to comprehensively validate the `body` dictionary.  This handles type validation for `key`, `name`, and `description`.  It also implicitly handles null/empty checks as Pydantic models typically default missing fields to appropriate values (empty strings in this case).  The code then explicitly checks if a space with the given `key` already exists in the `DB`, performing a value validation against the existing data.  Appropriate exceptions (`ValidationError` and `ValueError`) are raised with informative messages for invalid inputs.  All functional input parameters (`body`) are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_space` has excellent parameter design and type annotations.  The single parameter `body` is correctly type-annotated as `Dict[str, Any]`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  While the internal `SpaceBodyInputModel` isn't shown, the code demonstrates an understanding of using type validation to ensure data integrity."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new space.  It uses the `body` dictionary (the only functional input parameter) to create a new space entry in the global `DB[\"spaces\"]` dictionary.  All documented exceptions (`pydantic.ValidationError` and `ValueError`) are handled appropriately. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior, including return types and exception handling. There are no placeholders, TODO comments, or pass statements.  The function correctly handles the case where the 'name' or 'description' are missing from the input dictionary, relying on Pydantic's defaulting behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_space` does not handle any phone number or email address inputs.  Its purpose is to create a new space based on a dictionary containing a key, name, and optional description.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_private_space": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and generally well-written. It accurately describes the function's purpose and the arguments it takes.  The types are correctly specified for parameters and return values. The `Args` and `Returns` sections are clear and helpful.  The `Raises` section correctly identifies the `ValueError` exception.  Dictionary keys within the `body` argument and the return dictionary are adequately documented."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_private_space` does not perform any input validation on the `body` dictionary.  It directly passes the `body` to the `create_space` function without checking if the required keys ('key', 'name') exist, or if their types are correct.  Using a Pydantic model would significantly improve the robustness of this function by enforcing type constraints and ensuring the presence of required fields before passing the data further.  The current implementation leaves it vulnerable to errors caused by unexpected or missing data in the input dictionary."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function `create_private_space` delegates all validation to the `create_space` function (which is not provided).  Therefore, we cannot assess the completeness of its input validation.  The only validation performed directly within `create_private_space` is a check for the existence of the 'key' in the input dictionary, which is a minimal null/empty check.  However, this does not cover type validation or value validation for 'key' or any validation for 'name' or 'description'.  Without knowing the implementation of `create_space`, we can only conclude that the validation is partial at best.  The functional inputs 'key', 'name', and 'description' require further validation beyond the implicit check for the existence of 'key'."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `create_private_space` has excellent parameter design and type annotations.  All parameters (`body`) and the return type are clearly annotated with their expected types.  `body` is correctly typed as `Dict[str, Any]`, reflecting the dictionary structure. The return type is also specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function `create_private_space` simply delegates the task to another function `create_space` without adding any private space-specific logic.  While it correctly handles the input parameters and doesn't introduce new exceptions, it doesn't fulfill the core purpose suggested by its name and docstring.  It claims to create a *private* space, implying some additional behavior or distinction compared to a regular space created by `create_space`.  This crucial difference is missing.  The function is therefore only partially complete because it lacks the implementation details needed to differentiate it from the generic `create_space` function."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_private_space` does not handle phone numbers or email addresses as input.  It only takes a dictionary with keys 'key', 'name', and an optional 'description'. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function simply calls another function (`create_space`), whose implementation is not provided, so we cannot assess its behavior regarding phone numbers or emails either."
+          }
+        },
+        "update_space": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types, including the structure of the `body` dictionary. The return value is also correctly documented, including its type and the keys it contains.  The `Raises` section correctly identifies the `ValueError` exception.  Types are consistently specified for all parameters and return values.  The docstring clearly explains that the function updates an existing space based on the provided `spaceKey` and `body` data."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation using Pydantic models or other methods for the `spaceKey` and `body` parameters.  While `spaceKey` is implicitly checked for existence in the `DB[\"spaces\"]` dictionary, this is not true input validation. The `body` dictionary is also not validated for the presence or type of its keys (\"name\" and \"description\").  Using Pydantic models would significantly improve the robustness of this function by explicitly defining the expected structure and types of the input data, preventing unexpected errors and improving code clarity.  For example, a Pydantic model could ensure that \"name\" and \"description\" are strings and are present in the `body` dictionary."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type checking for `spaceKey` (implicitly, as it's annotated as `str`) and uses it as a key in a dictionary, which indirectly validates that it's not `None`.  It also checks if the `spaceKey` exists in the `DB`. However, it lacks crucial value validation for `spaceKey` (e.g., length restrictions, allowed characters).  The `body` dictionary is checked for the presence of \"name\" and \"description\" keys, but there's no validation of the *values* associated with these keys (e.g., ensuring they are strings, checking for empty strings, or enforcing length limits).  No validation is performed on the data types of the values within the `body` dictionary.  While the function raises a `ValueError` if the `spaceKey` is not found, more robust error handling could be implemented for invalid data types or values within the `body` dictionary.  Therefore, while some validation is present, significant gaps exist, leading to a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`spaceKey` and `body`) are properly type-annotated with their expected types (str and Dict[str, Any], respectively). The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types are properly specified using `Dict[str, Any]`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in the docstring.  It uses both `spaceKey` and `body` parameters appropriately to fetch the space from the DB, update the specified fields (\"name\" and \"description\"), and return the updated space dictionary. The `ValueError` exception is correctly raised when a space with the given key is not found.  The docstring accurately reflects the function's behavior, including the return type and potential exceptions. There are no placeholders or incomplete logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_space` does not handle any phone number or email address inputs.  Its purpose is to update a space's name and description in a database, using only string inputs for those fields. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "delete_space": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in deleting a space and returning a task dictionary. The Args, Returns, and Raises sections are well-structured and informative, including type hints.  The description of the dictionary structure in the Returns section is clear and helpful.  The docstring correctly points out that the deletion is simulated and the task is marked as complete immediately."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the provided `spaceKey` exists in the `DB[\"spaces\"]` dictionary. This is sufficient input validation for the single functional parameter.  Using a Pydantic model would add unnecessary complexity for this simple check.  The type of `spaceKey` is already enforced by the type hint."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_space` performs comprehensive validation of its single functional input parameter, `spaceKey`.  It checks for the existence of the `spaceKey` within the `DB[\"spaces\"]` dictionary. This implicitly validates the type (it will raise a `TypeError` if `spaceKey` is not hashable, such as a list) and value (it checks if the key exists in the database).  If the key is not found, a `ValueError` with a descriptive message is raised.  All aspects of input validation (type, value, null/empty check) are addressed for the functional parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_space` has excellent parameter design and type annotations.  The single parameter `spaceKey` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a space from the `DB[\"spaces\"]` dictionary and creates a corresponding task entry in `DB[\"deleted_spaces_tasks\"]`.  The `spaceKey` parameter is used correctly to identify the space to delete.  The function raises a `ValueError` as documented when the space key is not found. The docstring accurately reflects the function's behavior and return type.  The simulated immediate completion of the task is clearly indicated in the comments. There are no placeholders, TODOs, or pass statements.  All aspects of the function's implementation align with its specification."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_space` does not handle phone numbers or email addresses.  Its purpose is to simulate deleting a space identified by a string key from a database-like structure (`DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_space": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose, arguments, return value, and exceptions.  The description clearly explains that the function retrieves space details, which is helpful in the context of an MCP server.  The Args and Returns sections are well-structured, specifying types and providing clear descriptions.  The Raises section accurately lists the potential exceptions.  The documentation of the dictionary return value adequately lists the keys (`spaceKey`, `name`, `description`) and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `isinstance` check to validate the type of the `spaceKey` parameter.  This is sufficient for the single input parameter which only requires a string type.  While a Pydantic model could be used, it would add unnecessary complexity for this simple validation task.  The current approach is clear, concise, and effective."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_space` performs comprehensive validation of its single functional input parameter, `spaceKey`.  It checks for the correct data type (string) using `isinstance` and raises a `TypeError` with a descriptive message if the type is incorrect. It also checks for the existence of the space in the database (`DB[\"spaces\"].get(spaceKey)`) and raises a `ValueError` if the space key is not found.  This covers type validation, value validation (existence in the database), and appropriate error handling.  All functional input parameters are validated."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_space` has excellent parameter design and type annotations.  All parameters (`spaceKey`) are properly type-annotated with their expected types (str). The return type (`Dict[str, Any]`) is clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves space details from the global `DB` based on the provided `spaceKey`.  Input validation ensures `spaceKey` is a string, and appropriate `TypeError` and `ValueError` exceptions are raised for invalid input and missing spaces, respectively. The function's logic is complete, and the returned dictionary matches the docstring's description.  All functional parameters are used. There are no placeholders or TODOs. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_space` does not handle phone numbers or email addresses as input.  Its sole input is a `spaceKey` string, which is used to retrieve data from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_space_content": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the type and provides a detailed description of the structure of the returned dictionary, including nested structures.  The `Raises` section is also comprehensive, listing all potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the functional parameters `spaceKey`, `start`, and `limit`.  It checks the types and values of these parameters using `isinstance` and comparison operators. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all the necessary constraints.  The `depth` and `expand` parameters are not validated because they are not used functionally."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters (`spaceKey`, `start`, and `limit`).  Type validation (`isinstance`) is used for all three, ensuring they are strings and integers respectively.  Value validation checks that `spaceKey` is not empty, `start` is non-negative, and `limit` is positive.  Appropriate `TypeError` and `ValueError` exceptions with clear messages are raised for invalid inputs.  All functional parameters are checked before being used in the subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (spaceKey, depth, expand, start, limit) are properly type-annotated with their expected types (str, Optional[str], Optional[str], int, int respectively).  The return type is clearly specified as List[Dict[str, Any]]. The function does not use **kwargs parameters.  Complex types like List, Dict, and Optional are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves content based on `spaceKey`, `start`, and `limit`, validating these inputs as specified in the docstring.  The `depth` and `expand` parameters are unused but are marked as such in the docstring, so this is acceptable. The function correctly handles the specified exceptions.  However, the docstring mentions that a `ValueError` should be raised if no space with the specified `spaceKey` is found.  The current implementation does not include this check; it simply returns an empty list if no matching content is found.  This is a minor gap, but it means the function doesn't fully meet the requirements outlined in its docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_space_content` does not handle any phone number or email address inputs.  Its purpose is to retrieve content from a database based on a `spaceKey` and pagination parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function does, however, include robust input validation for its own parameters (`spaceKey`, `start`, `limit`)."
+          }
+        },
+        "get_space_content_of_type": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly identifies the function's role in retrieving and filtering content.  The descriptions of parameters and their types are mostly accurate. Default values are correctly specified. The `Returns` section attempts to detail the structure of the returned dictionary, but it's overly verbose and could be improved with a more concise and organized representation.  The documentation of the nested `body` dictionary is particularly cumbersome."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation for its functional parameters.  While type hints are present (e.g., `spaceKey: str`, `start: int`), these are not enforced at runtime.  There's no checking to ensure `start` and `limit` are non-negative, or that `limit` is a reasonable value.  No input validation is performed on `type` to ensure it's a valid content type.  Using Pydantic models would significantly improve the robustness of this function by adding runtime validation of these parameters."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation implicitly through Python's type hinting for `spaceKey` and `type` (strings), `start` and `limit` (integers).  However, it lacks explicit value validation for these parameters.  `start` and `limit` could be negative, leading to errors or unexpected behavior.  There's no validation to ensure `spaceKey` and `type` are non-empty strings or that `limit` is within a reasonable range.  The `depth` and `expand` parameters are noted as not fully implemented, but they still accept input without validation, which is a potential vulnerability.  No explicit error handling is present beyond the implicit error handling of Python's list slicing.  While type hints provide some level of validation, the lack of explicit value checks and error handling for functional parameters makes the validation incomplete.  Therefore, the validation is only partial."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (spaceKey, type, depth, expand, start, limit) are properly type-annotated with their expected types.  The return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs`.  Complex types like `List`, `Dict`, and `Optional` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves content from a presumed `get_space_content` function (which is assumed to exist and operate correctly within the context of a global `DB`), filters it by type, and returns a paginated subset.  The `depth` and `expand` parameters are explicitly noted as not fully implemented, which is acceptable given the comment.  However, the function lacks error handling for cases where `get_space_content` might return an empty list or raise an exception (other than the documented `ValueError`).  The function also does not handle the case where `start` + `limit` exceeds the length of the filtered list, which could lead to an `IndexError`.  While the core functionality is present, these omissions prevent a \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_space_content_of_type` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve and filter content from a space based on a given type, spaceKey, and pagination parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "confluence/LongTaskAPI.py": {
+      "functions": {
+        "get_long_tasks": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's role in retrieving a paginated list of long-running tasks within the context of an MCP server. Default values for `start` and `limit` are correctly documented.  The `Args` and `Returns` sections are well-structured, including type hints. The `Raises` section correctly identifies the `ValueError` exception.  Type information is complete for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation for `start` and `limit` by checking if they are negative within the function itself.  While this is functional, it doesn't leverage Pydantic.  However, given the simplicity of the validation (checking for negativity), using Pydantic would add unnecessary complexity.  The existing validation is sufficient for this case. The `expand` parameter is explicitly noted as not implemented and therefore doesn't require validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs value validation on the `start` and `limit` parameters, checking if they are negative.  This is done through a `ValueError` exception. However, it lacks type validation for these parameters.  While the function signature suggests `int`, there's no explicit check to ensure that `start` and `limit` are actually integers. The `expand` parameter is not validated at all, although the docstring indicates it's not currently used.  Therefore, validation is partial, covering value checks for some parameters but missing type checks and completely lacking validation for `expand`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`expand`, `start`, `limit`) are properly type-annotated with their expected types (`Optional[str]`, `int`, `int` respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves a paginated list of tasks from the global `DB` dictionary using the `start` and `limit` parameters.  The `expand` parameter, while documented, is not used, which is noted in the docstring.  The function correctly handles the `start` and `limit` parameters, raising a `ValueError` if either is negative (although this error handling is not explicitly tested in the provided code).  The return type and structure match the docstring.  However, there's no error handling for cases where `start + limit` exceeds the length of the `tasks` list; this could lead to an `IndexError`.  While not a critical flaw, adding a check to prevent this would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_long_tasks` does not handle any phone number or email address inputs.  Its purpose is to retrieve a paginated list of tasks from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_long_task": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior, including the handling of the `id` parameter and the `ValueError` exception. The default value for `expand` is correctly documented, along with the explanation that it's currently unused.  All parameters and the return type are documented with types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple type hint (`id: str`) and a default value for the `expand` parameter.  While this provides basic type checking, it doesn't perform robust validation.  For example, it doesn't check if the `id` exists in the database before attempting to retrieve it.  However, the function itself handles the case where the ID is not found by raising a `ValueError`.  Therefore, while more comprehensive input validation (e.g., using Pydantic) could be beneficial, the existing validation is sufficient for the function's logic.  Adding Pydantic would add complexity without significantly improving the correctness or robustness of the function in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `id` parameter by annotating it as `str`.  It also includes a null/empty check by verifying that `task = DB[\"long_tasks\"].get(id)` returns a value before proceeding.  The `ValueError` exception provides a clear error message if the task is not found. However, there's no explicit value validation on the `id` parameter itself (e.g., checking for length, format, or allowed characters). The `expand` parameter is not validated because it's noted as being for API compatibility only and not currently processed.  Therefore, while the validation is not comprehensive, it's sufficient to prevent the most common errors."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`id` and `expand`) are properly type-annotated with their expected types (`str` and `Optional[str]`, respectively). The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a task from the global `DB` based on the provided `id`.  The `expand` parameter, while unused, is correctly identified as an MCP contextual parameter and its omission from the function logic is acceptable. The function raises a `ValueError` as documented when a task is not found. The return type and content match the docstring.  There are no placeholders or incomplete logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_long_task` does not handle phone numbers or email addresses as input.  Its purpose is to retrieve a task from a database based on a string ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "confluence": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files."
+      }
+    }
+  }
+}

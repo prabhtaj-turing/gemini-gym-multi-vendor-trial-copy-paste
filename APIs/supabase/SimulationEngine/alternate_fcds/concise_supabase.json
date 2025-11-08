@@ -1,0 +1,506 @@
+[
+    {
+        "name": "apply_migration",
+        "description": "Applies a database migration for DDL operations; avoid hardcoding references to generated IDs in data migrations.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The project's string ID."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the migration in snake_case."
+                },
+                "query": {
+                    "type": "string",
+                    "description": "The SQL query to apply."
+                }
+            },
+            "required": [
+                "name",
+                "project_id",
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "confirm_cost",
+        "description": "Confirms the user's understanding of project or branch creation costs, requires `get_cost` first, and returns a confirmation ID for `create_project` or `create_branch`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The item type for cost confirmation; must be 'project' or 'branch'."
+                },
+                "recurrence": {
+                    "type": "string",
+                    "description": "The cost's recurrence pattern, which must be \"hourly\" or \"monthly\"."
+                },
+                "amount": {
+                    "type": "number",
+                    "description": "The positive numerical amount of the cost."
+                }
+            },
+            "required": [
+                "amount",
+                "recurrence",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "create_branch",
+        "description": "Creates a development branch on a Supabase project, applying all main project migrations to a fresh database without production data, and assigns a unique project ID for branch queries and migrations.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The identifier of the project."
+                },
+                "confirm_cost_id": {
+                    "type": "string",
+                    "description": "The cost confirmation ID, obtained by calling `confirm_cost`."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the branch to create; defaults to `develop`."
+                }
+            },
+            "required": [
+                "confirm_cost_id",
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "create_project",
+        "description": "Create a new Supabase project; it may take a few minutes to initialize, so use `get_project` to check its status.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the project."
+                },
+                "organization_id": {
+                    "type": "string",
+                    "description": "The ID of the organization where the project will be created."
+                },
+                "confirm_cost_id": {
+                    "type": "string",
+                    "description": "The cost confirmation ID, obtained by calling `confirm_cost`."
+                },
+                "region": {
+                    "type": "string",
+                    "description": "Specifies the region to create the project in; defaults to the closest region if `None` is provided, with possible values including `us-west-1`, `us-east-1`, `us-east-2`, `ca-central-1`, `eu-west-1`, `eu-west-2`, `eu-west-3`, `eu-central-1`, `eu-central-2`, `eu-north-1`, `ap-south-1`, `ap-southeast-1`, `ap-northeast-1`, `ap-northeast-2`, `ap-southeast-2`, and `sa-east-1`."
+                }
+            },
+            "required": [
+                "confirm_cost_id",
+                "name",
+                "organization_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_branch",
+        "description": "Deletes a development branch identified by its ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The ID of the branch to delete."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "deploy_edge_function",
+        "description": "Deploys an Edge Function to a Supabase project, creating a new version if the function already exists.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the Supabase project."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the function."
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the file (e.g., 'index.ts', 'utils/helper.ts')."
+                            },
+                            "content": {
+                                "type": "string",
+                                "description": "The string content of the file."
+                            }
+                        },
+                        "required": [
+                            "content",
+                            "name"
+                        ]
+                    },
+                    "description": "A list of dictionaries representing the files to upload, which must include the entrypoint and any relative dependencies."
+                },
+                "entrypoint_path": {
+                    "type": "string",
+                    "description": "The path to the function's entrypoint file, which defaults to `index.ts`."
+                },
+                "import_map_path": {
+                    "type": "string",
+                    "description": "Path to the function's import map. Defaults to `None`."
+                }
+            },
+            "required": [
+                "files",
+                "name",
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "execute_sql",
+        "description": "Executes raw SQL queries within a simulated, in-memory PostgreSQL database that supports common DML, basic DDL (use `apply_migration` for DDL operations), and transactions, but lacks persistence and full PostgreSQL compatibility.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The project ID."
+                },
+                "query": {
+                    "type": "string",
+                    "description": "The SQL query to execute."
+                }
+            },
+            "required": [
+                "project_id",
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "generate_typescript_types",
+        "description": "Generates a string of TypeScript type definitions for a project identified by its ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The string ID of the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "get_anon_key",
+        "description": "Gets the anonymous API key for a project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The ID of the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "get_cost",
+        "description": "Gets the cost of creating a new project or branch, which varies by organization.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The type of item for which to request cost; must be 'project' or 'branch'."
+                },
+                "organization_id": {
+                    "type": "string",
+                    "description": "The organization ID."
+                }
+            },
+            "required": [
+                "organization_id",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "get_logs",
+        "description": "Gets Supabase project logs filtered by service type, returning only entries generated within the last minute.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The ID of the Supabase project."
+                },
+                "service": {
+                    "type": "string",
+                    "description": "The service type to fetch logs for, restricted to 'api', 'branch-action', 'postgres', 'edge-function', 'auth', 'storage', or 'realtime'."
+                }
+            },
+            "required": [
+                "project_id",
+                "service"
+            ]
+        }
+    },
+    {
+        "name": "get_organization",
+        "description": "Retrieves an organization's details, including its subscription plan.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "A string representing the organization ID."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_project",
+        "description": "Get details for a Supabase project by its unique ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "A unique project identifier."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_project_url",
+        "description": "Get the API URL for a project, returning a dictionary with the project ID and the optional API URL.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_branches",
+        "description": "Lists all development branches of a Supabase project, providing branch details including status to track operation completion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_edge_functions",
+        "description": "Lists all Edge Functions within a Supabase project, providing each function's ID, slug, display name, version, status, creation, and last update timestamps.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The identifier of the Supabase project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_extensions",
+        "description": "List all database extensions for the specified project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The identifier of the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_migrations",
+        "description": "List all database migrations associated with the provided project ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The project's identifier."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "list_organizations",
+        "description": "Lists all organizations that the user is a member of.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "list_projects",
+        "description": "Lists all of a user's Supabase projects to help discover the project ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "list_tables",
+        "description": "List tables for a project from specified schemas, or all available schemas if none are provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The project's identifier."
+                },
+                "schemas": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of schemas to include; defaults to all schemas if None."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "merge_branch",
+        "description": "Merge migrations and edge functions from the specified development branch (`branch_id`) into production, returning the merge operation status.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The ID of the development branch to be merged."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "pause_project",
+        "description": "Pauses a Supabase project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The ID of the project to pause."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    },
+    {
+        "name": "rebase_branch",
+        "description": "Rebases a development branch on production by applying newer production migrations to manage migration drift.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the branch to rebase."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "reset_branch",
+        "description": "Resets migrations of a development branch, losing any untracked data or schema changes.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "branch_id": {
+                    "type": "string",
+                    "description": "The ID of the development branch to be reset."
+                },
+                "migration_version": {
+                    "type": "string",
+                    "description": "The specific migration version for resetting the development branch."
+                }
+            },
+            "required": [
+                "branch_id"
+            ]
+        }
+    },
+    {
+        "name": "restore_project",
+        "description": "Restores a Supabase project using the provided project ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "The ID of the project."
+                }
+            },
+            "required": [
+                "project_id"
+            ]
+        }
+    }
+]

@@ -1,0 +1,861 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:57.852747Z",
+  "results": {
+    "github/users.py": {
+      "functions": {
+        "get_me": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in retrieving authenticated user details for an MCP server. The Returns section is particularly well-done, clearly specifying the dictionary structure and the type of each key-value pair.  The Raises section correctly identifies the `AuthenticationError`.  Type hints are used effectively throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `get_me` does not take any functional input parameters.  All data it uses is retrieved from the global `DB` object. Therefore, input validation using Pydantic or any other method is not applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `get_me` has no functional input parameters.  It relies solely on the globally accessible `DB` to retrieve the authenticated user's ID and subsequently their details.  Therefore, no input parameter validation is either present or needed."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_me` has no parameters.  The return type is clearly specified as `Dict[str, Any]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves user data from the global `DB` based on the authenticated user ID.  It handles the cases where the user is not authenticated or the user data is not found by raising the appropriate `AuthenticationError`. The returned dictionary matches the structure and types specified in the docstring.  There are no placeholders, TODOs, or unused functional parameters. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_me()` does not handle any phone number or email address input.  It retrieves user data from a database (`DB`) and returns it as a dictionary.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and returning existing user data, without any input processing related to phone numbers or emails."
+          }
+        },
+        "search_users": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's arguments, including default values and supported qualifiers within the search query. The `Returns` section clearly outlines the structure of the dictionary, including nested dictionaries within the `items` list. The `Raises` section correctly lists potential exceptions.  Types are specified for all parameters and the return value using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`q`, `sort`, `order`, `page`, `per_page`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data types and constraints.  Therefore, Pydantic models are not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`q`, `sort`, `order`, `page`, `per_page`) are validated.  `q` is checked for emptiness and valid syntax using `shlex.split`. `sort` and `order` are checked against lists of allowed values. `page` and `per_page` are checked for positive integer types and valid ranges (`per_page` has a maximum value of 100).  Appropriate `InvalidInputError` exceptions are raised with informative messages for all invalid inputs.  The validation covers type, value, and null/empty checks where applicable."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`q`, `sort`, `order`, `page`, `per_page`) are properly type-annotated with their expected types (str, Optional[str], str, int, int respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional`, `Dict`, and `List` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using all functional input parameters (`q`, `sort`, `order`, `page`, `per_page`).  Exception handling for `InvalidInputError` is implemented for various invalid inputs. The core logic of searching, filtering, sorting, and paginating users from the global `DB` works as intended.  However, the date and range comparisons within the qualifier handling are implemented naively (string comparison for dates, no error handling for non-numeric values).  A more robust solution would involve proper date parsing and handling of potential errors during type conversion and comparison.  Additionally, the `score` field in the returned `items` is assigned a default value (1.0) because the implementation doesn't seem to derive it from the database.  The docstring accurately reflects the function's behavior and return type, except for the lack of a precise description of the `score` field's origin.  While these are not major flaws, they represent areas for improvement to enhance robustness and clarity."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_users` function does not handle phone numbers or email addresses as input.  Its input is a search query string for GitHub users, which may contain logins, names, and other qualifiers but not email addresses or phone numbers directly. Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function focuses on searching and filtering user data based on various criteria from a database, not on processing contact information."
+          }
+        }
+      }
+    },
+    "github/issues.py": {
+      "functions": {
+        "get_issue": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's inputs and outputs, including detailed descriptions of the dictionary structures. The `Args` and `Returns` sections are comprehensive, specifying types and nested structures effectively.  The `Raises` section correctly lists potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation using `isinstance` checks and explicit checks for empty strings and non-positive integers.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all functional input parameters (`owner`, `repo`, `issue_number`).  Therefore, Pydantic is not strictly needed for this function, although it might offer some stylistic advantages."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`owner`, `repo`, and `issue_number`) have comprehensive validation.  Type checking is performed using `isinstance`.  `owner` and `repo` are checked for emptiness using `if not owner:` and `if not repo:`. `issue_number` is checked to ensure it's a positive integer using `if issue_number <= 0:`.  Appropriate `TypeError` and `ValueError` exceptions are raised with informative messages for invalid inputs.  All functional parameters are validated before being used in subsequent operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `issue_number`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of issue data based on owner, repo, and issue number.  All functional input parameters (`owner`, `repo`, `issue_number`) are used in the input validation and data retrieval process.  All documented exceptions (`TypeError`, `ValueError`, `NotFoundError`) are properly handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional given the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the structure of the returned dictionary and the exceptions raised."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_issue` does not handle any phone number or email address inputs.  Its inputs are a repository owner (string), repository name (string), and issue number (integer). Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_issue_comments": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs (owner, repo, issue_number) and their types. The Returns section correctly specifies the list of dictionaries structure, and it attempts to detail the structure of each dictionary within the list.  The Raises section correctly lists the potential exceptions.  Types are specified for parameters and return values.  The documentation of the nested dictionary structure within the return value is a good effort, though it could be improved (see below)."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, and `issue_number` parameters.  It checks that `owner` and `repo` are non-empty strings and that `issue_number` is a positive integer.  While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is sufficient and covers all functional input parameters.  Therefore, Pydantic is not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`owner`, `repo`, and `issue_number`) are validated comprehensively.  Type validation is performed using `isinstance` checks. Value validation ensures that strings are non-empty and that `issue_number` is a positive integer.  Appropriate `ValidationError` exceptions are raised with clear error messages for invalid inputs.  There are no gaps in the validation of functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `issue_number`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs` parameters.  Complex types like `List` and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves comments for a given GitHub issue based on owner, repo, and issue number.  All functional input parameters (`owner`, `repo`, `issue_number`) are used.  The documented exceptions (`NotFoundError`, `ValidationError`) are properly implemented and raised in appropriate scenarios. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the structure of the returned list of dictionaries.  The function also handles different data types for `created_at` and `updated_at` and sorts the comments by creation timestamp."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_issue_comments` does not handle any phone number or email address inputs.  Its inputs are a repository owner (string), repository name (string), and issue number (integer).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and formatting GitHub issue comments."
+          }
+        },
+        "create_issue": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments and their types, including default values. The `Returns` section is quite comprehensive, detailing the structure of the returned dictionary, including nested dictionaries and lists.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, and `title` parameters, checking if they are not empty strings.  It also performs validation on the `assignees` and `labels` lists, checking for the existence of users and labels in the database.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient to ensure that the function receives valid input.  The use of Pydantic would not significantly improve the validation in this case, given the specific nature of the validation requirements and the existing checks."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters.  `owner`, `repo`, and `title` are checked for being non-empty strings, which is a crucial value check.  The code also handles the case where `assignees` and `labels` are provided as empty lists, and it correctly processes these cases without errors.  The validation for `assignees` and `labels` includes checks to ensure that the provided users and labels exist in the database.  However, there's no explicit type validation beyond implicit type checking (e.g., using `if not title:` assumes `title` is a string or None).  While the code effectively handles empty or missing values, adding explicit type checks (e.g., using `isinstance`) would make the validation more robust and explicit.  The function also correctly raises appropriate exceptions with informative error messages for various validation failures.  The validation is not comprehensive due to the lack of explicit type checking, but it's still quite good."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (owner, repo, title, body, assignees, labels) are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]], Optional[List[str]]).  The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of creating a GitHub issue within the simulated database environment.  All functional input parameters (`owner`, `repo`, `title`, `body`, `assignees`, `labels`) are used.  The documented exceptions are implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's return value."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_issue` function does not handle any phone number or email address inputs.  Its inputs are related to GitHub issue creation (owner, repo, title, body, assignees, labels), which are all strings or lists of strings.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "add_issue_comment": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs and outputs, including the structure of the dictionary returned. The `Args` and `Returns` sections are well-structured and informative.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value. The nested structure of the `user` dictionary within the return value is also well-documented."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the four functional parameters (`owner`, `repo`, `issue_number`, `body`).  Each parameter's type and constraints are checked using `isinstance` and other conditional checks.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is comprehensive and functional.  Therefore, Pydantic is not strictly needed for this specific function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All four functional input parameters (`owner`, `repo`, `issue_number`, and `body`) are validated comprehensively.  Type validation is performed using `isinstance`.  Value validation checks for non-empty strings using `.strip()` and checks that `issue_number` is a positive integer.  Error handling is implemented using custom exceptions (`custom_errors.ValidationError`, `custom_errors.NotFoundError`, `custom_errors.ForbiddenError`) with informative error messages.  All checks are performed before the parameters are used in any subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (owner, repo, issue_number, body) are properly type-annotated with their expected types (str, str, int, str). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the addition of a comment to an issue, handling various scenarios including permission checks for private repositories, locked issues, and different user roles.  All functional input parameters (`owner`, `repo`, `issue_number`, `body`) are used.  All documented exceptions (`NotFoundError`, `ValidationError`, `ForbiddenError`) are properly raised. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `add_issue_comment` function does not handle any phone number or email address inputs.  Its inputs are `owner` (repository owner), `repo` (repository name), `issue_number` (integer), and `body` (comment text).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on adding comments to a repository issue, and its input validation is limited to ensuring the correct data types and non-emptiness of the provided strings and the positivity of the issue number."
+          }
+        },
+        "list_issues": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's filtering and sorting capabilities, as well as its pagination mechanism.  All parameters, including their default values, are documented with types and descriptions. The `Returns` section correctly specifies the return type as a list of dictionaries and provides a detailed description of the structure of each dictionary, including nested dictionaries within `user`, `labels`, `assignee`, `assignees`, and `milestone`.  The `Raises` section correctly lists potential exceptions.  Types are consistently specified."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`owner`, `repo`, `state`, `labels`, `sort`, `direction`, `since`, `page`, `per_page`).  It checks types and constraints directly within the function. While Pydantic could be used, the existing validation is sufficient and avoids the overhead of introducing a Pydantic model for input parameters.  The existing validation is comprehensive and covers all the functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters.  All parameters (`owner`, `repo`, `state`, `labels`, `sort`, `direction`, `since`, `page`, `per_page`) are checked for both type and valid values."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]], Optional[int], etc.).  The function's return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs` parameters.  Complex types are properly specified using `List`, `Dict`, and `Optional`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using all functional input parameters to filter and paginate repository issues from the global `DB`.  Exception handling for invalid input parameters is implemented. The docstring accurately reflects the function's behavior and return type. However, the `try...except NameError` block and the fallback to `utils._transform_issue_for_response(issue_dict)` suggests a potential dependency issue or incomplete setup related to the `models.ListIssuesResponseItem` Pydantic model.  While the fallback mechanism prevents complete failure, it's not ideal and indicates a minor gap in the implementation's robustness.  The `print_log` within the exception handling is also a minor issue; ideally, more robust error handling or logging mechanisms should be used instead of simply printing to the console."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_issues` does not handle any phone number or email address inputs.  Its purpose is to list and filter repository issues from a database, dealing only with parameters like repository name, state, labels, sorting criteria, and pagination.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_issue": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's ability to update GitHub issues, detailing how modifications to various fields are handled (including clearing fields with `None`).  All default parameter values are mentioned and explained clearly. The `Args` section is comprehensive, specifying types and descriptions for each parameter.  The `Returns` section is exceptionally detailed, outlining the structure of the returned dictionary, including nested dictionaries and lists.  The `Raises` section correctly lists potential exceptions.  Types are specified for all parameters and the return value.  The documentation of the dictionary structure in the `Returns` section is thorough, although it could be slightly improved by using a more concise format (e.g., using a table or a more structured description for nested dictionaries)."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using type checking and manual checks for constraints (e.g., `issue_number` being positive, `state` being \"open\" or \"closed\").  While Pydantic could provide a more structured and potentially more concise way to express these validations, the existing approach is functional and covers all the functional input parameters.  The use of Pydantic would be a stylistic improvement, but not strictly necessary for correctness."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  `owner` and `repo` are checked to be strings. `issue_number` is checked to be a positive integer.  `title` and `body` are checked for type and whether they are being set to `None` to clear existing values. `state` is checked for type and whether it's \"open\" or \"closed\". `labels` and `assignees` are checked for type (list) and whether they are empty (to clear existing values) or contain valid strings (checking for existence of labels and assignees in the DB).  `milestone` is checked for type (integer or None) and whether the provided milestone number exists in the database.  Appropriate `ValidationError` and `ForbiddenError` exceptions are raised with informative messages for invalid inputs.  All functional parameters are validated before being used."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List for optional and list parameters.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core functionality of updating a GitHub issue based on the provided parameters.  All functional input parameters are used.  The exception handling for `NotFoundError`, `ForbiddenError`, and `ValidationError` is implemented correctly. There are no TODOs, pass statements, or placeholders. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `update_issue` function does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on updating GitHub issue metadata (title, body, state, labels, assignees, milestone).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "search_issues": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the search qualifiers and their usage. Default values for parameters are correctly specified and explained. The Args and Returns sections are comprehensive, detailing parameter types and the structure of the returned dictionary, including nested dictionaries and lists.  The Raises section correctly mentions the `custom_errors.InvalidInputError`. Types are consistently specified using type hints.  The documentation of the `items` list within the return value is particularly thorough, detailing the structure of each issue object and its attributes."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `query`, `page`, and `per_page` parameters.  Type checking and range checks are performed to ensure that these parameters meet the required criteria.  While Pydantic could be used to achieve the same validation, the current manual approach is sufficient and correctly handles the validation requirements for the functional parameters.  The `sort` and `order` parameters have limited validation (checking against allowed values could be added), but the current level of validation is acceptable given the context.  Using Pydantic would add complexity without significantly improving the validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], int, etc.).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types like `Optional[str]`, `List[Dict[str, Any]]`, and `Dict[str, Any]` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using the `query`, `page`, `per_page`, `sort`, and `order` parameters in its logic.  Exception handling for invalid input is implemented. The docstring accurately reflects the function's behavior and return type.  However, the search logic within the function is simplified.  The implementation checks if *any* search term is present in the specified fields ('title' or 'body'), rather than requiring *all* search terms to be present, as a more robust search would typically do.  Additionally,  the handling of some qualifiers (e.g., `in`, `state`) is implemented, but the docstring suggests that others (`author`, `assignee`, `label`, `repo`) should also be supported, and these are only partially implemented.  The sorting logic appears correct, but the `best-match` sorting is based on a potentially missing or inconsistently populated `score` field.  While the function handles the core functionality, these simplifications and incomplete qualifier handling prevent it from being fully implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_issues` function does not handle any phone number or email address inputs.  Its purpose is to search for issues and pull requests based on various qualifiers and search terms within a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "github/pull_requests.py": {
+      "functions": {
+        "get_pull_request": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is excessively long and verbose, making it difficult to read and understand. While it attempts to comprehensively document the return dictionary's structure, the sheer volume of nested details overwhelms the reader.  The excessive detail in the Returns section, particularly the nested structures within the dictionary, makes it hard to quickly grasp the essential information.  This level of detail should be better organized, perhaps using a separate schema or reference document.  The description of the function itself is repetitive (\"This function gets details of a specific pull request. It uses the provided owner, repository name, and pull request number to identify and retrieve the comprehensive details of the pull request.\")  This could be significantly condensed."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the three functional parameters (`owner`, `repo`, `pull_number`).  It checks for empty strings, correct types, and positive integer values.  While Pydantic could be used, the existing validation is sufficient and arguably more readable in this simple case.  The use of Pydantic would add complexity without significant benefit for this specific function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`owner`, `repo`, and `pull_number`) are comprehensively validated.  Type validation is performed using `isinstance`. Value validation checks for non-empty strings (`owner` and `repo`) and a positive integer (`pull_number`).  Null/empty checks are also included for `owner` and `repo`. Appropriate `ValueError` exceptions are raised with clear error messages for invalid inputs.  All checks happen before the parameters are used in subsequent operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `pull_number`) are properly type-annotated with their expected types (str, str, int respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within the return dictionary are also properly specified using `List`, `Dict`, and `Optional` type hints where appropriate."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves pull request data from the global `DB` based on the provided `owner`, `repo`, and `pull_number`.  Input validation is performed for all functional parameters.  Documented exceptions (`ValueError` and `NotFoundError`) are handled appropriately. There are no placeholders or TODO comments. The docstring accurately describes the function's behavior and return type.  However, the function attempts to use Pydantic validation (`models.PullRequest.model_validate`) and then, if that fails, returns the raw dictionary. While this is a form of error handling, it's not ideal; a more robust approach would be to log the validation error and potentially raise a custom exception indicating data integrity issues.  The fallback to returning the raw dictionary might lead to inconsistencies in the data returned to the caller."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone numbers or email addresses.  The function `get_pull_request` focuses solely on retrieving and formatting data related to GitHub pull requests.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list_pull_requests": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  Default values for all parameters are correctly specified and explained. The types for parameters and return values are explicitly stated.  The description of the `sort` parameter accurately reflects the different sorting options and their behaviors, including the special handling of 'long-running'. The explanation of pagination is helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (owner, repo, state, sort, direction, per_page, page).  While Pydantic could provide a more concise and potentially type-safer way to perform this validation, the existing manual checks are comprehensive and cover all necessary aspects.  Therefore, Pydantic models are not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`owner`, `repo`, `state`, `sort`, `direction`, `per_page`, `page`) are validated for both type and value.  Type validation ensures that each parameter is of the expected type (string or integer). Value validation checks for empty strings, valid values within allowed sets (`state`, `sort`, `direction`), and valid ranges (`per_page`, `page`).  Appropriate `ValidationError` exceptions are raised with informative messages for invalid inputs.  All checks are performed before the parameters are used in subsequent logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[int], etc.). The function's return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs` parameters.  Complex types like `List`, `Dict`, `Optional`, and `Union` are all correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`owner`, `repo`, `state`, `sort`, `direction`, `per_page`, `page`) are used in the function's logic to filter, sort, and paginate pull requests.  The documented exceptions (`NotFoundError`, `ValidationError`, `RateLimitError`) are implemented (although `RateLimitError` is not explicitly raised in the provided code, it's implied that it could be raised within the hypothetical interaction with the actual API that this function simulates). There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_pull_requests` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on retrieving and filtering pull requests from a repository based on criteria like state, sort order, and pagination.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "merge_pull_request": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the arguments, including their types and optional parameters with default values. The `Returns` section correctly specifies the dictionary structure and the types of its keys.  The `Raises` section comprehensively lists all potential exceptions.  Types are consistently specified for all parameters and return values. The documentation of the dictionary in the return value is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for the functional input parameters (`owner`, `repo`, `pull_number`, `merge_method`).  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is sufficient and covers all functional parameters.  The manual checks ensure that the types are correct and that `pull_number` is positive. The `merge_method` is validated against an allowed list.  No Pydantic models are used, but the existing validation is comprehensive for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (owner, repo, pull_number, commit_title, commit_message, merge_method) are properly type-annotated with their expected types, including the use of Optional for optional parameters.  The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core merge functionality.  It handles various exception scenarios as documented. The `commit_title` and `commit_message` parameters are used correctly to customize the merge commit message.  However, the implementation generates a SHA hash deterministically based on readily available data, rather than using a cryptographically secure hash function suitable for real-world commit SHAs.  This is a significant simplification for a mock environment but would be a critical flaw in production.  Additionally, the `files` field in the generated `merge_commit` is left empty, which might be considered incomplete depending on the requirements.  The function also directly manipulates the global `DB` which, while acceptable for this mock environment, is not ideal for maintainability and testability in a real-world scenario."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone numbers or email addresses.  The function `merge_pull_request` deals exclusively with merging pull requests on a code repository, using parameters like owner, repository name, pull request number, and commit details.  There are no input fields or processing related to phone numbers or email addresses. Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_pull_request_files": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's inputs and outputs, including the structure of the dictionary list returned. The `Args` and `Returns` sections are well-written and informative, specifying types correctly.  The `Raises` section correctly lists the potential exceptions.  The documentation of the dictionary's structure within the `Returns` section is comprehensive, listing all keys and their types.  The docstring is complete enough for a developer to understand how to use the function."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking for the three functional input parameters (`owner`, `repo`, `pull_number`).  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling string length constraints or more complex validation rules), the existing type checks adequately address the basic validation needs for these parameters in this specific function.  Using Pydantic here would be an unnecessary addition of complexity for this simple type-checking scenario."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on all three functional input parameters (`owner`, `repo`, and `pull_number`).  It checks that `owner` and `repo` are strings and `pull_number` is an integer.  Appropriate `ValidationError` exceptions are raised for type mismatches. However, it lacks value validation.  For example, it doesn't check for empty strings in `owner` and `repo`, which could lead to errors downstream.  It also doesn't validate that `pull_number` is a positive integer. While the function checks for the existence of the repository and pull request in the database, this is more of a data existence check rather than input validation of the parameters themselves.  Therefore, the validation is good but not comprehensive due to the absence of value and empty string checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `pull_number`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No **kwargs parameters are used.  Complex types within the return type annotation are also correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves the list of files changed in a pull request based on the provided `owner`, `repo`, and `pull_number`.  All functional input parameters (`owner`, `repo`, `pull_number`) are used.  The documented exceptions (`ValidationError` and `NotFoundError`) are properly implemented and raised under the appropriate conditions. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` as expected. The docstring accurately describes the function's behavior, return type, and potential exceptions.  The function correctly handles the case where a pull request or repository is not found. The return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_pull_request_files` does not handle any phone number or email address inputs.  Its inputs are a repository owner (string), repository name (string), and pull request number (integer).  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_pull_request_status": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the returned dictionary, including nested structures and types, is comprehensive.  The `Args` and `Returns` sections are particularly strong, providing detailed information about the data structures involved.  The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, and `pull_number` parameters.  It checks the types and performs basic checks for emptiness and valid ranges. While Pydantic could provide a more structured and potentially more comprehensive approach, the existing validation is sufficient for the task.  The manual checks cover all aspects of the functional input parameters.  Using Pydantic would add extra overhead without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`owner`, `repo`, and `pull_number`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `pull_number`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the return dictionary (List, Dict) are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the logic described in its docstring.  All functional input parameters (`owner`, `repo`, `pull_number`) are used to retrieve and process data from the global `DB`.  All documented exceptions (`NotFoundError`, `ValidationError`) are handled appropriately. There are no TODOs, pass statements, or placeholder implementations. The function's return value matches the docstring's description in terms of structure and content.  The logic for handling potential inconsistencies in the database (e.g., missing repository ID, missing head SHA in pull request data) is also included and appropriately raises exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_pull_request_status` does not handle any phone number or email address inputs.  Its inputs are `owner` (string), `repo` (string), and `pull_number` (integer), all related to identifying a pull request on a repository.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and processing data related to pull requests from a database, and performs input validation appropriate for its parameters (string and integer types and non-emptiness)."
+          }
+        },
+        "update_pull_request_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and generally accurate. It clearly explains the function's purpose, parameters, return value, and exceptions.  The description of `expected_head_sha` and its implications is particularly helpful.  Default values are correctly mentioned and explained.  All arguments are documented with types and descriptions. The `Returns` section accurately describes the dictionary structure and content. The `Raises` section lists all possible exceptions. Types are specified for all parameters and return values.  The documentation is complete enough for effective use."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`owner`, `repo`, `pull_number`, `expected_head_sha`).  It checks types and constraints (e.g., non-empty strings, positive integers). While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all functional input parameters.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters (`owner`, `repo`, `pull_number`, `expected_head_sha`).  Each parameter undergoes type checking using `isinstance()`.  `owner` and `repo` are checked for emptiness. `pull_number` is validated to ensure it's a positive integer. `expected_head_sha`, when provided, is also checked for emptiness and type.  Appropriate `custom_errors.ValidationError` exceptions are raised for invalid inputs with clear error messages.  All functional parameters are validated before being used in the main logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `pull_number`, `expected_head_sha`) are properly type-annotated with their expected types (str, str, int, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, str]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core logic of updating a pull request branch.  All functional input parameters (`owner`, `repo`, `pull_number`, `expected_head_sha`) are used.  The documented exceptions (`NotFoundError`, `ConflictError`, `ForbiddenError`) are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's return type and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_pull_request_branch` does not handle any phone number or email address inputs.  Its inputs are `owner` (string), `repo` (string), `pull_number` (integer), and an optional `expected_head_sha` (string).  These are all related to GitHub pull requests and do not involve phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_pull_request_comments": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs (owner, repo, pull_number) and their types. The Returns section correctly identifies the return type as a list of dictionaries and provides a detailed description of the keys within each dictionary, including nested structures like the `user` dictionary.  The Raises section correctly lists `NotFoundError` and `ValidationError`.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the three functional parameters (`owner`, `repo`, `pull_number`).  It checks the type and content of each parameter before proceeding.  While Pydantic could be used to achieve the same validation in a more concise and potentially type-safer way, the existing manual validation is sufficient and covers all functional inputs.  The use of Pydantic models here would be redundant."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all three functional input parameters (`owner`, `repo`, and `pull_number`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `pull_number`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No **kwargs parameters are used.  Complex types like `List` and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves pull request comments based on the provided owner, repo, and pull number.  All functional input parameters (`owner`, `repo`, `pull_number`) are used.  The documented exceptions (`NotFoundError`, `ValidationError`) are properly raised in case of invalid input or non-existent resources. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, correctly handling the retrieval and formatting of comments. The docstring accurately reflects the function's behavior and return type.  The handling of datetime objects within the `created_at` and `updated_at` fields is also robust, using `.isoformat()` for consistent output.  The use of `try-except` block with `PydanticValidationError` gracefully handles potential issues during Pydantic model validation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_pull_request_comments` does not handle any phone number or email address inputs.  Its inputs are `owner` (str), `repo` (str), and `pull_number` (int), which are all related to identifying a pull request on a repository.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_pull_request_reviews": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs (Args section) and output (Returns section), including types and nested structures within the dictionaries. The Raises section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring. The description of the function is clear and helpful in the context of an MCP server."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for the `owner`, `repo`, and `pull_number` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing checks are sufficient to ensure that the inputs are of the correct type and within the acceptable range.  Therefore, Pydantic models are not strictly needed for input validation in this specific function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of all three functional input parameters (`owner`, `repo`, and `pull_number`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `pull_number`) are properly type-annotated with their expected types (str, str, int). The function's return type is clearly specified as `List[Dict[str, Any]]`.  The function does not use `**kwargs` parameters.  Complex types within the return type annotation are also correctly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`owner`, `repo`, `pull_number`) are used to retrieve and process data from the global `DB`.  All documented exceptions (`TypeError`, `ValueError`, `NotFoundError`) are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic for retrieving repository data, pull request data, and reviews is complete and functional, considering the use of the global `DB`. The sorting of reviews by `submitted_at` is correctly implemented, handling various data types and potential errors gracefully. The formatting of the returned review list matches the structure specified in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_pull_request_reviews` does not handle any phone number or email address inputs.  Its inputs are a repository owner (string), repository name (string), and pull request number (integer).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles string and integer input validation and error handling for its intended purpose."
+          }
+        },
+        "create_pull_request_review": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, parameters, return value, and exceptions.  It accurately describes the function's behavior, including the nuances of the `event` parameter and its impact on the `submitted_at` field in the response.  Default values for optional parameters are clearly stated and explained. The `Args` and `Returns` sections are detailed and helpful, specifying types effectively.  The documentation of the `comments` parameter, while lengthy, is necessary given the complexity of the nested dictionary structure.  The `Raises` section accurately lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The `comments` parameter utilizes the `models.PullRequestReviewCommentInput` Pydantic model for validation.  This model is used within a loop to validate each dictionary within the `comments` list.  While other parameters have basic type checking (e.g., `isinstance` checks for `owner`, `repo`, `pull_number`), the use of the Pydantic model for `comments` demonstrates proper usage of Pydantic for complex, nested input validation.  Adding Pydantic models for other parameters would improve the robustness and readability of input validation, but the existing type checks are a reasonable alternative for simple parameters.  The validation of `commit_id` using a regular expression is also a good approach for that specific parameter."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List[Dict[str, Any]] for complex types.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of pull request reviews as described in its docstring.  All functional input parameters (`owner`, `repo`, `pull_number`, `commit_id`, `body`, `event`, `comments`) are used appropriately in the function's logic.  All documented exceptions are handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, return type, and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_pull_request_review` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on pull request review creation within a simulated GitHub API environment.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_pull_request": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and parameters.  It correctly lists the arguments and their types, including default values. The `Returns` section attempts to thoroughly document the structure of the dictionary returned, but it is excessively verbose and repetitive, especially in the nested `head` and `base` sections.  The level of detail provided for nested dictionary structures is excessive and makes the docstring harder to read than necessary.  The documentation of the `Returns` section is also inconsistent with the actual implementation.  The docstring promises a return dictionary containing only the keys listed in the `documented_response_keys` variable, yet the code returns a dictionary containing many more keys.  The `Raises` section accurately lists the exceptions.  While the docstring is comprehensive in terms of listing information, its excessive verbosity and the inconsistency between the documented return value and the actual return value detract from its quality.  A more concise and accurate description of the return value would significantly improve the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `title`, `head`, and `base` parameters, checking if they are empty strings.  While this is functional, it doesn't provide the comprehensive validation that a Pydantic model would offer (e.g., type checking, length restrictions, pattern matching).  However, given the simplicity of the validation requirements and the context of the codebase, using Pydantic models would likely be overkill.  The existing checks are sufficient for the current needs.  The other parameters (`owner`, `repo`, `body`, `draft`, `maintainer_can_modify`) are either strings or booleans and have default values, making explicit validation less critical.  Adding Pydantic would not significantly improve the code's robustness in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters.  `title`, `head`, and `base` are checked for emptiness.  The function also performs a case-insensitive lookup of the repository in the `DB`.  However, there's no explicit type checking beyond what Python's type hinting provides (which is not runtime enforced in this code).  While the repository lookup implicitly validates the existence of the repository,  the `owner` and `repo` parameters themselves aren't explicitly validated for format (e.g.,  allowing only alphanumeric characters and underscores, or limiting length).  The boolean parameters (`draft` and `maintainer_can_modify`) are not explicitly validated, though Python's type hinting would catch incorrect types at runtime if type checking is enabled.  The function raises appropriate exceptions for invalid inputs with clear error messages.  Therefore, it's not fully comprehensive due to the lack of explicit type and format validation for `owner` and `repo`, and implicit handling of boolean parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, Optional[str], Optional[bool]). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types like `Optional[str]` and `Optional[bool]` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of pull request creation within the constraints of the mock database.  All functional input parameters (`owner`, `repo`, `title`, `head`, `base`, `body`, `draft`, `maintainer_can_modify`) are used.  The documented exceptions are implemented. There are no placeholders or TODO comments. The core logic for checking existing PRs, branch existence, and commit differences is present."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_pull_request` does not handle any phone number or email address inputs.  Its parameters and functionality are entirely focused on creating pull requests within a version control system (likely mimicking GitHub's API).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "add_pull_request_review_comment": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior regarding new comments versus replies and the conditional requirements for various parameters. The Args section is comprehensive, listing all parameters with their types and descriptions, including default values and explanations of their usage. The Returns section correctly specifies the return type as `Dict[str, Any]` and provides a detailed description of the dictionary's structure, including nested dictionaries.  The Raises section lists the potential exceptions with informative descriptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks types (e.g., `if pull_number <= 0:`), checks for required values (e.g., `if not body:`), and performs more complex validation based on parameter interdependencies (e.g., checking for `commit_id` and `path` when `in_reply_to` is not provided). While Pydantic could provide a more structured and potentially more concise way to express these validations, the existing approach is comprehensive and functional.  The use of Pydantic models would not significantly improve the validation in this specific case, given the complexity of the inter-parameter relationships."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for most functional parameters.  `pull_number` is checked to ensure it's a positive integer. `body` is checked for emptiness.  The function correctly validates that `commit_id` and `path` are present for new comments (not replies).  Line number validation (`line`) is performed for line-level comments, checking for positive integer values and a reasonable range.  `side` is validated for \"LEFT\" or \"RIGHT\" values when applicable.  The function also checks for the existence of the repository and pull request in the mock database (`DB`).  Error handling is present using custom exceptions (`ValidationError`, `NotFoundError`, `UnprocessableEntityError`, `ForbiddenError`) with informative messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (str, int, Optional[str], Optional[int], etc.). The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use **kwargs parameters.  Complex types like `Optional` are used correctly."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core functionality of adding pull request review comments, handling replies, and validating inputs.  It correctly uses all functional input parameters.  The exception handling is mostly implemented, covering `NotFoundError`, `ValidationError`, `UnprocessableEntityError`, and `ForbiddenError`. There are no placeholders or TODO comments.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `add_pull_request_review_comment` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on managing pull request review comments within a simulated GitHub-like environment.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "update_pull_request": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's ability to update pull request attributes.  All arguments, including their types and default values, are documented. The `Returns` section correctly specifies the return type as `Dict[str, Any]` and attempts to comprehensively describe the structure of the dictionary, although it admits that the list is not exhaustive.  The `Raises` section lists all potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation using type checking and manual checks for specific values (e.g., state must be 'open' or 'closed').  While Pydantic could provide a more structured and potentially more concise way to express these validations, the existing approach is functional and covers all functional input parameters.  The manual checks are sufficient for the validation requirements of this function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on all functional input parameters (`owner`, `repo`, `pull_number`, `title`, `body`, `state`, `base`, `maintainer_can_modify`).  `pull_number` additionally has a more robust check attempting to convert it to an integer and raising an error if this fails.  The `state` parameter also has value validation, checking if it's \"open\" or \"closed\".  Appropriate `ValidationError` exceptions are raised with informative messages for invalid inputs.  However, there's a lack of validation for the `owner` and `repo` parameters beyond type checking. While the code checks for the repository's existence later, it doesn't validate the format of the owner and repo names (e.g., preventing injection or invalid characters).  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional for optional parameters and the correct specification of complex types like Dict and bool.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of updating a pull request within the simulated database environment.  All functional input parameters are used.  The exception handling is implemented for the documented exceptions. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_pull_request` does not handle any phone number or email address inputs.  Its parameters and logic are entirely focused on updating GitHub pull request information. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "github/repositories.py": {
+      "functions": {
+        "create_or_update_file": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and generally provides a good overview of the function's purpose, parameters, return values, and exceptions.  It accurately describes the function's role in creating or updating files within a repository, including details about optional parameters like `branch` and `sha`. The descriptions of the nested dictionary structures within the return value are particularly helpful.  Default values for optional parameters are clearly stated and explained.  All arguments are documented with types and descriptions.  The `Returns` section accurately reflects the structure of the returned dictionary, although some fields like `download_url` and `html_url` are mentioned as potentially present but aren't guaranteed by the implementation.  The `Raises` section correctly lists the possible exceptions. Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`owner`, `repo`, `path`, `message`, `content`, `branch`, `sha`).  It checks for empty strings and performs a `base64` decoding check on the `content` parameter. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks cover all the functional input parameters adequately.  The current approach is sufficient given the context."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`owner`, `repo`, `path`, `message`, `content`, `branch`, `sha`) are validated.  `owner`, `repo`, `path`, `message`, and `content` have null/empty checks. `content` has a base64 decoding check to ensure valid format. `sha` is validated against the existing file's SHA if the file is being updated, and a check is performed to ensure it's not provided when creating a new file.  `branch` is implicitly validated through the branch lookup; if it doesn't exist, a `NotFoundError` is raised.  The validation is thorough and covers type, value, and null/empty checks where appropriate, along with domain-specific constraints."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (owner, repo, path, message, content, branch, sha) are properly type-annotated with their expected types (str or Optional[str]). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling most aspects of creating or updating files within the simulated database.  All functional input parameters (`owner`, `repo`, `path`, `message`, `content`, `branch`, `sha`) are used appropriately in the logic.  The documented exceptions (`NotFoundError`, `ValidationError`, `ConflictError`, `ForbiddenError`) are implemented. There are no obvious placeholders or TODO comments.  The docstring accurately reflects the function's return type and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_or_update_file` does not handle phone numbers or email addresses as input.  Its inputs are related to Git repository management (owner, repo name, file path, content, etc.). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list_branches": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: listing branches in a GitHub repository with pagination. Default values for `page` and `per_page` are correctly specified and explained.  The `Args` and `Returns` sections are well-structured, and types are consistently specified using type hints.  The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, `page`, and `per_page` parameters.  These checks cover type and value constraints. While Pydantic could provide a more structured approach, the existing validation is sufficient and correctly handles the requirements.  Using Pydantic would add unnecessary complexity for this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters (`owner`, `repo`, `page`, `per_page`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `page`, `per_page`) are properly type-annotated with their expected types (str, Optional[int], Optional[int] respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No `**kwargs` parameter is used.  Complex types like `List` and `Dict` are properly specified, including the use of `Optional` for the pagination parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`owner`, `repo`, `page`, `per_page`) are used appropriately in the function's logic.  The documented exceptions (`NotFoundError`, `ValueError`) are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The return type and the structure of the returned data match the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_branches` does not handle any phone number or email address inputs.  Its inputs are `owner` and `repo` (strings representing a GitHub repository owner and name), `page`, and `per_page` (integers for pagination).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the string inputs for emptiness and the integer inputs for positivity."
+          }
+        },
+        "push_files": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the arguments and their types, including a clear explanation of the nested `files` dictionary structure. The `Returns` section correctly specifies the return type and describes the included fields. The `Raises` section lists the potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`owner`, `repo`, `branch`, `files`, `message`).  While Pydantic models could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are comprehensive and cover all aspects of the input data types and required fields.  Therefore, Pydantic is not strictly needed for this function, although it might offer some advantages in terms of code readability and maintainability for more complex validation scenarios."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all four functional input parameters: `owner`, `repo`, `branch`, and `files`.  Each is checked for null or empty values.  `owner`, `repo`, and `branch` are validated as non-empty strings.  The `files` parameter undergoes extensive validation: it checks if it's a non-empty list, if each element is a dictionary, and if each dictionary contains the required keys (\"path\" and \"content\"), with both keys containing valid string values.  Appropriate `ValidationError` exceptions are raised with informative error messages for any invalid input.  The validation is thorough and covers all aspects of the functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `branch`, `files`, `message`) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  Complex types like `List[Dict[str, str]]` are correctly used. No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely implemented and functional, correctly handling most aspects of pushing files to a simulated repository using the global `DB`.  All functional input parameters (`owner`, `repo`, `branch`, `files`, `message`) are used.  The documented exceptions (`NotFoundError`, `ValidationError`, `ConflictError`) are also implemented. There are no TODOs or placeholders."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `push_files` does not handle any phone number or email address inputs.  Its inputs are related to Git repository operations (owner username, repository name, branch name, file paths, and commit messages). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_repository": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It clearly explains the default settings for repository creation.  The `Args` and `Returns` sections are comprehensive, specifying types and providing detailed descriptions of the dictionary structures. The `Raises` section accurately lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses basic type checking and manual validation for the `name`, `description`, `private`, and `auto_init` parameters.  While it doesn't employ Pydantic models, the validation is sufficient for its purpose.  The checks ensure that the `name` is not empty, and the other parameters are handled correctly based on their types and expected values.  Using Pydantic would add overhead without significantly improving the existing validation, which is already quite robust for this specific function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation for the `name` parameter, checking for emptiness and implicitly enforcing a string type via type hinting.  However, it lacks explicit type validation for `description`, `private`, and `auto_init` beyond the type hints. While the code correctly handles boolean and None values for `private` and `auto_init`,  more robust checks could be added to prevent unexpected input types.  For example, a check could be added to ensure that `description` is a string if provided, and that `private` and `auto_init` are actually booleans.  The validation for `name` is sufficient, raising a `ValidationError` with a clear message if it's empty.  The function also performs a check for the existence of a repository with the same name, which is a crucial domain-specific constraint.  Overall, the validation is good but could be improved by adding explicit type checks for all parameters and potentially more sophisticated checks on the `name` parameter (e.g., length restrictions, allowed characters)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `description`, `private`, `auto_init`) are properly type-annotated with their expected types (str, Optional[str], Optional[bool], Optional[bool] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling the creation of repositories and initial commits when `auto_init` is True.  All functional input parameters (`name`, `description`, `private`, `auto_init`) are used. The documented exceptions (`ValidationError`, `UnprocessableEntityError`, `ForbiddenError`) are implemented. There are no placeholders or TODO comments.  The docstring accurately reflects the function's behavior and return value."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_repository` does not handle any phone number or email address inputs.  Its purpose is to create a GitHub repository based on a name, description, privacy setting, and auto-initialization flag.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_file_contents": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior in retrieving file or directory contents and explains how the return value differs based on whether the path is a file or directory.  The Args, Returns, and Raises sections are well-structured and informative. Default values are correctly mentioned. Types are specified for all parameters and return values using type hints.  The documentation of the dictionary structures within the Returns section is thorough, clearly outlining the keys and their types for both file and directory entries."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, and `path` parameters.  These checks ensure that these strings are not empty. While Pydantic could be used to achieve the same validation, the current manual approach is sufficient and clear for this simple case.  The `ref` parameter is optional and has no explicit validation, but its use within the function handles potential `None` values appropriately.  Using Pydantic here would add unnecessary complexity without significant benefit."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the functional parameters `owner`, `repo`, and `path`.  It checks for empty strings and `None` values, raising appropriate `ValidationError` exceptions.  However, it lacks validation on the `ref` parameter. While it handles the case where `ref` is `None`, it doesn't check for invalid formats or values if a `ref` is provided.  The validation could be improved by adding checks to ensure that `ref` is a valid branch name, tag name, or commit SHA before attempting to resolve it.  The existing checks for `owner`, `repo`, and `path` are comprehensive in terms of empty string and `None` checks.  The missing validation on `ref` prevents a \"Comprehensive\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `path`, `ref`) are properly type-annotated with their expected types (str, str, str, Optional[str] respectively). The function's return type is clearly specified using `Union[Dict[str, Any], List[Dict[str, Any]]]`.  The function does not use `**kwargs` parameters.  Complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly handling file and directory retrieval from the simulated `DB`.  All functional input parameters (`owner`, `repo`, `path`, `ref`) are used.  The documented exceptions (`ValidationError`, `NotFoundError`) are implemented. There are no placeholders or TODO comments.  The docstring accurately reflects the return types."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `get_file_contents` does not handle or process any phone numbers or email addresses.  Its purpose is to retrieve file and directory contents from a database representing a Git repository.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "fork_repository": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It correctly mentions the optional `organization` parameter and its default value. The `Args` and `Returns` sections are detailed, including nested dictionary structures within the return value. The `Raises` section comprehensively lists potential exceptions.  Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking for its input parameters (`owner`, `repo`, `organization`).  While Pydantic models could provide a more structured and potentially more comprehensive approach (e.g., handling string length constraints, regular expressions for specific patterns), the existing type checks adequately address the basic type validation requirements for these parameters.  The current validation is sufficient for the given context.  Using Pydantic would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive input validation on all three functional parameters (`owner`, `repo`, and `organization`).  Type validation is present for all three using `isinstance`.  The `organization` parameter also correctly handles the `None` case.  There are no missing validation checks for the functional parameters.  While there's no explicit length or format validation on the strings, the subsequent checks in the function (database lookups, etc.) will implicitly handle many invalid values by raising appropriate exceptions (like `NotFoundError`).  The error messages raised for type mismatches are clear and informative."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `organization`) are properly type-annotated with their expected types (str, str, Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core functionality of forking a repository.  All functional input parameters (`owner`, `repo`, `organization`) are used correctly.  The documented exceptions are handled appropriately. There are no placeholders or TODO comments. The logic is functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `fork_repository` does not handle any phone numbers or email addresses.  Its inputs are repository owner and name strings, and an optional organization string. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on repository management within a simulated database environment."
+          }
+        },
+        "create_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section correctly specifies the dictionary structure and the types of its keys, including the nested `object` dictionary.  The `Raises` section accurately lists the exceptions that the function might raise.  Type hints are used consistently for parameters and return values. The documentation is complete enough for someone to use the function effectively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `owner`, `repo`, `branch`, and `sha` parameters.  It checks for empty branch names, uses regular expressions to validate the SHA format, and checks for the existence of the repository and the source commit in the mock database (`DB`). While Pydantic models could provide a more structured and potentially more concise way to perform these validations, the existing manual checks cover all functional input parameters adequately.  Therefore, Pydantic models are not strictly needed for this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All four functional input parameters (`owner`, `repo`, `branch`, and `sha`) are validated.  `owner` and `repo` are implicitly validated through the existence check of the repository in the database. `sha` undergoes a regular expression check (`re.fullmatch(models.SHA_PATTERN, sha)`) to ensure it conforms to a valid SHA format and a further check to confirm it corresponds to an existing commit within the specified repository. `branch` is checked for emptiness and for pre-existing branches with the same name in the repository.  All validations include appropriate error handling with informative error messages using custom exceptions.  The validation is thorough and covers type, value, and null/empty checks where applicable."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `branch`, `sha`) are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new branch based on the provided parameters.  All functional input parameters (`owner`, `repo`, `branch`, `sha`) are used.  The function correctly handles the documented exceptions (`NotFoundError`, `UnprocessableEntityError`). There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the structure of the returned dictionary.  The `node_id` generation, while using a custom method, is consistent with the described functionality."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_branch` does not handle any phone number or email address inputs.  Its inputs are `owner`, `repo`, `branch`, and `sha` which are all strings representing repository and branch information, not contact details. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "list_commits": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and attempts to comprehensively document the function's parameters, return value, and exceptions.  It correctly lists all parameters with types and default values. The `Returns` section is quite detailed, specifying the nested structure of the returned dictionaries, including types for most fields. The `Raises` section accurately reflects the exceptions the function can throw.  Type hints are used consistently."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`str`, `Optional[str]`, `Optional[int]`) for its functional parameters (`owner`, `repo`, `sha`, `path`, `page`, `per_page`).  While this provides basic type checking, it doesn't offer the rich validation capabilities of Pydantic models (e.g., string length constraints, regular expressions, range checks for integers).  However, given the context of the problem and the nature of the parameters, the type hints are sufficient.  More robust validation might be beneficial if the function were to be exposed as a public API, but for internal use within this system, the existing validation is adequate.  Adding Pydantic models would add complexity without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation, but it's not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (owner, repo, sha, path, page, per_page) are properly type-annotated with their expected types (str, Optional[str], Optional[int]). The function's return type is clearly specified as List[Dict[str, Any]].  No **kwargs parameters are used.  Complex types like List, Dict, and Optional are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality, correctly handling the retrieval and traversal of commits from the simulated database (`DB`).  All functional parameters (`owner`, `repo`, `sha`, `path`, `page`, `per_page`) are used.  The exception handling for `NotFoundError` is implemented, covering various scenarios where commits or repositories might not be found.  The logic for pagination and path filtering works as expected."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_commits` does not handle any phone number or email address inputs.  Its purpose is to retrieve and format commit data from a repository, using parameters like owner, repo name, SHA, path, etc.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_commit": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-structured and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  Default values for `page` and `per_page` are correctly specified. The `Args` and `Returns` sections are comprehensive, detailing the structure of the nested dictionaries.  The documentation of the `files` list within the return value accurately reflects the pagination logic."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type hints (`Optional[int]` for `page` and `per_page`, `str` for `owner`, `repo`, and `sha`) and performs manual input validation within the function.  For example, it checks if `page` is less than 1 and adjusts it, and it checks if `per_page` is greater than 0 and caps it at 100.  While Pydantic could provide a more structured and potentially more comprehensive approach to validation, the existing manual checks adequately handle the validation needs for the functional parameters.  The use of Pydantic would be an improvement in terms of code organization and readability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation and some value validation on the `page` and `per_page` parameters.  It checks if `page` is an integer and greater than or equal to 1, and if `per_page` is an integer and greater than 0, also capping it at 100.  However, there's no validation for `owner`, `repo`, or `sha`. These parameters are crucial and should be validated for non-empty strings and potentially length restrictions or format constraints (e.g., SHA format).  The absence of validation for these core parameters makes the validation incomplete.  No special constraints are checked (e.g., repository existence is checked after the parameter is used, not before).  Error handling is present for repository and commit not found, but not for invalid input types or values of `owner`, `repo`, or `sha`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`owner`, `repo`, `sha`, `page`, `per_page`) are properly type-annotated with their expected types (str, str, str, Optional[int], Optional[int] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly retrieves commit data from the mock database (`DB`), handles pagination of the files list using the `page` and `per_page` parameters, and formats the data according to the docstring specifications.  The exception handling for `NotFoundError` is correctly implemented.  The date formatting helper function is also well-written."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_commit` does not handle any phone number or email address inputs.  Its purpose is to retrieve commit data from a repository, and the input parameters are related to repository identification (owner, repo, sha) and pagination (page, per_page).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "search_code": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the `search_code` function's purpose and usage within an MCP server context.  It accurately describes the function's core functionality: searching for code within repositories. The description of supported qualifiers in the `query` parameter is thorough and helpful.  Default values for all parameters are correctly mentioned and explained. The `Args` and `Returns` sections are well-structured, and types are specified for all parameters and the return value.  The documentation of the nested dictionary structures within the `Returns` section is particularly commendable, providing a clear understanding of the data structure.  The `Raises` section correctly lists potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`query`, `sort`, `order`, `page`, `per_page`).  While Pydantic could be used to structure and validate these inputs, the existing manual checks are comprehensive and cover all necessary validation aspects.  The current approach is sufficient and avoids the overhead of introducing Pydantic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `sort`, `order`, `page`, `per_page`) are properly type-annotated with their expected types. The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types within the type annotations (e.g., `Dict[str, Any]`, `int`) are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using the `query`, `page`, and `per_page` parameters.  The `sort` and `order` parameters are handled, but their functionality is limited due to the docstring's note that they are being phased out.  The exception handling for `InvalidInputError` and `RateLimitError` is implemented correctly. There are no placeholders or TODO comments.  The docstring accurately reflects the return type and structure. The core search logic appears functional given the mock database. However, the implementation's reliance on a global `DB` makes thorough testing difficult without access to the `DB`'s structure and contents.  A more robust implementation might involve more explicit error handling for cases where data is missing from the `DB` (e.g., `KeyError`).  Additionally, the logic for handling size qualifiers could be simplified and made more readable."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `search_code` function does not handle any phone number or email address inputs.  Its input and output are solely focused on code search queries and results. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "search_repositories": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return values, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `query`, `page`, `per_page`, and `order` parameters.  Type checking and range checks are performed directly within the function. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is functional and covers all the necessary checks for the functional input parameters.  The use of Pydantic would not significantly improve the code in this case, given the simplicity of the validation logic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `sort`, `order`, `page`, `per_page`) are properly type-annotated with their expected types (str, Optional[str], str, int, int respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional[str]` and `Dict[str, Any]` are correctly used in type annotations."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements a search functionality over a repository database (represented by the global `DB`).  All functional input parameters (`query`, `sort`, `order`, `page`, `per_page`) are used to filter, sort, and paginate the results.  The documented exceptions (`custom_errors.InvalidInputError`) are properly raised for invalid inputs. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior, including the structure of the returned dictionary and the handling of various search qualifiers and sorting options.  The use of `shlex.split` for query parsing and regular expressions for qualifier extraction is robust. The date handling within the sorting logic is also correctly implemented.  The output dictionary matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `search_repositories` does not handle phone numbers or email addresses as input.  Its purpose is to search GitHub repositories based on a query string, sort criteria, and pagination parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "github": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, and `error_definitions.json`). The `tests` folder is well-populated with numerous test files."
+      }
+    }
+  }
+}

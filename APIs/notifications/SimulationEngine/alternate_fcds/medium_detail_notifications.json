@@ -1,0 +1,65 @@
+[
+    {
+        "name": "get_notifications",
+        "description": "Retrieves Android notifications, with an option to filter the results.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sender_name": {
+                    "type": "string",
+                    "description": "An optional filter for the sender or group name. If provided, this must be a non-empty string with a maximum length of 256 characters."
+                },
+                "app_name": {
+                    "type": "string",
+                    "description": "Specifies the application name used to filter notifications. This must be a non-empty string with a maximum length of 256 characters."
+                },
+                "unread": {
+                    "type": "boolean",
+                    "description": "A boolean that filters notifications by their read status. If `True` (the default), fetches only unread notifications and marks them as read. If `False`, fetches only read notifications without changing their status."
+                }
+            }
+        }
+    },
+    {
+        "name": "reply_notification",
+        "description": "Reply to a notification identified by its unique bundle `key` using the provided `message_body` and `recipient_name`. This function returns a confirmation, including details like the number of replies sent and optional UI content. The `app_name` is an optional parameter, and while `app_package_name` is accepted for API compatibility, it is not currently utilized.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "A unique bundle identifier for the notification to reply to. It must be a non-empty string with a maximum length of 256 characters."
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The text content of the reply message. It must be a non-empty string."
+                },
+                "recipient_name": {
+                    "type": "string",
+                    "description": "The display name of the recipient. It must be a non-empty string with a maximum length of 256 characters."
+                },
+                "app_name": {
+                    "type": "string",
+                    "description": "An optional application name for the reply. If provided, it must be a non-empty string with a maximum length of 256 characters."
+                },
+                "app_package_name": {
+                    "type": "string",
+                    "description": "An optional package name, not used in the current implementation but validated for API compatibility. If provided, it must be a non-empty string with a maximum length of 256 characters."
+                }
+            },
+            "required": [
+                "key",
+                "message_body",
+                "recipient_name"
+            ]
+        }
+    },
+    {
+        "name": "reply_notification_message_or_contact_missing",
+        "description": "Handles reply attempts where the message body or recipient is missing. This function is invoked when a user attempts to reply without providing the required message content or recipient name.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    }
+]

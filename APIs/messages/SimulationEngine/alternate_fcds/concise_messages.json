@@ -1,0 +1,259 @@
+[
+    {
+        "name": "ask_for_message_body",
+        "description": "Displays a single recipient with a single endpoint in a card to prompt the user for the message body.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "recipient": {
+                    "type": "object",
+                    "properties": {
+                        "contact_id": {
+                            "type": "string",
+                            "description": "A unique identifier for the contact."
+                        },
+                        "contact_name": {
+                            "type": "string",
+                            "description": "The name of the contact."
+                        },
+                        "contact_endpoints": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            },
+                            "description": "A list of the contact's endpoints."
+                        },
+                        "contact_photo_url": {
+                            "type": "string",
+                            "description": "The URL of the contact's photo."
+                        }
+                    },
+                    "description": "Auxiliary information about the message recipient, to be displayed on the card shown to the user.",
+                    "required": [
+                        "contact_endpoints",
+                        "contact_name"
+                    ]
+                }
+            },
+            "required": [
+                "recipient"
+            ]
+        }
+    },
+    {
+        "name": "prepare_chat_message",
+        "description": "Prepare interactive message cards for sending via SMS/MMS by validating the message body and recipient list, without actually sending the message.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message_body": {
+                    "type": "string",
+                    "description": "A non-empty string containing the text message content."
+                },
+                "recipients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "contact_id": {
+                                "type": "string",
+                                "description": "Unique identifier for the contact"
+                            },
+                            "contact_name": {
+                                "type": "string",
+                                "description": "The name of the contact"
+                            },
+                            "contact_endpoints": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                },
+                                "description": "List of endpoints for the contact"
+                            },
+                            "contact_photo_url": {
+                                "type": "string",
+                                "description": "URL to the contact's photo"
+                            }
+                        },
+                        "required": [
+                            "contact_endpoints",
+                            "contact_name"
+                        ]
+                    },
+                    "description": "A list of recipient objects."
+                }
+            },
+            "required": [
+                "message_body",
+                "recipients"
+            ]
+        }
+    },
+    {
+        "name": "send_chat_message",
+        "description": "Sends a message via SMS/MMS to a recipient with exactly one phone number.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "recipient": {
+                    "type": "object",
+                    "properties": {
+                        "contact_id": {
+                            "type": "string",
+                            "description": "The unique identifier for the contact."
+                        },
+                        "contact_name": {
+                            "type": "string",
+                            "description": "The name of the contact."
+                        },
+                        "contact_endpoints": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "endpoint_type": {
+                                        "type": "string",
+                                        "description": "Must be \"PHONE_NUMBER\""
+                                    },
+                                    "endpoint_value": {
+                                        "type": "string",
+                                        "description": "The phone number"
+                                    },
+                                    "endpoint_label": {
+                                        "type": "string",
+                                        "description": "Label for the endpoint"
+                                    }
+                                },
+                                "required": [
+                                    "endpoint_type",
+                                    "endpoint_value"
+                                ]
+                            },
+                            "description": "A list containing exactly one endpoint."
+                        },
+                        "contact_photo_url": {
+                            "type": "string",
+                            "description": "The URL of the contact's photo."
+                        }
+                    },
+                    "description": "An object containing the recipient's contact information, which must define exactly one message endpoint.",
+                    "required": [
+                        "contact_endpoints",
+                        "contact_name"
+                    ]
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The content of the message, which must be a non-empty string using correct grammar and punctuation, with any lists formatted as bullet points using asterisks."
+                },
+                "media_attachments": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "media_id": {
+                                "type": "string",
+                                "description": "Unique identifier of the media"
+                            },
+                            "media_type": {
+                                "type": "string",
+                                "description": "Type of media, defaults to \"IMAGE\""
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "Source of media (\"IMAGE_RETRIEVAL\", \"IMAGE_GENERATION\",\n  \"IMAGE_UPLOAD\", or \"GOOGLE_PHOTO\")"
+                            }
+                        },
+                        "required": [
+                            "media_id",
+                            "media_type",
+                            "source"
+                        ]
+                    },
+                    "description": "A list of metadata objects for each media payload, currently supporting only images."
+                },
+                "recipient_name": {
+                    "type": "string",
+                    "description": "The recipient's name (legacy)."
+                },
+                "recipient_phone_number": {
+                    "type": "string",
+                    "description": "The recipient's phone number (legacy)."
+                },
+                "recipient_photo_url": {
+                    "type": "string",
+                    "description": "URL of the recipient's profile photo (legacy parameter)."
+                }
+            },
+            "required": [
+                "message_body",
+                "recipient"
+            ]
+        }
+    },
+    {
+        "name": "show_message_recipient_choices",
+        "description": "Displays a card of potential recipients for user selection when clarification is needed between multiple recipients or a single recipient with multiple endpoints.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "recipients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "contact_id": {
+                                "type": "string",
+                                "description": "Unique identifier for the contact"
+                            },
+                            "contact_name": {
+                                "type": "string",
+                                "description": "The name of the contact"
+                            },
+                            "contact_endpoints": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                },
+                                "description": "List of endpoints for the contact"
+                            },
+                            "contact_photo_url": {
+                                "type": "string",
+                                "description": "URL to the contact's photo"
+                            }
+                        },
+                        "required": [
+                            "contact_endpoints",
+                            "contact_name"
+                        ]
+                    },
+                    "description": "A list of objects, where each object represents a possible message recipient."
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The text message content to send to the recipient, which may be left empty."
+                }
+            },
+            "required": [
+                "recipients"
+            ]
+        }
+    },
+    {
+        "name": "show_message_recipient_not_found_or_specified",
+        "description": "Inform the user that the message recipient is not found or not specified, occurring when contact searches yield no results or a contact name is not provided in the query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "contact_name": {
+                    "type": "string",
+                    "description": "The recipient name searched for, or `None` if no name was provided."
+                },
+                "message_body": {
+                    "type": "string",
+                    "description": "The text message content to send to the recipient, which may be empty if not already specified."
+                }
+            }
+        }
+    }
+]

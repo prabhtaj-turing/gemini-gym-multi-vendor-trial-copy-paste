@@ -1,0 +1,1795 @@
+[
+    {
+        "name": "add_attachment",
+        "description": "Add an attachment to an issue from a file path, automatically handling MIME type detection, file size validation, encoding, and checksum generation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_id_or_key": {
+                    "type": "string",
+                    "description": "The unique identifier or key of the target issue; must be a non-empty string that exists in the database."
+                },
+                "file_path": {
+                    "type": "string",
+                    "description": "A filesystem path to the file to attach; the file will be read from disk, and its filename extracted from this path."
+                }
+            },
+            "required": [
+                "file_path",
+                "issue_id_or_key"
+            ]
+        }
+    },
+    {
+        "name": "assign_issue_to_user",
+        "description": "Assigns an issue to a user, or unassigns it by setting the assignee to `null`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_id": {
+                    "type": "string",
+                    "description": "Unique ID of the issue to assign."
+                },
+                "assignee": {
+                    "type": "object",
+                    "description": "An object containing the required information for the assignee.",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The username of the assignee (e.g., `jdoe`)."
+                        }
+                    },
+                    "required": [
+                        "name"
+                    ]
+                }
+            },
+            "required": [
+                "assignee",
+                "issue_id"
+            ]
+        }
+    },
+    {
+        "name": "bulk_delete_issues",
+        "description": "Delete multiple issues in a single bulk operation, continuing even if some issues cannot be deleted.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_ids": {
+                    "type": "array",
+                    "description": "A list of issue IDs to delete."
+                }
+            },
+            "required": [
+                "issue_ids"
+            ]
+        }
+    },
+    {
+        "name": "create_group",
+        "description": "Create a new group with the specified name, which will initially have no members.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the group to create."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "create_issue",
+        "description": "Creates a new issue in Jira with the specified fields.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "properties": {
+                        "project": {
+                            "type": "string",
+                            "description": "Key of the project to which the issue belongs."
+                        },
+                        "summary": {
+                            "type": "string",
+                            "description": "A brief summary of the issue."
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "A detailed description of the issue."
+                        },
+                        "issuetype": {
+                            "type": "string",
+                            "description": "The type of the issue."
+                        },
+                        "priority": {
+                            "type": "string",
+                            "description": "The priority of the issue."
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "The issue's status, for example: `Open`, `Resolved`, `Closed`, `Completed`, or `In Progress`."
+                        },
+                        "assignee": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The username of the assignee (e.g., `jdoe`)."
+                                }
+                            },
+                            "description": "The user assigned to the issue, provided as a dictionary in the format `{\"name\": \"jdoe\"}`.",
+                            "required": [
+                                "name"
+                            ]
+                        }
+                    },
+                    "description": "A dictionary of issue fields, including all required fields.",
+                    "required": [
+                        "assignee",
+                        "description",
+                        "issuetype",
+                        "priority",
+                        "project",
+                        "status",
+                        "summary"
+                    ]
+                }
+            },
+            "required": [
+                "fields"
+            ]
+        }
+    },
+    {
+        "name": "create_issue_link",
+        "description": "Create a new issue link in Jira between two existing issues.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The type of issue link to create, as a non-empty string."
+                },
+                "inwardIssue": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "The key of the inward issue; must be a non-empty string."
+                        }
+                    },
+                    "description": "The inward issue reference, a dictionary containing its non-empty `key` string.",
+                    "required": [
+                        "key"
+                    ]
+                },
+                "outwardIssue": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "The non-empty string key of the outward issue."
+                        }
+                    },
+                    "description": "The outward issue reference, a dictionary containing its `key` as a non-empty string.",
+                    "required": [
+                        "key"
+                    ]
+                }
+            },
+            "required": [
+                "inwardIssue",
+                "outwardIssue",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "create_issue_type",
+        "description": "Create a new issue type in Jira with the specified name and description.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the issue type; cannot be empty."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The non-empty description for the issue type."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The type of issue to create; defaults to `standard` and accepts `standard` or `subtask`, treating other values as `standard`."
+                }
+            },
+            "required": [
+                "description",
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "create_or_get_webhooks",
+        "description": "Registers new webhooks and returns their generated IDs.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "webhooks": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    },
+                    "description": "Webhooks to create or retrieve."
+                }
+            },
+            "required": [
+                "webhooks"
+            ]
+        }
+    },
+    {
+        "name": "create_project",
+        "description": "Create a new project with the given key and name.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "proj_key": {
+                    "type": "string",
+                    "description": "The project's key; cannot be empty."
+                },
+                "proj_name": {
+                    "type": "string",
+                    "description": "The name of the project; cannot be empty."
+                }
+            },
+            "required": [
+                "proj_key",
+                "proj_name"
+            ]
+        }
+    },
+    {
+        "name": "create_project_component",
+        "description": "Create a new component within a specified Jira project to group issues and assign to team members.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project": {
+                    "type": "string",
+                    "description": "The non-empty string key of the project where the component will be created."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The component's name, a non-empty string with a maximum length of 255 characters."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "An optional description of the component's purpose, limited to 1000 characters."
+                }
+            },
+            "required": [
+                "name",
+                "project"
+            ]
+        }
+    },
+    {
+        "name": "create_user",
+        "description": "Creates a new user with the required details and a unique email, applying sensible defaults for any unspecified fields.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The required username for the new user."
+                        },
+                        "emailAddress": {
+                            "type": "string",
+                            "description": "The user's primary email address (required)."
+                        },
+                        "displayName": {
+                            "type": "string",
+                            "description": "The required name to display in the UI."
+                        },
+                        "profile": {
+                            "type": "object",
+                            "properties": {
+                                "bio": {
+                                    "type": "string",
+                                    "description": "The user's biographical information."
+                                },
+                                "joined": {
+                                    "type": "string",
+                                    "description": "The date the user joined."
+                                }
+                            },
+                            "description": "A dictionary containing user profile information."
+                        },
+                        "groups": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of group names."
+                        },
+                        "drafts": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "The unique ID of the draft."
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "description": "The subject of the draft."
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "description": "The content of the draft."
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "description": "The creation timestamp of the draft."
+                                    }
+                                },
+                                "required": [
+                                    "body",
+                                    "id",
+                                    "subject",
+                                    "timestamp"
+                                ]
+                            },
+                            "description": "A list of draft objects, where each object is a dictionary."
+                        },
+                        "messages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "The unique ID of the message."
+                                    },
+                                    "from": {
+                                        "type": "string",
+                                        "description": "The sender's email address."
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "description": "The recipient's email address."
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "description": "The subject of the message."
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "description": "The timestamp of the message."
+                                    }
+                                },
+                                "required": [
+                                    "from",
+                                    "id",
+                                    "subject",
+                                    "timestamp",
+                                    "to"
+                                ]
+                            },
+                            "description": "A list of message objects, where each object is a dictionary."
+                        },
+                        "threads": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "The unique ID of the thread."
+                                    },
+                                    "messageIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "A list of message IDs in the thread."
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "messageIds"
+                                ]
+                            },
+                            "description": "A list of thread objects, where each object is a dictionary."
+                        },
+                        "labels": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "An array of strings to use as labels."
+                        },
+                        "settings": {
+                            "type": "object",
+                            "properties": {
+                                "theme": {
+                                    "type": "string",
+                                    "description": "The user's theme preference."
+                                },
+                                "notifications": {
+                                    "type": "boolean",
+                                    "description": "Specifies the user's notification preference."
+                                }
+                            },
+                            "description": "A dictionary of user settings."
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string",
+                                        "description": "The action performed."
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "description": "The timestamp of the action."
+                                    }
+                                },
+                                "required": [
+                                    "action",
+                                    "timestamp"
+                                ]
+                            },
+                            "description": "A list of history event objects, where each object is a dictionary."
+                        },
+                        "watch": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "An array of watched item IDs."
+                        },
+                        "sendAs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "alias": {
+                                        "type": "string",
+                                        "description": "The email alias."
+                                    },
+                                    "default": {
+                                        "type": "boolean",
+                                        "description": "Whether this is the default alias."
+                                    }
+                                },
+                                "required": [
+                                    "alias",
+                                    "default"
+                                ]
+                            },
+                            "description": "A list of alias objects, where each object is a dictionary."
+                        }
+                    },
+                    "description": "An object containing the user's details.",
+                    "required": [
+                        "displayName",
+                        "emailAddress",
+                        "name"
+                    ]
+                }
+            },
+            "required": [
+                "payload"
+            ]
+        }
+    },
+    {
+        "name": "create_version",
+        "description": "Create a new version and return its information.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the version."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The version's description."
+                },
+                "archived": {
+                    "type": "boolean",
+                    "description": "Indicates if the version is archived."
+                },
+                "released": {
+                    "type": "boolean",
+                    "description": "Indicates if the version is released."
+                },
+                "release_date": {
+                    "type": "string",
+                    "description": "The version's release date, as a string."
+                },
+                "user_release_date": {
+                    "type": "string",
+                    "description": "The version's user-defined release date."
+                },
+                "project": {
+                    "type": "string",
+                    "description": "The version's project."
+                },
+                "project_id": {
+                    "type": "integer",
+                    "description": "The project ID of the version."
+                }
+            }
+        }
+    },
+    {
+        "name": "crop_temporary_avatar",
+        "description": "Crop a temporary avatar in Jira to desired dimensions before making it permanent, typically after uploading it to adjust its appearance.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "cropDimensions": {
+                    "type": "object",
+                    "description": "A dictionary containing the integer `x`, `y` coordinates of the top-left corner, and the integer `width`, `height` of the crop area.",
+                    "properties": {
+                        "x": {
+                            "type": "integer",
+                            "description": "The x-coordinate of the top-left corner."
+                        },
+                        "y": {
+                            "type": "integer",
+                            "description": "The y-coordinate of the top-left corner."
+                        },
+                        "width": {
+                            "type": "integer",
+                            "description": "The integer width of the crop area."
+                        },
+                        "height": {
+                            "type": "integer",
+                            "description": "Height of the crop area."
+                        }
+                    },
+                    "required": [
+                        "height",
+                        "width",
+                        "x",
+                        "y"
+                    ]
+                }
+            },
+            "required": [
+                "cropDimensions"
+            ]
+        }
+    },
+    {
+        "name": "delete_attachment",
+        "description": "Permanently deletes an attachment, including its file data and all references from issues; this operation cannot be undone.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the attachment to delete, specified as a positive integer or its string representation."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "delete_component_by_id",
+        "description": "Permanently delete a component from a project, optionally moving its assigned issues to another component.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "comp_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the component to delete."
+                },
+                "moveIssuesTo": {
+                    "type": "string",
+                    "description": "The ID of the component to move existing issues to; defaults to `None`, which leaves issues unassigned."
+                }
+            },
+            "required": [
+                "comp_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_group_by_name",
+        "description": "Delete an existing group, permanently removing it from the system and causing users to lose their group-based permissions.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "groupname": {
+                    "type": "string",
+                    "description": "The name of the group to delete."
+                }
+            },
+            "required": [
+                "groupname"
+            ]
+        }
+    },
+    {
+        "name": "delete_issue_by_id",
+        "description": "Permanently deletes an existing issue, optionally removing its subtasks.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the issue to delete."
+                },
+                "delete_subtasks": {
+                    "type": "boolean",
+                    "description": "If `True`, also deletes associated subtasks; defaults to `False`."
+                }
+            },
+            "required": [
+                "issue_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_project_by_key",
+        "description": "Delete a project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_key": {
+                    "type": "string",
+                    "description": "The key of the project."
+                }
+            },
+            "required": [
+                "project_key"
+            ]
+        }
+    },
+    {
+        "name": "delete_user_by_username_or_key",
+        "description": "Delete a user by username or key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "The username of the user to delete."
+                },
+                "key": {
+                    "type": "string",
+                    "description": "The key of the user to delete."
+                }
+            }
+        }
+    },
+    {
+        "name": "delete_version_by_id",
+        "description": "Delete a version.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ver_id": {
+                    "type": "string",
+                    "description": "The ID of the version to delete."
+                },
+                "move_fix_issues_to": {
+                    "type": "string",
+                    "description": "The ID of the version to move fixed issues to; currently unused."
+                },
+                "move_affected_issues_to": {
+                    "type": "string",
+                    "description": "The ID of the version to move affected issues to (currently not used)."
+                }
+            },
+            "required": [
+                "ver_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_webhooks_by_ids",
+        "description": "Delete webhooks by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "webhookIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The IDs of the webhooks to delete."
+                }
+            },
+            "required": [
+                "webhookIds"
+            ]
+        }
+    },
+    {
+        "name": "download_attachment",
+        "description": "Downloads the specified attachment to the current directory using its original filename, handling both binary and text formats.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the attachment to download, provided as a positive integer or its string representation, which must exist in the database."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "find_groups_for_picker",
+        "description": "Searches for groups by matching group names against a case-insensitive query string, returning all matches.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The search string to match against group names; if provided, it must be a string, otherwise all groups are returned."
+                }
+            }
+        }
+    },
+    {
+        "name": "find_users",
+        "description": "Find users with a case-insensitive search against their name, display name, and email, supporting pagination and filtering by active status.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "search_string": {
+                    "type": "string",
+                    "description": "A string to match against a user's `name`, `display name`, and `email`."
+                },
+                "startAt": {
+                    "type": "integer",
+                    "description": "The starting index of the users to return. Defaults to 0."
+                },
+                "maxResults": {
+                    "type": "integer",
+                    "description": "The maximum number of users to return, which defaults to 50 and cannot exceed 1000."
+                },
+                "includeActive": {
+                    "type": "boolean",
+                    "description": "Indicates whether to include active users, defaulting to `True`."
+                },
+                "includeInactive": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include inactive users in the results. Defaults to `False`."
+                }
+            },
+            "required": [
+                "search_string"
+            ]
+        }
+    },
+    {
+        "name": "get_all_application_roles",
+        "description": "Retrieve all application roles defined in the system, which control access to Jira features and functionality.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_dashboards",
+        "description": "Retrieve a list of all Jira dashboards with optional pagination support.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "startAt": {
+                    "type": "integer",
+                    "description": "The index of the first dashboard to return, defaulting to 0."
+                },
+                "maxResults": {
+                    "type": "integer",
+                    "description": "The maximum number of dashboards to return; returns all if not specified."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_all_filters",
+        "description": "Retrieve all Jira filters, which save and share search queries for quickly accessing common issue searches.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_issue_link_types",
+        "description": "Retrieve all Jira issue link types used to categorize and manage relationships between issues.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_issue_types",
+        "description": "Retrieve all system-defined issue types from Jira, used to categorize and manage issues.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_permission_schemes",
+        "description": "Get all permission schemes in the system.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_permissions",
+        "description": "Get all system permissions; not available in the real-world API.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_priorities",
+        "description": "Get all priorities in the system.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_project_categories",
+        "description": "Retrieve all project categories.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_projects",
+        "description": "Get all projects.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_resolutions",
+        "description": "Retrieves all resolutions in the system.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_roles",
+        "description": "Get all roles in the system.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_security_levels",
+        "description": "Get all security levels.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_settings",
+        "description": "Get all system settings.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_status_categories",
+        "description": "Get all status categories.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_statuses",
+        "description": "Get all statuses in the system.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_webhooks",
+        "description": "Gets all webhooks.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_all_workflows",
+        "description": "Get all workflows.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_application_properties",
+        "description": "Retrieve Jira's system-wide application properties that control its behavior, fetching either all or a specific property by its key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "The key of the specific property to retrieve; if omitted, all application properties are returned."
+                },
+                "permissionLevel": {
+                    "type": "string",
+                    "description": "The permission level required to access the property; if not provided, all properties are returned."
+                },
+                "keyFilter": {
+                    "type": "string",
+                    "description": "A filter to apply to the property keys; if not provided, all properties are returned."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_application_role_by_key",
+        "description": "Retrieve detailed information for a specific application role using its unique key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "The unique identifier of the application role to retrieve."
+                }
+            },
+            "required": [
+                "key"
+            ]
+        }
+    },
+    {
+        "name": "get_attachment_content",
+        "description": "Retrieve the raw, decoded binary content of an attachment as bytes without saving it to disk.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "A positive integer or its string representation that uniquely identifies an existing attachment."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_attachment_metadata",
+        "description": "Retrieve attachment metadata without the file content, providing a URL to access the content separately.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier for the attachment, which must be a positive integer or its string representation."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_component_by_id",
+        "description": "Retrieve detailed information for a component identified by its unique ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "comp_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the component to retrieve."
+                }
+            },
+            "required": [
+                "comp_id"
+            ]
+        }
+    },
+    {
+        "name": "get_current_user_permissions",
+        "description": "Get the current user's permissions as a list of permission keys.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "projectKey": {
+                    "type": "string",
+                    "description": "The key of the project to check permissions for; defaults to `None`."
+                },
+                "issueKey": {
+                    "type": "string",
+                    "description": "The string key of the issue to check permissions for; defaults to None."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_current_user_preferences",
+        "description": "Get the current user's preferences.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_dashboard_by_id",
+        "description": "Retrieve detailed information for a specific dashboard by its ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "dash_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the dashboard to retrieve."
+                }
+            },
+            "required": [
+                "dash_id"
+            ]
+        }
+    },
+    {
+        "name": "get_filter_by_id",
+        "description": "Retrieve detailed information for a specific filter using its unique ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "filter_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the filter to retrieve."
+                }
+            },
+            "required": [
+                "filter_id"
+            ]
+        }
+    },
+    {
+        "name": "get_group_by_name",
+        "description": "Retrieve detailed information about a specific group by its name, used for managing user permissions and access control.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "groupname": {
+                    "type": "string",
+                    "description": "The name of the group to retrieve; cannot be empty or whitespace-only."
+                }
+            },
+            "required": [
+                "groupname"
+            ]
+        }
+    },
+    {
+        "name": "get_issue_by_id",
+        "description": "Retrieve detailed information about a specific issue by its ID, including any associated attachments.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_id": {
+                    "type": "string",
+                    "description": "The unique identifier of the issue to retrieve."
+                }
+            },
+            "required": [
+                "issue_id"
+            ]
+        }
+    },
+    {
+        "name": "get_issue_create_metadata",
+        "description": "Get metadata about projects and their available issue types for creating new issues, filterable by project keys and issue type names.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "projectKeys": {
+                    "type": "string",
+                    "description": "A comma-separated list of project keys to filter results; if `None`, all projects are returned, and non-existent keys are excluded from the results without error."
+                },
+                "issueTypeNames": {
+                    "type": "string",
+                    "description": "A comma-separated list of issue type names to filter results; if `None`, returns all issue types, and non-existent types are ignored."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_issue_link_type_by_id",
+        "description": "Retrieve detailed information about a specific issue link type by its unique ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "link_type_id": {
+                    "type": "string",
+                    "description": "The unique ID of the issue link type to retrieve."
+                }
+            },
+            "required": [
+                "link_type_id"
+            ]
+        }
+    },
+    {
+        "name": "get_issue_type_by_id",
+        "description": "Retrieve detailed information for a specific issue type by its unique ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type_id": {
+                    "type": "string",
+                    "description": "A non-empty string representing the unique identifier of the issue type to retrieve."
+                }
+            },
+            "required": [
+                "type_id"
+            ]
+        }
+    },
+    {
+        "name": "get_jql_autocomplete_suggestions",
+        "description": "Get JQL autocomplete data.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_permission_scheme_by_id",
+        "description": "Get a permission scheme by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "scheme_id": {
+                    "type": "string",
+                    "description": "The ID of the permission scheme."
+                }
+            },
+            "required": [
+                "scheme_id"
+            ]
+        }
+    },
+    {
+        "name": "get_priority_by_id",
+        "description": "Get a priority by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "priority_id": {
+                    "type": "string",
+                    "description": "The non-empty string ID of the priority to get."
+                }
+            },
+            "required": [
+                "priority_id"
+            ]
+        }
+    },
+    {
+        "name": "get_project_avatars_by_key",
+        "description": "Get all avatars of type 'project' for a project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_key": {
+                    "type": "string",
+                    "description": "The project's key, which must be a non-empty string."
+                }
+            },
+            "required": [
+                "project_key"
+            ]
+        }
+    },
+    {
+        "name": "get_project_by_key",
+        "description": "Retrieve a specific project by its key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_key": {
+                    "type": "string",
+                    "description": "The project key, which cannot be empty."
+                }
+            },
+            "required": [
+                "project_key"
+            ]
+        }
+    },
+    {
+        "name": "get_project_category_by_id",
+        "description": "Get a project category by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "cat_id": {
+                    "type": "string",
+                    "description": "The ID of the project category."
+                }
+            },
+            "required": [
+                "cat_id"
+            ]
+        }
+    },
+    {
+        "name": "get_project_components_by_key",
+        "description": "Get all components for a project.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_key": {
+                    "type": "string",
+                    "description": "The key of the project."
+                }
+            },
+            "required": [
+                "project_key"
+            ]
+        }
+    },
+    {
+        "name": "get_reindex_status",
+        "description": "Get the current status of an ongoing reindex operation, including its running state and type.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_resolution_by_id",
+        "description": "Get a resolution by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "res_id": {
+                    "type": "string",
+                    "description": "A non-empty string representing the resolution's ID."
+                }
+            },
+            "required": [
+                "res_id"
+            ]
+        }
+    },
+    {
+        "name": "get_role_by_id",
+        "description": "Get a role by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "role_id": {
+                    "type": "string",
+                    "description": "The role ID."
+                }
+            },
+            "required": [
+                "role_id"
+            ]
+        }
+    },
+    {
+        "name": "get_security_level_by_id",
+        "description": "Get a security level by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sec_id": {
+                    "type": "string",
+                    "description": "The security level's ID."
+                }
+            },
+            "required": [
+                "sec_id"
+            ]
+        }
+    },
+    {
+        "name": "get_server_info",
+        "description": "Retrieves server information.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_status_by_id",
+        "description": "Get a status by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "status_id": {
+                    "type": "string",
+                    "description": "The ID of the status."
+                }
+            },
+            "required": [
+                "status_id"
+            ]
+        }
+    },
+    {
+        "name": "get_status_category_by_id",
+        "description": "Get a status category by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "cat_id": {
+                    "type": "string",
+                    "description": "The string ID of the status category."
+                }
+            },
+            "required": [
+                "cat_id"
+            ]
+        }
+    },
+    {
+        "name": "get_user_avatars_by_username",
+        "description": "Retrieve all avatars visible to the specified user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "The username used to retrieve avatars."
+                }
+            },
+            "required": [
+                "username"
+            ]
+        }
+    },
+    {
+        "name": "get_user_by_username_or_account_id",
+        "description": "Retrieves a single user by username or account ID (key), prioritizing the account ID if both are provided, and raises `UserNotFoundError` if not found.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "The deprecated username of the user to retrieve."
+                },
+                "account_id": {
+                    "type": "string",
+                    "description": "The account ID (key) for retrieving the user."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_version_by_id",
+        "description": "Get a version by ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ver_id": {
+                    "type": "string",
+                    "description": "The ID of the version to get."
+                }
+            },
+            "required": [
+                "ver_id"
+            ]
+        }
+    },
+    {
+        "name": "get_version_related_issue_counts_by_id",
+        "description": "Get the related issue counts for a version.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ver_id": {
+                    "type": "string",
+                    "description": "The version ID for retrieving related issue counts."
+                }
+            },
+            "required": [
+                "ver_id"
+            ]
+        }
+    },
+    {
+        "name": "list_issue_attachments",
+        "description": "Retrieves metadata for all attachments associated with a specified issue, skipping deleted references and returning them in the issue's attachment list order, or an empty list if none exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_id_or_key": {
+                    "type": "string",
+                    "description": "The unique identifier or key of the issue to query; must be a non-empty string that exists in the database."
+                }
+            },
+            "required": [
+                "issue_id_or_key"
+            ]
+        }
+    },
+    {
+        "name": "perform_bulk_issue_operations",
+        "description": "Perform bulk operations on multiple issues in a single request, processing operations in the provided order.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issueUpdates": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {}
+                    },
+                    "description": "A list of dictionaries, where each defines a bulk operation to perform."
+                }
+            },
+            "required": [
+                "issueUpdates"
+            ]
+        }
+    },
+    {
+        "name": "search_issues_for_picker",
+        "description": "Search for issues using a case-insensitive text query string and/or JQL, with JQL filtering applied before text filtering.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "A text query string to search issue summaries and IDs; `None` applies no filtering, while an empty string `\"\"` generally matches all issues."
+                },
+                "currentJQL": {
+                    "type": "string",
+                    "description": "A JQL expression that filters issues before text search, supporting all standard JQL operators and functions."
+                }
+            }
+        }
+    },
+    {
+        "name": "search_issues_jql",
+        "description": "Searches for issues using a JQL query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "jql": {
+                    "type": "string",
+                    "description": "A JQL query string to search for issues, supporting operators (`=`, `~`, `IN`), `AND`/`OR` logic with parentheses for grouping, and `ORDER BY` clauses. Strings with spaces must be quoted. Query the `assignee` field directly by username (e.g., `assignee = \"jdoe\"`); dot notation is not supported. For example: `(project = \"WebApp\" OR project = \"API\") AND status = \"Open\" ORDER BY created DESC`."
+                },
+                "start_at": {
+                    "type": "integer",
+                    "description": "The index of the first issue to return (default: 0)."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "The maximum number of issues to return (default: 50)."
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of fields to return, defaulting to all fields if omitted."
+                },
+                "expand": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of fields to expand, defaulting to `None`."
+                },
+                "validate_query": {
+                    "type": "boolean",
+                    "description": "Specifies whether to validate the JQL query, defaulting to `True`."
+                }
+            }
+        }
+    },
+    {
+        "name": "start_reindex",
+        "description": "Initiates a reindex operation in Jira to rebuild search indexes, available in FOREGROUND or BACKGROUND mode.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reindex_type": {
+                    "type": "string",
+                    "description": "The reindex type, either 'FOREGROUND' (blocking) or 'BACKGROUND' (non-blocking); defaults to 'FOREGROUND'."
+                }
+            }
+        }
+    },
+    {
+        "name": "update_application_property_by_id",
+        "description": "Update an application property in Jira, creating it if it does not exist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The identifier of the property to update."
+                },
+                "value": {
+                    "type": "string",
+                    "description": "The new property value."
+                }
+            },
+            "required": [
+                "id",
+                "value"
+            ]
+        }
+    },
+    {
+        "name": "update_component_by_id",
+        "description": "Update an existing component by providing its name and/or description, requiring at least one to be provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "comp_id": {
+                    "type": "string",
+                    "description": "The unique string identifier of the component to update."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The new name for the component, defaulting to `None` and with a maximum length of 255 characters."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The new description for the component, with a maximum length of 1000 characters and defaulting to None."
+                }
+            },
+            "required": [
+                "comp_id"
+            ]
+        }
+    },
+    {
+        "name": "update_current_user_preferences",
+        "description": "Updates the current user's preferences.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "object",
+                    "properties": {
+                        "theme": {
+                            "type": "string",
+                            "description": "The current user's theme."
+                        },
+                        "notifications": {
+                            "type": "string",
+                            "description": "The current user's notification preferences."
+                        }
+                    },
+                    "description": "The new preference values to set."
+                }
+            },
+            "required": [
+                "value"
+            ]
+        }
+    },
+    {
+        "name": "update_filter_by_id",
+        "description": "Update an existing filter's name and/or JQL query, requiring at least one to be provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "filter_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the filter to update."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The new name for the filter; defaults to `None`."
+                },
+                "jql": {
+                    "type": "string",
+                    "description": "The new JQL query for the filter, defaulting to None."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of the filter; defaults to `None`."
+                },
+                "favorite": {
+                    "type": "boolean",
+                    "description": "Whether the filter is a favorite, defaulting to None."
+                },
+                "editable": {
+                    "type": "boolean",
+                    "description": "Indicates whether the filter is editable; defaults to None."
+                }
+            },
+            "required": [
+                "filter_id"
+            ]
+        }
+    },
+    {
+        "name": "update_group_members_by_name",
+        "description": "Update the members of an existing group.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "groupname": {
+                    "type": "string",
+                    "description": "The name of the group to update."
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The complete list of usernames for the group."
+                }
+            },
+            "required": [
+                "groupname",
+                "users"
+            ]
+        }
+    },
+    {
+        "name": "update_issue_by_id",
+        "description": "Updates the specified fields of an existing issue.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_id": {
+                    "type": "string",
+                    "description": "Unique identifier for the issue to update."
+                },
+                "fields": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "description": "A brief summary of the issue."
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "A new description for the issue."
+                        },
+                        "priority": {
+                            "type": "string",
+                            "description": "The issue's priority."
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "The status of the issue. For example: `Open`, `Resolved`, `Closed`, `Completed`, or `In Progress`."
+                        },
+                        "assignee": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "Username of the assignee (e.g., `jdoe`)."
+                                }
+                            },
+                            "description": "An object containing the assignee's information, for example, `{\"name\": \"jdoe\"}`.",
+                            "required": [
+                                "name"
+                            ]
+                        },
+                        "issuetype": {
+                            "type": "string",
+                            "description": "The type of issue."
+                        },
+                        "project": {
+                            "type": "string",
+                            "description": "The key of the project."
+                        },
+                        "due_date": {
+                            "type": "string",
+                            "description": "The issue's due date."
+                        },
+                        "comments": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            },
+                            "description": "A list of comments to add to the issue."
+                        }
+                    },
+                    "description": "A key-value map of the valid issue fields to update."
+                }
+            },
+            "required": [
+                "issue_id"
+            ]
+        }
+    },
+    {
+        "name": "upload_avatar",
+        "description": "Uploads a new avatar image to Jira for users, projects, or other entities.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "filetype": {
+                    "type": "string",
+                    "description": "The type of avatar to upload, specified as \"user\" (for user avatars), \"project\" (for project avatars), or \"system\" (for system-wide avatars)."
+                },
+                "filename": {
+                    "type": "string",
+                    "description": "The name of the file being uploaded."
+                }
+            },
+            "required": [
+                "filename",
+                "filetype"
+            ]
+        }
+    },
+    {
+        "name": "upload_temporary_avatar",
+        "description": "Upload a temporary avatar to Jira for preview during the avatar selection process.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "filetype": {
+                    "type": "string",
+                    "description": "The type of avatar to upload, specified as \"user\" (for user avatars), \"project\" (for project avatars), or \"system\" (for system-wide avatars)."
+                },
+                "filename": {
+                    "type": "string",
+                    "description": "The name of the file being uploaded."
+                }
+            },
+            "required": [
+                "filename",
+                "filetype"
+            ]
+        }
+    },
+    {
+        "name": "validate_license",
+        "description": "Validates a license and returns its validity status and decoded content.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "license": {
+                    "type": "string",
+                    "description": "The license string for validation."
+                }
+            },
+            "required": [
+                "license"
+            ]
+        }
+    }
+]

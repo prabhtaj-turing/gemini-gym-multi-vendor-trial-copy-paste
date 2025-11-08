@@ -1,0 +1,1778 @@
+[
+    {
+        "name": "add_reaction_to_message",
+        "description": "Adds a user's emoji reaction to a specific message identified by its timestamp within a given channel. The message timestamp must be a string representing a Unix timestamp with up to 6 decimal places of precision.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The unique identifier for a user. It must be provided as a non-empty string."
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "The identifier for the channel. It must be a non-empty string."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the emoji reaction, which must be a non-empty string."
+                },
+                "message_ts": {
+                    "type": "string",
+                    "description": "The timestamp of the message. This parameter must be a non-empty string representing a Unix timestamp, accurate to up to 6 decimal places for microsecond precision."
+                }
+            },
+            "required": [
+                "channel_id",
+                "message_ts",
+                "name",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "add_reminder",
+        "description": "Creates a reminder, performing comprehensive input validation. `user_id` and `text` must be non-empty strings, while `ts` must be a non-empty string representing a valid numeric value. `channel_id` must be a string or `None`, and the `user_id` must exist in the database.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user to remind. It must be a non-empty string."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The content of the reminder. It must be a non-empty string."
+                },
+                "ts": {
+                    "type": "string",
+                    "description": "The timestamp indicating when the reminder should occur. This must be a non-empty string representing a Unix timestamp as a number (e.g., \"1678886400\" or \"1678886400.5\")."
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "The ID of the channel where the reminder should be sent. This parameter defaults to `None`. If provided as a string, it can be an empty string, unlike `user_id` and `text`."
+                }
+            },
+            "required": [
+                "text",
+                "ts",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "add_remote_file",
+        "description": "Registers an external file for use within the Slack workspace, enabling it to be referenced and shared. The file's content remains hosted externally.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "external_id": {
+                    "type": "string",
+                    "description": "A unique identifier for the file in the external system. This parameter must be a non-empty string."
+                },
+                "external_url": {
+                    "type": "string",
+                    "description": "The URL where the file can be accessed. It must be a non-empty string."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The title to display for the file in Slack. This must be a non-empty string."
+                },
+                "filetype": {
+                    "type": "string",
+                    "description": "The type or extension of the file, such as \"pdf\" or \"docx\". If provided, this parameter must be a non-empty string; otherwise, it defaults to None."
+                },
+                "indexable_file_contents": {
+                    "type": "string",
+                    "description": "Text content that can be indexed for search. This parameter must be a non-empty string if provided; otherwise, it defaults to `None`."
+                }
+            },
+            "required": [
+                "external_id",
+                "external_url",
+                "title"
+            ]
+        }
+    },
+    {
+        "name": "archive_conversation",
+        "description": "Archives a conversation by setting its archived status to true (`is_archived=True`) and closing it (`is_open=False`). Archived conversations are typically hidden from regular channel lists and are no longer actively used.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The ID of the conversation to archive, which must be a non-empty string."
+                }
+            },
+            "required": [
+                "channel"
+            ]
+        }
+    },
+    {
+        "name": "close_conversation",
+        "description": "Closes a direct message or multi-person direct message. This operation is specifically applicable only to direct message and multi-person direct message conversation types.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The identifier of the direct message or multi-person direct message to close. This parameter must be a non-empty string that refers to an existing direct message (IM) or multi-person direct message (MPIM)."
+                }
+            },
+            "required": [
+                "channel"
+            ]
+        }
+    },
+    {
+        "name": "complete_reminder",
+        "description": "Marks a reminder as complete using its unique ID and a timestamp. The `reminder_id` must be a non-empty string, and the `complete_ts` must be a non-empty string representing a valid numeric timestamp.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reminder_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the reminder. This must be a non-empty string."
+                },
+                "complete_ts": {
+                    "type": "string",
+                    "description": "A string representing the timestamp when the action was completed. It must be non-empty and represent a valid numeric timestamp."
+                }
+            },
+            "required": [
+                "complete_ts",
+                "reminder_id"
+            ]
+        }
+    },
+    {
+        "name": "create_channel",
+        "description": "Initiates a public or private channel-based conversation. A unique, non-empty channel name is required, and an optional team ID can be provided to associate the channel.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the channel. It must be a non-empty string."
+                },
+                "is_private": {
+                    "type": "boolean",
+                    "description": "Specifies whether to create a private channel. This parameter defaults to `False` and must be a boolean value."
+                },
+                "team_id": {
+                    "type": "string",
+                    "description": "The encoded team ID. This parameter defaults to `None` and must be a string if provided."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "create_user_group",
+        "description": "Creates a new User Group, which requires a non-empty name. Optional attributes such as a mention handle, team ID, description, and a list of channel IDs can also be provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the User Group. This parameter must be a non-empty string."
+                },
+                "handle": {
+                    "type": "string",
+                    "description": "Specifies a mention handle for the User Group. If provided, it must be a string."
+                },
+                "team_id": {
+                    "type": "string",
+                    "description": "The ID of the team to which the User Group belongs. This parameter must be a string if provided."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Provides a description for the User Group; it must be a string if supplied."
+                },
+                "channel_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of channel IDs to include in the User Group. If provided, it must be a list of strings."
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "The timestamp indicating when the User Group was created. It must be a string and defaults to the current time."
+                }
+            },
+            "required": [
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "delete_chat_message",
+        "description": "Deletes a message from a specified channel, identifying the message by its Unix timestamp with fractional seconds and the channel by its unique identifier.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The unique identifier of the channel containing the message."
+                },
+                "ts": {
+                    "type": "string",
+                    "description": "A Unix timestamp, including fractional seconds, that identifies the message to be deleted."
+                }
+            },
+            "required": [
+                "channel",
+                "ts"
+            ]
+        }
+    },
+    {
+        "name": "delete_file",
+        "description": "Permanently deletes a file from the Slack workspace, removing it from all channels where it was shared.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string",
+                    "description": "The ID of the file to delete. This must be a non-empty string."
+                }
+            },
+            "required": [
+                "file_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_reminder",
+        "description": "Deletes a reminder using its unique identifier. The `reminder_id` must be a non-empty string.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reminder_id": {
+                    "type": "string",
+                    "description": "The identifier for the reminder. It must be a non-empty string."
+                }
+            },
+            "required": [
+                "reminder_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_scheduled_message",
+        "description": "Deletes a scheduled message from a specified channel using its unique channel identifier and the scheduled message's unique ID. It returns a dictionary confirming deletion, including the channel and scheduled message ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The unique identifier of the channel containing the scheduled message."
+                },
+                "scheduled_message_id": {
+                    "type": "string",
+                    "description": "A unique string identifier for the scheduled message."
+                }
+            },
+            "required": [
+                "channel",
+                "scheduled_message_id"
+            ]
+        }
+    },
+    {
+        "name": "delete_user_photo",
+        "description": "Deletes the profile photo for a specified user. It identifies the user by their ID and removes the associated image data, including any cropping information, from their profile.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user whose profile photo should be deleted. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "disable_user_group",
+        "description": "Disables a user group identified by its ID. An optional timestamp string can be provided to specify when the user group was deleted; otherwise, the current time is recorded.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "usergroup_id": {
+                    "type": "string",
+                    "description": "The string ID of the User Group to disable. This ID must refer to an existing user group and cannot be an empty string."
+                },
+                "date_delete": {
+                    "type": "string",
+                    "description": "A timestamp string indicating when the User Group was deleted. If `None` is provided, the current time will be used."
+                }
+            },
+            "required": [
+                "usergroup_id"
+            ]
+        }
+    },
+    {
+        "name": "enable_user_group",
+        "description": "Enables a user group that has been disabled. This action restores the group to an active state by clearing its disabled status, deleted timestamp, and the user who marked it for deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "usergroup_id": {
+                    "type": "string",
+                    "description": "The string ID of the User Group to enable; it cannot be an empty string."
+                }
+            },
+            "required": [
+                "usergroup_id"
+            ]
+        }
+    },
+    {
+        "name": "finish_external_file_upload",
+        "description": "Completes an external file upload process that was previously initiated using the `get_external_upload_url()` function.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Required. The ID of the file to update."
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "Optional. The new title for the file."
+                            }
+                        },
+                        "required": [
+                            "id"
+                        ]
+                    },
+                    "description": "A list of dictionaries representing file objects, where each dictionary must contain a specific set of required properties."
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "The ID of the channel where the file will be shared."
+                },
+                "initial_comment": {
+                    "type": "string",
+                    "description": "The initial comment to be associated with the uploaded file."
+                },
+                "thread_ts": {
+                    "type": "string",
+                    "description": "Specifies the timestamp of a parent message, which is used to post the file upload as a reply within that message's thread."
+                }
+            },
+            "required": [
+                "files"
+            ]
+        }
+    },
+    {
+        "name": "get_conversation_history",
+        "description": "Fetches the history of messages and events for a specific conversation. This history can be retrieved using a channel ID, filtered by timestamp ranges, and paginated with a cursor and limit.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The ID of the conversation. This parameter must be a non-empty string."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A pagination cursor that defaults to `None`. If provided, it must be a base64-encoded string with the format `user:{user_id}` (e.g., `dXNlcjpleGFtcGxlSWQxMjM=` for `user:exampleId123`), which matches Slack's cursor format for consistent pagination."
+                },
+                "include_all_metadata": {
+                    "type": "boolean",
+                    "description": "Specifies whether to return all metadata. This parameter defaults to `False` and must be a boolean value."
+                },
+                "inclusive": {
+                    "type": "boolean",
+                    "description": "Controls whether messages exactly at the `oldest` and `latest` timestamps are included in the returned history. This parameter must be a boolean and defaults to `False`."
+                },
+                "latest": {
+                    "type": "string",
+                    "description": "Filters messages to include only those sent before this timestamp. Defaults to the current time if not provided. If specified, it must be a string in Unix timestamp format with exactly 6 decimal places for microsecond precision (e.g., '1688683055.556679'), and must be convertible to a float."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of items to return. It defaults to 100 and must be an integer between 1 and 999."
+                },
+                "oldest": {
+                    "type": "string",
+                    "description": "Filters messages to include only those after this timestamp. It must be a string in Unix timestamp format, with exactly 6 decimal places for microsecond precision (e.g., '1688683055.556679'). Defaults to '0' and must be a valid Unix timestamp convertible to a float."
+                }
+            },
+            "required": [
+                "channel"
+            ]
+        }
+    },
+    {
+        "name": "get_conversation_members",
+        "description": "Retrieves members from a conversation, supporting pagination. Use the `cursor` parameter, encoded in base64 as 'user:{user_id}', to retrieve the next set of results, and specify `limit` (maximum 10000) to control the number of members returned.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The unique identifier for the conversation. This must be a non-empty string and refer to an existing conversation."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A base64-encoded pagination cursor used to retrieve the next page of results. It must be in the format `user:{user_id}` and defaults to `None`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of items to return, defaulting to 100. This value must be positive and cannot exceed 10000."
+                }
+            },
+            "required": [
+                "channel"
+            ]
+        }
+    },
+    {
+        "name": "get_conversation_replies",
+        "description": "Retrieve a thread of messages from a specified conversation. The thread is identified by a timestamp associated with either its parent message or any message within the thread.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The ID of the conversation. This parameter must be a string and refer to an existing conversation."
+                },
+                "ts": {
+                    "type": "string",
+                    "description": "A string representing the timestamp of the parent message or any message within the thread."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A string representing a pagination cursor, specifically the timestamp of a message. Provide the `next_cursor` value from a previous API response to retrieve the next page of results, starting after the message identified by this timestamp. Defaults to `None`."
+                },
+                "include_all_metadata": {
+                    "type": "boolean",
+                    "description": "A boolean flag that, if `True`, would return all metadata. Defaults to `False`. However, this parameter is currently not implemented and has no effect on the response."
+                },
+                "inclusive": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to include messages exactly at the `oldest` and `latest` timestamps within the returned results. Defaults to `False`, meaning messages at these boundary timestamps are excluded."
+                },
+                "latest": {
+                    "type": "string",
+                    "description": "Filters messages to include only those posted before this timestamp. This parameter is a string representing a timestamp and defaults to `None`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of items to return. This integer parameter defaults to 1000."
+                },
+                "oldest": {
+                    "type": "string",
+                    "description": "A string that specifies the earliest timestamp for messages to retrieve. Only messages posted after this timestamp will be included in the results. It defaults to \"0\"."
+                }
+            },
+            "required": [
+                "channel",
+                "ts"
+            ]
+        }
+    },
+    {
+        "name": "get_external_upload_url",
+        "description": "Generates a secure, temporary URL to initiate the upload of an external file to Slack. Provide the file's name and size to receive a unique file ID and the corresponding upload URL. A 1-minute timer automatically deletes the file record if the upload is not completed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string",
+                    "description": "The name of the file to be uploaded. This parameter must be a non-empty string."
+                },
+                "length": {
+                    "type": "integer",
+                    "description": "The size of the file in bytes. It must be an integer greater than zero and cannot exceed 50 MB (52,428,800 bytes)."
+                },
+                "alt_txt": {
+                    "type": "string",
+                    "description": "A description of the file used for accessibility purposes (e.g., by screen readers). This optional string parameter must not exceed 1000 characters."
+                },
+                "snippet_type": {
+                    "type": "string",
+                    "description": "An optional string that defines the snippet's type, influencing how the file is displayed."
+                }
+            },
+            "required": [
+                "filename",
+                "length"
+            ]
+        }
+    },
+    {
+        "name": "get_file_info",
+        "description": "Retrieves information for a file specified by its `file_id`, which must be a non-empty string. Pagination for associated comments can be controlled using an optional `cursor` (a string representing a non-negative integer, defaults to `None`) and `limit` (a positive integer, defaults to `100`).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string",
+                    "description": "The ID of the file for which to retrieve information. This parameter must be a non-empty string."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "Specifies a pagination cursor for comments. It must be a string representing a non-negative integer and defaults to `None`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of comments to return. This parameter must be a positive integer and defaults to 100."
+                }
+            },
+            "required": [
+                "file_id"
+            ]
+        }
+    },
+    {
+        "name": "get_message_reactions",
+        "description": "Gets reactions for a specific message in a channel. It returns all reaction details if the `full` parameter is `True`; otherwise, it provides a summary of the reactions.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel_id": {
+                    "type": "string",
+                    "description": "The string identifier for the channel. This parameter cannot be empty."
+                },
+                "message_ts": {
+                    "type": "string",
+                    "description": "The timestamp of the message for which to retrieve reactions. It must be a non-empty string representing a Unix timestamp with up to 6 decimal places for microsecond precision."
+                },
+                "full": {
+                    "type": "boolean",
+                    "description": "Controls the level of detail for returned reactions. If `True`, returns all reaction details; otherwise, it returns a summary. This parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "channel_id",
+                "message_ts"
+            ]
+        }
+    },
+    {
+        "name": "get_reminder_info",
+        "description": "Gets information about a reminder. Provide the `reminder_id` as a non-empty string to retrieve its details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reminder_id": {
+                    "type": "string",
+                    "description": "The identifier for the reminder, which must be a non-empty string."
+                }
+            },
+            "required": [
+                "reminder_id"
+            ]
+        }
+    },
+    {
+        "name": "get_user_identity",
+        "description": "Retrieves a user's identity information. Provide a non-empty string for the `user_id`, and the function returns a dictionary that includes the operation status (`ok`), the user's name and ID, and their team ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the user. It must be a non-empty string."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "get_user_info",
+        "description": "Retrieves information for a specified user ID. Optionally include locale data for the user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The User ID for which to retrieve information. This parameter must be a string."
+                },
+                "include_locale": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include locale information in the returned user details. This boolean parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "get_user_presence",
+        "description": "Get user presence information for a specified user ID. If no `user_id` is provided, it defaults to the authenticated user. Returns a dictionary indicating `ok` status (boolean) and the user's `presence` status (string).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user whose presence information is requested. This parameter is optional; if not specified, it defaults to the authenticated user's ID."
+                }
+            }
+        }
+    },
+    {
+        "name": "invite_admin_user",
+        "description": "Invites a user to a Slack workspace, requiring a non-empty, valid `email` address for the user. Optionally, specify `channel_ids` as a comma-separated list of channel IDs, `real_name` (which defaults to being extracted from the email), and the `team_id`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "description": "The email address of the user to invite. It must be a non-empty string and conform to a valid email format."
+                },
+                "channel_ids": {
+                    "type": "string",
+                    "description": "An optional parameter, defaulting to `None`, which is a comma-separated string of channel IDs used to add the user to specific channels."
+                },
+                "real_name": {
+                    "type": "string",
+                    "description": "The full name of the user. If provided, it must be a string; otherwise, it is extracted from the email address."
+                },
+                "team_id": {
+                    "type": "string",
+                    "description": "The ID of the team to invite the user to. If provided, it must be a string. This parameter defaults to `None`."
+                }
+            },
+            "required": [
+                "email"
+            ]
+        }
+    },
+    {
+        "name": "invite_to_conversation",
+        "description": "Invites users to a specified channel. Provide the channel ID as a non-empty string and user IDs as a non-empty, comma-separated list. Optionally, set `force` to `True` to invite valid users even if some provided IDs are invalid.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The ID of the channel to invite users to. It must be a non-empty string."
+                },
+                "users": {
+                    "type": "string",
+                    "description": "A non-empty string containing a comma-separated list of user IDs."
+                },
+                "force": {
+                    "type": "boolean",
+                    "description": "Determines whether to continue inviting valid users if the provided list includes invalid users. If `False` (the default), the process will halt or fail upon encountering invalid users."
+                }
+            },
+            "required": [
+                "channel",
+                "users"
+            ]
+        }
+    },
+    {
+        "name": "join_conversation",
+        "description": "Joins an existing conversation for the specified user and channel IDs. The operation indicates failure if the user is already a member of the conversation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The user ID of the user joining the conversation. It must be a non-empty string."
+                },
+                "channel": {
+                    "type": "string",
+                    "description": "The string ID of the conversation to join. This ID cannot be empty and must refer to an existing conversation."
+                }
+            },
+            "required": [
+                "channel",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "kick_from_conversation",
+        "description": "Remove a user from a conversation. This action effectively revokes their membership in that conversation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The string ID of the conversation from which to remove a user. This ID must not be empty."
+                },
+                "user_id": {
+                    "type": "string",
+                    "description": "The string ID of the user to remove from the conversation. This ID cannot be an empty string."
+                }
+            },
+            "required": [
+                "channel",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "leave_conversation",
+        "description": "Allows a user to leave a conversation by specifying their user ID and the identifier of the conversation to be left.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user who is leaving the conversation. This must be a non-empty string and correspond to a user who is currently a member of the specified channel."
+                },
+                "channel": {
+                    "type": "string",
+                    "description": "A non-empty string identifier for the existing conversation the user wishes to leave."
+                }
+            },
+            "required": [
+                "channel",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "list_channels",
+        "description": "Lists channels in a Slack team. It supports pagination, excluding archived channels, and filtering by team ID or specific channel types such as 'public_channel', 'private_channel', 'mpim', or 'im'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "cursor": {
+                    "type": "string",
+                    "description": "A cursor string used for paginating through data collections. If provided, it must represent a non-negative integer; otherwise, it defaults to `None`."
+                },
+                "exclude_archived": {
+                    "type": "boolean",
+                    "description": "A boolean flag that, when set to `True`, excludes archived channels from the returned list. Defaults to `False`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of items to return, which must be an integer between 1 and 1000. It defaults to 100."
+                },
+                "team_id": {
+                    "type": "string",
+                    "description": "The encoded string ID of the team for which to list channels. Defaults to `None`."
+                },
+                "types": {
+                    "type": "string",
+                    "description": "Specifies the channel types to retrieve. Provide a comma-separated list of any combination of `public_channel`, `private_channel`, `mpim`, or `im`. This parameter defaults to `public_channel`."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_files",
+        "description": "Retrieve files from the Slack workspace. Optionally filter files by channel, user, timestamp range, or file types. Results are paginated for efficient data retrieval.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel_id": {
+                    "type": "string",
+                    "description": "Filters files shared in a specific channel. It must be a valid channel ID if provided."
+                },
+                "user_id": {
+                    "type": "string",
+                    "description": "Filters files uploaded by a specific user. If provided, this string must represent a valid user ID."
+                },
+                "ts_from": {
+                    "type": "string",
+                    "description": "Filter files created after this timestamp, inclusively. If provided, it must be a Unix timestamp string."
+                },
+                "ts_to": {
+                    "type": "string",
+                    "description": "Filters files created on or before a specified timestamp. This parameter must be a Unix timestamp string."
+                },
+                "types": {
+                    "type": "string",
+                    "description": "A comma-separated list of file types used to filter the results. For example, specify 'pdf,docx,jpg' to retrieve only PDF, Word, and JPEG files."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A pagination cursor used to retrieve additional results. It must be a string that represents a non-negative integer."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of files to return per page. This value must be a positive integer and defaults to 100."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_reminders",
+        "description": "Lists all reminders that were either created by a specified user or are designated for that user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user. It must be a non-empty string."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "list_scheduled_messages",
+        "description": "Retrieves a list of scheduled messages. This list can be filtered by channel, team ID, or a time range specified by `oldest` and `latest` Unix timestamp strings. Pagination is supported through a `cursor` (a non-negative integer string) and `limit` (a non-negative integer) to control the number of entries returned.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "A string identifying the channel for the scheduled messages. Defaults to None."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A string used for pagination purposes. It must represent a non-negative integer and defaults to `None`."
+                },
+                "latest": {
+                    "type": "string",
+                    "description": "A Unix timestamp string specifying the latest value within the desired time range. This string can represent either an integer or a float. It defaults to None."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Specifies the maximum number of original entries to return. This parameter must be a non-negative integer and defaults to None."
+                },
+                "oldest": {
+                    "type": "string",
+                    "description": "A string representing a Unix timestamp for the oldest value in the time range. This timestamp can be an integer or float representation. Defaults to `None`."
+                },
+                "team_id": {
+                    "type": "string",
+                    "description": "An encoded team ID used to list channels for a specific team. This parameter is required when an organization token is used and defaults to `None`."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_user_conversations",
+        "description": "Lists conversations accessible by a specified user. Results can be paginated, limited in number (up to 1000), and filtered by type (e.g., public_channel, private_channel) or by excluding archived channels.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user whose conversations to list. This parameter must be a non-empty string."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A string parameter used to paginate through collections of data. To fetch subsequent pages, set its value to the `next_cursor` attribute returned by a previous request's response, which is an integer string representing the pagination cursor. If omitted, the first page of data is fetched."
+                },
+                "exclude_archived": {
+                    "type": "boolean",
+                    "description": "A boolean flag that, when set to `true`, excludes archived channels from the list. Defaults to `False`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of items to return. This integer value must not exceed 1000, and its default is 100. Fewer items than requested may be returned, even if the end of the list has not been reached."
+                },
+                "types": {
+                    "type": "string",
+                    "description": "Specify the channel types to include by providing a comma-separated list. Valid types are `public_channel`, `private_channel`, `mpim`, and `im`."
+                }
+            },
+            "required": [
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "list_user_group_members",
+        "description": "List all users belonging to a specified User Group. By default, only active users are included; however, disabled users can also be included via an optional parameter.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "usergroup_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the User Group. This ID must be a non-empty string and correspond to an existing user group."
+                },
+                "include_disabled": {
+                    "type": "boolean",
+                    "description": "A boolean value that specifies whether to include disabled users in the results. Defaults to `False`, meaning disabled users are excluded by default."
+                }
+            },
+            "required": [
+                "usergroup_id"
+            ]
+        }
+    },
+    {
+        "name": "list_user_groups",
+        "description": "Lists user groups for a team. It can optionally include disabled groups, user counts, and user IDs based on the provided parameters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_id": {
+                    "type": "string",
+                    "description": "Specifies the ID of the team whose User Groups are to be listed. This parameter is optional; if omitted, User Groups for all teams are returned."
+                },
+                "include_disabled": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include disabled User Groups in the list. This parameter defaults to `False`."
+                },
+                "include_count": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include the total number of users for each User Group in the response. This boolean parameter defaults to `False`."
+                },
+                "include_users": {
+                    "type": "boolean",
+                    "description": "A boolean indicating whether to include the list of user IDs in the response for each user group. If `True`, a list of user IDs (List[str]) is returned. Defaults to `False`."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_user_reactions",
+        "description": "Lists reactions made by a specific user. If `user_id` is `None`, it lists reactions from all users.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "Specifies the user ID for whom reactions should be displayed. Defaults to `None`, which retrieves reactions from all users. If provided, the value must be a non-empty string."
+                },
+                "full": {
+                    "type": "boolean",
+                    "description": "A boolean flag that, if `true`, returns all reaction details. Defaults to `False`."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "A pagination cursor that defaults to `None`. If provided, it must be a string that can be parsed as a non-negative integer."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of items to return. It defaults to 100 and must be a positive integer."
+                }
+            }
+        }
+    },
+    {
+        "name": "list_users",
+        "description": "Lists all users in a Slack team. Optionally filter users by a specific `team_id` and control pagination using `limit` (a positive integer up to 1000, defaulting to 100) and a base64 encoded `cursor` in the format `user:{user_id}`. Set `include_locale` to `True` to retrieve locale information for each user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "cursor": {
+                    "type": "string",
+                    "description": "A pagination cursor string that must be base64 encoded. If provided, it must be a valid base64 string that decodes into the format `user:{user_id}`."
+                },
+                "include_locale": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that, when true, includes the user's locale string within each user object in the response. Defaults to `False`."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of items to return. It must be a positive integer and no larger than 1000, defaulting to 100."
+                },
+                "team_id": {
+                    "type": "string",
+                    "description": "The Team ID used to filter the list of users. If provided, it must be a non-empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "lookup_user_by_email",
+        "description": "Finds a user by their email address. The email string must be non-empty and adhere to a valid format, including a local part, a domain part separated by '@', and a top-level domain.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "description": "An email address associated with a user. It must be a non-empty string."
+                }
+            },
+            "required": [
+                "email"
+            ]
+        }
+    },
+    {
+        "name": "mark_conversation_read",
+        "description": "Sets the read cursor in a specified channel or conversation. This requires a channel ID and a timestamp string for the message to mark as read, where the timestamp must be a Unix timestamp with fractional seconds (e.g., '1678886400.000000').",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The ID of the channel or conversation. It must be a non-empty string."
+                },
+                "ts": {
+                    "type": "string",
+                    "description": "The timestamp of the message to mark as read. This string must be a non-empty Unix timestamp with fractional seconds (e.g., '1678886400.000000')."
+                }
+            },
+            "required": [
+                "channel",
+                "ts"
+            ]
+        }
+    },
+    {
+        "name": "open_conversation",
+        "description": "Opens or resumes a conversation between users. It can resume an existing conversation by channel ID or create a new one with specified users, returning an existing conversation if the same user combination already exists. If `return_im` is `False` (default), the function provides only the channel ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "An optional channel ID used to resume an existing conversation. This parameter is a string that defaults to `None`."
+                },
+                "prevent_creation": {
+                    "type": "boolean",
+                    "description": "Specifies whether to prevent creating a new conversation. It defaults to `False`."
+                },
+                "return_im": {
+                    "type": "boolean",
+                    "description": "Specifies the level of detail for the returned channel information. When `True`, returns the full channel definition including all metadata; when `False`, it returns minimal channel information, specifically only the channel ID. Defaults to `False`."
+                },
+                "users": {
+                    "type": "string",
+                    "description": "A string that provides a comma-separated list of users. This parameter defaults to `None`."
+                }
+            }
+        }
+    },
+    {
+        "name": "post_chat_message",
+        "description": "Sends a message to a specified channel. The channel ID must be a non-empty string. Messages can include text, JSON-based attachments, or structured blocks, where blocks must be a list of dictionaries validated by `BlockItemStructure`; messages can also be sent as replies within an existing thread by specifying a `thread_ts`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The identifier for the channel. This parameter must be a non-empty string."
+                },
+                "ts": {
+                    "type": "string",
+                    "description": "The message timestamp. If provided, this parameter must be a string."
+                },
+                "attachments": {
+                    "type": "string",
+                    "description": "A JSON-based array of structured attachments. This parameter must be provided as a string if used."
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {}
+                    },
+                    "description": "A JSON-based array of structured blocks. If provided, it must be a list of dictionaries, where each dictionary's structure is validated by `BlockItemStructure`."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The message text. This parameter must be a string if provided."
+                },
+                "as_user": {
+                    "type": "boolean",
+                    "description": "Specifies whether to post the message as the user. This is a legacy option and must be a boolean value if provided."
+                },
+                "icon_emoji": {
+                    "type": "string",
+                    "description": "An emoji to use as the message icon. This parameter must be a string if provided."
+                },
+                "icon_url": {
+                    "type": "string",
+                    "description": "Specifies the URL of an image to use as the message's icon; this parameter must be a string if provided."
+                },
+                "link_names": {
+                    "type": "boolean",
+                    "description": "Controls whether user groups are found and linked within the message text. This parameter must be a boolean value if provided."
+                },
+                "markdown_text": {
+                    "type": "string",
+                    "description": "Specifies the message text, formatted using markdown. This parameter must be a string if provided."
+                },
+                "metadata": {
+                    "type": "string",
+                    "description": "A JSON object containing `event_type` and `event_payload` fields for message metadata. If provided, this object must be represented as a string."
+                },
+                "mrkdwn": {
+                    "type": "boolean",
+                    "description": "Disables Slack markup parsing for the message. This parameter must be a boolean value if provided."
+                },
+                "parse": {
+                    "type": "string",
+                    "description": "Changes how messages are treated. If provided, this parameter must be a string."
+                },
+                "reply_broadcast": {
+                    "type": "boolean",
+                    "description": "Controls whether a reply is visible to everyone. This parameter must be a boolean if provided."
+                },
+                "thread_ts": {
+                    "type": "string",
+                    "description": "A string representing the timestamp (`ts`) of an existing message. Provide this value to make the current message a reply within that message's thread."
+                },
+                "unfurl_links": {
+                    "type": "boolean",
+                    "description": "Enables unfurling of primarily text-based content. This parameter must be a boolean if provided."
+                },
+                "unfurl_media": {
+                    "type": "boolean",
+                    "description": "Disables the unfurling of media content. This parameter must be a boolean value if provided."
+                },
+                "username": {
+                    "type": "string",
+                    "description": "Specifies the bot's username. This parameter must be a string if provided."
+                }
+            },
+            "required": [
+                "channel"
+            ]
+        }
+    },
+    {
+        "name": "post_ephemeral_message",
+        "description": "Sends an ephemeral message to a specified user within a given channel. Both the user and channel identifiers are required parameters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "Specifies the channel as a non-empty string where the ephemeral message will be sent."
+                },
+                "user": {
+                    "type": "string",
+                    "description": "Specifies the user to whom the ephemeral message is sent. This parameter must be a non-empty string."
+                },
+                "attachments": {
+                    "type": "string",
+                    "description": "A JSON-based array of structured attachments, which must be provided as a string."
+                },
+                "blocks": {
+                    "type": "array",
+                    "description": "A JSON-based array of structured blocks. If provided, this parameter must be a list."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "Specifies the message text, which must be a string if provided."
+                },
+                "as_user": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that, when `True`, posts the message as the authenticated user. If provided, this parameter must be a boolean."
+                },
+                "icon_emoji": {
+                    "type": "string",
+                    "description": "Specifies the emoji to use as the message's icon. This parameter must be a string if provided."
+                },
+                "icon_url": {
+                    "type": "string",
+                    "description": "Specifies the URL to an image to use as the icon. This parameter must be a string if provided."
+                },
+                "link_names": {
+                    "type": "boolean",
+                    "description": "Specifies whether to find and link channel names and usernames within the message. This parameter must be a boolean if provided."
+                },
+                "markdown_text": {
+                    "type": "string",
+                    "description": "The message text, formatted using markdown syntax. This parameter must be a string if provided."
+                },
+                "parse": {
+                    "type": "string",
+                    "description": "Specifies how messages are treated. This parameter must be a string if provided."
+                },
+                "thread_ts": {
+                    "type": "string",
+                    "description": "The `ts` value of another message, which specifies the thread this message should be posted in. This parameter must be a string if provided."
+                },
+                "username": {
+                    "type": "string",
+                    "description": "Sets the bot's or user's name for the message. This parameter must be a string if provided."
+                }
+            },
+            "required": [
+                "channel",
+                "user"
+            ]
+        }
+    },
+    {
+        "name": "remove_reaction_from_message",
+        "description": "Removes a specific reaction from a message. This action requires the `user_id` of the reactor, the `name` of the emoji reaction, the `channel_id` where the message resides, and the `message_ts` (timestamp) of the message. All these identifiers must be non-empty strings.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The user's unique identifier. This parameter must be a non-empty string."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the reaction (emoji), which must be a non-empty string."
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "The ID of the channel. It must be a non-empty string."
+                },
+                "message_ts": {
+                    "type": "string",
+                    "description": "The timestamp of the message. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "channel_id",
+                "message_ts",
+                "name",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "remove_remote_file",
+        "description": "Remove a remote file, deleting its record and removing its identifier from all channels where it was accessible. To do this, supply exactly one identifier: either a Slack-generated `file_id` or the `external_id` provided when the file was first registered.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string",
+                    "description": "The unique, Slack-generated string ID of the file to remove. If provided, it must be a non-empty string."
+                },
+                "external_id": {
+                    "type": "string",
+                    "description": "A creator-defined GUID that was provided when the remote file was added via `add_remote_file` or an external upload flow."
+                }
+            }
+        }
+    },
+    {
+        "name": "rename_conversation",
+        "description": "Renames a conversation, identified by its `channel` ID, to the `name` provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The string ID of the conversation to be renamed. This parameter is required and must correspond to an existing conversation."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The new name for the conversation. This parameter must be a non-empty string and unique among existing conversation names."
+                }
+            },
+            "required": [
+                "channel",
+                "name"
+            ]
+        }
+    },
+    {
+        "name": "schedule_chat_message",
+        "description": "Schedules a message for future delivery at a specified time to a designated channel.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The string identifier for the user."
+                },
+                "channel": {
+                    "type": "string",
+                    "description": "A string identifying the channel where the message will be sent."
+                },
+                "post_at": {
+                    "type": "integer",
+                    "description": "A Unix timestamp indicating the scheduled time for sending the message. This value must be positive and can be provided as an integer, float, or a numeric string."
+                },
+                "attachments": {
+                    "type": "string",
+                    "description": "A JSON-formatted string representing an array of structured attachments."
+                },
+                "blocks": {
+                    "type": "array",
+                    "description": "A list of structured block objects, where each block object is a dictionary."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The primary textual content of the message."
+                },
+                "as_user": {
+                    "type": "boolean",
+                    "description": "Specifies whether to post the message as the authenticated user, defaulting to `False`."
+                },
+                "link_names": {
+                    "type": "boolean",
+                    "description": "Determines whether to find and link user groups. This parameter defaults to `False`."
+                },
+                "markdown_text": {
+                    "type": "string",
+                    "description": "Specifies the message text, which must be formatted using markdown syntax."
+                },
+                "metadata": {
+                    "type": "string",
+                    "description": "A JSON-formatted string representing an object that must contain an `event_type` field (string) and an `event_payload` field (dictionary)."
+                },
+                "parse": {
+                    "type": "string",
+                    "description": "A string that specifies how messages are treated."
+                },
+                "reply_broadcast": {
+                    "type": "boolean",
+                    "description": "Determines if the reply should be made visible to everyone. Defaults to `False`."
+                },
+                "thread_ts": {
+                    "type": "string",
+                    "description": "Provide the timestamp (`ts`) value of an existing message to make this message a reply within that message's thread."
+                },
+                "unfurl_links": {
+                    "type": "boolean",
+                    "description": "Enables the unfurling of primarily text-based content. This boolean parameter defaults to `True`."
+                },
+                "unfurl_media": {
+                    "type": "boolean",
+                    "description": "Disables the unfurling of media content. This parameter defaults to `False`."
+                }
+            },
+            "required": [
+                "channel",
+                "post_at",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "search_all_content",
+        "description": "Searches for messages and files using a single query. The query is a space-separated string of terms and filters. Filters are applied only to the resource type they are relevant to (e.g., `filetype:` applies only to files).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "A space-separated string of text terms and filters used as a search query for messages and files. Text terms for messages are matched against content with a default AND logic (OR is supported), while for files they match name/title with OR logic. Supported filters include `in:#<channel>` and `has:star` (for both); `from:@<user>`, `has:link`, `has:reaction`, `before:`, `after:`, `during:`, `-<word>`, and `some*` (for messages only); and `filetype:<type>` (for files only)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "search_files",
+        "description": "Searches for files using a space-separated query of text terms and filters. Text terms match against a file's name and title, employing OR logic if multiple terms are provided. Supported filters include `in:#<channel>`, `filetype:<type>` (e.g., 'pdf', 'image'), and `has:star`; date, user, exclusion, and wildcard filters are not applicable.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The search query, formatted as a space-separated string of terms and filters. Supported filters include `in:#<channel>` to restrict by channel, `filetype:<type>` (e.g., 'pdf', 'image') to narrow by file type, and `has:star` for starred files. Note that date, user (`from:`), exclusion (`-`), and wildcard (`*`) filters are not applicable to file searches."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "search_messages",
+        "description": "Searches for messages matching a query. The query is a space-separated string of text terms and filters. By default, all text terms must be present in the message's content (AND logic).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The search query is a space-separated string of terms and filters. It supports filters like `from:@<user>` for specific users, `in:#<channel>` for channels, and `has:link`, `has:reaction`, `has:star` for message properties. Date-based filtering uses `before:YYYY-MM-DD`, `after:YYYY-MM-DD`, and `during:YYYY-MM-DD`, with `during` also supporting `YYYY` or `YYYY-MM`. Text term modifications include `-<word>` to exclude, `some*` for partial matching (wildcard), and `OR` between terms (e.g., 'hello OR world') to match any."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "send_me_message",
+        "description": "Sends a \"me\" message to a specified channel. Both the channel identifier and the message text provided must be non-empty strings.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "A string that uniquely identifies the user."
+                },
+                "channel": {
+                    "type": "string",
+                    "description": "The channel identifier where the message will be sent. This parameter must be a non-empty string."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The text content of the message to send, which must be a non-empty string."
+                }
+            },
+            "required": [
+                "channel",
+                "text",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "set_conversation_purpose",
+        "description": "Sets the description for a specified channel. Both the channel identifier and the description must be non-empty strings.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The string name of the channel for which to set the description. This channel name must not be empty, must refer to an existing channel, and the current user must be a member of it."
+                },
+                "purpose": {
+                    "type": "string",
+                    "description": "The description to be set for the channel. This parameter must be a non-empty string."
+                }
+            },
+            "required": [
+                "channel",
+                "purpose"
+            ]
+        }
+    },
+    {
+        "name": "set_conversation_topic",
+        "description": "Sets the topic for a specified conversation channel. The topic must be a non-empty string.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The name of the conversation for which the topic will be set. This must be a non-empty string corresponding to an existing channel."
+                },
+                "topic": {
+                    "type": "string",
+                    "description": "The new topic string for the conversation. It must not be an empty string."
+                }
+            },
+            "required": [
+                "channel",
+                "topic"
+            ]
+        }
+    },
+    {
+        "name": "set_user_photo",
+        "description": "Sets a user's profile photo. Provide the `user_id` and a base64-encoded string representing the new image. Optionally, include cropping parameters to define how the image should be cropped.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The ID of the user to update. This string cannot be empty."
+                },
+                "image": {
+                    "type": "string",
+                    "description": "A base64-encoded string containing the image data. It must be a valid base64 string and cannot be empty."
+                },
+                "crop_x": {
+                    "type": "integer",
+                    "description": "Specifies the x-coordinate for the top-left corner of the crop. It must be a non-negative integer if provided."
+                },
+                "crop_y": {
+                    "type": "integer",
+                    "description": "The y-coordinate for the top-left corner of the crop. It must be a non-negative integer if provided."
+                },
+                "crop_w": {
+                    "type": "integer",
+                    "description": "The width of the crop box. If provided, this value must be a non-negative integer."
+                }
+            },
+            "required": [
+                "image",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "set_user_presence",
+        "description": "Manually sets a user's presence status. This function updates the status for a specified user ID, which cannot be an empty string. The presence status must be either 'active' or 'away', and successful execution confirms the operation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "The identifier for the user whose presence will be updated; it cannot be an empty string."
+                },
+                "presence": {
+                    "type": "string",
+                    "description": "The new presence status, which must be either 'active' or 'away'."
+                }
+            },
+            "required": [
+                "presence",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "set_user_profile",
+        "description": "Sets a user's profile information.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "profile": {
+                    "type": "object",
+                    "properties": {
+                        "display_name": {
+                            "type": "string",
+                            "description": "The name that is displayed for the user."
+                        },
+                        "real_name": {
+                            "type": "string",
+                            "description": "The real name of the user."
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "The user's email address. If provided, this value must contain an \"@\" character."
+                        },
+                        "phone": {
+                            "type": "string",
+                            "description": "The user's phone number. If provided, this value must contain only digits, spaces, hyphens, and the plus symbol ('+')."
+                        },
+                        "status_emoji": {
+                            "type": "string",
+                            "description": "An emoji to be displayed as the user's status."
+                        },
+                        "status_text": {
+                            "type": "string",
+                            "description": "A custom status text for the user's profile."
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "Specifies the user's title."
+                        },
+                        "team": {
+                            "type": "string",
+                            "description": "The team associated with the user."
+                        },
+                        "skype": {
+                            "type": "string",
+                            "description": "The user's unique Skype username, also known as their Skype ID."
+                        },
+                        "first_name": {
+                            "type": "string",
+                            "description": "The first name of the user."
+                        },
+                        "last_name": {
+                            "type": "string",
+                            "description": "The user's last name."
+                        }
+                    },
+                    "description": "A dictionary of profile fields to set, where each key must be a valid profile field name."
+                },
+                "user_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the user to modify. This must be a non-empty string."
+                }
+            },
+            "required": [
+                "profile",
+                "user_id"
+            ]
+        }
+    },
+    {
+        "name": "share_file",
+        "description": "Share an existing file into specified channels. The file must already exist in the Slack workspace, and all specified channels must be valid.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string",
+                    "description": "The ID of the file to share. It must be a non-empty string."
+                },
+                "channel_ids": {
+                    "type": "string",
+                    "description": "A string containing the channel IDs to share the file with. It must be a non-empty, comma-separated list of valid channel IDs."
+                }
+            },
+            "required": [
+                "channel_ids",
+                "file_id"
+            ]
+        }
+    },
+    {
+        "name": "update_chat_message",
+        "description": "Updates a specific message in a designated channel, identified by its timestamp. The update operation requires at least one of the `attachments`, `blocks`, or `text` parameters to be provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "description": "The string identifier for the channel containing the message to be updated. This parameter is required and must refer to an existing channel."
+                },
+                "ts": {
+                    "type": "string",
+                    "description": "A required string representing the timestamp of the message to be updated."
+                },
+                "attachments": {
+                    "type": "string",
+                    "description": "Specifies structured attachments for the message. This parameter must be a URL-encoded string that represents a JSON-based array of structured attachment objects."
+                },
+                "blocks": {
+                    "type": "string",
+                    "description": "A collection of structured blocks, formatted as a JSON-based array and provided as a URL-encoded string."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The updated content for the message. This parameter must be a string. While optional, at least one of `text`, `attachments`, or `blocks` must be provided when updating a message."
+                },
+                "as_user": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that, when set to `True`, updates the message as the authenticated user."
+                },
+                "file_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "An array of new file IDs to include with this message."
+                },
+                "link_names": {
+                    "type": "boolean",
+                    "description": "Controls whether to automatically find and link channel names and usernames within the message."
+                },
+                "markdown_text": {
+                    "type": "string",
+                    "description": "The message text, which must be formatted using markdown syntax."
+                },
+                "parse": {
+                    "type": "string",
+                    "description": "A string parameter used to specify how messages are treated."
+                },
+                "reply_broadcast": {
+                    "type": "boolean",
+                    "description": "An optional boolean parameter that determines whether to broadcast an existing thread reply."
+                }
+            },
+            "required": [
+                "channel",
+                "ts"
+            ]
+        }
+    },
+    {
+        "name": "update_user_group",
+        "description": "Updates an existing User Group specified by its ID. This function allows modifying the group's name, handle, description, associated channel IDs, and the last update timestamp. The name and handle must be non-empty strings, and channel IDs must be a list of strings.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "usergroup_id": {
+                    "type": "string",
+                    "description": "The ID of the User Group to update. This must be a non-empty string that identifies an existing user group."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The new name for the User Group. If provided, it must be a non-empty string."
+                },
+                "handle": {
+                    "type": "string",
+                    "description": "A new handle for the User Group. If provided, it must be a non-empty string."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The new description for the User Group, which must be a string if provided."
+                },
+                "channel_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A new list of channel IDs. If provided, this parameter must be a list containing only string elements."
+                },
+                "date_update": {
+                    "type": "string",
+                    "description": "The timestamp when the User Group was last updated. This value must be a string if provided."
+                }
+            },
+            "required": [
+                "usergroup_id"
+            ]
+        }
+    },
+    {
+        "name": "update_user_group_members",
+        "description": "Update the list of users for a specified User Group. Provide the `usergroup` as the encoded ID of the group and `users` as a comma-separated string of encoded user IDs that represent the group's entire user list. Optionally, set `include_count` to true to return the number of users, or specify a `date_update` timestamp, otherwise the current timestamp is used.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "usergroup": {
+                    "type": "string",
+                    "description": "The encoded ID identifying the User Group to be updated. This ID must correspond to an existing User Group."
+                },
+                "users": {
+                    "type": "string",
+                    "description": "A comma-separated string of encoded user IDs. This string represents the complete and current list of users for the User Group."
+                },
+                "include_count": {
+                    "type": "boolean",
+                    "description": "Specifies whether to include the number of users in the User Group. This parameter defaults to `False`."
+                },
+                "date_update": {
+                    "type": "string",
+                    "description": "Specifies the timestamp when the User Group was last updated. If this parameter is `None` or an empty string, the system automatically uses the current timestamp."
+                }
+            },
+            "required": [
+                "usergroup",
+                "users"
+            ]
+        }
+    },
+    {
+        "name": "upload_file",
+        "description": "Uploads a file to Slack, supporting uploads via direct content or a file path, with content taking precedence if both are provided. The function automatically detects file and MIME types for both text and binary files. Uploaded files are subject to a 50MB size limit.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "channels": {
+                    "type": "string",
+                    "description": "A comma-separated list of channel IDs indicating where the file will be shared. All provided channel IDs must be valid."
+                },
+                "content": {
+                    "type": "string",
+                    "description": "The file's contents provided as a string. This parameter takes precedence if both `content` and `file_path` are specified, and the content is subject to a 50MB size limit."
+                },
+                "file_path": {
+                    "type": "string",
+                    "description": "Specifies the path to a local file for upload. The file's content, whether text or binary, will be processed accordingly, and the file must not exceed a 50MB size limit."
+                },
+                "filename": {
+                    "type": "string",
+                    "description": "The name of the file to be uploaded. If not provided and `file_path` is specified, the filename will be automatically extracted from the `file_path`."
+                },
+                "filetype": {
+                    "type": "string",
+                    "description": "A file type identifier, such as 'pdf', 'txt', or 'jpg'. If not provided, the file type will be automatically detected from the provided filename or file path."
+                },
+                "initial_comment": {
+                    "type": "string",
+                    "description": "An optional string to include as an initial comment when uploading the file."
+                },
+                "thread_ts": {
+                    "type": "string",
+                    "description": "A string representing the timestamp of the parent message to which the uploaded file will reply within a thread."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Specifies the title for the uploaded file. If this parameter is not provided, the file's name will be used as its title."
+                }
+            }
+        }
+    }
+]

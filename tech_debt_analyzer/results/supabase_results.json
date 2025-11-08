@@ -1,0 +1,717 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:59.036193Z",
+  "results": {
+    "supabase/organization.py": {
+      "functions": {
+        "list_organizations": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: listing organizations a user belongs to.  The Returns section accurately describes the structure of the returned list of dictionaries, including the key names (\"id\" and \"name\") and their types (both strings).  The type hinting in the docstring (`List[Dict[str, str]]`) is mostly correct, *except* it doesn't account for the fact that the function retrieves potentially more fields from the database (`organizations_from_db: List[Dict[str, Any]]`) and then filters them down.  The docstring should reflect this more accurately, perhaps by using `List[Dict[str, Any]]` for the return type as well, or by explicitly stating that only \"id\" and \"name\" are guaranteed to be present.  The docstring correctly states that each dictionary will contain \"id\" and \"name\" keys, even though the implementation might read more keys from the database.  No Args section is needed as there are no arguments.  There is no mention of potential exceptions (e.g., database errors), which would improve the docstring.  Overall, the docstring is well-written and informative but could be improved by aligning the return type annotation with the actual implementation's handling of potential extra keys from the database."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The function `list_organizations` does not take any functional input parameters.  Therefore, the question of Pydantic model usage or other input validation methods is not applicable.  The function only interacts with the global `DB` to retrieve data."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_organizations` does not have any functional input parameters.  Therefore, no input validation is needed or missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_organizations` has no parameters.  The return type is clearly specified as `List[Dict[str, str]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a list of organizations from the global `DB`, filters the data to include only the 'id' and 'name' fields, and returns the result as a list of dictionaries.  The docstring accurately reflects the function's behavior and return type. There are no unused functional parameters, placeholders, or exceptions to handle.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_organizations` does not handle any phone number or email address inputs.  It solely retrieves and formats data about organizations from a database. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_organization": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the `id` parameter's type and constraints. The `Returns` section correctly specifies the type and provides a detailed description of the dictionary structure, including nested structures within `subscription_plan`. The `Raises` section accurately lists the exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses only one functional input parameter, `id`.  While it doesn't use a Pydantic model for validation, it performs manual validation checks: it verifies that `id` is not empty and that it's a string.  Therefore, Pydantic is not needed for input validation in this specific function because sufficient validation is already implemented.  Adding a Pydantic model would be redundant."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_organization` performs comprehensive validation on its single functional input parameter, `id`.  It checks for null or empty values (`if not id:`), verifies that it's a string (`if not isinstance(id, str):`), and handles the case where no organization is found with the given ID by raising a `NotFoundError`.  All checks are implemented with appropriate error messages using custom exceptions.  There are no missing validation checks for the `id` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_organization` has excellent parameter design and type annotations.  The single parameter `id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It handles the `id` parameter appropriately, validating its type and presence.  All documented exceptions (`NotFoundError`, `ValidationError`) are implemented. The logic for retrieving, transforming, and validating the organization data is complete and functional given the use of the global `DB` and helper functions. The return value matches the docstring's description.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_organization` does not handle any phone number or email address inputs.  Its input is an organization ID (string), and its purpose is to retrieve and format organization details from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "supabase/project.py": {
+      "functions": {
+        "list_projects": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: listing Supabase projects for a user.  It accurately describes the function's helpfulness in discovering project IDs. The Returns section is well-structured and thoroughly details the structure of the returned dictionary, including the type and description of each key.  Type hints are used effectively in both the function signature and the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Applicable",
+            "notes": "The `list_projects` function does not have any functional input parameters.  It only uses the global `DB` which is considered correctly used in this codebase.  Therefore, no input validation is needed or applicable."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The function `list_projects` has no functional input parameters.  It relies solely on the global `DB` variable to retrieve data.  Therefore, no input parameter validation is needed or possible."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_projects` has no parameters.  The return type is clearly specified as `List[Dict[str, str]]`.  There is no use of `**kwargs`.  Therefore, all criteria for an \"Excellent\" rating are met."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves project data from the global `DB` using `utils.get_main_entities`, iterates through the data, formats it into the specified dictionary structure, and returns a list of these dictionaries.  The docstring accurately describes the function's behavior and return type.  There are no placeholders, unused functional parameters, or exceptions to handle (as the function relies on the `utils.get_main_entities` function for data retrieval and error handling, which is outside the scope of this specific function's evaluation). The implementation matches the docstring's promises."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_projects` does not handle any phone number or email address inputs.  It retrieves and formats data from a database representing Supabase projects.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_project": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs (Args section) and output (Returns section), including types. The `Returns` section correctly specifies the dictionary keys and their types. The `Raises` section correctly lists the exceptions.  The description of what the function does is clear."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`GetProjectInput`) to validate the `id` parameter, which is the only functional input parameter.  The `try...except` block correctly handles `PydanticValidationError`. While the error handling extracts only the first error message, this is sufficient for the single input field.  No other input validation is needed because the `id` parameter is validated comprehensively by the Pydantic model.  Therefore, the Pydantic model is used properly for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `id` parameter using a Pydantic model (GetProjectInput).  This likely enforces that `id` is a string. However, it lacks explicit value validation.  For instance, there's no check for the length of the ID, whether it contains only alphanumeric characters, or if it matches a specific pattern expected for project IDs.  While the `try-except` block handles Pydantic validation errors and raises a custom `ValidationError`, the validation itself within the Pydantic model needs to be more comprehensive to ensure the `id` is not only a string but also a valid project ID.  Therefore, while type validation is present, value validation is missing, resulting in a \"Good\" rating instead of \"Comprehensive\"."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_project` has excellent parameter design.  The single parameter `id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves project details based on the provided ID.  It validates the input ID using Pydantic, handles the `NotFoundError` if the project is not found, and correctly constructs the response dictionary as specified in the docstring.  The `version` field is handled correctly to ensure it's a string, even if the database value is `None`. All functional input parameters (`id`) are used.  Exception handling for `NotFoundError` and `ValidationError` is implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_project` does not handle phone numbers or email addresses as input.  Its input is a project ID (string), and it retrieves project details from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  The function correctly handles its intended input and performs data retrieval and validation within its scope."
+          }
+        },
+        "create_project": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's arguments, including default values and types. The `Returns` section correctly specifies the type and describes the structure of the dictionary, including key names and types.  The `Raises` section lists all potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `CreateProjectArgs` to validate the input parameters `name`, `organization_id`, `confirm_cost_id`, and `region`.  The `try...except` block handles `PydanticValidationError`. While additional checks are performed after Pydantic validation (e.g., checking for empty strings and existence of organization and cost confirmation IDs), these are supplementary and don't negate the primary role of Pydantic in validating input types and constraints.  The use of Pydantic is appropriate and effective for input validation in this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters (`name`, `organization_id`, `confirm_cost_id`, and `region`)."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `organization_id`, `confirm_cost_id`, `region`) are properly type-annotated with their expected types (str, str, str, Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new Supabase project using the provided parameters.  All functional input parameters (`name`, `organization_id`, `confirm_cost_id`, `region`) are used appropriately in the function's logic.  The documented exceptions (`InvalidInputError`, `NotFoundError`, `CostConfirmationError`, `PydanticValidationError`) are all properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including the return type and the keys in the returned dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_project` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on project creation using other identifiers (name, organization ID, cost confirmation ID, and region).  There's no need for improvements related to phone number or email handling because it's not part of the function's design."
+          }
+        },
+        "pause_project": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's arguments (`project_id`) and their types. The `Returns` section correctly specifies the dictionary structure and the types of its keys (`project_id`, `status`, `message`).  The `Raises` section correctly lists the potential exceptions.  The description of the return dictionary is detailed enough."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id` parameter. It checks if `project_id` is a non-empty string. While functional, this approach is less concise and maintainable than using a Pydantic model.  A Pydantic model would provide a more structured and extensible way to define and validate the input, potentially including features like data type coercion and more complex validation rules.  However, given the simplicity of the validation requirement, the manual approach is sufficient, albeit less elegant."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `pause_project` performs comprehensive validation of its single functional input parameter, `project_id`.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `pause_project` has an excellent parameter design.  The `project_id` parameter is properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the pausing of a Supabase project as described in its docstring.  It uses the `project_id` input parameter effectively for retrieving and updating the project's status within the mock database (`DB`).  All documented exceptions (`NotFoundError`, `OperationNotPermittedError`, `ValidationError`) are properly handled and raised under the appropriate conditions. The return dictionary matches the docstring's specification. There are no placeholders, TODOs, or pass statements.  The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `pause_project` function does not handle any phone number or email address inputs.  Its input is a `project_id` which is treated as a string and validated only for being non-null and non-empty.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on project status manipulation within a Supabase-like system."
+          }
+        },
+        "restore_project": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's arguments (`project_id`), return value (a dictionary with `project_id`, `status`, and `message`), and the exceptions it might raise (`NotFoundError`, `OperationNotPermittedError`, `ValidationError`).  The types are correctly specified for parameters and return values. The description of the dictionary's structure in the Returns section is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking and manual validation to ensure the `project_id` is a non-empty string.  While Pydantic could be used, the existing validation is sufficient and clear.  Adding Pydantic would add complexity without significant benefit in this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `restore_project` has only one functional input parameter: `project_id`.  The code performs comprehensive validation on this parameter.  It checks for the correct data type (string) using `isinstance`, checks for an empty string, and implicitly validates the value by attempting to retrieve a project from the database using the provided ID.  The database lookup acts as a further validation step, ensuring the ID corresponds to an existing project.  Appropriate exceptions (`ValidationError`, `NotFoundError`, `OperationNotPermittedError`) are raised with informative error messages for various failure scenarios."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `restore_project` has excellent parameter design.  All parameters are properly type-annotated (`project_id: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the restoration of a Supabase project as described in its docstring.  It handles input validation, checks the project's status before attempting restoration, updates the project status in the database (using a helper function), and returns a dictionary containing the project ID, updated status, and a confirmation message. All functional input parameters (`project_id`) are used.  All documented exceptions are properly implemented and handled. There are no placeholders or TODO comments. The logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `restore_project` does not handle any phone numbers or email addresses.  Its input is a project ID (string), and its core functionality revolves around retrieving and updating project status within a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_project_url": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's inputs (project_id), its return value (a dictionary with 'project_id' and 'api_url'), and the exceptions it might raise (NotFoundError and ValidationError). The types are correctly specified for the parameter and return value.  The description of the dictionary's structure, including the possibility of `api_url` being `None`, is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `isinstance` check to validate that `project_id` is a string.  This is sufficient for the single input parameter and avoids the overhead of a Pydantic model, which would be unnecessary for this simple type check.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `project_id` parameter, ensuring it's a string.  This is a crucial check. However, it lacks value validation.  For instance, it doesn't check if the `project_id` is empty or contains only whitespace, or if it conforms to any specific format or length restrictions defined by the system.  While the function handles the case where the project ID doesn't exist in the database, it doesn't explicitly validate the format or content of the ID itself beyond its type.  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_project_url` has excellent parameter design and type annotations.  The single parameter `project_id` is correctly type-annotated as `str`. The return type `Dict[str, Any]` is clearly specified.  No `**kwargs` are used.  The type annotation for the return dictionary is appropriately descriptive, although it could be made more precise by using `Optional[str]` for the `api_url` key."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements its docstring.  It validates the input `project_id`, retrieves project information from the `DB` (using the helper function), handles the case where the project or its API URL is not found, and returns a dictionary with the expected structure and content, including the possibility of a `None` value for `api_url`. All functional input parameters are used.  There are no placeholders, TODOs, or incomplete logic. The exception handling matches the docstring's specifications.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_project_url` does not handle any phone number or email address inputs.  Its sole input is a `project_id` string, which it validates as being a string type.  Therefore, the criteria of normalizing phone numbers or validating email addresses are not applicable.  The function focuses solely on retrieving project information from a database based on a string identifier."
+          }
+        },
+        "generate_typescript_types": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in generating TypeScript types for a given project ID within the context of an MCP server. The Args and Returns sections are well-structured and informative, correctly specifying types.  The Raises section correctly lists the potential exceptions.  The documentation of the dictionary return value is thorough, detailing all keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id` parameter. It checks if `project_id` is None, if it's a string, and if it's not empty.  While Pydantic could be used, the manual checks are sufficient and cover all necessary validation aspects for this single input parameter.  Using Pydantic would add unnecessary complexity for this simple validation scenario."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `generate_typescript_types` performs comprehensive validation on its single functional input parameter, `project_id`.  It checks for:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `generate_typescript_types` has excellent parameter design.  The single parameter `project_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the generation of TypeScript types based on the provided `project_id`.  All functional input parameters (`project_id`) are used.  All documented exceptions (`NotFoundError`, `TypeGenerationError`, `ValidationError`) are handled appropriately. There are no TODOs, pass statements, or placeholders. The logic is complete and functional, utilizing the global `DB` dictionary as expected. The docstring accurately reflects the function's behavior, including the return type (dictionary with specified keys and values) and the exceptions it might raise.  The function also correctly handles cases where a project has no tables or a table has no columns, returning appropriate results in those scenarios."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  It focuses on generating TypeScript types from project data retrieved from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_anon_key": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's arguments and the `project_id` key in the return dictionary. The types are correctly specified for parameters and return values.  The `Raises` section correctly lists `NotFoundError` and `ValidationError`.  The description of the return dictionary is good, specifying the keys and types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id` parameter. It checks if `project_id` is a non-empty string.  While functional, this validation could be simplified and made more robust using a Pydantic model.  A Pydantic model would allow for more concise validation and potentially handle more complex validation rules (e.g., length restrictions, regular expressions) in a more readable and maintainable way. However, the existing manual validation is sufficient to cover the basic requirements.  Therefore, Pydantic is not strictly needed, but would be a beneficial improvement."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `get_anon_key` performs comprehensive validation of its single functional input parameter, `project_id`.  It checks for null or empty strings using `if not project_id or (isinstance(project_id, str) and not project_id.strip())`, ensuring that the input is not just an empty string but also handles None values. It also explicitly validates the data type using `if not isinstance(project_id, str)`.  Furthermore, it checks for the existence of the project in the database, which is a form of value validation specific to the application domain.  All checks result in appropriate custom exception handling (`ValidationError`, `NotFoundError`, `ResourceNotFoundError`) with informative error messages."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_anon_key` has excellent parameter design and type annotations.  The single parameter `project_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of an anonymous API key based on the provided project ID.  It handles the cases where the project ID is invalid (null, empty, or not a string), the project doesn't exist, and the anonymous key is missing. All functional input parameters (`project_id`) are used.  The exception handling matches the docstring, and there are no placeholders or TODOs. The return value matches the docstring's description.  The logic is complete and functional given the use of the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_anon_key` does not handle any phone numbers or email addresses.  Its input is a project ID (string), and its processing involves database lookups. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the project ID input for null or empty values and ensures it's a string."
+          }
+        }
+      }
+    },
+    "supabase/supabase.py": {
+      "functions": {
+        "get_cost": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_cost': File not found: APIs/supabase.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_cost': File not found: APIs/supabase.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_cost': File not found: APIs/supabase.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_cost': File not found: APIs/supabase.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_cost': File not found: APIs/supabase.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_cost': File not found: APIs/supabase.py"
+          }
+        },
+        "confirm_cost": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'confirm_cost': File not found: APIs/supabase.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'confirm_cost': File not found: APIs/supabase.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'confirm_cost': File not found: APIs/supabase.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'confirm_cost': File not found: APIs/supabase.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'confirm_cost': File not found: APIs/supabase.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'confirm_cost': File not found: APIs/supabase.py"
+          }
+        }
+      }
+    },
+    "supabase/branch.py": {
+      "functions": {
+        "create_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in creating a development branch in Supabase, highlighting the key aspects like migration application and the generation of a new project ID for the branch. The Args, Returns, and Raises sections are well-structured and informative.  Default values are correctly mentioned. Types are specified for all parameters and the return value.  The description of the dictionary return value is comprehensive, listing all key-value pairs and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id`, `confirm_cost_id`, and `name` parameters.  It checks for emptiness and performs additional checks specific to the application logic (e.g., checking if a branch with the given name already exists). While Pydantic could be used to structure and validate these inputs, the existing manual validation is sufficient and covers all functional input parameters.  Using Pydantic would add complexity without a significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`project_id`, `confirm_cost_id`, and `name`) are validated.  `project_id` and `confirm_cost_id` are checked for null/empty values. `name` is also checked for being empty.  Further, the function validates that the `project_id` refers to an existing project in the database, and that the associated organization exists and has the branching feature enabled. The `confirm_cost_id` is checked for existence, validity (correct type), and that it hasn't been used already.  The branch name is checked for uniqueness within the project.  Appropriate custom exceptions (`ValidationError`, `NotFoundError`, `CostConfirmationError`, `BranchingNotEnabledError`) are raised with informative error messages for all validation failures."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`project_id`, `confirm_cost_id`, `name`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new branch in the simulated database (`DB`). All functional input parameters (`project_id`, `confirm_cost_id`, `name`) are used to validate inputs, check for existing branches, and create new entries in the `DB` for projects, tables, extensions, migrations, and branches.  All documented exceptions are handled. There are no TODOs, placeholders, or `pass` statements. The function's logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately describes the function's behavior, input parameters, return values, and exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_branch` does not handle any phone number or email address inputs.  Its inputs are project IDs, cost confirmation IDs, and a branch name \u2013 none of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "list_branches": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's role in listing Supabase project branches and their statuses. The Args, Returns, and Raises sections are well-structured and informative.  Types are specified for parameters and return values.  The documentation of the dictionary structure in the Returns section is particularly helpful, clearly outlining the keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id` parameter. It checks if `project_id` is provided, is a string, and is not empty.  While functional, using a Pydantic model would make the validation more concise and potentially allow for more sophisticated validation rules (e.g., length restrictions, regular expressions) in a more structured way.  However, the existing validation is sufficient to prevent common errors."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `list_branches` performs comprehensive validation on its single functional input parameter, `project_id`.  It checks for null or empty strings (`if not project_id or (isinstance(project_id, str) and not project_id.strip())`), validates the data type using `isinstance(project_id, str)`, and raises appropriate `ValidationError` exceptions for invalid inputs.  Furthermore, it checks for the existence of the project in the database (`utils.get_entity_by_id_from_db`) and raises a `ResourceNotFoundError` if it doesn't exist.  Finally, it checks if branching is enabled for the project using `utils.is_branching_enabled_for_project` and raises a `BranchingNotEnabledError` if not.  All validation is performed before using the `project_id` to access data."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_branches` has excellent parameter design and type annotations.  The single parameter `project_id` is correctly type-annotated as `str`. The return type `List[Dict[str, Any]]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `project_id` parameter for all database interactions.  All documented exceptions are handled. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type. However, the code removes the `parent_project_id` key from the returned dictionaries. While this isn't explicitly stated as a requirement in the docstring, it's a minor omission that could be considered a deviation from a potentially expected complete branch representation.  The docstring should be updated to reflect this omission or the `parent_project_id` should be included in the returned dictionaries if it's considered relevant information."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_branches` does not handle any phone number or email address inputs.  Its input is a project ID (string), and its processing focuses solely on database interactions to retrieve branch information. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the project ID input for being non-null and of the correct type."
+          }
+        },
+        "delete_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and behavior.  It accurately describes the function's arguments (`branch_id`) and its return value (a dictionary with `branch_id`, `status`, and `message`). The `Raises` section correctly lists the potential exceptions.  Types are specified for parameters and return values.  The description of the dictionary structure in the Returns section is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `delete_branch` uses a single functional input parameter, `branch_id`.  It performs input validation by checking if `branch_id` is a non-empty string using `isinstance` and `strip()`.  While Pydantic could be used, the existing validation is sufficient and clear.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `delete_branch` performs comprehensive validation of its single functional input parameter, `branch_id`.  It checks that `branch_id` is a non-empty string using `isinstance` and `strip()`. This covers type validation and null/empty checks.  No other functional input parameters exist.  The validation is thorough and raises appropriate `ValidationError` exceptions with clear error messages when validation fails."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_branch` has excellent parameter design.  It has one parameter, `branch_id`, which is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the deletion of a branch based on its ID, handling various error conditions as documented.  All functional input parameters (`branch_id`) are used.  The logic for finding the branch, checking for deletion permissions (main branch and status checks), performing the deletion, and returning the appropriate response is complete and functional. The docstring accurately reflects the function's behavior, including the return type and raised exceptions.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_branch` does not handle any phone numbers or email addresses.  Its input is a `branch_id` which is treated as a string and validated only for being non-empty.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on branch deletion within a database, and its input and output are unrelated to phone numbers or emails."
+          }
+        },
+        "merge_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: merging branch changes into production.  The description is clear and helpful for an MCP server context. The `Args` and `Returns` sections are well-structured, specifying types and descriptions.  The `Raises` section correctly lists the potential exceptions.  The documentation of the dictionary return value is comprehensive, listing all keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `branch_id` parameter.  It checks if `branch_id` is a string and if it's not empty or whitespace-only.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling different error types more elegantly), the existing validation is sufficient for this specific parameter.  The function has only one functional input parameter, and it is validated.  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `merge_branch` has only one functional input parameter: `branch_id`.  The code performs comprehensive validation on this parameter.  It checks that `branch_id` is a string (`isinstance`), that it's not empty or whitespace-only (`branch_id.strip()`), and then it checks for the existence of the branch in the database.  Appropriate custom exceptions (`ValidationError`, `NotFoundError`) are raised with informative error messages for each validation failure.  All possible failure modes for the `branch_id` parameter are handled."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `merge_branch` has excellent parameter design.  All parameters are properly type-annotated (`branch_id: str`). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality of merging migrations and edge functions from a development branch to production.  It handles edge function merging (including updates and new functions) and migration merging (handling conflicts and applying new migrations). The exception handling for `NotFoundError`, `MergeConflictError`, `OperationNotPermittedError`, and `ValidationError` is correctly implemented.  The function uses the `branch_id` input parameter effectively.  The docstring accurately reflects the function's return type and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `merge_branch` function does not handle any phone numbers or email addresses.  Its input is a `branch_id` (string), and its processing focuses on database operations related to merging data from a development branch to a production environment.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "reset_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in resetting a development branch's migrations, including the potential loss of untracked data. The description of the arguments and their types is accurate. The `Returns` section correctly specifies the dictionary structure and the meaning of its keys.  The `Raises` section comprehensively lists all potential exceptions.  Default values are mentioned.  Types are specified for all parameters and return values. The documentation of the dictionary in the `Returns` section is clear and detailed."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `models.ResetBranchInputArgs` to validate the `branch_id` (str) and `migration_version` (Optional[str]) input parameters.  This model presumably defines the expected types and any constraints on these parameters. The `try...except PydanticValidationError` block handles validation errors, raising them to the calling function.  This is a proper and effective use of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on `branch_id` using Pydantic's `ResetBranchInputArgs` model.  This implicitly handles null/empty checks for `branch_id` as Pydantic will raise a `ValidationError` if it's missing.  However, it lacks explicit value validation for `branch_id` (e.g., checking if it matches a specific format or length).  The `migration_version` parameter also benefits from type validation via Pydantic, including null/empty checks.  However, there's no validation to ensure that if provided, `migration_version` actually exists within the context of the specified `branch_id`.  The validation is good because it uses Pydantic for type checking and implicit null/empty checks, but it's not comprehensive due to the lack of explicit value validation for `branch_id` and the absence of a check to confirm the existence of `migration_version` within the branch's migration history."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`branch_id` and `migration_version`) are properly type-annotated with their expected types (`str` and `Optional[str]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: it resets a branch's migrations to a specified version or to its initial state.  Both `branch_id` and `migration_version` are used correctly.  All documented exceptions are handled, and there are no placeholders or TODOs.  The logic for resetting the schema and reapplying migrations is present."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `reset_branch` does not handle any phone numbers or email addresses.  Its inputs are a `branch_id` (string) and an optional `migration_version` (string), neither of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses on database migration management and doesn't involve any user contact information."
+          }
+        },
+        "rebase_branch": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose: rebasing a development branch onto the production branch to handle migration drift.  The Args and Returns sections are well-structured and informative, correctly specifying types. The Raises section accurately lists the potential exceptions.  The description of the dictionary return value is particularly helpful, detailing the keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `rebase_branch` uses only one functional input parameter, `branch_id`.  It performs manual input validation to check if `branch_id` is a non-empty string. While Pydantic could be used, the existing manual validation is sufficient and correctly handles the potential issues (empty string, non-string type).  Using Pydantic would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `rebase_branch` has only one functional input parameter: `branch_id`.  The validation for `branch_id` is comprehensive.  It checks that:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function has excellent parameter design.  The single parameter `branch_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: it checks for branch existence, local changes, and migration conflicts before attempting to rebase.  It correctly handles different scenarios, including no migrations needed, successful rebase, and various error conditions. The use of the global `DB` is acceptable given the context.  The docstring accurately reflects the return values and exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `rebase_branch` does not handle any phone numbers or email addresses.  Its input is a branch ID (string), and its processing focuses entirely on database operations related to branch rebasing and migration management.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "supabase/database.py": {
+      "functions": {
+        "list_tables": {
+          "docstring_quality": {
+            "status": "Excellent",
+            "notes": "The docstring is comprehensive and well-written.  It clearly explains the function's purpose, accurately describes the arguments and their types (including default values), meticulously details the structure of the complex dictionary returned, and lists the exceptions that might be raised.  The descriptions are concise and easy to understand.  The docstring also correctly reflects the function's behavior, including the handling of optional parameters and the robust processing of potentially missing keys in the database results (e.g., using `or []` to handle missing \"columns\", \"primary_keys\", and \"relationships\").  The inclusion of nested dictionary structures within the `Returns` section is particularly helpful. There are no inconsistencies between the docstring and the implementation."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for the `project_id` and `schemas` parameters.  While Pydantic could be used, the existing checks are sufficient and arguably more readable for this simple validation.  The checks explicitly handle the case where `schemas` is `None`, and correctly validate that `schemas` is a list of strings if provided.  Using Pydantic would add overhead without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on the `project_id` and `schemas` parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`project_id` and `schemas`) are properly type-annotated with their expected types (str and Optional[List[str]] respectively). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No **kwargs parameters are used.  Complex types are properly specified using List, Dict, and Optional."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It handles the `schemas` parameter appropriately, defaulting to all schemas if `None` is provided and raising `ValidationError` for invalid input types.  The `project_id` parameter is used to check for project existence and retrieve tables.  All documented exceptions (`NotFoundError`, `ValidationError`) are implemented. There are no TODOs, pass statements, or placeholders. The logic for processing columns and handling potentially missing keys (\"columns\", \"primary_keys\", \"relationships\") in the database results is robust. The use of `models.Table(**table_output).model_dump()` ensures the output format matches the docstring's specification.  The function's logic is complete and functional given the global `DB` dictionary."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_tables` does not handle any phone number or email address inputs.  Its purpose is to retrieve and format data about database tables, taking a project ID and optionally a list of schemas as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list_extensions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's role in listing extensions for a given project ID. The Args, Returns, and Raises sections are present and generally well-structured.  Types are specified for parameters and return values. The description of the dictionary structure within the Returns section is clear and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `models.ListExtensionsInput` to validate the `project_id` parameter. However, the validation is rudimentary, only checking if the input is a valid string.  The `try-except` block catches `PydanticValidationError`, but the model itself likely doesn't contain constraints beyond basic type checking (e.g., length restrictions, allowed characters, etc.).  The subsequent `.strip()` method suggests that additional validation might be needed within the Pydantic model to handle whitespace.  A more robust Pydantic model could incorporate these checks, improving the validation process.  Currently, only the `project_id` is validated; other parameters are absent.  Therefore, the validation is only partially used."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on the `project_id` parameter using Pydantic.  It checks if the input is a string using `models.ListExtensionsInput(project_id=project_id)`. However, this only checks the type; it doesn't validate the value itself.  The code then strips whitespace from `project_id`, implying a check for empty strings is implicitly handled, but there's no explicit check for an empty string *before* the Pydantic validation.  Furthermore, there's no validation to ensure the `project_id` actually represents a valid project ID according to any defined format or constraints (e.g., length, character set).  The subsequent lookup in `utils.get_entity_by_id` handles the case where the ID doesn't exist in the database, but this is a database lookup, not input validation.  Therefore, while some validation is present (type checking and implicit empty string handling), crucial value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_extensions` has excellent parameter design and type annotations.  The single parameter `project_id` is correctly type-annotated as `str`. The return type `List[Dict[str, Any]]` is also clearly specified.  No `**kwargs` are used.  Complex types are properly specified using `List` and `Dict`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring. It uses the `project_id` input parameter to retrieve and format extension data from the global `DB` dictionary.  The function includes proper exception handling for `NotFoundError` and `ValidationError`.  The returned data structure matches the docstring's specification. There are no placeholders, TODOs, or pass statements. The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_extensions` does not handle any phone number or email address inputs.  Its input is a project ID (string), which undergoes basic validation (checking if it's a valid string and exists in the database) but no phone number or email-specific processing is performed. Therefore, the categories related to phone number normalization and email validation are not applicable."
+          }
+        },
+        "list_migrations": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the `project_id` type. The `Returns` section correctly specifies the list of dictionaries structure and the types of the keys (`version`, `name`, `status`, `applied_at`). The `Raises` section correctly lists the exceptions.  Type hints are used consistently throughout."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`models.ListMigrationsArgsValidator`) to validate the `project_id` input parameter.  This ensures that `project_id` is a string. While an empty string is allowed to pass validation, the function later checks for the project's existence in the database.  The use of a Pydantic model for this validation is appropriate and effective.  No other input validation is needed because the `project_id` is the only functional parameter."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on the `project_id` parameter using Pydantic.  It checks that `project_id` is a string. While it allows empty strings, this is explicitly noted in the code comments and the existence of the project ID is checked later.  However, it lacks value validation beyond the type check; it doesn't, for example, check for a maximum length or specific allowed characters in the `project_id`.  The function also implicitly checks for the existence of the project in the database, which could be considered a form of value validation, but it's not a direct check on the `project_id` parameter itself.  Therefore, while type validation is present, more comprehensive value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_migrations` has excellent parameter design and type annotations.  The single parameter `project_id` is correctly type-annotated as `str`. The return type `List[Dict[str, Any]]` is clearly specified.  No `**kwargs` are used.  Complex types within the return type annotation are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely fulfills its purpose, correctly using the `project_id` parameter to fetch and format migration data from the global `DB`.  Exception handling for `NotFoundError` and `PydanticValidationError` is implemented. The return value matches the docstring's specification. However, there's a minor gap: the code silently ignores malformed migration records (those missing 'version', 'name', or 'status'). While it skips these records, logging these inconsistencies would improve robustness and debugging capabilities in a production environment.  The handling of `applied_at` values that are not datetime objects is also a bit passive; logging this unexpected data type would be beneficial.  These omissions prevent a \"Fully Implemented\" rating."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_migrations` does not handle any phone number or email address inputs.  Its input is a project ID (string), and its purpose is to retrieve migration data from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "apply_migration": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The description of the return value is also good, clearly specifying the dictionary structure and the types of its keys.  The `Raises` section correctly lists the exceptions that the function might raise.  Types are specified for all parameters and return values. The documentation of the dictionary return value is thorough, listing all keys and their types."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id`, `name`, and `query` parameters.  It checks that each is a non-empty string. While Pydantic could provide a more concise and potentially more feature-rich validation approach (e.g., handling different string constraints), the existing manual checks adequately cover the basic validation requirements for these parameters.  Using Pydantic would be an improvement in terms of code readability and maintainability, but is not strictly necessary given the current implementation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`project_id`, `name`, `query`) undergo comprehensive validation.  Type validation (checking if they are strings) and null/empty checks are performed for each.  There are no other domain-specific constraints to validate for these parameters given the context of the function.  Appropriate `ValidationError` exceptions are raised with clear error messages for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`project_id`, `name`, `query`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the application of a database migration.  All functional input parameters (`project_id`, `name`, `query`) are used to validate input, check project existence, execute the migration, and record the outcome.  All documented exceptions (`NotFoundError`, `ValidationError`, `MigrationError`) are handled appropriately. There are no TODOs, pass statements, or placeholders. The function's logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and the structure of the returned dictionary.  The migration record is correctly appended to the project's migration list in both success and failure scenarios.  Error messages are captured and included in the exception and the migration record."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided Python function `apply_migration` does not handle any phone numbers or email addresses.  Its purpose is to manage database migrations, taking a project ID, migration name, and SQL query as input.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "execute_sql": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written. It clearly explains the function's purpose, supported SQL operations, data types, and limitations.  The Args, Returns, and Raises sections are present and informative.  Type hints are used effectively.  The documentation of the dictionary structure in the Returns section is particularly helpful, detailing the different structures for SELECT queries versus DML/DDL statements."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses type checking and manual validation for the `project_id` and `query` parameters.  It checks if they are strings, not empty or whitespace, and if `project_id` corresponds to an existing project in the mock database.  While Pydantic could be used, the existing validation is sufficient and arguably more readable in this simple case.  Using Pydantic wouldn't add significant value here, especially given the existing clear and concise validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `project_id` and `query`.  `project_id` is checked for null/empty values, correct data type (string), and its existence within the (simulated) database. The `query` parameter is checked for null/empty values (including whitespace-only strings), correct data type (string), and indirectly for validity through the `db_manager.execute_query` call which will raise a `SQLError` if the query is malformed or causes a database error.  All checks are performed before the parameters are used in any further processing, and appropriate exceptions (`InvalidInputError`, `NotFoundError`, `DatabaseConnectionError`) with informative error messages are raised for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`project_id` and `query`) are properly type-annotated as `str`.  The return type is clearly specified as `Dict[str, Any]`. The function does not use `**kwargs`.  All type annotations are complete and accurate for the given parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the execution of SQL queries against a simulated database (using the global `DB`).  Both `project_id` and `query` parameters are used effectively for input validation and query execution. All documented exceptions are handled, and there are no placeholders or TODO comments. The function's logic is complete and functional within the constraints of the simulated database environment. The docstring accurately reflects the function's behavior, including the structure of the return values for different query types (SELECT, DML, DDL)."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code is for a function that executes SQL queries.  It does not handle or process phone numbers or email addresses as input.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable.  The function focuses solely on database interaction and query execution."
+          }
+        }
+      }
+    },
+    "supabase/edge.py": {
+      "functions": {
+        "list_edge_functions": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior.  The description is clear and helpful. The `Args` and `Returns` sections are detailed, including types and descriptions of dictionary keys. The `Raises` section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id` parameter. It checks if `project_id` is a string and if it's not empty after stripping whitespace.  While functional, using a Pydantic model would improve the code's readability and maintainability. A Pydantic model could enforce these checks more concisely and allow for more complex validation rules (e.g., length restrictions, regular expression matching) to be added easily in the future.  However, the current manual validation is sufficient to prevent common errors."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `list_edge_functions` performs comprehensive validation on its single functional input parameter, `project_id`.  It checks for the correct data type (string), handles empty strings by stripping whitespace and checking for emptiness, and ensures the project ID exists in the database.  Appropriate custom exceptions (`ValidationError`, `NotFoundError`, `FeatureNotEnabledError`) are raised with informative error messages for each validation failure.  All aspects of input validation are covered for the single functional parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `list_edge_functions` has excellent parameter design and type annotations.  The single parameter `project_id` is correctly type-annotated as `str`. The return type `List[Dict[str, Any]]` is also clearly specified.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  It validates the `project_id` input, checks for project and feature existence, retrieves data from the global `DB`, formats the data according to the specified structure, handles potential errors by raising appropriate exceptions (`NotFoundError`, `FeatureNotEnabledError`, `ValidationError`), and returns a list of dictionaries as promised. All functional input parameters (`project_id`) are used. There are no placeholders, TODO comments, or incomplete logic. The handling of datetime objects to ensure ISO 8601 format is a nice touch.  The error messages are also improved for better clarity."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone numbers or email addresses.  Its purpose is to retrieve and format data about Supabase Edge Functions from a database.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the `project_id` input by checking its type and ensuring it's not empty.  It also handles potential errors gracefully by raising appropriate custom exceptions."
+          }
+        },
+        "deploy_edge_function": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage.  It accurately describes the function's arguments, including default values for `entrypoint_path` and `import_map_path`. The `Returns` section correctly specifies the type and describes the structure of the returned dictionary, including key names and types.  The `Raises` section lists the potential exceptions.  Types are specified for all parameters and the return value.  The documentation of the `files` argument as a list of dictionaries, including the keys `name` and `content`, is clear."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function utilizes a Pydantic model `DeployEdgeFunctionInputArgs` (not shown in the provided code snippet, but implied by `DeployEdgeFunctionInputArgs(**args_data)`) to validate the input parameters `project_id`, `name`, `files`, `entrypoint_path`, and `import_map_path`.  The `try...except` block handles `ValidationError` exceptions raised by Pydantic, demonstrating that the model is used for input validation. While additional semantic checks are performed after the Pydantic validation, the Pydantic model handles the initial type and structural validation of the input arguments.  This is a proper use of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all functional parameters.  `project_id` and `name` are validated for type (string) and emptiness. `files` is validated for type (list), emptiness, and the presence of required keys ('name', 'content') in each dictionary.  Duplicate filenames are checked.  `entrypoint_path` and `import_map_path` are validated for existence within the `files` list.  File content is checked for emptiness and valid JavaScript/TypeScript syntax and content using a validator.  The validation leverages Pydantic for basic type and structure checks, and then performs extensive semantic validation to ensure data integrity and consistency with the application's logic.  Appropriate custom exceptions (`InvalidInputError`, `NotFoundError`, `FeatureNotEnabledError`, `ValidationError`) are raised with informative error messages for various validation failures."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`project_id`, `name`, `files`, `entrypoint_path`, `import_map_path`) are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  Complex types like `List`, `Dict`, `Optional` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core functionality of deploying an Edge Function, using the global `DB` as intended.  All functional input parameters (`project_id`, `name`, `files`, `entrypoint_path`, `import_map_path`) are used.  The function correctly handles `NotFoundError`, `InvalidInputError`, `FeatureNotEnabledError`, and `ValidationError` as documented. There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle phone numbers or email addresses.  The function `deploy_edge_function` focuses on deploying Edge Functions to a Supabase project. Its inputs and outputs relate to project IDs, function names, code files, and deployment status. There is no processing or validation of phone numbers or email addresses anywhere in the code.  Therefore, the criteria for phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "supabase/logs.py": {
+      "functions": {
+        "get_logs": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate.  It clearly explains the function's purpose, arguments, return value, and exceptions.  The description of the return value, including the structure of the dictionary entries and the time limitation, is particularly helpful.  The `Args` and `Returns` sections are complete and well-formatted. The `Raises` section accurately lists the potential exceptions.  Type hints are used consistently and correctly."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `project_id` and `service` parameters.  It checks for null or empty strings, correct data types (string), and whether the `service` value is within the `VALID_SERVICES` set.  While Pydantic could provide a more concise and potentially type-safer way to perform this validation, the existing manual checks are comprehensive for the given inputs.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `project_id` and `service`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`project_id` and `service`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `List[Dict[str, Any]]`.  No **kwargs parameters are used.  Complex types like `List` and `Dict` are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using both `project_id` and `service` parameters.  It handles the documented exceptions (`NotFoundError`, `ValidationError`, `LogsNotAvailableError`). The logic for filtering logs within the last minute is implemented, and the return type matches the docstring.  However, the error handling could be slightly improved.  Multiple `LogsNotAvailableError` exceptions are raised for various scenarios (logs not available for the project, service not configured for logs, etc.).  Consolidating these into a single, more informative error message might improve clarity.  Additionally, the code assumes a specific structure for the `DB` and `all_logs_data`, which might be fragile if the data structure changes.  Adding more robust checks or using a more structured data access method could enhance the function's resilience."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_logs` does not handle any phone numbers or email addresses.  Its input parameters are `project_id` (string) and `service` (string), both of which are treated as identifiers and not subjected to any normalization or validation beyond basic type and value checks.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on retrieving and filtering log data from a database."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "supabase": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (SimulationEngine, tests, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the expected core files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`).  The `tests` folder is well-organized with numerous test files. The main API folder also contains the expected `.py` files representing the API endpoints."
+      }
+    }
+  }
+}

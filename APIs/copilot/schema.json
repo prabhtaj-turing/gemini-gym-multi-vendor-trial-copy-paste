@@ -1,0 +1,155 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/copilot-api-schema.json",
+    "title": "Copilot API State",
+    "description": "Schema defining the state of the Copilot API, including its virtual file system and operational status.",
+    "type": "object",
+    "properties": {
+        "workspace_root": {
+            "description": "The absolute, normalized path representing the root of the workspace.",
+            "type": "string",
+            "pattern": "^/.*$"
+        },
+        "cwd": {
+            "description": "The current working directory (absolute, normalized path) within the workspace.",
+            "type": "string",
+            "pattern": "^/.*$"
+        },
+        "environment": {
+            "description": "Environment variables organized by scope (system, workspace, session).",
+            "type": "object",
+            "properties": {
+                "system": {
+                    "type": "object",
+                    "description": "System-level environment variables"
+                },
+                "workspace": {
+                    "type": "object",
+                    "description": "Workspace-level environment variables"
+                },
+                "session": {
+                    "type": "object",
+                    "description": "Session-level environment variables (from export/unset commands)"
+                }
+            }
+        },
+        "file_system": {
+            "description": "The core database representing the file system. Maps normalized, absolute file/directory paths to their corresponding node objects.",
+            "type": "object",
+            "patternProperties": {
+                "^/.*$": {
+                    "$ref": "#/$defs/fileSystemNode"
+                }
+            },
+            "additionalProperties": false
+        },
+        "background_processes": {
+            "description": "A map of background processes. Keys are PIDs (as strings), values are the command strings being 'run'.",
+            "type": "object",
+            "patternProperties": {
+                "^[1-9]\\d*$": {
+                    "type": "string",
+                    "description": "The command string associated with the PID."
+                }
+            },
+            "additionalProperties": false
+        },
+        "_next_pid": {
+            "description": "Internal counter for assigning the next background process ID.",
+            "type": "integer",
+            "minimum": 1
+        }
+    },
+    "required": [
+        "workspace_root",
+        "cwd",
+        "environment",
+        "file_system",
+        "background_processes",
+        "_next_pid"
+    ],
+    "$defs": {
+        "fileSystemNode": {
+            "description": "Represents a single file or directory within the file system.",
+            "oneOf": [
+                {
+                    "title": "File Node",
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "description": "The normalized, absolute path of the file.",
+                            "type": "string",
+                            "pattern": "^/.*$"
+                        },
+                        "is_directory": {
+                            "description": "Flag indicating if this node is a directory.",
+                            "const": false
+                        },
+                        "content_lines": {
+                            "description": "An array where each string represents a line in the file.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "size_bytes": {
+                            "description": "The calculated size of the file content in bytes.",
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "last_modified": {
+                            "description": "The timestamp of the last modification in ISO 8601 format.",
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "required": [
+                        "path",
+                        "is_directory",
+                        "content_lines",
+                        "size_bytes",
+                        "last_modified"
+                    ],
+                    "additionalProperties": false
+                },
+                {
+                    "title": "Directory Node",
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "description": "The normalized, absolute path of the directory.",
+                            "type": "string",
+                            "pattern": "^/.*$"
+                        },
+                        "is_directory": {
+                            "description": "Flag indicating if this node is a directory.",
+                            "const": true
+                        },
+                        "content_lines": {
+                            "description": "Must be empty for directories.",
+                            "type": "array",
+                            "maxItems": 0
+                        },
+                        "size_bytes": {
+                            "description": "Size is typically 0 for directories.",
+                            "const": 0
+                        },
+                        "last_modified": {
+                            "description": "The timestamp of the last modification in ISO 8601 format.",
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "required": [
+                        "path",
+                        "is_directory",
+                        "content_lines",
+                        "size_bytes",
+                        "last_modified"
+                    ],
+                    "additionalProperties": false
+                }
+            ]
+        }
+    }
+} 

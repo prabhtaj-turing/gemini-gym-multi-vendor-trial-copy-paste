@@ -1,0 +1,249 @@
+[
+  {
+    "name": "glob",
+    "description": "Finds files matching a glob pattern, sorting files modified in the last 24 hours by modification time, followed by older files sorted alphabetically.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "A glob pattern for matching files, supporting wildcards like `*.py`, `**/*.md`, and `src/**/*.ts`."
+        },
+        "path": {
+          "type": "string",
+          "description": "An absolute path to a directory within the workspace to search, defaulting to the workspace root."
+        },
+        "case_sensitive": {
+          "type": "boolean",
+          "description": "Specifies whether pattern matching is case-sensitive, defaulting to `False` (case-insensitive)."
+        },
+        "respect_git_ignore": {
+          "type": "boolean",
+          "description": "Specifies whether to respect `.gitignore` patterns; only applies within a git repository and defaults to `True`."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "list_directory",
+    "description": "Lists the direct children of a specified workspace directory.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute directory path to list, which must be within the workspace root."
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of glob patterns to exclude, for example `['*.log', 'node_modules']`."
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Reads the content of text, image (PNG, JPG, GIF, WEBP, SVG, BMP), and PDF files, supporting line-range pagination for text files.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to a file within the configured workspace that is not ignored by `.geminiignore` patterns."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "The 0-based line number to start reading from for text files, used for pagination; requires the `limit` parameter to be set."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "For text files only, the maximum number of lines to read, used with `offset` for pagination. Defaults to 2000 and enforces a 2000-character limit per line."
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "read_many_files",
+    "description": "Reads files using paths or glob patterns, concatenating text content and returning base64-encoded data for explicitly requested image or PDF files.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A required array of glob patterns or paths relative to the workspace root (e.g., `['src/**/*.py']`, `['README.md', 'docs/']`)."
+        },
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional glob patterns to include, which are merged with `paths`. For example: `[\"*.test.py\"]`."
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Glob patterns for files or directories to exclude, which are added to the default excludes if `useDefaultExcludes` is `True`."
+        },
+        "recursive": {
+          "type": "boolean",
+          "description": "Whether to search recursively, a behavior primarily controlled by `**` in glob patterns. Defaults to `True`."
+        },
+        "useDefaultExcludes": {
+          "type": "boolean",
+          "description": "Whether to exclude default patterns such as `node_modules`, `.git`, and binary files. Defaults to `True`."
+        },
+        "respect_git_ignore": {
+          "type": "boolean",
+          "description": "Whether to respect `.gitignore` patterns; defaults to `True`."
+        }
+      },
+      "required": [
+        "paths"
+      ]
+    }
+  },
+  {
+    "name": "replace",
+    "description": "Perform a precise string replacement in a file with multi-stage self-correction, or create a new file.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to the file to modify, which must be within the workspace."
+        },
+        "old_string": {
+          "type": "string",
+          "description": "The literal text to replace, including 3+ lines of surrounding context for unique identification; use an empty string to create a new file."
+        },
+        "new_string": {
+          "type": "string",
+          "description": "The complete and exact replacement text for `old_string`, including all necessary whitespace and formatting."
+        },
+        "expected_replacements": {
+          "type": "integer",
+          "description": "The expected number of replacements, which defaults to 1; use when replacing multiple occurrences of the same string."
+        },
+        "modified_by_user": {
+          "type": "boolean",
+          "description": "Indicates whether the edit was manually modified by the user for tracking purposes; defaults to `None`."
+        }
+      },
+      "required": [
+        "file_path",
+        "new_string",
+        "old_string"
+      ]
+    }
+  },
+  {
+    "name": "run_shell_command",
+    "description": "Executes a shell command in the simulated workspace.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The shell command to execute."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the command's purpose."
+        },
+        "directory": {
+          "type": "string",
+          "description": "The directory in which to execute the command, relative to the workspace root; defaults to the current working directory."
+        },
+        "background": {
+          "type": "boolean",
+          "description": "Runs the command in the background, returning immediately with a process ID."
+        }
+      },
+      "required": [
+        "command"
+      ]
+    }
+  },
+  {
+    "name": "save_memory",
+    "description": "Saves a fact to long-term memory when the user makes an explicit request or states important information.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "fact": {
+          "type": "string",
+          "description": "A clear, self-contained statement of the fact to remember."
+        }
+      },
+      "required": [
+        "fact"
+      ]
+    }
+  },
+  {
+    "name": "search_file_content",
+    "description": "Searches file contents for a regular expression pattern within a specified directory (or workspace root if unspecified), returning matches with the file path, line number, and line content.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "A valid regular expression pattern to search for within file contents (e.g., `'function\\s+myFunction'`)."
+        },
+        "path": {
+          "type": "string",
+          "description": "Absolute path to a directory within the workspace to search; defaults to the workspace root if not provided."
+        },
+        "include": {
+          "type": "string",
+          "description": "A glob pattern to filter which files are searched (e.g., `*.js`, `*.{ts,tsx}`, `src/**`); if not provided, all files are searched, respecting common ignore patterns."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "write_file",
+    "description": "Writes content to a specified file, overwriting the file if it exists and creating parent directories if necessary.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "The absolute path to the file, which must be within the workspace root."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content to write to the file, which will completely replace any existing content."
+        },
+        "modified_by_user": {
+          "type": "boolean",
+          "description": "Indicates whether the content was modified by the user, defaulting to `None`."
+        }
+      },
+      "required": [
+        "content",
+        "file_path"
+      ]
+    }
+  }
+]

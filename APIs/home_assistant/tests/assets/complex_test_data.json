@@ -1,0 +1,146 @@
+{
+  "environment": {
+    "home_assistant": {
+      "devices": {
+        "LIGHT_001": {
+          "type": "light",
+          "name": "Smart LED Strip",
+          "attributes": {
+            "state": "On",
+            "brightness": 85,
+            "color": {
+              "r": 255,
+              "g": 128,
+              "b": 0
+            },
+            "effects": [
+              "breathing",
+              "rainbow",
+              "strobe"
+            ],
+            "schedule": {
+              "weekdays": {
+                "on": "07:00",
+                "off": "22:30"
+              },
+              "weekends": {
+                "on": "08:30",
+                "off": "23:00"
+              }
+            }
+          }
+        },
+        "THERMOSTAT_001": {
+          "type": "thermostat",
+          "name": "Main Thermostat",
+          "attributes": {
+            "state": "Heat",
+            "temperature": 72,
+            "target_temperature": 75,
+            "humidity": 45,
+            "modes": ["heat", "cool", "auto", "off"],
+            "sensors": {
+              "indoor": {
+                "temperature": 72.5,
+                "humidity": 44.8
+              },
+              "outdoor": {
+                "temperature": 38.2,
+                "humidity": 65.3
+              }
+            }
+          }
+        }
+      },
+      "zones": {
+        "living_room": {
+          "devices": ["LIGHT_001", "SPEAKER_001"],
+          "climate_control": "THERMOSTAT_001"
+        },
+        "bedroom": {
+          "devices": ["LIGHT_002", "FAN_001"],
+          "climate_control": "THERMOSTAT_001"
+        }
+      }
+    },
+    "weather": {
+      "current": {
+        "temperature": 38,
+        "conditions": "cloudy",
+        "humidity": 65,
+        "wind_speed": 12.5
+      },
+      "forecast": [
+        {
+          "day": "tomorrow",
+          "high": 42,
+          "low": 35,
+          "conditions": "sunny"
+        },
+        {
+          "day": "day_after",
+          "high": 39,
+          "low": 32,
+          "conditions": "rain"
+        }
+      ]
+    }
+  },
+  "automations": {
+    "morning_routine": {
+      "triggered": false,
+      "schedule": "07:00",
+      "conditions": ["weekday", "home"],
+      "actions": [
+        {
+          "device": "LIGHT_001",
+          "action": "turn_on",
+          "brightness": 50
+        },
+        {
+          "device": "THERMOSTAT_001", 
+          "action": "set_temperature",
+          "temperature": 72
+        }
+      ]
+    },
+    "security_mode": {
+      "triggered": true,
+      "conditions": ["away", "night"],
+      "actions": [
+        {
+          "type": "all_lights",
+          "action": "turn_off"
+        },
+        {
+          "type": "security_system",
+          "action": "arm"
+        }
+      ]
+    }
+  },
+  "user_preferences": {
+    "default_brightness": 75,
+    "energy_saving": true,
+    "notifications": {
+      "email": true,
+      "push": false,
+      "sms": true
+    },
+    "themes": {
+      "active": "dark",
+      "available": ["light", "dark", "auto"]
+    }
+  },
+  "system": {
+    "version": "3.2.1",
+    "database_schema_version": "1.5.0",
+    "last_backup": "2024-01-15T03:00:00Z",
+    "statistics": {
+      "total_devices": 2,
+      "active_automations": 1,
+      "data_points_collected": 15420,
+      "uptime_hours": 168.5
+    }
+  }
+}

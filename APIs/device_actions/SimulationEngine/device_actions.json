@@ -1,0 +1,636 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "device_actions",
+        "description": "A tool for performing actions on the user's current smart device. Supported actions include\ntaking photos or videos, toggling the flashlight, taking screenshots, opening apps or URLs, and\nusing power options like restart or shutdown.\n\n\n** Open App or Open URL **\n * If the user prompt contains a url or website with an action verb, use `open_url` to open the url.\n * If the user prompt contains an app name with an action verb, follow the \"How to Open App\" instructions to open the app.\n * If the user prompt is ambiguous (e.g., \"go to Google\" *could* be the search engine or the app, but the app is a likely candidate), default to open app.\n\n\n** How to Open App **\n * When a user asks to open or go to an app, you should **always** check if the app is installed before opening it.\n * Use the steps below to determine if the app is installed or not.\n   1) Use `installed_apps` to get the list of installed apps on the user device.\n   2) Compare the app name from the user prompt with the app names in the list.\n   3) First, look for an exact match. If none is found, look for a close match (e.g., \"google maps\" -> \"maps\", \"amazon\" -> \"amazon shopping\", \"pixel screenshot\" -> \"pixel screenshots\", \"alexa\" -> \"amazon alexa\").\n * If you find an exact or close match, use `open_app` to open the app.\n * Otherwise, do the following steps:\n   1) Use google search to search for the app's website and Play Store link.\n   2) Extract both links from the search result.\n   3) Show the app's website and Play Store link in the final response. Do not open them directly.\n\n\n** Pixel Screenshots **\n * Pixel Screenshots helps users find specific information within their screenshots.\n * Follow the \"How to Open App\" instructions for handling related queries.\n * When a user requests to search or find information within their screenshots, pass the search query to the Pixel Screenshots app when opening it.\n\n\n** Restart or Power Off Device **\n * If the user requests a restart or power off, use `restart_device` or `power_off_device` respectively. Then inform the user that the power options menu is being opened.\n * The user may refer to you as \"Google\" or \"Gemini\". If the user says \"Google\" or \"Gemini\" followed by commands like \"restart phone\" or \"power off phone,\" treat it as a direct command.\n\n\n** Ring Phone **\n * Ringing the user's phone helps them locate it if it has been misplaced.\n * If the user is searching for their phone or requests to find/call their phone, use `ring_phone` once to remotely ring it, and then inform the user that their phone is ringing.\n\n\n** Take Photo / Video or Open Camera **\n * If the user asks to take a photo or video, use `take_photo` or `record_video` respectively.\n * If the user asks to open the camera or get ready for taking a photo or video, use `open_camera`.\n\n\n** LIMITATIONS ** The following are limitations or unsuppported capabilities of the device actions tool. You should not call any method from the device actions tool to address these type of queries. For these queries, try to use google search to learn more about how to address the user's query or just return a final response directly.\n * The device actions tool cannot handle installing, uninstalling, or deleting apps. Do not call get_installed_apps or open_app.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/open_camera": {
+            "post": {
+                "operationId": "open_camera",
+                "description": "Open the device's camera.\nThis method allows specifying which camera to use (e.g., front or rear)\nand the initial mode it should open in (e.g., photo or video mode).\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "OPEN",
+                        "object": "camera",
+                        "location": "my device"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_TAKE_PHOTO"
+                    ]
+                },
+                "x-google-bard-inline-operation": false,
+                "parameters": [
+                    {
+                        "name": "camera_type",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CameraType"
+                        },
+                        "description": "The type of camera to open (e.g., FRONT or REAR).",
+                        "required": false
+                    },
+                    {
+                        "name": "camera_operation",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CameraOperation"
+                        },
+                        "description": "The initial functional mode for the camera upon opening (e.g., PHOTO for taking pictures, VIDEO for recording).",
+                        "required": false
+                    },
+                    {
+                        "name": "camera_mode",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CameraMode"
+                        },
+                        "description": "Deprecated. Kept for binary compatibility.",
+                        "x-google-bard-model-visible": false,
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Open the camera.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/take_photo": {
+            "post": {
+                "operationId": "take_photo",
+                "description": "Take a photo using the device camera.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "CREATE",
+                        "object": "photos",
+                        "location": "my device"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_TAKE_PHOTO"
+                    ]
+                },
+                "x-google-bard-inline-operation": false,
+                "parameters": [
+                    {
+                        "name": "camera_type",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CameraType"
+                        },
+                        "description": "The type of camera to open (e.g., FRONT or REAR). When the user asks to take a selfie, use the value FRONT.",
+                        "required": false
+                    },
+                    {
+                        "name": "self_timer_delay",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Delay time to start taking a photo. If the user does not specify the delay time, always provide a default value '3 seconds'.",
+                        "required": false
+                    },
+                    {
+                        "name": "camera_mode",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CameraMode"
+                        },
+                        "description": "The mode the camera should use when taking a picture.",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Captured a photo.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record_video": {
+            "post": {
+                "operationId": "record_video",
+                "description": "Record a video using the device camera.\nIf the user requests to record a video with a delay, ignore the delay and start recording immediately.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "CREATE",
+                        "object": "videos",
+                        "location": "my device"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_RECORD_VIDEO"
+                    ]
+                },
+                "parameters": [
+                    {
+                        "name": "camera_type",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CameraType"
+                        },
+                        "description": "The type of camera to use.",
+                        "required": false
+                    },
+                    {
+                        "name": "self_timer_delay",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Deprecated. Kept for binary compatibility.",
+                        "x-google-bard-model-visible": false,
+                        "required": false
+                    },
+                    {
+                        "name": "video_duration",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Duration of the video recording, for example \"record a 15 second video\".",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recorded a video.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/take_screenshot": {
+            "post": {
+                "operationId": "take_screenshot",
+                "description": "Take a screenshot on the device.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "CREATE",
+                        "object": "screenshots",
+                        "location": "my device"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_TAKE_SCREENSHOT"
+                    ]
+                },
+                "x-google-bard-inline-operation": false,
+                "responses": {
+                    "200": {
+                        "description": "Captured a screenshot.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/turn_on_flashlight": {
+            "post": {
+                "operationId": "turn_on_flashlight",
+                "description": "Turns on the flashlight on the device. Lumos can be used to turn on the flashlight.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "START",
+                        "object": "flashlight",
+                        "location": "my device"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_UPDATE_DEVICE_SETTING"
+                    ]
+                },
+                "responses": {
+                    "200": {
+                        "description": "Turned on flashlight.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/turn_off_flashlight": {
+            "post": {
+                "operationId": "turn_off_flashlight",
+                "description": "Turns off the flashlight on the device. Nox can be used to turn off the flashlight.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "STOP",
+                        "object": "flashlight",
+                        "location": "my device"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_UPDATE_DEVICE_SETTING"
+                    ]
+                },
+                "responses": {
+                    "200": {
+                        "description": "Turned off flashlight.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_installed_apps": {
+            "post": {
+                "operationId": "get_installed_apps",
+                "description": "Get the list of installed application on the device.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "applications"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_OPEN_APP"
+                    ]
+                },
+                "responses": {
+                    "200": {
+                        "description": "Applications installed on the device in a flattened list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppInfo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/open_app": {
+            "get": {
+                "operationId": "open_app",
+                "description": "Open the requested application on the device.\n\n\n**Alternative app names:**\n - If the user wants to open \"alarms\" or \"timers\" but there is no app with an\n   obviously matching name, open any clock app, if present, as a less-preferred fallback.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "OPEN",
+                        "object": "applications"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_OPEN_APP"
+                    ]
+                },
+                "x-google-bard-inline-operation": false,
+                "parameters": [
+                    {
+                        "name": "app_name",
+                        "in": "query",
+                        "description": "The name of the application to open.\nThis name has to **exactly** match one of the names produced by `get_installed_apps`.\n",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "app_package_name",
+                        "in": "query",
+                        "description": "The package name of the application to open.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "extras",
+                        "in": "query",
+                        "description": "The extras in json string format to send to the application being opened.\n**Note**:\n * This should **only** be populated when opening \"Pixel Screenshots\".\n * When opening \"Pixel Screenshots\", **always** extract the information-seeking part of the user prompt and populate it in the extras field.\n * The key of the extras field is \"query\". The value of the extras field is the query extracted from the user prompt.\n * The query should be a full question/sentence, unless the original user prompt is too terse to infer one.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The result of successfully initiating opening an app.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/open_url": {
+            "get": {
+                "operationId": "open_url",
+                "description": "Open the requested url in a browser.\nDo not use it unless the user prompt contains a url or explicitly asks to open a website.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "OPEN",
+                        "object": "url"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_OPEN_URL"
+                    ]
+                },
+                "x-google-bard-inline-operation": false,
+                "parameters": [
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "description": "The URL to open.\nDo **not** include the protocol (e.g. https://) if the user prompt does **not** include it.\n",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "website_name",
+                        "in": "query",
+                        "description": "The name of the website to open. Do **not** include the **top-level** domain.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response message.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/open_websearch": {
+            "get": {
+                "operationId": "open_websearch",
+                "description": "Opens a Google search page with the provided query in the browser (e.g. Chrome).",
+                "x-google-bard-model-visible": false,
+                "x-capability-search": [
+                    {
+                        "operation-type": "OPEN",
+                        "object": "url"
+                    }
+                ],
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_OPEN_WEBSEARCH_IN_BROWSER"
+                    ]
+                },
+                "x-google-bard-inline-operation": false,
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "The search query to open.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response message.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/power_off_device": {
+            "post": {
+                "operationId": "power_off_device",
+                "description": "Power off the device. It can only open the power options menu.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "STOP",
+                        "object": "device"
+                    }
+                ],
+                "x-google-bard-inline-operation": false,
+                "responses": {
+                    "200": {
+                        "description": "Turning off.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/restart_device": {
+            "post": {
+                "operationId": "restart_device",
+                "description": "Restart the device. It can only open the power options menu.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "RESTART",
+                        "object": "device"
+                    }
+                ],
+                "x-google-bard-inline-operation": false,
+                "responses": {
+                    "200": {
+                        "description": "Restarting.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/open_home_screen": {
+            "post": {
+                "operationId": "open_home_screen",
+                "description": "Navigate to home screen on the device.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "OPEN",
+                        "object": "home screen",
+                        "location": "my device"
+                    }
+                ],
+                "x-google-bard-inline-operation": false,
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_NAVIGATE_HOME_SCREEN"
+                    ]
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully navigated to the home screen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ring_phone": {
+            "post": {
+                "operationId": "ring_phone",
+                "description": "Send an action to the device requesting it to remotely ring the user's paired phone.\n",
+                "x-capability-search": [
+                    {
+                        "operation-type": "FIND",
+                        "object": "phone"
+                    }
+                ],
+                "x-google-bard-inline-operation": true,
+                "x-client-compatibility": {
+                    "requiredClientCapabilities": [
+                        "CAPABILITY_MUTATING_OP_RING_PHONE"
+                    ]
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully rang the user's phone.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActionSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CameraType": {
+                "description": "Which camera to use. One of FRONT, REAR or DEFAULT.",
+                "type": "string",
+                "enum": [
+                    "FRONT",
+                    "REAR",
+                    "DEFAULT"
+                ]
+            },
+            "CameraOperation": {
+                "description": "Which camera operation to select. One of PHOTO or VIDEO.",
+                "type": "string",
+                "enum": [
+                    "PHOTO",
+                    "VIDEO"
+                ]
+            },
+            "AppInfo": {
+                "description": "Metadata of an application.",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CameraMode": {
+                "description": "The mode the camera should use when taking a picture. One of DEFAULT or PORTRAIT.",
+                "type": "string",
+                "enum": [
+                    "DEFAULT",
+                    "PORTRAIT"
+                ]
+            },
+            "ActionSummary": {
+                "x-google-bard-entity": {
+                    "type": "action_card_content",
+                    "entityId": "card_id",
+                    "contentMetadataPath": "action_card_content.content_metadata",
+                    "fieldMapping": {
+                        "action_card_content": "action_card_content_passthrough"
+                    }
+                },
+                "description": "The description of the tool action result",
+                "properties": {
+                    "result": {
+                        "type": "string"
+                    },
+                    "action_card_content_passthrough": {
+                        "x-google-bard-model-visible": false,
+                        "type": "string"
+                    },
+                    "card_id": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

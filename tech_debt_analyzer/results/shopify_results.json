@@ -1,0 +1,799 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:59.104293Z",
+  "results": {
+    "shopify/customers.py": {
+      "functions": {
+        "shopify_get_customer_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior and includes examples, which is helpful.  The documentation of the nested dictionary structures within the return value (`customer` dictionary and its nested fields like `default_address` and `addresses`) is particularly thorough. Type hints are used effectively throughout."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `customer_id` and `fields` parameters.  It checks the type and emptiness of `customer_id` and performs similar checks on the elements of the `fields` list. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient to cover the necessary input validation for the functional parameters.  Using Pydantic here would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `customer_id` and `fields`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`customer_id` and `fields`) are properly type-annotated with their expected types (`str` and `Optional[List[str]]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves customer data based on the provided `customer_id` and `fields`.  Both `customer_id` and `fields` parameters are fully utilized in the function's logic.  All documented exceptions (`NoResultsFoundError`, `InvalidInputError`) are properly handled. There are no TODOs, pass statements, or placeholder implementations. The function's logic is complete and functional, given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and the handling of optional parameters.  The deep copy of mutable structures ensures data integrity."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does not handle phone number or email normalization/validation directly.  The `customer_data_from_db` presumably contains these fields, but the function itself doesn't process them.  It simply retrieves and returns the data as-is.  Therefore, any normalization or validation must be happening elsewhere (likely in the data storage or retrieval process that populates `customers_table`)."
+          }
+        },
+        "shopify_search_customers": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a clear explanation of the function's purpose, arguments, return values, and exceptions.  It accurately reflects the function's capabilities as a customer search endpoint within an MCP server context. Default values for all parameters are correctly specified and explained.  The `Args` and `Returns` sections are detailed, including descriptions of nested dictionary structures.  The `Raises` section lists the expected exceptions. Types are consistently specified using type hints and within the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters (`query`, `limit`, `page_info`, `fields`, `order`).  It performs type checking and range/format validation. While Pydantic could provide a more structured and potentially more concise way to achieve the same validation, the existing manual approach is comprehensive and covers all functional inputs.  Therefore, Pydantic models are not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`query`, `limit`, `fields`, `order`, `page_info`) have type and value validation checks."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (query, limit, page_info, fields, order) are properly type-annotated with their expected types (str, Optional[int], Optional[str], Optional[List[str]], Optional[str] respectively).  The function's return type is clearly specified as Dict[str, Any].  The function does not use **kwargs parameters.  Complex types like List, Dict, and Optional are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using all functional input parameters (`query`, `limit`, `page_info`, `fields`, `order`).  Exception handling for `InvalidInputError` and `InvalidQueryError` is implemented.  The logic correctly handles pagination, sorting, filtering, and field selection based on the inputs.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does handle email and phone number inputs within the query string, but its normalization and validation strategies are not comprehensive."
+          }
+        },
+        "shopify_get_customers": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and generally provides a good overview of the function's purpose, parameters, return values, and exceptions.  It accurately describes the function's filtering capabilities and pagination support. Default values are correctly specified and explained. The `Args` and `Returns` sections are comprehensive, including detailed descriptions of the dictionary structures.  The `Raises` section correctly mentions `InvalidParameterError`.  Types are mostly specified correctly."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks types, ranges (for `limit`), and formats (for dates and IDs). While Pydantic could provide a more concise and potentially more robust way to perform these checks, the existing validation is comprehensive and covers all functional input parameters.  The use of Pydantic would be a stylistic choice for improvement, not a necessity to fix missing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List where appropriate.  The return type is also clearly specified as `Dict[str, List[Dict[str, Any]]]`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of filtered customers based on all provided functional parameters.  All functional input parameters are used in the filtering logic.  All documented exceptions are handled. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, given the use of the global `DB` dictionary. The docstring accurately reflects the function's behavior, including return types and exception handling."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_customers` function does not handle phone numbers or email addresses as inputs.  It retrieves customer data from a database (simulated here) and allows filtering based on various criteria like creation date, update date, customer ID, and specific fields to retrieve. However, there is no input field for phone numbers or email addresses, nor is there any code to normalize or validate such inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "list_customer_addresses": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior regarding pagination and error handling.  Default values for parameters are clearly stated and explained.  The `Args` and `Returns` sections are detailed, including descriptions of nested dictionary structures.  The `Raises` section correctly lists the potential exceptions.  Types are consistently specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for `customer_id`, `limit`, and `since_id`.  These checks cover type and value constraints. While Pydantic could be used, the current manual validation is sufficient and correctly handles the requirements.  Using Pydantic wouldn't add significant value in this case, given the simplicity of the validation rules."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All three functional input parameters (`customer_id`, `limit`, and `since_id`) have comprehensive validation.  `customer_id` is checked to ensure it's a non-empty string. `limit` is validated as an integer within the range of 1 to 250. `since_id` is checked to be a non-negative integer or None.  Appropriate `InvalidInputError` exceptions are raised with informative messages for invalid inputs.  All validation checks are performed before the parameters are used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (customer_id, limit, since_id) are properly type-annotated with their expected types (str, int, Optional[int] respectively).  The function's return type is clearly specified as Dict[str, List[Dict[str, Any]]].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval of paginated customer addresses based on `customer_id`, `limit`, and `since_id`.  All functional input parameters are used: `customer_id`, `limit`, and `since_id` directly influence the data retrieval and filtering.  The documented exceptions (`InvalidInputError` and `NoResultsFoundError`) are properly raised based on input validation and data lookup results. There are no TODOs, pass statements, or placeholder implementations. The logic correctly handles pagination, sorting, and limiting of results. The docstring accurately describes the function's behavior, input parameters, return type, and raised exceptions.  The function's return value matches the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_customer_addresses` does not handle phone numbers or email addresses as inputs.  It retrieves customer address data from a database, but the input parameters are a customer ID, a limit for the number of addresses to return, and a pagination offset.  There's no field for email or phone number input, and therefore no normalization or validation is needed or performed.  The function focuses solely on retrieving and paginating address data based on a customer ID."
+          }
+        },
+        "get_customer_address_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the function's inputs and outputs, including types and nested dictionary structures. The `Args` and `Returns` sections are well-structured and informative. The `Raises` section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for `customer_id` and `address_id`.  It checks that they are strings and not empty strings.  While Pydantic could be used to achieve the same validation more concisely, the existing validation is sufficient and covers all functional input parameters.  Using Pydantic here would not offer a significant advantage given the simplicity of the validation requirements."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters, `customer_id` and `address_id`.  Both are checked for correct type (string) and for non-empty values after stripping whitespace.  Appropriate `InvalidInputError` exceptions are raised with clear error messages if validation fails.  All functional inputs are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`customer_id` and `address_id`) are properly type-annotated as strings.  The return type is clearly specified as `Dict[str, Dict[str, Any]]`. The function does not use `**kwargs`.  Type annotations are complete and accurately reflect the expected types."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a customer address based on customer_id and address_id.  Both functional input parameters are used.  All documented exceptions (`InvalidInputError` and `NoResultsFoundError`) are properly handled. There are no TODOs, pass statements, or placeholders. The logic is complete and functional given the global `DB` dictionary. The docstring accurately reflects the function's behavior, including the return type and potential exceptions.  The use of `copy.deepcopy` to prevent modification of the DB cache is a good practice."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_customer_address_by_id` does not handle phone numbers or email addresses as inputs.  It retrieves customer address data based on `customer_id` and `address_id`, but these IDs are treated as strings without any normalization or validation beyond checking if they are non-empty strings.  The function's focus is on data retrieval and not on input data sanitization or validation of contact information.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_a_customer_address": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The descriptions are detailed and provide helpful examples.  The documentation of the `address` dictionary is particularly thorough, listing both required and optional fields with examples.  The `Returns` section accurately reflects the structure of the returned dictionary."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`ShopifyAddressModel`) to validate the `address` dictionary.  However, it also performs manual validation on both `address` and `customer_id` before passing `address` to the Pydantic model. The manual checks for `customer_id` being a non-empty string and for the presence of required fields in `address` are redundant because the Pydantic model should handle these checks.  The manual checks could be removed, relying solely on the Pydantic model for validation, which would simplify the code and improve readability.  While Pydantic is used, it's not used to its full potential due to the redundant manual checks."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `customer_id` and `address`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`customer_id` and `address`) are properly type-annotated with their expected types.  The `customer_id` is annotated as `str`, and `address` is correctly annotated as `Dict[str, Any]`. The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a customer address.  It validates both the `customer_id` and the `address` dictionary, raising appropriate exceptions (`InvalidInputError` and `NoResultsFoundError`) as documented.  All functional input parameters (`customer_id` and `address`) are used. The logic for generating a unique ID, adding the address to the customer's address list, updating the global `DB`, and returning the created address is complete and functional. The docstring accurately reflects the function's behavior, including the return type and the exceptions raised.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does not handle email addresses at all.  Therefore, no email validation is performed.  The function *does* handle phone numbers, but the normalization is implicit and not explicitly shown in the provided code snippet.  The `ShopifyAddressModel` (which is not defined in the provided code) is presumably responsible for handling phone number normalization.  We can only assume it does this correctly based on the problem description.  If `ShopifyAddressModel` were to perform only basic data type checking on the phone number field without any actual normalization (e.g., extracting digits and handling area codes), then the normalization aspect would be insufficient.  Because the internal workings of `ShopifyAddressModel` are unknown, we can only assume it performs adequate normalization.  Therefore, the rating is \"Good\" because of the lack of email handling and the implicit nature of the phone number normalization.  To be rated \"Excellent\", the code would need to explicitly show the phone number normalization logic and include email validation."
+          }
+        },
+        "update_a_customer_address": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It clearly explains the partial update mechanism and the protection of certain fields. The examples provided are helpful."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses Pydantic's `ShopifyAddressModel` to validate the `address` parameter after initial type and forbidden field checks.  However, the `customer_id` and `address_id` parameters are validated using basic type and emptiness checks instead of a Pydantic model.  Using Pydantic models for all three input parameters would provide a more consistent and potentially more robust validation approach, handling more complex validation rules (e.g., format constraints on IDs) within the model definition itself.  The current approach is functional but could be improved for consistency and maintainability with Pydantic."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all three functional parameters: `customer_id`, `address_id`, and `address`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (customer_id, address_id, address) have proper type annotations.  The address parameter uses `Dict[str, Any]` which is appropriate given the flexibility of the address updates. The return type is also clearly specified as `Dict[str, Any]`. No **kwargs are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the update functionality as described in its docstring.  All functional input parameters (`customer_id`, `address_id`, `address`) are used appropriately in the function's logic.  All documented exceptions (`InvalidInputError`, `NoResultsFoundError`) are handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, correctly updating the address in the simulated `DB`. The docstring accurately reflects the function's behavior, including return types and exception handling.  The function also correctly handles the case where the address to be updated is the default address, updating the `default_address` field in the customer data accordingly."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function handles phone number input but doesn't explicitly normalize it in the way the prompt describes.  While it uses `ShopifyAddressModel` for validation, which likely includes email validation (we don't see the model's definition), the code doesn't show explicit phone number normalization (e.g., extracting digits, handling area codes separately).  The function relies on the `ShopifyAddressModel` to handle any formatting or validation of phone numbers and emails, which is a good approach if that model is correctly implemented.  However, without seeing the definition of `ShopifyAddressModel`, we can't definitively say that it performs the necessary normalization and validation to meet all criteria.  If `ShopifyAddressModel` handles both phone number normalization (as described) and email validation, then the rating would be \"Excellent\".  As it stands, it's \"Good\" because the explicit normalization steps are missing from the provided code.  The reliance on an external model makes the code's robustness dependent on the correctness of that model."
+          }
+        }
+      }
+    },
+    "shopify/orders.py": {
+      "functions": {
+        "shopify_get_customer_orders": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a clear description of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs manual input validation for all functional parameters using type checking and range/value checks.  While Pydantic could be used to structure and validate the inputs, the existing manual validation is comprehensive and sufficient.  The use of Pydantic would add extra overhead without significantly improving the validation process in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters are validated.  `customer_id` is checked for non-empty string type. `limit` is checked for integer type and range (1-250). `status` is checked against a list of valid values. `since_id` is checked for non-empty string type if provided. `created_at_min` and `created_at_max` are checked for string type and ISO 8601 format.  `fields` is checked for a list of non-empty strings if provided.  Each validation includes appropriate error handling with clear error messages using custom exceptions.  All checks are performed before the function uses the parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, List[Dict[str, Any]]]`. The function does not use `**kwargs` parameters.  All complex types are properly specified using `List`, `Dict`, and `Optional`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using most input parameters to filter and retrieve orders from the global `DB`.  Exception handling for invalid inputs and missing customers is implemented. The docstring accurately describes the function's behavior and return type.  However, there's a minor gap: the `since_id` parameter's filtering logic sorts the orders *after* applying the `since_id` filter, which might lead to inconsistent pagination results if the orders aren't already sorted by ID before the `since_id` filter is applied.  The sorting should happen *before* the `since_id` filter is applied for consistent pagination.  Additionally, the code assumes that the `orders_table` and `customers_table` in the global `DB` are structured in a specific way (e.g., the existence of 'customer' key within each order).  While this is acceptable given the context of using a mock database, it lacks explicit error handling if the database structure deviates from this assumption.  Finally, the function uses `ensure_order_has_fulfillments`, but the implementation of this helper function is not provided."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_customer_orders` function does not handle phone numbers or email addresses as inputs.  Therefore, the criteria of normalizing phone numbers and validating email addresses are not applicable. The function focuses on retrieving and filtering Shopify orders based on various criteria like customer ID, status, date range, and other order attributes.  There's no input field for phone numbers or emails in the function signature or its usage within the code."
+          }
+        },
+        "shopify_create_an_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's complexity and the many details involved in creating a Shopify order.  The documentation of dictionaries, including nested structures and optional keys, is thorough. Default values are mostly well-explained (though some could be more concise)."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`models.ShopifyOrderCreateInput`) to validate the `order` input dictionary.  The `**order` syntax unpacks the dictionary into keyword arguments for the Pydantic model's constructor.  This approach leverages Pydantic's capabilities for comprehensive data type validation, constraint checking, and type hinting. While there's some pre-Pydantic validation (mostly basic type checks to provide more specific error messages), it's supplementary to the core validation provided by the Pydantic model.  The post-Pydantic validation handles business rules not easily expressible within Pydantic's constraints (e.g., checking for the presence of both first and last name in addresses).  Therefore, Pydantic is the primary mechanism for input validation, and it's used effectively."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for its functional parameters.  All functional parameters are checked for their data types.  Many parameters also undergo value validation, checking for valid ranges (e.g., positive integers for quantity), formats (e.g., Decimal for price and discount amounts), and allowed values (e.g., inventory behavior options).  Null/empty checks are performed where appropriate, such as for line items and required fields within nested dictionaries.  Domain-specific constraints are validated, for example, checking for the existence of referenced customers and products.  Appropriate exceptions (`custom_errors.ValidationError` and `custom_errors.InvalidInputError`) are raised with informative error messages indicating the nature and location of the validation failure.  The validation process uses a combination of pre-Pydantic checks for specific error messages and types and Pydantic's model validation for more structural and data type validation.  Post-Pydantic checks handle business rules and additional constraints.  The validation covers every functional input parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `shopify_create_an_order` demonstrates excellent parameter design and type annotations.  All parameters are properly type-annotated using comprehensive type hints (Dict, List, Optional, etc.), accurately reflecting the expected data structures. The return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core logic of creating a Shopify order, using the global `DB` as intended.  All functional input parameters are used.  The exception handling covers the documented exceptions, though the error messages could be more informative in some cases.  There are no placeholders or TODO comments.  The docstring mostly aligns with the implementation, but there's a minor discrepancy: the docstring mentions \"automatic transaction processing,\" which isn't explicitly shown in the code (though the transaction handling is comprehensive).  The function's logic is complete within the context of the global `DB`, but it relies on helper functions (`utils.generate_next_resource_id`, `utils.get_next_order_number`, etc.) whose implementations are not provided for review.  The completeness of the inventory management logic is also dependent on the `utils.adjust_variant_inventory` function.  Assuming these helper functions work as expected, the core functionality is mostly complete."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function demonstrates good practices in handling email and phone numbers, but it could be improved for robustness."
+          }
+        },
+        "shopify_reopen_an_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in reopening a Shopify order within the context of an MCP server. The Args and Returns sections are well-structured, and the description of the nested dictionary structures within the Returns section is comprehensive, although quite lengthy.  All documented exceptions are correctly raised in the function body. Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `shopify_reopen_an_order` uses only one functional input parameter: `order_id`.  It performs manual validation on this parameter, checking if it's a non-empty string.  While Pydantic could be used to achieve the same validation more concisely, the existing manual validation is sufficient and covers the necessary checks.  Therefore, Pydantic is not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `shopify_reopen_an_order` performs comprehensive validation on its single functional input parameter, `order_id`.  It checks:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `shopify_reopen_an_order` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`order_id: str`). The return type (`Dict[str, Any]`) is clearly specified.  The function does not use `**kwargs`.  Complex types within the return dictionary are also properly specified using `List`, `Dict`, and `Optional`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: it validates the input `order_id`, retrieves the order from the `DB`, checks for cancellation and already-open states, updates the order's `closed_at` and `updated_at` fields, and constructs a response dictionary containing the reopened order details.  Exception handling for `NotFoundError` and `OrderProcessingError` is correctly implemented.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_reopen_an_order` function does not handle any phone number or email address inputs.  Its input is an `order_id` (string), and while it accesses and processes data associated with that order ID (including an email address within the order details), it doesn't perform any normalization or validation on phone numbers or email addresses as part of its core functionality.  The email address is simply retrieved from the database and included in the response.  Therefore, the categories of \"Excellent,\" \"Good,\" or \"Poor\" regarding phone number and email address handling are not applicable."
+          }
+        },
+        "shopify_get_orders_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is mostly well-written and informative. It clearly explains the function's purpose,  lists all parameters with types and descriptions, and details the return value's structure.  Default values are correctly specified. The `Raises` section accurately reflects the exception handling.  The documentation of the dictionary structure in the return value is particularly thorough, going into detail about the nested dictionaries and their potential fields.  The inclusion of common values for certain parameters (e.g., `financial_status`, `fulfillment_status`) is helpful."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It performs type checking and range checks for numerical parameters, checks for valid string values in enumerated parameters, and validates date string formats. While a Pydantic model could potentially structure this validation more concisely, the existing manual approach is comprehensive and effective.  Therefore, a Pydantic model is not strictly needed for input validation in this function."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  Type validation is performed for `limit`, `ids`, `fields`, `name`, `attribution_app_id`, and `since_id`.  Value validation is present for `limit` (range check), `ids` and `fields` (non-empty strings), `since_id` (non-negative integer), `status`, `financial_status`, and `fulfillment_status` (allowed values).  Null/empty checks are implicitly performed through the `is not None` checks combined with type checks for many parameters.  Date parameters (`created_at_min`, `created_at_max`, etc.) are checked for both type and ISO 8601 format validity.  Appropriate `InvalidInputError` exceptions with informative messages are raised for all validation failures.  All functional input parameters are checked before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, and int annotations where appropriate.  The function's return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves orders from the global `DB` based on the provided filter criteria.  All functional input parameters are used in the filtering logic.  All documented exceptions are implemented. There are no TODO comments, pass statements, or placeholder implementations. The function's logic is complete and functional within the context of the global `DB` dictionary. The docstring accurately describes the function's parameters, behavior, and return type.  The handling of date parameters, including timezone considerations, is robust. The function correctly handles the `fields` parameter to return only the requested fields, or all fields if `fields` is empty or not provided. The sorting and pagination logic using `since_id` and `limit` works as expected.  The function also correctly handles the `attribution_app_id` parameter, including the special case of \"current\".  The addition of `ensure_order_has_fulfillments` suggests a potential external dependency, but this is not a flaw in the function itself."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_orders_list` function does not handle phone number or email address inputs.  It retrieves and filters Shopify order data based on various criteria (dates, status, IDs, etc.), but these criteria do not include phone numbers or email addresses as filter parameters or as data to be normalized or validated.  The function processes existing order data from a database (`orders_from_db`), and the email address within the order data is not processed in any specific way.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "shopify_get_orders_count": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's filtering capabilities and the use of ISO 8601 format for dates.  All parameters, including their default values, are documented with clear descriptions. The `Returns` section correctly specifies the dictionary structure and the `count` key's type.  The `Raises` section lists the relevant exceptions. Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `financial_status`, `fulfillment_status`, and `status` parameters by checking if they are present in predefined sets (`VALID_FINANCIAL_STATUSES`, `VALID_FULFILLMENT_STATUSES`, `VALID_ORDER_STATUSES`).  Date parameters are validated using the `utils._parse_datetime_param` and `utils._parse_datetime_from_record` functions. While Pydantic could be used to structure and validate the input, the existing manual validation is sufficient and covers all functional parameters.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on all its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types (Optional[str] for date parameters and strings for status parameters).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the functionality described in its docstring.  All functional input parameters (`created_at_max`, `created_at_min`, `financial_status`, `fulfillment_status`, `status`, `updated_at_max`, `updated_at_min`) are used in the filtering logic.  All documented exceptions (`InvalidParameterError` and `ShopifyApiError`) are properly handled. There are no TODO comments, pass statements, or placeholder implementations. The logic is complete and functional, correctly filtering orders based on the provided criteria and returning the total count. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_orders_count` function does not handle any phone number or email address inputs.  Its purpose is to retrieve a count of Shopify orders based on various date and status filters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "shopify_get_order_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of retrieving an order by ID, including the handling of optional fields. The Args and Returns sections are well-structured, and default values are correctly mentioned.  Type hints are used consistently and comprehensively."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `order_id` and `fields` parameters.  It checks the type and content of these parameters. While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing manual checks are sufficient and cover all aspects of the functional input parameters.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary for the correctness of the input validation in this specific function."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs good input validation on both functional parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id` and `fields`) are properly type-annotated with their expected types (`str` and `Optional[List[str]]` respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used.  Complex types are properly specified using `Optional` and `List`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves an order from the global `DB` based on the provided `order_id`.  Both `order_id` and `fields` parameters are used appropriately to either retrieve all fields or only the specified ones.  All documented exceptions (`NotFoundError`, `ValidationError`) are handled. There are no TODOs, placeholders, or `pass` statements. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The helper function `_shopify_get_order_by_id_serialize_value` is assumed to exist and correctly serialize values (this is outside the scope of the provided code). The function also correctly handles the case where `fields` is `None` or an empty list, returning all fields.  The `ensure_order_has_fulfillments` function is assumed to correctly handle the addition of fulfillment data as needed."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_order_by_id` function does not handle phone number or email address inputs directly.  It retrieves order data from a database (`orders_collection`) which *may* contain phone numbers and email addresses as part of the order information (e.g., in `billing_address` or `shipping_address`, or the customer details). However, the function itself doesn't perform any normalization or validation on these fields.  The function only validates the `order_id` and `fields` parameters, ensuring they are of the correct type and format.  Any normalization or validation of phone numbers and email addresses would need to be implemented within the `_shopify_get_order_by_id_serialize_value` function (which is not shown) or within the data storage and retrieval mechanisms.  Since the core logic of the provided function does not directly handle phone number or email input, the rating is \"Not Applicable\"."
+          }
+        },
+        "shopify_close_an_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  The description is clear and helpful for an MCP server context. The Args section accurately documents the single argument. The Returns section is quite extensive, detailing the structure of the returned dictionary, including nested dictionaries and lists.  All key types within the nested dictionaries are specified. The Raises section correctly lists the potential exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `shopify_close_an_order` uses only one functional input parameter: `order_id`.  It performs manual input validation on `order_id` to check if it's a non-empty string.  While Pydantic could be used, the existing validation is sufficient and correctly handles the single input.  Using Pydantic here would add unnecessary complexity for this simple validation task."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function `shopify_close_an_order` performs comprehensive validation on its single functional input parameter, `order_id`.  It checks that `order_id` is a non-empty string using `isinstance` and `.strip()`.  Further validation ensures the order exists in the `DB`, is not already closed, is not cancelled, and meets financial and fulfillment criteria before proceeding.  Appropriate exceptions (`ValidationError`, `NotFoundError`, `OrderProcessingError`) with informative messages are raised for various invalid input scenarios or order states. All aspects of validation (type, value, null/empty checks, and domain-specific constraints related to order status) are addressed for the `order_id` parameter."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `shopify_close_an_order` has excellent parameter design.  All parameters are properly type-annotated (specifically `order_id: str`). The return type `Dict[str, Any]` is clearly specified.  The function does not use `**kwargs`.  Complex types within the return value are also properly specified using `Dict[str, Any]` and `List[Dict[str, Any]]`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the closing of a Shopify order based on the provided `order_id`.  It handles all documented exceptions (`NotFoundError`, `OrderProcessingError`, `ShopifyApiError`, `ValidationError`). All functional input parameters (`order_id`) are used. The logic correctly checks for pre-existing closed or cancelled orders, pending fulfillments, and appropriate financial statuses before closing the order. The returned dictionary matches the structure and data types specified in the docstring.  The function uses the global `DB` dictionary as expected. There are no placeholders or TODO comments. The implementation fully aligns with the docstring's description."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_close_an_order` function does not handle any phone number or email address inputs.  Its input is an `order_id` (string), and while the function accesses and returns customer email addresses from its internal `DB` (presumably a database), it doesn't perform any normalization or validation on them.  The function's purpose is to close a Shopify order based on its ID, not to process or validate contact information.  Therefore, the categories of phone number normalization and email validation are not applicable."
+          }
+        },
+        "shopify_cancel_an_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's ability to cancel orders and handle refunds, including both simple and complex refund scenarios.  All default parameter values are clearly stated. The `Args` and `Returns` sections are detailed, including nested structures within dictionaries.  The `Raises` section lists all potential exceptions. Types are consistently specified for parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`ShopifyRefundModel`) to validate the `refund` parameter, which is a complex dictionary.  This is the most appropriate method for validating such a nested structure. Other parameters like `order_id` and `reason` have basic type and value checks, which are sufficient given their simplicity.  While more robust validation could be added (e.g., using regex for `order_id` if there's a specific format), the existing validation is adequate and the use of Pydantic for the `refund` parameter demonstrates effective use of the library for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive validation of its functional input parameters."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and Dict for complex types.  The return type is also clearly specified as Dict[str, Any]. The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function largely implements its intended functionality: it cancels orders, handles refunds (both simple and complex via the `refund` object), and manages restocking.  All functional input parameters are used.  Exception handling is present for the documented exceptions. There are no placeholders or TODO comments. The docstring accurately reflects the function's return type and behavior."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_cancel_an_order` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on order cancellation and refund processing within a Shopify-like system, using order IDs and other order-related data as input.  There's no field for customer contact information (phone or email) to be processed or validated."
+          }
+        },
+        "shopify_modify_pending_order_payment": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written. It clearly explains the function's purpose, arguments, return value, and exceptions.  The descriptions are detailed, and types are consistently specified.  The documentation of the nested dictionary structures within the `transactions` argument and the `order` return value is particularly thorough, though it could be slightly improved by using a more concise format (e.g., tables) for better readability."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model (`ModifyPendingOrderPaymentInputModel`) to validate the `transactions` parameter.  However, the `order_id` parameter, which is a functional parameter requiring validation, lacks Pydantic validation.  While it does have a type hint (`str`) and a check for its existence in the `orders_table`,  a more robust validation (e.g., checking for a specific format or length if applicable) could be added.  Adding `order_id` validation to the Pydantic model would improve the overall input validation."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but it's not entirely comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id` and `transactions`) are properly type-annotated.  The `transactions` parameter uses nested type annotations to accurately specify the expected structure of the list of dictionaries. The return type `Dict[str, Any]` is also clearly specified.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses the `order_id` and `transactions` parameters.  Exception handling for `ResourceNotFoundError` and `InvalidInputError` is implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The provided code demonstrates good practices in several areas but lacks comprehensive phone number normalization and email validation."
+          }
+        },
+        "shopify_modify_pending_order_items": {
+          "docstring_quality": {
+            "status": "Poor",
+            "notes": "The docstring is overly verbose and contains significant inconsistencies with the actual function implementation.  While it attempts to comprehensively document the `order` object returned, this level of detail is excessive and makes the docstring difficult to read and understand.  The sheer volume of nested dictionary descriptions overwhelms the reader."
+          },
+          "pydantic_usage": {
+            "status": "Partially Used",
+            "notes": "The function uses a Pydantic model `ModifyPendingOrderItemsInputModel` to validate the `line_items` parameter.  However, other functional parameters (`order_id`, `payment_method_id`, `note`, `tags`) are validated through manual checks within the function itself, not using Pydantic. While the manual checks are present, using Pydantic models for all input parameters would improve code readability, maintainability, and potentially catch more validation errors earlier.  A single Pydantic model encompassing all functional parameters would be a cleaner approach."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function demonstrates good input validation, but has minor gaps."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (order_id, line_items, payment_method_id, note, tags) are properly type-annotated with their expected types.  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `Optional[List[Dict[str, Any]]]` are correctly used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly handling the core logic of modifying pending Shopify orders.  All functional input parameters (`order_id`, `line_items`, `payment_method_id`, `note`, `tags`) are used.  Documented exceptions are implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_modify_pending_order_items` function does not handle phone numbers or email addresses as inputs.  It receives an order ID and potentially updates line items, payment methods, notes, and tags associated with an existing order. While it accesses and updates customer data which *includes* email and phone numbers within the order and customer objects, it doesn't process or validate these fields as inputs to the function itself.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "shopify_modify_pending_order_address": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written. It clearly explains the function's purpose, arguments, return value, and exceptions.  The descriptions are detailed, and types are consistently specified.  The documentation of the nested dictionary structures within the return value is particularly thorough, although quite lengthy."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`ModifyPendingOrderAddressInputModel`) to validate the `shipping_address` input parameter.  This is the primary functional input requiring validation. The `order_id` is validated later in the function for existence and state, but this is not strictly input validation in the sense that it checks the database state rather than the parameter itself.  The Pydantic model handles validation of the nested dictionary, ensuring that required fields are present and data types are correct.  While additional checks are performed on the order's state after retrieval from the database, the Pydantic model effectively validates the structure and data types of the `shipping_address` input before it's used."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation of both functional input parameters: `order_id` and `shipping_address`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters `order_id` and `shipping_address` are properly type-annotated.  `order_id` is annotated as `str`, and `shipping_address` is correctly annotated as `Dict[str, Any]`. The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional.  It correctly uses both `order_id` and `shipping_address` parameters.  Exception handling for `ResourceNotFoundError` and `InvalidInputError` is implemented. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type.  However, the validation of the `shipping_address` relies on a `ModifyPendingOrderAddressInputModel` and `custom_errors` which are not defined in the provided code snippet.  The assumption is that these are defined elsewhere and function correctly.  Without seeing their definitions, it's impossible to definitively say the address validation is fully correct.  The function also assumes the existence of fields within the `order` dictionary retrieved from the database, which might lead to unexpected behavior if the database structure is inconsistent.  More robust error handling for missing or unexpected fields in the `order` dictionary would improve the function's reliability."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function demonstrates good practices by using a Pydantic model (`ModifyPendingOrderAddressInputModel`) for validating the shipping address.  This likely handles email validation robustly, depending on the definition of `ModifyPendingOrderAddressInputModel`.  However, the code snippet doesn't show the definition of this model, so we can't definitively assess the quality of email validation."
+          }
+        }
+      }
+    },
+    "shopify/products.py": {
+      "functions": {
+        "shopify_get_products": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is quite comprehensive and well-written, providing a good overview of the function's purpose, arguments, return value, and exceptions.  It accurately reflects the function's capabilities and limitations.  The descriptions of the arguments are clear and helpful, including examples where appropriate. The documentation of the return value is detailed, explaining the structure of the nested dictionaries and lists.  The `limit` parameter's default value and maximum are correctly specified.  The `Raises` section accurately mentions the `InvalidInputError`."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks types and constraints (e.g., string length, list contents, integer range). While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing approach is comprehensive and effective.  The manual checks cover all functional parameters.  Using Pydantic would be a stylistic choice for improvement, not a necessity to fix a validation deficiency."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters are validated for type and value.  `limit` is checked to be an integer between 1 and 250. `collection_id`, `since_id`, `product_type` are checked for correct type and non-emptiness.  `ids`, `handle`, `fields`, and `presentment_currencies` are validated as lists of non-empty strings. Date parameters (`created_at_min`, `created_at_max`, `published_at_min`, `published_at_max`) are checked to be strings and parsed using `datetime.fromisoformat` to ensure they are valid ISO 8601 formatted dates.  Appropriate `custom_errors.InvalidInputError` exceptions with informative messages are raised for invalid inputs.  All validation checks are performed before the parameters are used in the function's logic."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional and List for optional and list parameters.  The return type is clearly specified as `Dict[str, List[Dict[str, Any]]]`. The function does not use `**kwargs`.  All complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is mostly complete and functional, correctly using most of the input parameters to filter and retrieve products from the global `DB`.  The input validation is thorough, and the exception handling for invalid inputs is implemented. The docstring accurately reflects the function's behavior and return type.  However, there's a minor gap: the `limit` parameter, while validated, doesn't seem to be strictly enforced in the final `current_results[:limit]` slice.  If `current_results` is already smaller than `limit`, it will still return the smaller list, which is functionally correct but not perfectly aligned with the docstring's implication of always returning a list of size `limit` (or less if fewer products match the criteria).  Also, the function lacks explicit handling for cases where the `DB` might be missing the 'products' or 'collections' keys, which could lead to unexpected behavior.  Adding a check for these keys would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_products` function does not handle any phone number or email address inputs.  Its parameters and functionality are focused solely on retrieving and filtering Shopify product data based on various criteria such as IDs, handles, dates, and product types.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "shopify_get_product_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including default values for `fields`. The `Returns` section is exceptionally detailed, meticulously outlining the structure of the dictionary, including nested dictionaries within `variants`, `options`, and `images`.  The `Raises` section correctly lists the potential exceptions.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual type checking and validation for the `product_id` and `fields` parameters.  While Pydantic could provide a more structured and potentially more concise way to perform this validation, the existing checks are sufficient to ensure that the inputs are of the correct type and format.  The manual checks cover all functional input parameters.  Using Pydantic would be an improvement in terms of code readability and maintainability, but it's not strictly necessary given the existing validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters.  `product_id` is checked to ensure it's an integer.  `fields`, if provided, is validated as a list where all elements are strings.  Appropriate `ValidationError` exceptions are raised with informative messages for invalid inputs.  All functional input parameters are checked before being used in subsequent operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`product_id` and `fields`) are properly type-annotated with their expected types (`int` and `Optional[List[str]]`, respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves product data from the global `DB` based on the provided `product_id`.  Both `product_id` and `fields` parameters are used correctly: `product_id` to fetch the data and `fields` to filter the response.  All documented exceptions (`ShopifyNotFoundError`, `ValidationError`) are handled appropriately. There are no TODOs, placeholders, or pass statements. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior and return type.  The transformation of variants, options, and images into the specified format is correctly implemented. The filtering based on the `fields` parameter works as expected."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided code does not handle any phone numbers or email addresses.  It's a function designed to retrieve product data from a database based on a product ID.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on data retrieval and transformation, and performs input validation only for the `product_id` and `fields` parameters, which are not phone numbers or emails."
+          }
+        },
+        "shopify_search_products": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is comprehensive and generally well-written, providing a good overview of the function's purpose, parameters, return values, and exceptions.  It accurately reflects the function's capabilities and includes examples."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The `shopify_search_products` function performs extensive input validation using type checking and manual validation for each functional parameter.  While Pydantic could provide a more concise and potentially more robust validation mechanism, the existing validation is comprehensive and covers all functional input parameters.  The current approach is sufficient, and using Pydantic would be an optimization, not a requirement for correctness."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all its functional parameters.  Each parameter undergoes type checking and value validation as appropriate.  Specifically:"
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types, including the use of Optional, List, and int annotations. The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using most of its functional input parameters.  The core search and filtering logic appears sound, and the exception handling for input validation is comprehensive. The docstring accurately reflects the function's behavior and return values."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_search_products` function does not handle any phone number or email address inputs.  Its parameters are all related to product search and filtering within a Shopify-like e-commerce system (query terms, tags, prices, dates, etc.).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "shopify/transactions.py": {
+      "functions": {
+        "shopify_create_an_order_transaction": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and functionality.  It accurately describes the core function of creating Shopify transactions, including the various transaction types and the comprehensive financial validations performed. The `Args` and `Returns` sections are well-structured and mostly complete, specifying types and providing clear descriptions of parameters and return values.  The documentation of the nested `receipt` dictionary within the `Returns` section is particularly helpful.  The `Raises` section correctly lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`ShopifyTransactionInputModel`) to validate the `transaction` input parameter, which is the main functional input.  The `order_id` parameter also has basic type checking. While the error handling within the `try...except` block around the Pydantic validation could be improved for clarity and to avoid redundant checks (e.g., the manual checks for missing 'kind' and 'amount' fields are already handled by Pydantic), the core validation is done using Pydantic.  Therefore, the input validation is considered properly used, even with the minor improvements possible in error handling."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `order_id` and `transaction`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id` and `transaction`) are properly type-annotated with their expected types (str and Dict[str, Any], respectively). The function's return type is clearly specified as Dict[str, Any].  No **kwargs parameter is used.  Complex types like Dict and Optional are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core logic of creating Shopify transactions with extensive validation.  All functional input parameters (`order_id` and `transaction`) are used.  The documented exceptions (`ShopifyNotFoundError`, `ShopifyInvalidInputError`, `ShopifyPaymentError`, `ValidationError`) are all handled, although some error messages could be more specific. The logic for handling different transaction kinds (`capture`, `void`, `refund`, `sale`, `authorization`), including validation against authorization limits and preventing over-refunding, is present.  Gift card balance updates for manual refunds are also implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_create_an_order_transaction` function does not handle any phone number or email address inputs.  Its inputs are an order ID (string) and a transaction dictionary.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function focuses solely on Shopify order transaction processing and validation."
+          }
+        }
+      }
+    },
+    "shopify/draft_orders.py": {
+      "functions": {
+        "shopify_create_a_draft_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is quite comprehensive, providing a good overview of the function's purpose, arguments, return values, and exceptions.  It accurately describes the function's role in creating draft orders with detailed line items, customer data, and pricing calculations. The `Args` and `Returns` sections are particularly thorough, detailing the structure of complex dictionary parameters and return values, including nested structures.  The documentation of optional fields within these dictionaries is also well-handled."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model `models.ShopifyDraftOrderCreateInput` to validate the `draft_order` input, which is the only functional input parameter.  The `try...except` block correctly handles the `PydanticValidationError`.  This demonstrates proper usage of Pydantic for input validation.  No other input validation methods are needed because Pydantic's schema validation covers all aspects of the input dictionary."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function uses Pydantic for input validation, which provides comprehensive type and value checking for all functional input parameters within the `draft_order` dictionary.  The Pydantic model (`models.ShopifyDraftOrderCreateInput`) ensures that all fields have the correct types and that constraints specified in the model (e.g., required fields, data type constraints, string lengths) are met.  The code also includes explicit checks for the existence of `variant_id` or both `title` and `price` in line items, and checks for the existence of customers by ID.  Error handling is implemented using custom exceptions (`ShopifyInvalidInputError`, `ValidationError`) to provide informative error messages to the caller.  All functional input parameters are validated before use."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `shopify_create_a_draft_order` has excellent parameter design.  All parameters are properly type-annotated using appropriate types like `Dict[str, Any]`, `Optional[List[Dict[str, Any]]]`, `Optional[str]`, `int`, etc.  The return type is also clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`.  Complex types are handled correctly using `List`, `Dict`, and `Optional` where needed."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using most input parameters.  The core logic for creating draft orders, handling line items (including custom and variant-based items), applying discounts (at both line item and order levels), calculating taxes, and constructing the final response is present.  Exception handling for invalid input is implemented using Pydantic validation and custom error handling. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does handle email and phone number inputs indirectly through the `customer` object within the `draft_order` dictionary.  However, it doesn't perform explicit validation or normalization of these fields.  The email field is simply passed through and used to populate the draft order and potentially a new customer record.  There's no check for a valid email format.  Similarly, the phone number is passed through without any formatting or extraction of digits."
+          }
+        },
+        "shopify_get_draft_orders_list": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive description of the function's purpose, parameters, return value, and exceptions.  It accurately reflects the function's behavior in most aspects."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for all functional parameters.  It checks types, ranges (for `limit`), and valid values (for `status`). While Pydantic could provide a more concise and potentially more robust way to perform this validation, the existing manual checks are comprehensive and cover all the functional input parameters.  The use of Pydantic wouldn't add significant value in this specific case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "All functional input parameters (`limit`, `since_id`, `ids`, `fields`, `status`, `updated_at_min`, `updated_at_max`) are validated.  The validation includes type checking, value range checks (e.g., `limit` between 1 and 250), format checks (ISO 8601 for dates), allowed value checks (for `status`), and null/empty checks where appropriate (e.g., checking if `ids` and `fields` are lists of non-empty strings).  Appropriate exceptions (`custom_errors.InvalidInputError`) with informative error messages are raised for invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types using type hints (Optional[List[str]], int, Optional[int], Optional[str], Optional[List[str]], Optional[str]). The function's return type is clearly specified as Dict[str, List[Dict[str, Any]]].  The function does not use **kwargs parameters.  Complex types are properly specified."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the retrieval and filtering of draft orders from the global `DB` dictionary. All functional input parameters (`fields`, `limit`, `since_id`, `updated_at_min`, `updated_at_max`, `ids`, `status`) are used appropriately in the filtering and pagination logic.  All documented exceptions (`custom_errors.InvalidInputError`) are handled correctly. There are no TODO comments, pass statements, or placeholder implementations. The function's logic is complete and functional, and the docstring accurately reflects the function's behavior, including the return type and the structure of the returned data.  The handling of date comparisons and ISO 8601 parsing is robust. The deep copy in field selection prevents unintended modification of the original data. The sorting logic handles various data types gracefully."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_draft_orders_list` function does not handle phone number or email address inputs in a way that requires normalization or validation as defined in the task description.  The function retrieves and filters draft orders from a database. While it processes customer and address data which *might* contain phone numbers and emails, it doesn't perform any specific normalization (like extracting digits from phone numbers) or validation (like checking email syntax) on these fields.  The function's focus is on filtering and pagination of draft order data, not on input sanitization or normalization of contact information."
+          }
+        },
+        "shopify_get_draft_order_by_id": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and mostly accurate. It clearly explains the function's purpose, arguments, return value, and exceptions.  The descriptions are helpful and provide examples.  Default values are correctly mentioned and explained.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `draft_order_id` and `fields` parameters.  Pydantic models are not used for input validation; instead, `isinstance` checks and explicit conditionals ensure that `draft_order_id` is a non-empty string and that `fields` (if provided) is a list of strings.  This approach is sufficient for the validation needs of these parameters.  While Pydantic could be used, it's not strictly necessary given the straightforward validation requirements.  The existing validation is comprehensive for the functional parameters."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `draft_order_id` and `fields`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`draft_order_id` and `fields`) are properly type-annotated with their expected types (str and Optional[List[str]] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves draft order data from the global `DB` dictionary, validates the input parameters (`draft_order_id` and `fields`), handles exceptions (`NotFoundError`, `ValidationError`), and applies field filtering as specified.  All functional input parameters are used. The implementation matches the docstring's description of behavior and return types. The use of Pydantic for data validation adds robustness.  There are no placeholders or TODO comments."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_get_draft_order_by_id` function does not handle phone number or email address inputs.  It retrieves data from a database representing a Shopify draft order. While the function validates the `draft_order_id` and optionally filters fields using a `fields` parameter, it doesn't process or validate any phone numbers or email addresses.  The email address might be present *within* the retrieved `draft_order_data` (in the `customer` field, for example), but the function itself doesn't directly handle or normalize it.  Therefore, the rating of \"Not Applicable\" is appropriate."
+          }
+        },
+        "shopify_update_a_draft_order": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's role in updating Shopify draft orders. The Args and Returns sections are comprehensive, detailing the structure of dictionaries and lists involved.  Type hints are consistently used and reflected in the docstring. The Raises section correctly lists the exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses `models.DraftOrderUpdateInputModel(**draft_order)` to validate the `draft_order` input parameter using Pydantic.  This validates the structure, types, and potentially other constraints defined within the `DraftOrderUpdateInputModel`.  Basic type checking is also performed for `draft_order_id` ensuring it's a non-empty string. While additional manual checks are performed later to validate the existence of referenced resources (customers, products, variants), these are not strictly input validation but rather data integrity checks.  The use of Pydantic for `draft_order` is a good practice and covers the primary input validation needs."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `draft_order_id` and `draft_order`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`draft_order_id` and `draft_order`) are properly type-annotated.  The `draft_order` parameter uses `Dict[str, Any]` which, while broad, accurately reflects its potential contents.  The function's return type is also clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and functional, correctly using both `draft_order_id` and `draft_order` parameters.  It handles the documented exceptions (`InvalidInputError` and `NotFoundError`) appropriately.  The logic for updating the draft order and validating inputs using Pydantic models is present.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Good",
+            "notes": "The function does a good job of validating the structure and types of the input data using Pydantic's `DraftOrderUpdateInputModel`.  This indirectly contributes to data quality, as it ensures that the data conforms to a predefined schema.  However, it lacks explicit normalization for phone numbers and robust validation for email addresses."
+          }
+        }
+      }
+    },
+    "shopify/returns.py": {
+      "functions": {
+        "shopify_create_a_return": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and functionality.  It accurately describes the function's role in initiating returns for Shopify orders, including the validation steps involved. The `Args` and `Returns` sections are well-structured and mostly complete, specifying types and providing clear descriptions of parameters and the return dictionary's structure.  The `Raises` section correctly lists the potential exceptions."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`models.ReturnInputModel`) to validate the `order_id` and `return_line_items` input parameters.  The `try...except` block catches `PydanticValidationError` to handle validation failures, raising a custom `ShopifyInvalidInputError` with detailed error messages. This demonstrates proper usage of Pydantic for input validation.  While there's additional validation within the function (e.g., checking quantity, fulfillment status), this is supplementary to the initial Pydantic validation and doesn't replace it."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `order_id` and `return_line_items`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`order_id` and `return_line_items`) are properly type-annotated.  The `return_line_items` parameter correctly uses nested type annotations to specify the expected structure of the list of dictionaries. The function's return type is also clearly specified as `Dict[str, Any]`. No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a Shopify return, handling various scenarios and validations as described in its docstring.  All functional input parameters (`order_id` and `return_line_items`) are used.  All documented exceptions are raised where appropriate. There are no TODOs, pass statements, or placeholder implementations. The logic is complete and functional, correctly interacting with the global `DB` dictionary. The docstring accurately reflects the function's behavior, return type, and raised exceptions."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_create_a_return` function does not handle any phone numbers or email addresses.  Its input and output are solely focused on order IDs, line item details for returns, and return processing within a Shopify-like system.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "shopify/exchanges.py": {
+      "functions": {
+        "shopify_create_an_exchange": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is well-written and provides a comprehensive overview of the function's purpose, arguments, return value, and exceptions.  It accurately describes the function's behavior, including the automatic calculation of price differences and inventory adjustments.  Default values for optional parameters are clearly stated.  The `Args` and `Returns` sections are detailed, specifying types and providing descriptions of complex structures like nested dictionaries.  The `Raises` section lists the potential exceptions.  Type hints are used consistently throughout the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Properly Used",
+            "notes": "The function uses a Pydantic model (`ExchangeInputModel`) to validate the `order_id`, `return_line_items`, `new_line_items`, `exchange_reason`, `exchange_note`, and `restock_returned_items` parameters.  While there's additional validation happening after the Pydantic model check (e.g., checking order status, inventory availability), the Pydantic model serves as the initial and crucial layer of input validation, ensuring basic type and structure correctness before proceeding to more complex checks.  This is a good use of Pydantic for input validation."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function demonstrates comprehensive input validation for all functional parameters.  `order_id` is checked for existence in the database. `return_line_items` and `new_line_items` undergo extensive validation:  type checking (lists of dictionaries), checks for the existence of required keys within each dictionary (e.g., `fulfillment_line_item_id`, `quantity`, `variant_id`, `product_id`), quantity constraints against available inventory and already exchanged quantities, and checks for the existence of referenced products and variants in the database.  The `quantity` fields are validated to be positive integers.  The code also checks the order status and financial status to ensure exchange eligibility.  Appropriate exceptions (`ShopifyInvalidInputError`, `NotFoundError`, `ShopifyExchangeError`) are raised with informative error messages for various validation failures.  All functional parameters are validated before being used in any calculations or database operations."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters are properly type-annotated with their expected types.  The return type is also clearly specified as `Dict[str, Any]`. The function does not use `**kwargs` parameters.  All complex types (List, Dict, Optional) are properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function is largely complete and implements the core logic of creating an exchange in a Shopify-like system.  It handles order validation, line item checks, inventory adjustments, and price difference calculations.  The use of Pydantic models for input validation is a good practice.  Exception handling for `ShopifyInvalidInputError`, `NotFoundError`, and `ShopifyExchangeError` is implemented.  The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `shopify_create_an_exchange` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on processing Shopify order exchange data, using order IDs, product IDs, and variant IDs as identifiers, none of which are phone numbers or email addresses."
+          }
+        }
+      }
+    },
+    "shopify/shopify.py": {
+      "functions": {
+        "transfer_to_human_agents": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'transfer_to_human_agents': File not found: APIs/shopify.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'transfer_to_human_agents': File not found: APIs/shopify.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'transfer_to_human_agents': File not found: APIs/shopify.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'transfer_to_human_agents': File not found: APIs/shopify.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'transfer_to_human_agents': File not found: APIs/shopify.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'transfer_to_human_agents': File not found: APIs/shopify.py"
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "shopify": {
+      "project_structure": {
+        "status": "Mostly Complete",
+        "notes": "The project structure is largely compliant with modern standards.  All three main folders (`SimulationEngine`, `tests`, and the root API folder) are present and contain the core required files.  The `__init__.py` files are present in all necessary locations. The `SimulationEngine` folder contains all the essential files (`db.py`, `models.py`, `custom_errors.py`, `error_config.json`, etc.). The `tests` folder is well-populated with numerous test files."
+      }
+    }
+  }
+}

@@ -1,0 +1,1204 @@
+[
+    {
+        "name": "add_content_labels",
+        "description": "Adds labels to a content item, creating a new entry if none exist, and returns the updated list of labels.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the content to add labels to."
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of labels to add."
+                }
+            },
+            "required": [
+                "id",
+                "labels"
+            ]
+        }
+    },
+    {
+        "name": "convert_content_body",
+        "description": "Convert a content body from one format to another.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "to": {
+                    "type": "string",
+                    "description": "The target format for content conversion, with valid values `view` (for viewing), `export_view` (for exporting), `editor` (for editing), or `storage` (for storing)."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "The current content format type."
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "The actual content value."
+                        },
+                        "representation": {
+                            "type": "string",
+                            "description": "The current representation of the content."
+                        }
+                    },
+                    "description": "The content body to convert, a dictionary containing `type` (current format), `value` (actual content), and `representation` (current representation).",
+                    "required": [
+                        "representation",
+                        "type",
+                        "value"
+                    ]
+                }
+            },
+            "required": [
+                "body",
+                "to"
+            ]
+        }
+    },
+    {
+        "name": "create_content",
+        "description": "Creates a new content item (e.g., page, blogpost, comment), including content with special ancestor relationships.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "The type of content, e.g., `page`, `blogpost`, or `comment`."
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "The title of the content."
+                        },
+                        "spaceKey": {
+                            "type": "string",
+                            "description": "The key of the space where the content will be created."
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "The status of the content. Default: `current`."
+                        },
+                        "version": {
+                            "type": "object",
+                            "description": "A content version object containing a `number` key.",
+                            "properties": {
+                                "number": {
+                                    "type": "integer",
+                                    "description": "The version number, defaulting to `1`."
+                                },
+                                "minorEdit": {
+                                    "type": "boolean",
+                                    "description": "Specifies if this is a minor edit (default: `False`)."
+                                }
+                            },
+                            "required": [
+                                "minorEdit",
+                                "number"
+                            ]
+                        },
+                        "body": {
+                            "type": "object",
+                            "description": "An object representing the content body in storage format.",
+                            "properties": {
+                                "storage": {
+                                    "type": "object",
+                                    "description": "A dictionary object.",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "description": "The value of the content in storage format."
+                                        },
+                                        "representation": {
+                                            "type": "string",
+                                            "description": "The type of representation, such as `storage`."
+                                        }
+                                    },
+                                    "required": [
+                                        "representation",
+                                        "value"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "storage"
+                            ]
+                        },
+                        "createdBy": {
+                            "type": "string",
+                            "description": "The username of the creator, which defaults to `'unknown'`."
+                        },
+                        "postingDay": {
+                            "type": "string",
+                            "description": "The posting day for the blog post in `YYYY-MM-DD` format."
+                        }
+                    },
+                    "description": "A dictionary of content details, including all required fields.",
+                    "required": [
+                        "body",
+                        "createdBy",
+                        "spaceKey",
+                        "status",
+                        "title",
+                        "type",
+                        "version"
+                    ]
+                }
+            },
+            "required": [
+                "body"
+            ]
+        }
+    },
+    {
+        "name": "create_content_attachments",
+        "description": "Creates new attachments for a specific content item.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the parent content."
+                },
+                "file": {
+                    "type": "object",
+                    "description": "The file object to attach."
+                },
+                "comment": {
+                    "type": "string",
+                    "description": "A comment describing the attachment, defaulting to `None`."
+                },
+                "minorEdit": {
+                    "type": "boolean",
+                    "description": "A boolean indicating if the edit is minor, defaulting to `False`."
+                }
+            },
+            "required": [
+                "file",
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "create_content_property",
+        "description": "Creates a new property for a specified content item.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the content."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "The string property key."
+                        },
+                        "value": {
+                            "type": "object",
+                            "properties": {
+                                "some": {
+                                    "type": "string",
+                                    "description": "A string representing the property's value."
+                                }
+                            },
+                            "description": "Specifies the property value as any key-value pair.",
+                            "required": [
+                                "some"
+                            ]
+                        }
+                    },
+                    "description": "A JSON object containing the property `key` (string) and its `value` (any key-value pair).",
+                    "required": [
+                        "key",
+                        "value"
+                    ]
+                }
+            },
+            "required": [
+                "body",
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "create_content_property_for_key",
+        "description": "Creates a new content property for a specified key when the version is 1.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier for the content."
+                },
+                "key": {
+                    "type": "string",
+                    "description": "The key for the content property."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {},
+                    "description": "A JSON object representing the property, ensuring the version is 1."
+                }
+            },
+            "required": [
+                "body",
+                "id",
+                "key"
+            ]
+        }
+    },
+    {
+        "name": "create_private_space",
+        "description": "Creates and returns a new private space dictionary, behaving identically to the `create_space` function.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "A unique identifier for the space."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Display name for the space."
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "An optional description for the space."
+                        }
+                    },
+                    "description": "The request body containing the configuration for the new private space.",
+                    "required": [
+                        "key",
+                        "name"
+                    ]
+                }
+            },
+            "required": [
+                "body"
+            ]
+        }
+    },
+    {
+        "name": "create_space",
+        "description": "Creates and returns a new space dictionary, defaulting `name` and `description` to an empty string if not provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "A mandatory unique identifier for the space."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Display name of the space."
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "An optional description of the space."
+                        }
+                    },
+                    "description": "A dictionary containing the properties for the space to be created.",
+                    "required": [
+                        "key",
+                        "name"
+                    ]
+                }
+            },
+            "required": [
+                "body"
+            ]
+        }
+    },
+    {
+        "name": "delete_content",
+        "description": "Deletes a content item, trashing it if trashable and current, or permanently deleting it if not trashable or if already trashed and the `status` parameter is 'trashed'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the content to delete."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "A query parameter that, when set to `trashed`, indicates content should be permanently deleted during a purge."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "delete_content_labels",
+        "description": "Deletes all labels from a content item, or a specific label if provided.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "ID of the content from which to delete labels."
+                },
+                "label": {
+                    "type": "string",
+                    "description": "An optional specific label to delete."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "delete_content_property",
+        "description": "Delete a content property by its key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Content's unique identifier."
+                },
+                "key": {
+                    "type": "string",
+                    "description": "The key of the property to delete."
+                }
+            },
+            "required": [
+                "id",
+                "key"
+            ]
+        }
+    },
+    {
+        "name": "delete_space",
+        "description": "Deletes the space identified by `spaceKey`, returning a task dictionary that tracks the immediately completed deletion.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spaceKey": {
+                    "type": "string",
+                    "description": "The unique identifier of the space to delete."
+                }
+            },
+            "required": [
+                "spaceKey"
+            ]
+        }
+    },
+    {
+        "name": "get_content_attachments",
+        "description": "Return attachments for a specific content item.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the parent content."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include, not utilized in this simulation, and defaults to `None`."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination, defaulting to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of attachments to return, defaulting to 50."
+                },
+                "filename": {
+                    "type": "string",
+                    "description": "The filename to filter attachments by; defaults to `None`."
+                },
+                "mediaType": {
+                    "type": "string",
+                    "description": "Filters attachments by media type; defaults to `None`."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_children",
+        "description": "Retrieves a mapping of direct children content, grouped by type.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique identifier of the parent content."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include; not utilized in this simulation and defaults to `None`."
+                },
+                "parentVersion": {
+                    "type": "integer",
+                    "description": "The integer version number of the parent content; not used in this simulation. Defaults to 0."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_children_by_type",
+        "description": "Returns direct children content of a specified type.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique identifier of the parent content."
+                },
+                "child_type": {
+                    "type": "string",
+                    "description": "The type of child content to retrieve, such as 'page', 'blogpost', 'comment', or 'attachment'."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "Additional fields to include in the result; defaults to `None` and is not used in this simulation."
+                },
+                "parentVersion": {
+                    "type": "integer",
+                    "description": "The version of the parent content, defaulting to 0."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination, defaulting to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of child content items to return; defaults to 25."
+                }
+            },
+            "required": [
+                "child_type",
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_comments",
+        "description": "Return comments associated with a specific content item.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique identifier of the parent content."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include in returned comment objects; not utilized in this simulation and defaults to None."
+                },
+                "parentVersion": {
+                    "type": "integer",
+                    "description": "The version of the parent content; defaults to 0 and is not used in this simulation."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The pagination starting index; defaults to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of comment objects to return; defaults to 25."
+                },
+                "location": {
+                    "type": "string",
+                    "description": "An optional string that specifies a location filter within the content hierarchy; defaults to `None`."
+                },
+                "depth": {
+                    "type": "string",
+                    "description": "An optional parameter to control comment retrieval depth, not used in this simulation, and defaults to None."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_descendants",
+        "description": "Returns all descendants of a content item, grouped by type.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the parent content."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include; not used in this simulation."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of descendants to return per type."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_descendants_by_type",
+        "description": "Retrieve descendants of a specific type for a content item.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the parent content."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The type of descendants to retrieve, such as 'page', 'blogpost', 'comment', or 'attachment'."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include; this parameter is not used in this simulation."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of descendants to return."
+                }
+            },
+            "required": [
+                "id",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "get_content_details",
+        "description": "Retrieves content by its unique identifier, optionally filtering by status to ensure it matches an expected state.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "A non-empty string representing the unique identifier of the content to retrieve."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "The expected content status; if provided, the content's status is verified against this string value."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_history",
+        "description": "Returns a content item's creation and versioning history as a dictionary, including its unique ID, an ordered list of records (each with `version`, `createdBy`, `createdDate`, `lastUpdated`), the latest record, top-level `createdBy` and `createdDate`, an optional `previousVersion`, and `nextVersion` (always `None`).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique identifier of the content."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to expand (e.g., `previousVersion,nextVersion,lastUpdated`); this parameter does not filter output in this simulation."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_labels",
+        "description": "Returns a paginated list of content labels, optionally filtered by a given prefix.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the content to get labels for."
+                },
+                "prefix": {
+                    "type": "string",
+                    "description": "Optional prefix to filter labels by."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination; must be non-negative."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum positive number of labels to return."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_list",
+        "description": "Returns a paginated list of content, filtered by the specified parameters.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The content type (e.g., \"page\", \"blogpost\", \"comment\") used to filter results; if `None`, no filtering is applied."
+                },
+                "spaceKey": {
+                    "type": "string",
+                    "description": "The key of the space where content is located, filtering results to only include content from that space."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The content title used to filter results; required if the content `type` is 'page'."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "The content's status, which defaults to 'current' and treats `None` as 'current'; valid values are 'current', 'trashed', or 'any', where 'any' ignores the status filter."
+                },
+                "postingDay": {
+                    "type": "string",
+                    "description": "The content's posting day, applied only if the content type is \"blogpost\", in `yyyy-mm-dd` format (e.g., \"2024-01-01\")."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include in the returned content objects, supporting `space` (expands the space field with its key), `version` (expands version information), and `history` (expands content history)."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Starting pagination index; defaults to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of results to return, defaulting to 25."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_content_properties",
+        "description": "Retrieve a paginated list of content properties for the specified content.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the content."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of properties to expand."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of properties to return."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_property_details",
+        "description": "Retrieves a content item's property by its key.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the content."
+                },
+                "key": {
+                    "type": "string",
+                    "description": "The key of the property to retrieve."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list to expand property details."
+                }
+            },
+            "required": [
+                "id",
+                "key"
+            ]
+        }
+    },
+    {
+        "name": "get_content_restrictions_by_operation",
+        "description": "Retrieves all restrictions for a content item, grouped by operation type.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The string ID of the content item."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include, which is not utilized in this simulation and defaults to `None`."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_content_restrictions_for_operation",
+        "description": "Retrieves restrictions for a specific operation on a content item.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the content item."
+                },
+                "operationKey": {
+                    "type": "string",
+                    "description": "The operation type (e.g., \"read\" or \"update\")."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of additional fields to include; this parameter is not utilized in this simulation and defaults to `None`."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination, defaulting to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of results to return; defaults to 100."
+                }
+            },
+            "required": [
+                "id",
+                "operationKey"
+            ]
+        }
+    },
+    {
+        "name": "get_long_task_details",
+        "description": "Return a specific long-running task by its ID; the `expand` parameter is accepted for API compatibility but not processed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the task."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of properties to expand; defaults to None."
+                }
+            },
+            "required": [
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "get_long_tasks",
+        "description": "Retrieves a paginated list of long-running task dictionaries; the `expand` parameter is accepted for API compatibility but is not processed.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of properties to expand, defaulting to `None`, but currently not implemented."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination; defaults to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of tasks to return; defaults to 100."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_space_content",
+        "description": "Retrieves a list of content item dictionaries for the space identified by `spaceKey`; note that `depth` and `expand` parameters are for API compatibility but are not fully implemented.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spaceKey": {
+                    "type": "string",
+                    "description": "A unique, non-empty string identifier for the space."
+                },
+                "depth": {
+                    "type": "string",
+                    "description": "The depth of content to retrieve; defaults to `None`."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of properties to expand; defaults to None."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination; defaults to 0 and must be a non-negative integer."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of content items to return, defaulting to 25, and must be a positive integer."
+                }
+            },
+            "required": [
+                "spaceKey"
+            ]
+        }
+    },
+    {
+        "name": "get_space_content_by_type",
+        "description": "Retrieves a list of content item dictionaries of a specified type within a space; `depth` and `expand` parameters are accepted for API compatibility but are not fully implemented.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spaceKey": {
+                    "type": "string",
+                    "description": "The unique identifier of the space."
+                },
+                "depth": {
+                    "type": "string",
+                    "description": "The depth of content to retrieve, defaulting to None."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of properties to expand; defaults to None but is not fully implemented."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The content type to filter, for example, \"page\" or \"blogpost\"."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination after filtering, defaulting to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of content items to return after filtering; defaults to 25."
+                }
+            },
+            "required": [
+                "spaceKey",
+                "type"
+            ]
+        }
+    },
+    {
+        "name": "get_space_details",
+        "description": "Retrieves details and returns the space dictionary for a given `spaceKey`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spaceKey": {
+                    "type": "string",
+                    "description": "The unique identifier of the space."
+                }
+            },
+            "required": [
+                "spaceKey"
+            ]
+        }
+    },
+    {
+        "name": "get_spaces",
+        "description": "Retrieves a paginated list of space dictionaries.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spaceKey": {
+                    "type": "string",
+                    "description": "A unique string identifier to filter spaces by; defaults to `None`."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The starting index for pagination; defaults to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of spaces to return; defaults to 25."
+                }
+            }
+        }
+    },
+    {
+        "name": "search_content",
+        "description": "Search for content based on a CQL query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The CQL query used for searching."
+                },
+                "expand": {
+                    "type": "string",
+                    "description": "A comma-separated list of properties to expand."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Starting index for pagination (default: 0)."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of results to return; defaults to 100."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "search_content_cql",
+        "description": "Searches for content using Confluence Query Language (CQL) with support for logical operators, field comparisons, and pagination.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "cql": {
+                    "type": "string",
+                    "description": "A CQL query string for searching, supporting field comparisons (e.g., `type='page'`, `space=\"TEST\"`), logical operators (AND, OR, NOT), parentheses for grouping, and comparison operators (`=, !=, >, <, >=, <=, ~, !~`) across the allowed fields: Ancestor, Container, Content, Created, Creator, Contributor, Favourite/favorite, ID, Label, Last modified, Macro, Mention, Parent, Space, Space category, Space key, Space title, Space type, Text, Title, Type, Watcher, and status."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "The non-negative starting index for pagination, defaulting to 0."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of results to return; defaults to 25 and must be non-negative."
+                }
+            },
+            "required": [
+                "cql"
+            ]
+        }
+    },
+    {
+        "name": "update_attachment_data",
+        "description": "Updates the binary data of an existing attachment.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique ID of the parent content."
+                },
+                "attachmentId": {
+                    "type": "string",
+                    "description": "The unique identifier of the attachment to update."
+                },
+                "file": {
+                    "type": "object",
+                    "description": "New file object to replace the existing attachment."
+                },
+                "comment": {
+                    "type": "string",
+                    "description": "A comment describing the update."
+                },
+                "minorEdit": {
+                    "type": "boolean",
+                    "description": "Whether the edit is minor."
+                }
+            },
+            "required": [
+                "attachmentId",
+                "file",
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "update_attachment_metadata",
+        "description": "Update the metadata of an existing attachment.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the parent content."
+                },
+                "attachmentId": {
+                    "type": "string",
+                    "description": "The unique identifier of the attachment to update."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {},
+                    "description": "A dictionary of updated metadata for the attachment."
+                }
+            },
+            "required": [
+                "attachmentId",
+                "body",
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "update_content",
+        "description": "Updates existing content, automatically incrementing the version (defaulting to 1) and ignoring any provided version data; setting the status to 'current' restores trashed content, only incrementing its version and updating its status; or, if `query_status='draft'` is signaled, it deletes the draft and replaces the content body (as updating drafts is not supported).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the content to update."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "Updated content title."
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "The content's new status."
+                        },
+                        "body": {
+                            "type": "object",
+                            "description": "New content body."
+                        },
+                        "space": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string",
+                                    "description": "A key for the space."
+                                }
+                            },
+                            "description": "A dictionary representing the new space, requiring a `key` (string) for the space identifier.",
+                            "required": [
+                                "key"
+                            ]
+                        },
+                        "ancestors": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of ancestor IDs."
+                        }
+                    },
+                    "description": "A dictionary containing updated content details, with optional fields: `title` (str), `status` (str), `body` (dict), `space` (dict with a `key` string), and `ancestors` (list of string IDs).",
+                    "required": [
+                        "ancestors",
+                        "body",
+                        "space",
+                        "status",
+                        "title"
+                    ]
+                }
+            },
+            "required": [
+                "body",
+                "id"
+            ]
+        }
+    },
+    {
+        "name": "update_content_property",
+        "description": "Updates an existing content property with a new value and an incremented version.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the content."
+                },
+                "key": {
+                    "type": "string",
+                    "description": "The key of the property to update."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {},
+                    "description": "A JSON object containing the updated property value and new version."
+                }
+            },
+            "required": [
+                "body",
+                "id",
+                "key"
+            ]
+        }
+    },
+    {
+        "name": "update_space",
+        "description": "Updates and returns the dictionary for the space identified by `spaceKey`.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "spaceKey": {
+                    "type": "string",
+                    "description": "The unique identifier of the space to update."
+                },
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The new display name of the space."
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "The space's new description."
+                        }
+                    },
+                    "description": "A dictionary containing fields to update, specifically `name` (string) for the display name and `description` (string) for the space's description.",
+                    "required": [
+                        "description",
+                        "name"
+                    ]
+                }
+            },
+            "required": [
+                "body",
+                "spaceKey"
+            ]
+        }
+    }
+]

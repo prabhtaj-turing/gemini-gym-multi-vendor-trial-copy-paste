@@ -1,0 +1,121 @@
+[
+    {
+        "name": "batch_update_document",
+        "description": "Applies a batch of updates to a document.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "string",
+                    "description": "The unique identifier for the document to update."
+                },
+                "requests": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "insertText": {
+                                "type": "object",
+                                "properties": {
+                                    "text": {
+                                        "type": "string",
+                                        "description": "The text to insert."
+                                    },
+                                    "location": {
+                                        "type": "object",
+                                        "properties": {
+                                            "index": {
+                                                "type": "integer",
+                                                "description": "The zero-based index in the document's content\n                           where the text will be inserted."
+                                            }
+                                        },
+                                        "description": "Specifies where to insert the text.",
+                                        "required": [
+                                            "index"
+                                        ]
+                                    }
+                                },
+                                "description": "Inserts text into the document.",
+                                "required": [
+                                    "location",
+                                    "text"
+                                ]
+                            },
+                            "updateDocumentStyle": {
+                                "type": "object",
+                                "properties": {
+                                    "documentStyle": {
+                                        "type": "object",
+                                        "description": "The new document style to apply. The specific\n                               structure of this dictionary will depend on how\n                               document styles are defined in your system."
+                                    }
+                                },
+                                "description": "Updates the document's style.",
+                                "required": [
+                                    "documentStyle"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "insertText",
+                            "updateDocumentStyle"
+                        ]
+                    },
+                    "description": "A list of update requests, where each request is a dictionary containing a single key that identifies the request type (e.g., `insertText`) and a value that specifies the request's parameters."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The ID of the user, which defaults to `\"me\"`."
+                }
+            },
+            "required": [
+                "documentId",
+                "requests"
+            ]
+        }
+    },
+    {
+        "name": "create_document",
+        "description": "Create a new document and return its data.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The document's title, defaulting to \"Untitled Document\"."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The user's ID; defaults to `me` and must be a non-empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_document",
+        "description": "Get a document by ID, including its associated comments, replies, labels, and access proposals.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "string",
+                    "description": "The ID of the document to retrieve; must not be empty or whitespace."
+                },
+                "suggestionsViewMode": {
+                    "type": "string",
+                    "description": "The mode for viewing suggestions; use \"DEFAULT\" or \"SUGGESTIONS_INLINE\", or `None` to preserve the document's existing setting."
+                },
+                "includeTabsContent": {
+                    "type": "boolean",
+                    "description": "Whether to include tab content. Defaults to False."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The ID of the user performing the action; defaults to `\"me\"` and cannot be empty or whitespace."
+                }
+            },
+            "required": [
+                "documentId"
+            ]
+        }
+    }
+]

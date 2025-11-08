@@ -1,0 +1,121 @@
+[
+    {
+        "name": "batch_update_document",
+        "description": "Applies a collection of updates to a document in a single operation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "string",
+                    "description": "The unique identifier of the document to update."
+                },
+                "requests": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "insertText": {
+                                "type": "object",
+                                "properties": {
+                                    "text": {
+                                        "type": "string",
+                                        "description": "The text to insert."
+                                    },
+                                    "location": {
+                                        "type": "object",
+                                        "properties": {
+                                            "index": {
+                                                "type": "integer",
+                                                "description": "The zero-based index in the document's content\n                           where the text will be inserted."
+                                            }
+                                        },
+                                        "description": "Specifies where to insert the text.",
+                                        "required": [
+                                            "index"
+                                        ]
+                                    }
+                                },
+                                "description": "Inserts text into the document.",
+                                "required": [
+                                    "location",
+                                    "text"
+                                ]
+                            },
+                            "updateDocumentStyle": {
+                                "type": "object",
+                                "properties": {
+                                    "documentStyle": {
+                                        "type": "object",
+                                        "description": "The new document style to apply. The specific\n                               structure of this dictionary will depend on how\n                               document styles are defined in your system."
+                                    }
+                                },
+                                "description": "Updates the document's style.",
+                                "required": [
+                                    "documentStyle"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "insertText",
+                            "updateDocumentStyle"
+                        ]
+                    },
+                    "description": "A list of update requests to apply to the document. Each request is a dictionary containing a single key that identifies its type, such as `'insertText'`. The value for this key is another dictionary containing the parameters for that specific request."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The ID of the user. If this parameter is not specified, it defaults to `me`."
+                }
+            },
+            "required": [
+                "documentId",
+                "requests"
+            ]
+        }
+    },
+    {
+        "name": "create_document",
+        "description": "Create a new document, optionally providing a title. The `userId` must be a non-empty string and defaults to 'me'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The title of the document. This parameter is a string that defaults to \"Untitled Document\"."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The ID of the user. It defaults to \"me\" and must be a non-empty string."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_document",
+        "description": "Retrieves a document using its unique ID, which must be a non-empty string. This function allows optional control over the suggestions view mode, inclusion of tab content, and the specific user performing the action, returning a dictionary that contains the document's primary fields and associated data like comments and permissions.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "string",
+                    "description": "The ID of the document to retrieve. This ID cannot be empty or consist only of whitespace characters."
+                },
+                "suggestionsViewMode": {
+                    "type": "string",
+                    "description": "Specifies the mode for viewing suggestions, accepting string values such as \"DEFAULT\" or \"SUGGESTIONS_INLINE\". If `None` is provided, the document's existing suggestion viewing setting is preserved."
+                },
+                "includeTabsContent": {
+                    "type": "boolean",
+                    "description": "A boolean parameter that controls whether the document's tab content is included in the returned data. When set to `True`, the `tabs` field will be present in the document. This parameter defaults to `False`."
+                },
+                "userId": {
+                    "type": "string",
+                    "description": "The ID of the user performing the action. This parameter defaults to \"me\" and cannot be empty or consist solely of whitespace."
+                }
+            },
+            "required": [
+                "documentId"
+            ]
+        }
+    }
+]

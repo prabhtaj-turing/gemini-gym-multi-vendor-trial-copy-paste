@@ -1,0 +1,331 @@
+[
+  {
+    "name": "add_to_memory",
+    "description": "Stores learned knowledge into a persistent AI knowledge base, requiring user acceptance, or updates existing knowledge using an ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "knowledge_to_store": {
+          "type": "string",
+          "description": "The specific piece of knowledge or fact to be stored, limited to a single paragraph (max 500 characters) and should not reference previous knowledge when updating."
+        },
+        "title": {
+          "type": "string",
+          "description": "A short title for the knowledge, used for later lookup and retrieval, that captures its essence."
+        },
+        "existing_knowledge_id": {
+          "type": "string",
+          "description": "Optional ID of an existing knowledge entry to update; if provided, `knowledge_to_store` and `title` replace the existing entry's content."
+        }
+      },
+      "required": [
+        "knowledge_to_store",
+        "title"
+      ]
+    }
+  },
+  {
+    "name": "codebase_search",
+    "description": "Finds code snippets semantically relevant to a natural language query, also searching git repository metadata for context, optionally filtered by target directories, and returns both code and git information with commit hash details.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A natural language search query describing the functionality, concept, or implementation to find, which should be descriptive rather than using exact names."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "An optional description of the search purpose for logging and debugging, used to track search patterns; defaults to `None`."
+        },
+        "target_directories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "An optional list of glob patterns to restrict search scope to specific directories or file patterns (e.g., `['src/**', 'lib/*.py', 'components/*']`); defaults to `None` for a full codebase search."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "create_diagram",
+    "description": "Creates and renders a Mermaid diagram in the chat UI from the provided raw Mermaid DSL `content`. Use `<br/>` for line breaks, wrap texts in double quotes, and avoid custom colors, `:::`, or beta features; invalid syntax raises a `MermaidSyntaxError`.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "A raw Mermaid diagram definition, for example, 'graph TD; A-->B;'."
+        }
+      },
+      "required": [
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "deep_search",
+    "description": "Finds relevant files, code blocks, and other context within the codebase.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A broad search query for the search model, encompassing the user's high-level goal with no other context provided; must be 3-1000 characters long and contain at least one alphanumeric character."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "delete_file",
+    "description": "Deletes a specified file from the application's managed file system by resolving its path relative to the workspace root.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target_file": {
+          "type": "string",
+          "description": "The path of the file to delete, relative to the workspace root, with leading slashes stripped to ensure relative treatment."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A string describing the reason for this deletion, used for logging or auditing but not affecting the return value, and defaults to `None`."
+        }
+      },
+      "required": [
+        "target_file"
+      ]
+    }
+  },
+  {
+    "name": "edit_file",
+    "description": "Proposes a structured edit to an existing file or creates a new one, where changes are specified sequentially; use `// ... existing code ...` to represent unchanged lines, as omitting this may inadvertently delete code; for new files, the `code_edit` parameter must contain the entire file content.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target_file": {
+          "type": "string",
+          "description": "The file path to modify; it can be relative to the workspace or absolute, with absolute paths preserved."
+        },
+        "code_edit": {
+          "type": "string",
+          "description": "A string containing only the precise lines of code to edit, representing unchanged code with `// ... existing code ...`; for new files, specify the entire file content."
+        },
+        "instructions": {
+          "type": "string",
+          "description": "A single-sentence instruction describing the sketched edit's change, used by a less intelligent model for concise, non-repetitive, and unambiguous edit application."
+        }
+      },
+      "required": [
+        "code_edit",
+        "instructions",
+        "target_file"
+      ]
+    }
+  },
+  {
+    "name": "fetch_pull_request",
+    "description": "Looks up a pull request by number (resolved via commit messages) or a commit by hash, and returns its real diff along with author details and file changes from the git repository.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pullNumberOrCommitHash": {
+          "type": "string",
+          "description": "The pull request number (without '#' prefix) or a full or abbreviated commit hash; for PR numbers, the function searches for commits referencing that PR in their messages."
+        }
+      },
+      "required": [
+        "pullNumberOrCommitHash"
+      ]
+    }
+  },
+  {
+    "name": "fetch_rules",
+    "description": "Fetches user-provided rules that assist with codebase navigation and code generation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "rule_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list containing the names of rules to fetch."
+        }
+      },
+      "required": [
+        "rule_names"
+      ]
+    }
+  },
+  {
+    "name": "file_search",
+    "description": "Fuzzy-searches internal file paths for files, returning a ranked list of up to 10 matching file paths.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "A string to search within file paths, using fuzzy matching to account for typos and partial matches."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A required sentence explaining the search's purpose, typically for logging or auditing."
+        }
+      },
+      "required": [
+        "explanation",
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "fix_lints",
+    "description": "Fix linting errors introduced by the last edit by generating and applying new code edits.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "type": "boolean",
+          "description": "A flag to execute the function, which must be `True`."
+        }
+      },
+      "required": [
+        "run"
+      ]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Performs a case-sensitive regular expression text search across files, optionally filtered by glob patterns, and returns up to 50 matches including file path, line number, and content; the query must be a valid regex pattern with escaped special characters for literal matching.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The regular expression pattern to search for; ensure it is valid and escape special characters (e.g., `\\.` for a literal dot) for literal matching."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A string describing the reason for the search, primarily for logging or auditing; defaults to `None`."
+        },
+        "case_sensitive": {
+          "type": "boolean",
+          "description": "Controls if the regex search is case-sensitive (True) or case-insensitive (False); defaults to True."
+        },
+        "include_pattern": {
+          "type": "string",
+          "description": "A glob pattern (e.g., `'*.py'`, `'src/**'`) to filter included file paths for the search; if omitted (defaults to `None`), all files passing the exclude filter are considered."
+        },
+        "exclude_pattern": {
+          "type": "string",
+          "description": "A glob pattern to filter file paths excluded from the search, where exclusions override inclusions."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "list_dir",
+    "description": "List the immediate files and subdirectories of a specified path relative to the workspace root, for exploring workspace structure.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "relative_workspace_path": {
+          "type": "string",
+          "description": "The directory path to list, relative to the workspace root; `\"\"` or `.` refers to the root, and leading slashes are stripped."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A description of the operation's reason, potentially used for logging or auditing; defaults to None."
+        }
+      },
+      "required": [
+        "relative_workspace_path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Read a file's specified line range or its entirety, returning up to 250 lines, summarizing content outside the range, and defaulting to the last 250 lines if the start line is out of bounds.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target_file": {
+          "type": "string",
+          "description": "The file path to read; can be absolute or relative to the workspace root, where relative paths are joined with the root."
+        },
+        "should_read_entire_file": {
+          "type": "boolean",
+          "description": "A boolean that, if `True`, reads the entire file and ignores `start_line_one_indexed` and `end_line_one_indexed_inclusive`."
+        },
+        "start_line_one_indexed": {
+          "type": "integer",
+          "description": "The one-indexed line number to start reading from (inclusive), which must be >= 1 and <= `end_line_one_indexed_inclusive`."
+        },
+        "end_line_one_indexed_inclusive": {
+          "type": "integer",
+          "description": "The one-indexed, inclusive line number to end reading at, which must be greater than or equal to `start_line_one_indexed` and less than or equal to the total lines in the file."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A description of why the operation is being performed, optionally used for logging or auditing, and defaults to `None`."
+        }
+      },
+      "required": [
+        "end_line_one_indexed_inclusive",
+        "start_line_one_indexed",
+        "target_file"
+      ]
+    }
+  },
+  {
+    "name": "reapply",
+    "description": "Re-applies the last attempted edit for a file by using an LLM to generate complete file content based on original instructions, the prior edit, and current file content, which then replaces the existing content; use this to correct unexpected `edit_file` results.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target_file": {
+          "type": "string",
+          "description": "The path of the file to re-apply the last edit to, specified either relative to the CWD or as an absolute path within the workspace."
+        }
+      },
+      "required": [
+        "target_file"
+      ]
+    }
+  },
+  {
+    "name": "run_terminal_cmd",
+    "description": "Execute a terminal command in the current workspace, appending `| cat` for interactive/pager commands and setting `is_background=True` for long-running processes.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The exact terminal command string to execute; append ' | cat' for interactive or pager commands."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A brief justification for running the command, shown to the user or used for logging."
+        },
+        "is_background": {
+          "type": "boolean",
+          "description": "A boolean indicating whether to run the command as a background process (e.g., for servers or watchers); defaults to `False`, which runs it in the foreground and waits for completion."
+        }
+      },
+      "required": [
+        "command",
+        "explanation"
+      ]
+    }
+  }
+]

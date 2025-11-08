@@ -1,0 +1,881 @@
+{
+  "analysis_timestamp": "2025-08-13T12:09:56.509694Z",
+  "results": {
+    "canva/Autofill.py": {
+      "functions": {
+        "create_autofill_job": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly describes the `brand_template_id`, `data`, and `title` arguments, including their types and, for `data`, a detailed explanation of its nested structure. The `Returns` section accurately describes the structure of the returned dictionary, including the nested `result` and `design` dictionaries.  The types are mostly correctly specified."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function does not use Pydantic models for input validation.  While there's a check for the existence of `asset_id` within the `data` dictionary, this is insufficient validation.  The function lacks comprehensive validation for the structure and types within the `data` dictionary (e.g., checking that each item has a 'type' key, and that the correct optional fields are present based on the 'type' value).  The `brand_template_id` is also not validated for type or format.  Using Pydantic models would significantly improve the robustness of input validation by providing a declarative and comprehensive way to specify the expected structure and types of `brand_template_id` and `data`, including nested structures within `data`.  This would catch errors early and improve the overall reliability of the function."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is incomplete."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`brand_template_id`, `data`, `title`) are properly type-annotated with their expected types (str, Dict[str, Any], Optional[str] respectively). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used.  Complex types within the `data` parameter are also properly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function mostly implements the creation of an autofill job and stores it in the global DB.  The `data` parameter is not fully utilized; only the `asset_id` (if present) is used.  The rest of the data dictionary is ignored.  The function also directly uses the `brand_template_id` as the design ID in the result, which might not always be accurate.  While the function creates a job entry with a success status, it lacks error handling or mechanisms to set the status to \"in_progress\" or \"failed\" if the underlying `create_design` function encounters issues.  The `title` parameter is correctly used, and the docstring accurately reflects the return type and structure.  The function's logic is mostly complete within the context of the global DB, but improvements are needed to fully utilize the input data and handle potential errors."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_autofill_job` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with brand template IDs, asset IDs, and other data within a specific design context, none of which involve phone numbers or email addresses."
+          }
+        },
+        "get_autofill_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior in retrieving an autofill job by ID. The Args and Returns sections are well-structured and mostly accurate.  Types are specified for parameters and return values.  The nested structure of the `result` dictionary within the return value is clearly documented, including optional fields."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_autofill_job` has one functional input parameter, `job_id`, which is annotated as a string.  However, there is no input validation performed on this parameter.  No type checking or other validation is done to ensure that `job_id` is in the expected format or that it exists in the database before attempting to retrieve it. Using a Pydantic model would significantly improve the robustness of this function by enforcing type constraints and potentially adding more sophisticated validation rules (e.g., checking for a valid job ID format)."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function `get_autofill_job` performs only a type check on the `job_id` parameter by specifying `job_id: str` in the function signature.  However, it lacks crucial value validation.  There's no check to ensure that `job_id` is not an empty string or contains only whitespace.  Furthermore, there's no handling for potential exceptions that might arise from accessing the `DB` (though this is a mock DB, in a real-world scenario, database access would need robust error handling).  No explicit error is raised for invalid `job_id` values; the function simply returns a default error message.  Therefore, while a type check is present, essential value validation and explicit error handling for invalid inputs are missing, resulting in a \"Partial\" rating."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_autofill_job` has excellent parameter design and type annotations.  The single parameter `job_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves a job from the global `DB` dictionary using the provided `job_id`.  If the job is found, it returns a dictionary containing the job details as specified in the docstring. If the job is not found, it returns a dictionary with an \"error\" key as specified. The function uses the `job_id` parameter correctly.  There are no placeholders, exceptions to handle, or inconsistencies between the docstring and implementation.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_autofill_job` does not handle any phone number or email address inputs.  Its purpose is to retrieve data from a database based on a job ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "canva/Folder.py": {
+      "functions": {
+        "create_folder": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section correctly specifies the type and describes the structure of the returned dictionary, including nested structures within the `thumbnail` dictionary. The `Raises` section correctly lists the `ValueError` exceptions.  Types are specified for all parameters and return values."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `name` and `parent_folder_id` parameters by checking their lengths.  While Pydantic could provide a more structured and potentially more comprehensive approach (e.g., handling different data types or more complex validation rules), the existing manual checks adequately address the validation requirements for these parameters within the context of the provided code.  The manual checks are sufficient for this specific function's needs.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `name` and `parent_folder_id`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name` and `parent_folder_id`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `Dict[str, Any]`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements the creation of a new folder, handling the specified input parameters (`name` and `parent_folder_id`) and raising `ValueError` exceptions as documented when the input is invalid or the parent folder does not exist.  The logic for updating the `DB` dictionary based on whether the parent is \"root\" or another folder is correctly implemented. The function's return value matches the docstring's description.  All functional input parameters are used. There are no placeholders or TODO comments. The docstring accurately reflects the function's behavior and return type."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_folder` function does not handle any phone number or email address inputs.  Its inputs are a folder name (string) and a parent folder ID (string).  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the length of the input strings."
+          }
+        },
+        "get_folder": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the `ValueError` exception. The description of the return value is detailed, including the nested structure of the `thumbnail` dictionary.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if` statement to check if the provided `folder_id` exists in the `DB[\"folders\"]` dictionary.  This serves as basic input validation. While a Pydantic model could be used, it's not strictly necessary for this simple check. The existing validation is sufficient for the task.  A Pydantic model would add overhead without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by declaring `folder_id` as a string. It also performs a value check by verifying if the `folder_id` exists as a key within the `DB[\"folders\"]` dictionary.  However, it lacks checks for empty strings or None values for `folder_id`.  A more robust validation would include checks for these cases, potentially raising a more specific exception than a generic `ValueError`.  The validation is only partial because it doesn't cover all possible invalid inputs for a string folder ID."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_folder` has excellent parameter design and type annotations.  All parameters (`folder_id`) are properly type-annotated with their expected types (str). The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function correctly handles the `ValueError` exception as documented.  The `folder_id` input parameter is used correctly. However, the function's return value is inconsistent with its docstring. The docstring specifies a dictionary with a 'folder' key containing several fields (id, name, created_at, updated_at, thumbnail, parent_id).  The function, however, only returns the nested 'folder' dictionary from the DB, omitting the top-level 'folder' key.  This is a mismatch between the docstring and the actual implementation.  The implementation also assumes that the `DB[\"folders\"][folder_id]` entry contains a nested dictionary with a \"folder\" key, which might not always be the case, leading to potential errors not explicitly handled.  The function lacks error handling for this scenario."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_folder` does not handle any phone number or email address inputs.  Its sole purpose is to retrieve folder metadata based on a folder ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_folder": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and their types. The `Returns` section correctly specifies the dictionary structure, including nested structures within the `thumbnail` key.  The `Raises` section correctly lists the potential `ValueError` exceptions.  Types are specified for all parameters and return values. The description of what the function does is clear and helpful in the context of an MCP server."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `folder_id` and `name` parameters.  It checks if `folder_id` exists in the `DB` and if the length of `name` is within the allowed range.  While Pydantic could be used, the existing validation is sufficient and correctly handles the required checks.  Using Pydantic would add unnecessary complexity for this simple case."
+          },
+          "input_validation": {
+            "status": "Comprehensive",
+            "notes": "The function performs comprehensive validation on both functional input parameters: `folder_id` and `name`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "Both function parameters (`folder_id` and `name`) are properly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly updates the folder name and timestamp in the global `DB`.  Both `folder_id` and `name` parameters are used appropriately.  The documented `ValueError` exceptions are correctly raised for non-existent folder IDs and invalid names. The return dictionary matches the docstring's specification. There are no placeholders or TODOs.  The logic is complete and functional given the use of the global `DB`."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_folder` does not handle any phone number or email address inputs.  Its parameters are `folder_id` (a string) and `name` (a string representing a folder name), neither of which are phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly validates the length of the `name` parameter, but this is unrelated to the specified task of phone number and email processing."
+          }
+        },
+        "delete_folder": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's behavior of recursively deleting a folder and its contents. The `Args` and `Returns` sections are well-structured and informative, including type hints. The `Raises` section correctly identifies the `ValueError`.  The description of the return dictionary is sufficient."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses a simple `if folder_id not in DB[\"folders\"]:` check to validate that the provided `folder_id` exists in the database.  This is sufficient input validation for the single functional parameter.  While using a Pydantic model would be possible, it's not strictly necessary given the simplicity of the validation and the existing check.  Adding a Pydantic model would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Good",
+            "notes": "The function performs type validation on `folder_id` by explicitly defining it as a string in the function signature.  It also performs value validation by checking if the `folder_id` exists in the `DB[\"folders\"]` dictionary. This check prevents attempts to delete non-existent folders.  However, it lacks checks for empty strings or other potential invalid string formats for `folder_id`.  While the existence check in the DB acts as a form of value validation, a more robust approach would include explicit checks for empty strings or strings containing only whitespace.  Therefore, the validation is good but not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_folder` has excellent parameter design and type annotations.  The single parameter `folder_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used.  All type annotations are complete and accurate."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly implements recursive deletion of a folder and its contents from the global `DB`.  The `folder_id` parameter is used correctly to identify the folder to delete.  The `ValueError` exception is raised appropriately if the folder ID does not exist. The function's logic is complete and functional, handling the removal of assets and subfolders recursively. The docstring accurately reflects the function's behavior and return type.  There are no placeholders, TODOs, or pass statements. The return value is consistent with the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_folder` does not handle any phone number or email address inputs.  Its purpose is to delete a folder from a database (presumably represented by the `DB` dictionary). Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "list_folder_items": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It correctly documents the arguments, including default values and types. The `Returns` section accurately describes the top-level structure of the returned dictionary.  The `Raises` section correctly identifies the `ValueError`.  Types are mostly specified correctly."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs input validation without using Pydantic models.  It checks if `folder_id` exists in the `DB`, and it implicitly validates `item_types` by checking if elements are in a set of allowed values (\"folder\", \"design\", \"image\") within the conditional statements. The `sort_by` parameter is checked against a dictionary of valid sort options.  While Pydantic could provide a more structured and potentially more robust way to perform this validation, the existing validation is sufficient and covers all functional input parameters.  Using Pydantic would add complexity without significant benefit in this case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is not comprehensive."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`folder_id`, `item_types`, `sort_by`, `continuation`) are properly type-annotated with their expected types (str, Optional[List[str]], Optional[str], Optional[str] respectively).  The function's return type is clearly specified as `Dict[str, Any]`.  The function does not use `**kwargs` parameters.  Complex types like `List`, `Dict`, and `Optional` are correctly used in the annotations."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of listing folder items based on the provided `folder_id` and `item_types`.  The `ValueError` exception for non-existent folder IDs is also correctly handled.  The `continuation` parameter is not used in the current implementation, suggesting a missing pagination feature.  The sorting functionality is partially implemented; it only sorts by fields related to folders, ignoring the `created_at` and `updated_at` fields for designs and images.  The docstring mentions that items should be sorted, but the implementation only sorts the folder items, not all items.  The `sort_by` parameter is used, but its functionality is incomplete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `list_folder_items` function does not handle any phone number or email address inputs.  Its purpose is to list items within a folder based on a folder ID and other parameters.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "canva/BrandTemplate.py": {
+      "functions": {
+        "get_brand_template": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and arguments.  The description of the returned dictionary is fairly detailed, including nested structures.  Types are specified for parameters and return values using type hints."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_brand_template` has one functional input parameter: `brand_template_id`.  No input validation is performed on this parameter.  There's no type checking, range checking, or any other form of validation to ensure that `brand_template_id` is a valid string (e.g., non-empty, specific format) before it's used to access the `brand_templates` dictionary.  Using a Pydantic model would significantly improve the robustness of this function by enforcing data types and potentially adding constraints on the format of the `brand_template_id`."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function only performs a null check on the `brand_template_id`  by using `.get()` method.  This checks if the key exists in the `brand_templates` dictionary. However, it lacks type validation (ensuring `brand_template_id` is a string) and value validation (checking if the ID is in a valid format or length, if such constraints exist).  There's also no explicit error handling for cases where the ID is not found or is of the wrong type.  The function implicitly handles the case where the ID is not found by returning `None`, but a more explicit error handling mechanism would improve robustness.  Furthermore, there is no validation of the data retrieved from the `DB`; it assumes the data within the dictionary is correctly formatted.  Therefore, while a basic null check is present, comprehensive type and value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_brand_template` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`brand_template_id: str`). The return type `Optional[Dict[str, Any]]` is clearly specified.  The function does not use `**kwargs`.  Complex types within the return dictionary are also appropriately hinted, although the `Any` type in `Dict[str, Any]` could be made more specific for better type safety."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves a brand template based on its ID from the global `DB`.  The `brand_template_id` parameter is used correctly. The returned dictionary structure matches the docstring, except for the `thumbnail` key which is missing the optional `width`, `height` and `url` keys as described in the docstring.  The function doesn't handle potential exceptions (e.g., `KeyError` if a key is missing in the retrieved template dictionary), which could lead to unexpected behavior.  Adding error handling would improve robustness."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_brand_template` does not handle any phone number or email address inputs.  Its purpose is to retrieve a brand template from a database based on a string ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_brand_template_dataset": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  The Args section correctly documents the `brand_template_id` parameter. The Returns section correctly states the return type `Optional[Dict[str, Any]]`. However, the description of the returned dictionary is insufficient.  The docstring states that the dictionary will contain a \"dataset\" key with a nested dictionary containing \"type\" keys, but it doesn't fully explain what values the \"dataset\" dictionary might contain beyond that.  The actual implementation shows that the \"dataset\" key will contain a dictionary with potentially many keys, not just \"type\".  The docstring should reflect this more accurately.  The docstring also fails to mention that the function returns `None` if the brand template or its dataset is not found. While the implementation handles this case, it's not explicitly documented in the Returns section.  No exceptions are raised, so the lack of a Raises section is not a problem.  The type hinting is good.  Overall, the docstring is understandable, but lacks the precision and completeness needed to be considered \"Good\" or \"Excellent\".  The description of the nested dictionary structure within the return value needs significant improvement to match the actual implementation."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_brand_template_dataset` has only one functional input parameter: `brand_template_id` which is type hinted as a string.  No Pydantic model is used for validation. However, the code implicitly validates the input by checking if a corresponding key exists in the `brand_templates` dictionary.  While this is functional validation, using a Pydantic model would not significantly improve this specific function's input validation because the existing check is sufficient and directly addresses the potential failure mode (key not found).  Adding a Pydantic model would add unnecessary complexity for this simple case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs a null check on the `brand_template_id` implicitly through the `get()` method on the `brand_templates` dictionary.  However, it lacks explicit type validation to ensure `brand_template_id` is a string.  There's also no validation of the value itself; it doesn't check if the `brand_template_id` actually exists in the database or conforms to any specific format or constraints.  No exceptions are raised for invalid input.  Therefore, while a null check is present, comprehensive type and value validation is missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_brand_template_dataset` has excellent parameter design and type annotations.  All parameters (`brand_template_id`) are properly type-annotated with their expected types (str). The return type `Optional[Dict[str, Any]]` is clearly specified.  No `**kwargs` are used.  Complex types like `Optional` and `Dict` are correctly specified."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly retrieves the dataset based on the provided `brand_template_id`.  It handles cases where the brand template or dataset is not found by returning `None`, as documented. The docstring accurately reflects the function's behavior and return type. However, the function only returns the dataset under the key \"dataset\" in a dictionary. While this fulfills the docstring's description, a more direct return of the `datasets` dictionary would be slightly more efficient and arguably cleaner.  There are no placeholders, exceptions to handle, or unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_brand_template_dataset` does not handle any phone number or email address inputs.  Its purpose is to retrieve data from a database based on a brand template ID.  Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "list_brand_templates": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values. The description of the return value is also good, specifying the dictionary structure and the types of its keys.  The documentation of the `items` list within the return dictionary is thorough, detailing the structure and types of nested dictionaries."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function uses manual input validation for the `ownership`, `dataset`, and `sort_by` parameters.  These parameters have limited, predefined valid values, and the function explicitly checks against those values. While Pydantic could be used to provide a more structured and potentially more robust validation approach, the existing manual checks are sufficient for this specific function's needs.  The `query` parameter is validated implicitly by the `in` operator within the list comprehension; no explicit validation is needed. The `continuation` parameter is unused and therefore doesn't require validation.  Therefore, Pydantic models are not strictly needed for this function's input validation."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but not comprehensively."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`query`, `continuation`, `ownership`, `sort_by`, `dataset`) are properly type-annotated with their expected types using `Optional[str]`. The function's return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` parameter is used."
+          },
+          "implementation_status": {
+            "status": "Mostly Complete",
+            "notes": "The function correctly implements the core logic of filtering and sorting brand templates based on the provided parameters.  The `query`, `dataset`, and `sort_by` parameters are all used effectively. However, the `continuation` parameter is explicitly marked as unused.  While this is acceptable given the context (it's likely for future pagination implementation), it represents a minor gap in the current implementation.  The docstring accurately reflects the function's behavior and return type.  There are no placeholders or exceptions to handle."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_brand_templates` does not handle any phone number or email address inputs.  Its purpose is to list brand templates from a database based on various filtering and sorting criteria.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "canva/Asset.py": {
+      "functions": {
+        "create_asset_upload_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It clearly explains what the function does (creates an asset upload job), its role in the larger system (simulates job creation, directs users to a separate endpoint for actual upload), and the meaning of the return value.  The Args and Returns sections are well-structured, including type annotations.  The Notes section helpfully clarifies the limitations of the function (simulation only)."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_asset_upload_job` lacks any input validation for its functional parameters (`name`, `tags`, `thumbnail_url`).  There's no use of Pydantic models, nor are there any type checks or manual validation steps to ensure the data meets the expected format and constraints (e.g., `tags` having a maximum of 50 elements, `thumbnail_url` being a valid URL).  Adding Pydantic models would significantly improve the robustness of this function by providing a structured and efficient way to validate the input data before processing."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "There is no input validation present in the provided function.  All three functional parameters (`name`, `tags`, and `thumbnail_url`) lack type checking, value validation (length of tags, URL format), null/empty checks, and error handling.  No checks are performed to ensure that the inputs conform to the expected data types or constraints before they are (implicitly) used."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`name`, `tags`, `thumbnail_url`) are properly type-annotated with their expected types (str, List[str], str respectively). The function's return type is also clearly specified as `str`.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for creating an asset upload job, storing it in the `DB`, or returning a job ID.  The commented-out code suggests the intended implementation, but it's not actually present.  Therefore, the function is not implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_asset_upload_job` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with asset upload metadata (name, tags, thumbnail URL), none of which are phone numbers or email addresses."
+          }
+        },
+        "get_asset_upload_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the structure of the dictionary it returns. The types are correctly specified for parameters and return values.  The documentation of the nested dictionary structures within the return value ('asset' and 'error') is thorough and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_asset_upload_job` has one functional input parameter, `job_id`, which is annotated as a string. However, there is no input validation performed on this parameter.  No type checking or other validation is done to ensure that `job_id` is a valid string (e.g., not empty, meets a specific format) before it's used to access the `DB`.  Using a Pydantic model to define the input type and potentially add constraints (e.g., `job_id: str = Field(..., min_length=1)`) would significantly improve the robustness of the function."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function only takes one functional input parameter, `job_id` (a string).  There is no validation performed on this parameter. No type checking, value checking (e.g., checking for a specific format or length), null/empty checks, or any other form of validation is present.  The function directly uses the `job_id` to access the `DB` without any checks to ensure it's a valid key or that it exists.  Therefore, the input validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_asset_upload_job` has excellent parameter design and type annotations.  The single parameter `job_id` is correctly type-annotated as `str`. The return type `Optional[Dict[str, Any]]` is also clearly specified.  No `**kwargs` are used.  The type annotations are complete and accurately reflect the expected data types."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function does not handle the case where the `asset_upload_jobs` key is missing from the global `DB` dictionary.  This could lead to a `KeyError` if `DB.get(\"asset_upload_jobs\", {})` returns `None` before `.get(job_id, {})` is called.  The docstring promises a dictionary with specific keys ('id', 'status', 'asset', 'error'), but the function only returns a potentially empty dictionary if the job ID is not found.  The implementation does not create the structure described in the docstring; it only retrieves a value from the DB.  The function correctly uses the `job_id` parameter."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_asset_upload_job` does not handle any phone number or email address inputs.  Its purpose is to retrieve data from a database based on a job ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_asset": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It accurately describes the function's arguments and the structure of the returned dictionary, including nested structures like `thumbnail` and the deprecated `import_status` and `import_error`.  Types are specified for all parameters and the return value using type hints. The documentation of the optional fields within the returned dictionary is thorough."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_asset` takes only one functional parameter, `asset_id`, which is expected to be a string.  However, there's no input validation performed on `asset_id`. No type checking or other validation is implemented to ensure that `asset_id` is a valid string or meets any other criteria before it's used to access the `DB`.  Using a Pydantic model would significantly improve the robustness of this function by ensuring that `asset_id` is of the correct type and potentially enforcing additional constraints (e.g., minimum length, allowed characters)."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function performs no input validation on the `asset_id` parameter.  There are no checks for data type, null/empty values, or any other constraints on the `asset_id` before it's used as a key to access the `DB`.  While the function uses a dictionary lookup, which might implicitly handle some errors (e.g., a `KeyError` if the asset ID doesn't exist), this is not explicit validation.  The function lacks any explicit checks to ensure the `asset_id` is of the correct type or format before attempting to use it.  Therefore, the validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_asset` has excellent parameter design and type annotations.  All parameters are properly type-annotated (`asset_id: str`). The return type `Optional[Dict[str, Any]]` is clearly specified.  The function does not use `**kwargs`.  Complex types within the return dictionary are also properly specified (e.g., `List[str]`, `Optional[Dict]`)."
+          },
+          "implementation_status": {
+            "status": "Partially Complete",
+            "notes": "The function does not handle the case where the `assets` key is missing from the global `DB` dictionary.  While it attempts to gracefully handle a missing asset ID using `.get()`, it doesn't account for the possibility that the entire `assets` dictionary might be absent. This could lead to unexpected behavior or errors.  The docstring promises a dictionary with specific keys ('id', 'name', etc.) in the returned dictionary, but if the asset is not found, an empty dictionary is returned, violating the docstring's contract.  The function also lacks error handling for potential issues within the database (e.g., corrupted data).  Finally, the `import_status` and `import_error` fields are marked as deprecated but are still included in the potential return dictionary structure, which is inconsistent."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_asset` does not handle any phone number or email address inputs.  Its purpose is to retrieve asset metadata from a database using an asset ID.  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "update_asset": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a decent overview of the function's purpose.  It accurately describes the function's arguments, including their types and default values (Optional[str] and Optional[List[str]] are correctly noted). The return value type and description are also correctly specified.  The docstring clearly states that the function updates asset metadata."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function performs basic input validation without using Pydantic.  It checks if `name` is provided and not empty, and implicitly checks the type of `asset_id`, `name`, and `tags`.  It also enforces a maximum length for `name` and a maximum number of items for `tags`. While Pydantic could provide a more structured and comprehensive approach to validation (including data type validation and more complex constraints), the existing manual checks are sufficient for the current level of validation.  Using Pydantic would add complexity without significant benefit given the simplicity of the validation requirements."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs some input validation but is incomplete."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`asset_id`, `name`, `tags`) are properly type-annotated with their expected types (str, Optional[str], Optional[List[str]] respectively).  The return type is also clearly specified as `bool`. The function does not use `**kwargs`."
+          },
+          "implementation_status": {
+            "status": "Stub",
+            "notes": "The function body contains only a `pass` statement, indicating that the core implementation is missing.  There is no actual logic to update the asset in the `DB` dictionary.  While the function signature and docstring are present, the lack of implementation prevents it from being considered even partially complete."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `update_asset` does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals with asset IDs, names, and tags, none of which are email addresses or phone numbers."
+          }
+        },
+        "delete_asset": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and adequately describes the function's purpose: deleting an asset given its ID.  It correctly specifies the `asset_id` argument type and the boolean return type, indicating success or failure based on asset existence. The description of the return value accurately reflects the function's behavior.  The docstring is complete enough for a user to understand how to use the function.  There is no mention of exceptions, but the function doesn't explicitly raise any, so this omission isn't a significant flaw in this case.  While the internal implementation uses a global `DB`, the docstring doesn't need to reflect this implementation detail."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `delete_asset` uses a simple `if` statement to check if the `asset_id` exists in the `DB` before attempting deletion. This serves as basic input validation, ensuring that the `asset_id` is at least present as a key within the dictionary.  While a Pydantic model could be used to add more robust validation (e.g., checking the `asset_id` format or type more strictly), the existing check is sufficient for the function's purpose and the current level of complexity.  Using Pydantic would add overhead without significant benefit in this specific case."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation by defining `asset_id` as a string. However, it lacks value validation.  It does not check if `asset_id` is empty or contains only whitespace, nor does it check if the `asset_id` actually exists in the `DB[\"assets\"]` dictionary before attempting to delete it.  While a `KeyError` might be raised internally by the dictionary access, this is not explicitly handled and provides no user-facing feedback.  The function should include checks for empty or invalid `asset_id` values and handle the case where the asset is not found more gracefully, perhaps by raising a more informative exception or returning a different error code."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `delete_asset` has excellent parameter design.  The single parameter `asset_id` is correctly type-annotated as `str`. The return type is also clearly specified as `bool`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly deletes an asset from the global `DB` dictionary if it exists and returns `True`. If the asset is not found, it correctly returns `False`.  The `asset_id` parameter is used correctly. The docstring accurately reflects the function's behavior and return type. There are no placeholders, exceptions to handle, or other implementation gaps."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `delete_asset` does not handle phone numbers or email addresses.  Its input is an `asset_id` which is treated as a string.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function only deals with deleting an asset from a dictionary-like database (`DB`)."
+          }
+        }
+      }
+    },
+    "canva/Users.py": {
+      "functions": {
+        "get_current_user": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  The Args and Returns sections are present and correctly identify the `user_id` parameter type and the dictionary return type.  The description of the dictionary's structure in the Returns section is accurate and helpful.  Type hints are used effectively (`str` and `Dict[str, Any]`)."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_current_user` uses only one functional input parameter, `user_id`, which is type hinted as a string.  While there's no explicit input validation beyond the type hint (no Pydantic model), the implicit check within the function (`if user_id in DB[\"Users\"]:` ) acts as validation.  If `user_id` is not a key in the `DB[\"Users\"]` dictionary, the function will correctly return an empty dictionary.  Therefore, adding a Pydantic model would be redundant in this case.  The existing implicit check provides sufficient validation for the single functional input."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `user_id` by declaring it as a string in the function signature (`user_id: str`). However, it lacks value validation.  It does not check if `user_id` is a valid key within the `DB[\"Users\"]` dictionary before attempting to access its nested elements.  There's no check for empty strings or None values.  While a `KeyError` might be raised if `user_id` is not found, this is not explicit error handling and doesn't provide a user-friendly message.  Therefore, while type validation is present, crucial value and null checks are missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_current_user` has excellent parameter design and type annotations.  The `user_id` parameter is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves user information from the global `DB` dictionary based on the provided `user_id`.  It handles the case where the user is not found by returning an empty dictionary, as documented. The `user_id` parameter is used correctly. The function's logic is complete and consistent with its docstring.  There are no placeholders, exceptions to handle, or unused functional parameters."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_current_user` does not handle phone numbers or email addresses as input.  Its input is a `user_id` (string), and its purpose is to retrieve user information from a database (represented by `DB`).  Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "get_current_user_profile": {
+          "docstring_quality": {
+            "status": "Adequate",
+            "notes": "The docstring is present and provides a reasonable description of the function's purpose.  It correctly identifies the function's argument (`user_id`) and its type. The return type is also specified as `Dict[str, Any]`. However, the documentation of the returned dictionary is insufficient.  The docstring states that the dictionary will contain a `profile` key with a potentially optional `display_name` but doesn't account for other potential keys within the `profile` dictionary, making it incomplete.  The docstring also correctly states that an empty dictionary is returned if the user is not found.  No exceptions are raised by this function, so the lack of a \"Raises\" section is not a problem.  While the docstring is functional, it could be significantly improved by providing a more comprehensive description of the structure of the returned `profile` dictionary.  The current description is too vague.  The use of `Any` for the type of the dictionary's values is also not ideal; more specific types should be used if possible."
+          },
+          "pydantic_usage": {
+            "status": "Not Needed",
+            "notes": "The function `get_current_user_profile` has only one functional input parameter, `user_id`, which is a string.  No Pydantic model is used for validation. However, the code implicitly validates that `user_id` exists as a key within the `DB[\"Users\"]` dictionary.  While not explicit type checking or validation with a Pydantic model, the code's logic ensures that the function will only proceed if `user_id` is a valid key in the dictionary.  Using a Pydantic model would add unnecessary complexity in this case, as the existing implicit validation is sufficient and clear.  Adding a Pydantic model would not improve the validation in this specific scenario."
+          },
+          "input_validation": {
+            "status": "Partial",
+            "notes": "The function performs type validation on `user_id` by implicitly expecting a string (due to the use of `in DB[\"Users\"]`). However, it lacks value validation.  There's no check to ensure the `user_id` string is in a valid format or represents an existing user within the constraints of the `DB[\"Users\"]` dictionary.  No explicit null or empty string checks are performed. While the function implicitly handles a non-existent user by returning an empty dictionary, this isn't explicit error handling and doesn't provide informative error messages.  Therefore, only type validation (implicitly) is present, but crucial value and null checks are missing."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_current_user_profile` has excellent parameter design and type annotations.  The single parameter `user_id` is correctly type-annotated as `str`. The return type is clearly specified as `Dict[str, Any]`.  No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Fully Implemented",
+            "notes": "The function correctly retrieves the user profile from the global `DB` dictionary if the user exists, and returns an empty dictionary otherwise.  The `user_id` parameter is correctly used. The docstring accurately reflects the function's behavior and return type.  There are no placeholders, exceptions to handle, or other implementation gaps."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_current_user_profile` does not handle any phone number or email address inputs.  Its sole purpose is to retrieve user profile data from a database (represented by `DB`) based on a user ID.  Therefore, the criteria of phone number normalization and email validation are not applicable.  The function correctly handles its intended task of retrieving user profile data."
+          }
+        }
+      }
+    },
+    "canva/DesignExport.py": {
+      "functions": {
+        "create_design_export_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonably clear description of the function's purpose.  It accurately describes the `design_id` and `format` arguments and their requirements. The documentation of the `format` dictionary is particularly thorough, detailing the options for each key and their types.  The `Returns` section adequately describes the structure of the returned dictionary, including nested structures and potential error codes. Default values for optional parameters (`export_quality`, `size`, `lossless`, `transparent_background`, `as_single_image`) are correctly mentioned."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function lacks any input validation.  Neither Pydantic models nor alternative validation methods (e.g., type checking, manual checks) are used to validate the `design_id` or `format` parameters, or the various optional parameters within the `format` dictionary.  Adding Pydantic models would significantly improve the robustness of this function by enforcing data types, constraints, and allowed values for all inputs."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided code snippet does not contain any input validation for the `create_design_export_job` function.  Neither `design_id` nor `format` (or its nested elements) are checked for type, value, or null/empty conditions.  No error handling is present to catch invalid inputs.  Therefore, no input validation is present at all."
+          },
+          "function_parameters": {
+            "status": "Good",
+            "notes": "The function's return type is correctly annotated as `-> dict`.  The `design_id` and `format` parameters are correctly type-annotated. However, the nested parameters within the `format` dictionary (type, quality, pages, export_quality, size, height, width, lossless, transparent_background, as_single_image) lack type annotations within the `format` dictionary itself.  The function does not use `**kwargs`.  While most parameters have type hints at the function level, the lack of nested type hints within the `format` dictionary prevents an \"Excellent\" rating."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for creating an export job, interacting with the global `DB`, or returning the specified dictionary structure.  All functional parameters are unused because there is no implementation logic."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_design_export_job` function does not handle any phone number or email address inputs.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function focuses solely on design export job creation and management, dealing with design IDs, formats, and export options.  No aspects of phone number or email processing are present in the code."
+          }
+        },
+        "get_design_export_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose.  It clearly explains what the function does (retrieves the status and results of a design export job), and the `Args` and `Returns` sections are well-structured.  The documentation of the nested dictionary structures within the return value is particularly helpful, detailing the possible statuses, error codes, and their meanings.  Types are specified for all parameters and the return value."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_design_export_job` has one functional input parameter, `job_id`, which is annotated as a string. However, there is no input validation performed on this parameter.  No type checking or other validation is implemented to ensure that `job_id` is a valid format or exists in the mock database. Using a Pydantic model would significantly improve the robustness of this function by enforcing type constraints and potentially adding more sophisticated validation rules (e.g., checking if the job ID exists in the DB)."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function has only one functional input parameter, `job_id`, which is declared as a string.  However, there is no validation performed on this parameter within the provided function code. No type checking, value checking (e.g., checking if it's a valid job ID format or exists in the DB), null/empty checks, or any other form of validation is present.  Therefore, the validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_design_export_job` has excellent parameter design.  All parameters are properly type-annotated (`job_id: str`). The return type is clearly specified as `-> dict`.  The function does not use `**kwargs`.  The parameter name `job_id` is clear and descriptive.  Complex types within the returned dictionary are also well-described in the docstring, although not directly enforced by type hints (which is acceptable given the complexity of nested structures)."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation to retrieve a design export job from the global `DB` dictionary,  meaning it does not fulfill the core functionality described in its docstring.  Therefore, it is considered \"Not Implemented\"."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_design_export_job` does not handle any phone numbers or email addresses as input.  Its sole input is a job ID (string), and its purpose is to retrieve the status of a design export job. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    },
+    "canva/Design.py": {
+      "functions": {
+        "create_design": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'create_design': File not found: APIs/canva/Canva/Design.py"
+          }
+        },
+        "list_designs": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list_designs': File not found: APIs/canva/Canva/Design.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list_designs': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list_designs': File not found: APIs/canva/Canva/Design.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list_designs': File not found: APIs/canva/Canva/Design.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list_designs': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'list_designs': File not found: APIs/canva/Canva/Design.py"
+          }
+        },
+        "get_design": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design': File not found: APIs/canva/Canva/Design.py"
+          }
+        },
+        "get_design_pages": {
+          "docstring_quality": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design_pages': File not found: APIs/canva/Canva/Design.py"
+          },
+          "pydantic_usage": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design_pages': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_validation": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design_pages': File not found: APIs/canva/Canva/Design.py"
+          },
+          "function_parameters": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design_pages': File not found: APIs/canva/Canva/Design.py"
+          },
+          "implementation_status": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design_pages': File not found: APIs/canva/Canva/Design.py"
+          },
+          "input_normalization": {
+            "status": "Error",
+            "notes": "Could not find or read function 'get_design_pages': File not found: APIs/canva/Canva/Design.py"
+          }
+        }
+      }
+    },
+    "canva/Comment.py": {
+      "functions": {
+        "create_thread": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose and arguments.  It correctly identifies the function's role in creating a comment thread and explains the format for user mentions. The description of the `assignee_id` parameter is accurate.  The `Returns` section is detailed, outlining the structure of the returned dictionary and its nested elements including types.  All parameter types are specified."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_thread` does not employ Pydantic models or any other form of input validation for its functional parameters (`design_id`, `message`, `assignee_id`).  All three parameters are crucial for the function's logic, and lack of validation leaves the function vulnerable to unexpected input types or values, potentially leading to errors or security vulnerabilities.  Using Pydantic models would significantly improve the robustness of this function by enforcing type constraints and potentially adding more sophisticated validation rules (e.g., checking the format of `message` or ensuring `assignee_id` exists if provided)."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided function `create_thread` has no input validation whatsoever.  All three functional parameters (`design_id`, `message`, and `assignee_id`) lack type checking, value validation (e.g., checking for valid format of `message` or checking if `assignee_id` exists if provided), and null/empty checks.  There is no error handling for invalid inputs.  Therefore, the input validation is completely absent."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (design_id, message, assignee_id) are properly type-annotated with their expected types (str, str, Optional[str] respectively). The function's return type is clearly specified as dict.  No **kwargs parameters are used."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for creating a thread, interacting with the global `DB`, or returning the specified dictionary structure.  All functional parameters (`design_id`, `message`, `assignee_id`) are unused.  The docstring describes a complex return structure that is not reflected in the code."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_thread` does not handle any phone number or email address inputs.  Its parameters are `design_id` (string), `message` (string), and `assignee_id` (optional string). None of these are designed to represent or contain phone numbers or email addresses. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "create_reply": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  The Args section accurately documents the parameters with their types and descriptions. The Returns section correctly specifies the return type as a dictionary and attempts to detail its structure.  However, the documentation of the nested `reply` dictionary is incomplete. While it lists the keys `id`, `design_id`, `thread_id`, `content`, `author`, `created_at`, and `updated_at`, it doesn't specify the types of `id`, `design_id`, `thread_id`, `created_at`, and `updated_at` (all strings except `created_at` and `updated_at` which should be integers).  Furthermore, the description of the `content` dictionary's `mentions` dictionary is vague (\"Keys as \"user_id:team_id\", values include tag and user info\").  More specific type information is needed for better clarity.  The docstring also lacks a \"Raises\" section, which would improve completeness.  Despite these shortcomings, the docstring is sufficiently informative to understand the function's basic usage and expected output.  The function body is `pass`, so there is no inconsistency between the docstring and the implementation *as written*, but the docstring promises a more complex return value than the current implementation provides."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The provided `create_reply` function lacks any input validation for its functional parameters (`design_id`, `thread_id`, and `message`).  There's no use of Pydantic models, nor are there any alternative checks (e.g., type hints with runtime checks, manual validation using `isinstance` or regular expressions).  Adding Pydantic models would significantly improve the robustness of the function by ensuring that the inputs conform to expected types and constraints before processing.  For example, a Pydantic model could ensure that `design_id` and `thread_id` are non-empty strings and that `message` doesn't exceed a certain length."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided function `create_reply` does not contain any input validation.  All three functional parameters (`design_id`, `thread_id`, and `message`) lack type checking, value validation, null/empty checks, and any other form of validation.  No error handling is present for invalid inputs.  Therefore, no input parameter validation is present."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`design_id`, `thread_id`, `message`) are properly type-annotated with their expected types (str). The function's return type is clearly specified as `dict`.  The function does not use `**kwargs` parameters.  The parameter names are clear and descriptive.  While the return type is a `dict` with nested structures, the specification within the docstring sufficiently clarifies the expected contents;  more precise type hinting for the nested dictionary would improve the code but isn't strictly required for an \"Excellent\" rating given the context."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for adding a reply to the global `DB`.  The function does not create or return a dictionary with the specified structure.  All functional parameters are unused because there is no implementation."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_reply` does not handle phone numbers or email addresses as input.  Therefore, there is no normalization or validation to assess.  The function deals with design and thread IDs and a message string, none of which are phone numbers or emails."
+          }
+        },
+        "get_thread": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose.  The Args section accurately documents the parameters with their types. The Returns section correctly specifies the return type as a dictionary.  Crucially, it attempts to comprehensively detail the structure of the returned dictionary, including optional fields.  However, the level of detail in describing the nested `content`, `suggested_edits`, `assignee`, `resolver`, and `author` dictionaries could be improved.  For instance,  `content` mentions plaintext and markdown but doesn't specify the types (e.g., `plaintext: str`, `markdown: str`). Similarly, the structure and types within `suggested_edits` are vaguely described.  The docstring does not mention any exceptions that the function might raise (missing Raises section), which is a shortcoming.  While the docstring is quite good in its attempt at comprehensive documentation of the return structure, the lack of a Raises section and the vagueness in describing some nested dictionary structures prevent it from being rated as excellent."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_thread` does not perform any input validation on the `design_id` and `thread_id` parameters.  There's no type checking, range checking, or any other form of validation to ensure that these inputs are in the expected format or within acceptable bounds.  Using Pydantic models would significantly improve the robustness of this function by adding input validation.  For example, a Pydantic model could ensure that `design_id` and `thread_id` are strings of a certain length or format."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided function `get_thread` has no input validation whatsoever.  Both `design_id` and `thread_id` are accepted without any checks for type, value, null/empty conditions, or any other constraints.  No error handling is present to catch invalid inputs.  Therefore, all functional input parameters lack validation."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`design_id` and `thread_id`) are properly type-annotated as strings.  The return type is clearly specified as a dictionary (`dict`).  The function does not use `**kwargs`.  Complex types within the returned dictionary are described in the docstring, although not formally enforced by type hints in the function signature itself (this is acceptable given the complexity and the function's purpose)."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation to retrieve a thread from a global `DB` dictionary using the provided `design_id` and `thread_id`.  The function does not fulfill its intended purpose as described in the docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_thread` does not handle any phone number or email address inputs.  Its parameters are `design_id` and `thread_id`, both strings representing IDs, not contact information. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        },
+        "get_reply": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a clear description of the function's purpose: retrieving a reply from a thread within a design.  The Args section accurately documents the input parameters with their types and descriptions. The Returns section correctly specifies the return type as a dictionary and attempts to detail its structure.  However, the documentation of the nested `reply` dictionary is incomplete. While it lists several keys (`id`, `design_id`, `thread_id`, `content`, `author`, `created_at`, `updated_at`), it only provides a high-level description of `content` and `author`.  The types of these keys are not specified, nor is the structure of the `content` dictionary (e.g., the types of `plaintext`, `markdown`, and `mentions`).  The docstring also omits any mention of potential exceptions (e.g., if the reply is not found).  Adding this information would improve the docstring's completeness and make it easier for users to understand how to use the function and handle potential errors.  Despite these omissions, the docstring is well-structured and provides sufficient information for a basic understanding of the function's behavior."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_reply` does not perform any input validation on its functional parameters (`design_id`, `thread_id`, `reply_id`).  These parameters are all strings, but there's no check to ensure they are non-empty, have a specific format, or exist in the `DB`.  Using Pydantic models would significantly improve the robustness of this function by adding input validation.  For example, a Pydantic model could enforce string length constraints or check for the presence of IDs in the database before proceeding."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided function `get_reply` has no input validation whatsoever.  All three functional input parameters (`design_id`, `thread_id`, and `reply_id`) lack type checking, value validation, null/empty checks, and any other form of validation.  There is no error handling for invalid inputs.  Therefore, the function is completely vulnerable to invalid inputs."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (design_id, thread_id, reply_id) are properly type-annotated as strings.  The return type is clearly specified as a dictionary.  The function does not use **kwargs."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation to retrieve a reply from a global `DB` dictionary using the provided `design_id`, `thread_id`, and `reply_id`.  Therefore, the function is not implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_reply` does not handle any phone numbers or email addresses as input.  Its parameters are all string IDs (`design_id`, `thread_id`, `reply_id`). Therefore, the criteria of phone number normalization and email validation are not applicable.  No improvements are needed because there's nothing to improve upon in this context."
+          }
+        },
+        "list_replies": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a reasonable overview of the function's purpose.  It accurately describes the function's arguments, including default values for `limit` and `continuation`. The description of the return value is also good, specifying the type and outlining the structure of the dictionary, including nested dictionaries within the `items` list.  The types are specified for all parameters and return values.  The documentation of the nested `items` dictionary is detailed enough to be helpful."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The provided function `list_replies` does not employ Pydantic models or any other form of input validation for its functional parameters (`design_id`, `thread_id`, `limit`, `continuation`).  While type hints are present, they only provide static analysis benefits and do not perform runtime validation.  The `limit` parameter, for example, lacks enforcement of its min (1) and max (100) constraints.  Adding Pydantic models would significantly improve the robustness of the function by ensuring that inputs conform to the expected types and constraints before processing."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The provided code lacks input validation for all functional parameters.  `design_id` and `thread_id` have type hints (str), but no runtime checks are performed to ensure they are not None or empty strings.  `limit` has a type hint (Optional[int]) and docstring indicating constraints (min: 1, max: 100), but no code enforces these constraints.  `continuation` (Optional[str]) has no validation whatsoever.  No error handling is present for invalid inputs.  Therefore, the validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`design_id`, `thread_id`, `limit`, `continuation`) are properly type-annotated with their expected types (str, str, Optional[int], Optional[str] respectively). The function's return type is clearly specified as `dict`.  The function does not use `**kwargs`.  Complex types within the docstrings (List, Dict, Optional) are also reflected in the type hints where applicable."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation to list replies from the global `DB`.  The function is therefore not implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `list_replies` does not handle any phone number or email address inputs.  Its parameters are all strings related to design and thread IDs and pagination. Therefore, the criteria of phone number normalization and email validation are not applicable."
+          }
+        }
+      }
+    },
+    "canva/DesignImport.py": {
+      "functions": {
+        "create_design_import": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the `import_metadata` argument and its required and optional fields. The description of the return value is detailed, outlining the nested structure of the `job` dictionary and its potential fields depending on the `status`.  Types are specified for parameters and return values.  The documentation of the nested dictionaries within the return value is thorough, covering keys, types, and nested structures."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_design_import` does not use Pydantic models or any other form of input validation for its functional parameter `import_metadata`.  The docstring describes requirements for keys within this dictionary (e.g., `title_base64` being required and a string,  `mime_type` being optional), but no code enforces these constraints.  Adding Pydantic models would significantly improve the robustness of this function by providing type checking, data validation, and automatic error handling.  For example, a Pydantic model could ensure `title_base64` is a string, check its length after base64 decoding, and handle the optional `mime_type` appropriately."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided function `create_design_import` has no input validation whatsoever.  The `import_metadata` dictionary is accepted without any checks on its contents, including the required `title_base64` field (for type, length, base64 decoding validity) or the optional `mime_type` field (for format).  No checks are performed to ensure the data within the dictionary is of the expected type or within acceptable ranges.  There are no null or empty checks.  No exceptions are raised for invalid input.  Therefore, the input validation is completely absent."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters and the return type are properly type-annotated.  The `import_metadata` parameter is correctly specified as a dictionary.  Complex types within the dictionary and the return dictionary are also fully detailed using type annotations (e.g., `List`, `Optional`, `str`, `int`, `dict`). No `**kwargs` are used."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for creating a design import job, using the `import_metadata`, or interacting with the global `DB` to store or retrieve job information.  The function does not fulfill any of the promises made in its docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `create_design_import` does not handle any phone number or email address inputs.  Its purpose is to create a design import job based on metadata, which does not include such fields. Therefore, the criteria of phone number normalization and email validation are not applicable to this function.  No improvements are needed because the function correctly does not attempt to handle what it's not designed for."
+          }
+        },
+        "get_design_import_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and the structure of its response.  It accurately describes the `job_id` argument and the dictionary structure of the return value, including nested dictionaries and optional fields.  The types are specified for parameters and return values.  The description of the possible `status` values (\"in_progress\", \"success\", \"failed\") is helpful.  The documentation of the `result` and `error` dictionaries within the return value is thorough, detailing their keys and types."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_design_import_job` has one functional input parameter, `job_id`, which is annotated as a string. However, there is no input validation performed on this parameter.  No Pydantic model or other validation (e.g., type checking, length checks, format checks) is used to ensure the `job_id` is valid before it's used.  Adding a Pydantic model or other validation would significantly improve the robustness of the function."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The provided function `get_design_import_job` has only one functional input parameter: `job_id` (str).  No validation is performed on this parameter.  There are no checks for type, value, null/empty conditions, or any other constraints.  No exceptions are raised for invalid input.  Therefore, the input validation is minimal."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_design_import_job` has excellent parameter design and type annotations.  All parameters (`job_id`) and the return type (`dict`) are properly type-annotated.  There is no use of `**kwargs`. The type annotations are comprehensive, correctly specifying the complex nested structure of the expected dictionary return value, including the use of `Optional` where appropriate."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation to retrieve a design import job from the global `DB` dictionary, nor is there any logic to construct the expected dictionary return value.  The function is therefore not implemented."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_design_import_job` does not handle any phone numbers or email addresses as input.  Its sole input is a `job_id` string, and its purpose is to retrieve job status and results. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        },
+        "create_url_import_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and usage within an MCP server context.  It accurately describes the arguments, including their types and constraints (character limits). The default value for `mime_type` is correctly documented.  The `Returns` section is detailed, outlining the structure of the returned dictionary, including nested dictionaries and lists, and specifying types where possible.  However, it could be improved by explicitly stating that the `job` dictionary is the top-level key of the returned dictionary.  The docstring lacks a \"Raises\" section, which would be beneficial if any exceptions are possible (e.g., network errors during URL fetching).  While the nested structure of the `result` dictionary is well-documented, some types are missing (e.g., the type of `created_at` and `updated_at`).  The docstring's description of the function's behavior aligns with the function signature, but the lack of a \"Raises\" section and some missing types in the nested dictionary descriptions prevent it from being rated as excellent.  There is an inconsistency: the docstring implies a dictionary will always be returned, but the implementation (`pass`) suggests that this might not be the case.  The docstring should reflect the actual implementation's return behavior or the implementation should be updated to match the docstring."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `create_url_import_job` does not utilize Pydantic models or any other form of input validation for its functional parameters (`title`, `url`, `mime_type`).  While the docstrings describe length constraints for each parameter, these constraints are not enforced within the function's code.  Adding Pydantic models would significantly improve the robustness of the function by providing automatic validation and type checking."
+          },
+          "input_validation": {
+            "status": "None",
+            "notes": "The provided function `create_url_import_job` has no input validation whatsoever.  The `title`, `url`, and `mime_type` parameters are declared with type hints, but there are no checks within the function body to ensure that the inputs conform to these types or to the specified length constraints documented in the docstring (1-255 characters for title, 1-2048 for url, 1-100 for mime_type).  There are no checks for empty strings or `None` values (except for the optional `mime_type`, which isn't validated even for length if provided).  No checks are performed to ensure the URL is valid or accessible.  Therefore, no input validation is present."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "All function parameters (`title`, `url`, `mime_type`) are properly type-annotated with their expected types (str, str, Optional[str] respectively).  The return type is clearly specified as `dict`. The function does not use `**kwargs`.  Complex types within the return value's structure are not directly annotated in the function signature (as they are nested within the returned dictionary), but the docstring provides a clear description of their structure and types.  This is acceptable given the complexity of the nested structure."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation for creating a URL import job, interacting with the global `DB`, or handling the `title`, `url`, and `mime_type` parameters.  The function does not fulfill the requirements outlined in its docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided `create_url_import_job` function does not handle phone numbers or email addresses as input.  Therefore, the criteria of phone number normalization and email validation are not applicable. The function deals exclusively with URLs and metadata for design import jobs.  No assessment of phone number or email handling can be made."
+          }
+        },
+        "get_url_import_job": {
+          "docstring_quality": {
+            "status": "Good",
+            "notes": "The docstring is present and provides a good overview of the function's purpose and the structure of its response.  It accurately describes the `job_id` argument and the dictionary structure of the return value, including nested dictionaries and optional fields.  The types are specified for all parameters and return values. The descriptions of the nested dictionaries within the `result` are detailed and helpful."
+          },
+          "pydantic_usage": {
+            "status": "Missing Validation",
+            "notes": "The function `get_url_import_job` has one functional input parameter, `job_id`, which is annotated as a string. However, there is no input validation performed on this parameter.  No type checking or other validation is present to ensure that `job_id` is in the expected format or contains valid data before it's used. Using a Pydantic model to define the input type and potentially add constraints (e.g., minimum length, allowed characters) would significantly improve the robustness of the function."
+          },
+          "input_validation": {
+            "status": "Minimal",
+            "notes": "The function `get_url_import_job` has only one functional input parameter: `job_id`.  Currently, there is no input validation performed on `job_id`.  No type checking, value checking, null/empty checks, or any other form of validation is present.  To achieve even \"Partial\" validation, a check should be added to ensure `job_id` is not None or an empty string, and potentially that it matches a specific format or exists in the `DB`."
+          },
+          "function_parameters": {
+            "status": "Excellent",
+            "notes": "The function `get_url_import_job` has excellent parameter design and type annotations.  All parameters (`job_id`) and the return type (`dict`) are properly type-annotated.  There is no use of `**kwargs`. The type annotations are comprehensive, accurately reflecting the complex nested structure of the expected dictionary return value."
+          },
+          "implementation_status": {
+            "status": "Not Implemented",
+            "notes": "The function body contains only a `pass` statement.  There is no implementation to retrieve data from the global `DB` dictionary based on the provided `job_id`.  Therefore, the function does not implement the functionality described in its docstring."
+          },
+          "input_normalization": {
+            "status": "Not Applicable",
+            "notes": "The provided function `get_url_import_job` does not handle any phone numbers or email addresses as input.  Its purpose is to retrieve the status of a URL import job using a job ID. Therefore, the criteria of phone number normalization and email validation are not applicable to this function."
+          }
+        }
+      }
+    }
+  },
+  "project_level": {
+    "canva": {
+      "project_structure": {
+        "status": "Incomplete",
+        "notes": "The project structure is incomplete because the main API folder (`APIs/canva/`) lacks the crucial `__init__.py` file.  This file is essential for defining the public API functions and making the API service functional.  While the `SimulationEngine` folder is mostly complete (containing all the core files as expected), and the `tests` folder is adequately structured, the absence of the `__init__.py` in the main API folder renders the API itself incomplete and non-functional.  The presence of JSON files directly within the `SimulationEngine` folder is also not ideal; configuration files like `error_config.json` and `error_definitions.json` might be better placed in a dedicated `config` subfolder within `SimulationEngine` for better organization.  Finally, there are no `.py` files containing the main API logic in the root folder, only the `__init__.py` is missing."
+      }
+    }
+  }
+}

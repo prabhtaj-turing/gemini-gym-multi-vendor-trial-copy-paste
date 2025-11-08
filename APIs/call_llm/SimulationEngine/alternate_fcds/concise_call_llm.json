@@ -1,0 +1,102 @@
+[
+  {
+    "name": "generate_llm_response",
+    "description": "Generates a text response from a Google Generative AI model, supporting both text prompts and file uploads in a single request.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The text prompt or question to send to the model."
+        },
+        "api_key": {
+          "type": "string",
+          "description": "A valid Google AI API key for authentication with access to the specified model."
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of file paths to upload to the model."
+        },
+        "system_prompt": {
+          "type": "string",
+          "description": "A system-level instruction that sets the context or behavior for the model, separate from the user prompt."
+        },
+        "model_name": {
+          "type": "string",
+          "description": "Name of the Google Generative AI model, defaulting to `gemini-2.5-pro`."
+        }
+      },
+      "required": [
+        "api_key",
+        "prompt"
+      ]
+    }
+  },
+  {
+    "name": "generate_llm_response_with_tools",
+    "description": "Generates a model response that can include a text response and/or a function call request from the provided tools, which the caller is responsible for executing and returning the result.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The user's question or instruction."
+        },
+        "api_key": {
+          "type": "string",
+          "description": "A valid Google AI API key for authentication with access to the specified model."
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of file paths to be uploaded with the prompt."
+        },
+        "model_name": {
+          "type": "string",
+          "description": "Name of the Google Generative AI model to use, defaulting to 'gemini-2.5-pro'."
+        },
+        "system_prompt": {
+          "type": "string",
+          "description": "A system-level instruction that sets the model's context or behavior to guide its responses."
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "A list of `Tool` objects defining functions the model can call, created using helpers like `make_tool_from_docstring()`."
+        }
+      },
+      "required": [
+        "api_key",
+        "prompt"
+      ]
+    }
+  },
+  {
+    "name": "make_tool_from_docstring",
+    "description": "Parses a Python function's docstring to create a Google Generative AI `Tool` object for function calling.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "docstring": {
+          "type": "string",
+          "description": "The function docstring to convert, containing clear descriptions of its purpose and parameters."
+        },
+        "function_name": {
+          "type": "string",
+          "description": "The name of the function the docstring belongs to, which is used as the tool's function name."
+        }
+      },
+      "required": [
+        "docstring",
+        "function_name"
+      ]
+    }
+  }
+]
